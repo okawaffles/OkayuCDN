@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload to OkayuCDN</title>
+</head>
+<body>
+    <ul class="navi-ul">
+        <li class="navi-li-left"><a href="https://okayu.okawaffles.com/manage/upload" class="navi-a">Upload</a></li>
+        <li class="navi-li-left"><a href="https://okayu.okawaffles.com/manage/content" class="navi-a">Manage</a></li>
+        <li class="navi-li-right"><a href="https://okayu.okawaffles.com/logout" class="navi-a">Log Out</a></li>
+    </ul>
+
+    <div class="upload-pane">
+        <h3 class="title">Welcome to OkayuCDN. You are logged in as <%= username %></h3>
+        <h4 class="method">Method: POST (You -> Endpoint -> OkayuCDN)</h4>
+        <form class="uploadForm" action="./cdnUpload" method="POST">
+            <input type="file" name="uploaded" required />
+            <input type="submit" />
+        </form>
+    </div>
+
+    <style>
+        @font-face {
+            font-family: KFhimajiMOCO;
+            src: url("https://okayu.okawaffles.com/content/2.otf");
+        }
+        body {
+            background-color: #3d3d3d;
+            font-family: KFhimajiMOCO;
+        }
+
+        .navi-ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            background-color: #4d4d4d;
+        }
+        .navi-li-left {
+            float: left;
+        }
+        .navi-li-right {
+            float: right;
+        }
+        .navi-a {
+            display: block;
+            padding: 8px;
+            background-color: #4d4d4d;
+        }
+        .navi-li:hover {
+            background-color: #2f2f2f;
+        }
+
+        .upload-pane{
+            padding: 5%;
+        }
+    </style>
+</body>
+</html>

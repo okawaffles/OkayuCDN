@@ -3,5 +3,6 @@
     "buildType":"b",
     "enableAccountCreation":true,
     "enableUploading":true,
-    "enableAnonymousUploading":false
+    "enableAnonymousUploading":false,
+    "port":2773
 }
