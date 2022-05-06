@@ -26,6 +26,10 @@ var config = require('./config.json');
 okayuLogger.info("boot", `Starting OkayuCDN Server ${config.version}${config.buildType}`);
 okayuLogger.info("boot", `Server must be restarted to change config.\nAccount Creation: ${config.enableAccountCreation}\nUploading: ${config.enableUploading}\nAnonymous Uploading (if available): ${config.enableAnonymousUploading}`);
 
+// Check to be sure that template.json has been removed
+// From /db/sessionStorage and /db/userLoginData
+if (fs.existsSync(`./db/sessionStorage/template.json`) || fs.existsSync(`./db/userLoginData/template.json`)) okayuLogger.warn('accMgr', "Template JSONs have not been deleted! Please delete them from the database!");
+
 // Additional Functions
 
 function verifyToken(token) {
