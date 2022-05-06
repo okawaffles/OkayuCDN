@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to OkayuCDN</title>
+</head>
+<body>
+    <ul class="navi-ul">
+        <li class="navi-li-left navi-li"><a href="../ja" class="navi-a">ホーム</a></li>
+        <li class="navi-li-left navi-li"><a href="../manage/upload_ja" class="navi-a">アップロード</a></li>
+        <li class="navi-li-left navi-li"><a href="../manage/content_ja" class="navi-a">おさめる</a></li>
+        <li class="navi-li-right navi-li"><a href="../home" class="navi-a">English</a></li>
+    </ul>
+
+    <div class="container">
+        <h1 class="title">OkayuCDNへようこそ!</h1>
+        <h2 class="subtitle sa">ここに　あなたの　ファイルズを　むりょうの　アップロードします。</h3>
+        <h2 class="subtitle sb">（この　フォントは　かんじを　サポートじゃない。）</h2>
+    </div>
+
+    <div class="characters">
+        <img src="../content/okayu_450.png" class="chara-center" />
+    </div>
+
+
+
+    <style>
+        @font-face {
+            font-family: KFhimajiMOCO;
+            src: url("https://okayu.okawaffles.com/content/2.otf");
+        }
+
+        body {
+            background-color: #3d3d3d;
+            font-family: KFhimajiMOCO;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        
+
+        .navi-ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #333;
+        }
+
+        .navi-li-left {
+            float: left;
+        }
+        .navi-li-right {
+            float: right;
+        }
+
+        .navi-li-left a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 20px 20px;
+            text-decoration: none;
+        }
+        .navi-li-right a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 20px 20px;
+            text-decoration: none;
+        }
+
+        /* Change the link color to #111 (black) on hover */
+        .navi-li a:hover {
+            background-color: #111;
+        }
+
+
+        .container {
+            padding: 2.5%;
+            color: white;
+        }
+        @keyframes titleToTop {
+            0% { 
+                transform: translateY(1200%);
+                opacity: 0%;
+            }
+            100% { 
+                transform: translateY(0%); 
+                opacity: 100%;
+            }
+        }
+        @keyframes subToTop {
+            0% { 
+                transform: translateY(2400%);
+                opacity: 0%;
+            }
+            100% { 
+                transform: translateY(0%); 
+                opacity: 100%;
+            }
+        }
+
+        .title {
+            font-size: 86px;
+            animation: titleToTop 1.5s ease;
+        }
+        .subtitle {
+            font-size: 48px;
+        }
+        .sa {
+            transform: translateY(2400%);
+            animation: subToTop 1.5s ease;
+            animation-fill-mode: forwards;  
+            animation-delay: 100ms;
+        }
+        .sb {
+            transform: translateY(2400%);
+            animation: subToTop 1.5s ease;
+            animation-fill-mode: forwards;  
+            animation-delay: 200ms;
+        }
+        
+
+        @keyframes charaFly {
+            0% { 
+                transform: translateY(200%);
+            }
+            100% { 
+                transform: translateY(0%); 
+            }
+        }
+        
+        .characters {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .chara-center {
+            transform: translateY(200%);
+
+            animation: 1s charaFly ease;
+            animation-fill-mode: forwards;
+            animation-delay: 1250ms;
+        }
+        .chara-first {
+            transform: translateY(200%);
+ 
+            animation: 1s charaFly ease;
+            animation-fill-mode: forwards;
+            animation-delay: 1500ms;
+        }
+        .chara-last {
+            transform: translateY(200%);
+
+            animation: 1s charaFly ease;
+            animation-fill-mode: forwards;
+            animation-delay: 1500ms;
+        }
+    </style>
+</body>
+</html>

@@ -1,4 +1,15 @@
 var okayuLogger = require('./cs-modules/okayuLogger/index.js');
+
+try {
+    require('express');
+    require('cookie-parser');
+    require('ejs');
+} catch(err) {
+    okayuLogger.error('boot', "Missing dependencies! Please install express, cookie-parser, and ejs");
+    okayuLogger.info('boot', "Exit...");
+    process.exit(-1);
+}
+
 var fs = require('fs');
 var cookieParser = require('cookie-parser');
 var express = require('express');
@@ -47,6 +58,7 @@ app.get('/korone', (req, res) => {
 });
 app.get('/mira', (req, res) => {
     res.render('landing_mira.ejs');
+    res.end();
 });
 
 app.get('/content', (req, res) => {
@@ -72,22 +84,32 @@ app.get('/content/*', (req, res) => {
 
 
 // User Viewable Pages
+app.get('/home', (req, res) => {
+    res.render('home.ejs');
+    res.end();
+});
+app.get('/ja', (req, res) => {
+    res.render('home_ja.ejs');
+    res.end();
+});
+
+app.get('/info', (req, res) => {
+    res.render('info.ejs');
+    res.end();
+})
+
 
 app.get('/manage/upload', (req, res) => {
     res.render('upload.ejs');
-    res.end();
 });
 
 app.get('/login', (req, res) => {
     res.render('login.ejs');
-    res.end();
 });
 
 app.get('/signup', (req, res) => {
     res.render('signup.ejs');
-    res.end();
 });
-
 
 // POST Request handlers
 
@@ -98,6 +120,14 @@ app.post('/cdnUpload', (req, res) => {
 app.post('/login', (req, res) => {
     // tbf when i can figure out formidable
 });
+
+
+// KEEP LAST!!
+app.get('./*', (req, res) => {
+    res.render("404.ejs");
+    res.end();
+})
+
 
 // Listen on port
 var server = app.listen(config.port, () => {
