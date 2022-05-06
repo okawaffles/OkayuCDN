@@ -61,18 +61,6 @@ app.get('/mira', (req, res) => {
     res.end();
 });
 
-app.get('/content', (req, res) => {
-    var listing = ["listing-placeholder"];
-    fs.readdirSync('./content/', (err, files) => {
-        files.forEach(element => {
-            listing.push(element);
-        });
-    });
-
-    res.json({"content":listing});
-    res.end();
-});
-
 app.get('/content/*', (req, res) => {
     let user = req.url.split('/')[2];
     let item = req.url.split('/')[3];
