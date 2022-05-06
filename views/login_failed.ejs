@@ -11,19 +11,20 @@
 
 <body>
     <ul class="navi-ul">
-        <li class="navi-li-left navi-li"><a href="../home" class="navi-a">Home</a></li>
-        <li class="navi-li-left navi-li"><a href="../manage/upload" class="navi-a">Upload</a></li>
-        <li class="navi-li-left navi-li"><a href="../manage/content" class="navi-a">Manage</a></li>
-        <li class="navi-li-right navi-li"><a href="../logout" class="navi-a">Log Out</a></li>
-        <li class="navi-li-right navi-li"><a href="./upload" class="navi-a">にほんごじゃない</a></li>
+        <li class="navi-li-left navi-li"><a href="/home" class="navi-a">Home</a></li>
+        <li class="navi-li-left navi-li"><a href="/manage/upload" class="navi-a">Upload</a></li>
+        <li class="navi-li-left navi-li"><a href="/manage/content" class="navi-a">Manage</a></li>
     </ul>
     <br>
     <div class="pad upload-pane">
-        <h3 class="title">Welcome to OkayuCDN. You are logged in as UsernamePlaceholder</h3>
-        <h4 class="method">Method: POST (You -> Endpoint -> OkayuCDN)</h4>
-        <form class="uploadForm" action="./cdnUpload" method="POST">
-            <input type="file" name="uploaded" required />
-            <input type="submit" />
+        <h2 class="title">Welcome to OkayuCDN!</h2>
+        <h4 class="method">Let's get you logged in and ready to go!</h4>
+        <hr><br>
+        <form class="uploadForm" action="/login" method="POST">
+            <input type="text" placeholder="Username" name="un" required /><br>
+            <input type="password" placeholder="Password" name="pw" required /><br>
+            <input type="submit" class="submitBtn" value="Go"/>
+            <p style="color: red;">Bad login.</p>
         </form>
     </div>
 
@@ -39,7 +40,31 @@
             margin: 0;
         }
 
-        
+        .uploadForm {
+            display: grid;
+            place-items: center;
+        }
+        .submitBtn {
+            background-color: #2a455e;
+            color: white;
+            border: 0px;
+            width: 128px;
+            height: 32px;
+            font-family: KFhimajiMOCO;
+            font-size: medium;
+        }
+        .submitBtn:hover {
+            background-color: #3b6082;
+        }
+        hr {
+            border: 0;
+            clear:both;
+            display:block;
+            width: 96%;               
+            background-color: white;
+            height: 1px;
+        }
+
 
         .navi-ul {
             list-style-type: none;

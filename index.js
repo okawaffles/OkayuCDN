@@ -1,4 +1,5 @@
 var okayuLogger = require('./cs-modules/okayuLogger/index.js');
+var fs = require('fs');
 
 try {
     require('express');
@@ -11,7 +12,6 @@ try {
     process.exit(-1);
 }
 
-var fs = require('fs');
 var cookieParser = require('cookie-parser');
 var formidable = require('formidable');
 var express = require('express');
@@ -19,6 +19,7 @@ var app = express();
 app.use(express.static('/views'));
 app.use('/assets', express.static(__dirname + '/views/assets'));
 app.use(cookieParser());
+// app.use((req, res, next) => { res.status(404).render("404.ejs"); })
 
 var config = require('./config.json');
 
@@ -28,25 +29,21 @@ okayuLogger.info("boot", `Server must be restarted to change config.\nAccount Cr
 // Additional Functions
 
 function verifyToken(token) {
-    if (fs.existsSync(`./db/tokens/${token}.json`)) {
-        var userData = JSON.parse(fs.readFileSync(`./db/tokens/${token}.json`));
+    if (fs.existsSync(`./db/sessionStorage/${token}.json`)) {
+        var userData = JSON.parse(fs.readFileSync(`./db/sessionStorage/${token}.json`));
         var d = new Date();
         if (userData.expires > d.getMilliseconds()) return true; else return false;
     } else return false;
 }
 
 function verifyLogin(username, password) {
-    if (fs.existsSync(`./db/userData/${username}.json`)) {
-        var userData = JSON.parse(fs.readFileSync(`./db/userData/${username}.json`));
-        if (username === userData.un && password === userData.pw) return true; else return false;
+    if (fs.existsSync(`./db/userLoginData/${username}.json`)) {
+        var userData = JSON.parse(fs.readFileSync(`./db/userLoginData/${username}.json`));
+        if (password === userData.password) return true; else return false;
     } else return false;
 }
 
-function genNewToken(username) {
-    var a = new Uint32Array(1);
-    Crypto.getRandomValues(a);
-    return a[0];
-}
+const genNewToken = size => [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
 
 
 // Web pages
@@ -97,7 +94,14 @@ app.get('/info', (req, res) => {
 
 
 app.get('/manage/upload', (req, res) => {
-    res.render('upload.ejs');
+    let token = req.cookies.token;
+    if (!token) { 
+        res.redirect('/login');
+    } else if (verifyToken(token)) {
+        res.render('upload.ejs');
+    } else {
+        res.redirect('/login');
+    }
 });
 
 app.get('/login', (req, res) => {
@@ -115,12 +119,25 @@ app.post('/cdnUpload', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-    // tbf when i can figure out formidable
+    let form = new formidable.IncomingForm();
+    form.parse(req, (err, fields, files) => {
+        if (verifyLogin(fields.un, fields.pw)) {
+            let token = genNewToken(32);
+            let d = new Date();
+            let session = {
+                user:fields.un,
+                expires:parseInt((d.getMilliseconds() + 604800000))
+            };
+            fs.writeFileSync(`./db/sessionStorage/${token}.json`, JSON.stringify(session));
+            res.cookie(`token`, token);
+            res.redirect(`/manage/upload`);
+        } else res.render('login_failed.ejs');
+    });
 });
 
 
 // KEEP LAST!!
-app.get('./*', (req, res) => {
+app.get('*', (req, res) => {
     res.render("404.ejs");
     res.end();
 })

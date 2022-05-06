@@ -4,15 +4,16 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico">
     <title>404 - OkayuCDN</title>
 </head>
 <body>
     <ul class="navi-ul">
-        <li class="navi-li-left navi-li"><a href="../home" class="navi-a">Home</a></li>
-        <li class="navi-li-left navi-li"><a href="../manage/upload" class="navi-a">Upload</a></li>
-        <li class="navi-li-left navi-li"><a href="../manage/content" class="navi-a">Manage</a></li>
-        <li class="navi-li-right navi-li"><a href="../ja" class="navi-a">にほんご</a></li>
-        <li class="navi-li-right navi-li"><a href="../info" class="navi-a">Info</a></li>
+        <li class="navi-li-left navi-li"><a href="/home" class="navi-a">Home</a></li>
+        <li class="navi-li-left navi-li"><a href="/manage/upload" class="navi-a">Upload</a></li>
+        <li class="navi-li-left navi-li"><a href="/manage/content" class="navi-a">Manage</a></li>
+        <li class="navi-li-right navi-li"><a href="/ja" class="navi-a">にほんご</a></li>
+        <li class="navi-li-right navi-li"><a href="/info" class="navi-a">Info</a></li>
     </ul>
 
     <div class="container">
@@ -22,7 +23,7 @@
     </div>
 
     <div class="characters">
-        <img src="../content/okayu_450.png" class="chara-center" />
+        <img src="/assets/images/okayu_404.png" class="chara-center" />
     </div>
 
 
@@ -136,7 +137,7 @@
         .characters {
             position: absolute;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(-85%);
         }
 
         .chara-center {
@@ -145,6 +146,8 @@
             animation: 1s charaFly ease;
             animation-fill-mode: forwards;
             animation-delay: 1250ms;
+            width: 160%;
+            height: 160%;
         }
         .chara-first {
             transform: translateY(200%);
