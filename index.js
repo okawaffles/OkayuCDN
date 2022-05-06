@@ -74,11 +74,17 @@ app.get('/content', (req, res) => {
 });
 
 app.get('/content/*', (req, res) => {
-    let item = req.url.split('/')[2];
-    let file = fs.readFileSync(`./content/${item}`);
-    if (file) {
-        res.send(file);
-    } else res.status(404);
+    let user = req.url.split('/')[2];
+    let item = req.url.split('/')[3];
+    let file = "none"; 
+    try {
+        file = fs.readFileSync(`./content/${user}/${item}`);
+        if (file != "none") {
+            res.send(file);
+        }
+    } catch(err) {
+        res.render('404.ejs');
+    }
     res.end();
 });
 
