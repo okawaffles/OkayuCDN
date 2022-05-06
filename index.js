@@ -4,17 +4,20 @@ try {
     require('express');
     require('cookie-parser');
     require('ejs');
+    require('formidable');
 } catch(err) {
-    okayuLogger.error('boot', "Missing dependencies! Please install express, cookie-parser, and ejs");
+    okayuLogger.error('boot', "Missing dependencies! Please install express, cookie-parser, formidable, and ejs");
     okayuLogger.info('boot', "Exit...");
     process.exit(-1);
 }
 
 var fs = require('fs');
 var cookieParser = require('cookie-parser');
+var formidable = require('formidable');
 var express = require('express');
 var app = express();
 app.use(express.static('/views'));
+app.use('/assets', express.static(__dirname + '/views/assets'));
 app.use(cookieParser());
 
 var config = require('./config.json');
@@ -126,4 +129,5 @@ app.get('./*', (req, res) => {
 // Listen on port
 var server = app.listen(config.port, () => {
     okayuLogger.info('express', `Listening on port ${config.port}`);
-})
+});
+server.setTimeout(18000000);
