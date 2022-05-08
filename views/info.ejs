@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico">
+    <title>Welcome to OkayuCDN</title>
+</head>
+<body>
+    <ul class="navi-ul">
+        <li class="navi-li-left navi-li"><a href="../home" class="navi-a">Home</a></li>
+        <li class="navi-li-left navi-li"><a href="../manage/upload" class="navi-a">Upload</a></li>
+        <li class="navi-li-left navi-li"><a href="../manage/content" class="navi-a">Manage</a></li>
+        <li class="navi-li-right navi-li"><a href="../ja" class="navi-a">にほんご</a></li>
+        <li class="navi-li-right navi-li"><a href="../info" class="navi-a">Info</a></li>
+    </ul>
+
+    <div class="container">
+        <div class="column cl">
+            <h1>Nekomata Okayu</h1>
+            <h4>Nekomata Okayu is intellectual property of COVER corp.</h4>
+            <hr>
+            <img src="assets/images/okayu_full.png">
+        </div>
+        <div class="column cr">
+            <h1>What is OkayuCDN's purpose?</h1>
+            <h4>Okayu Content Delivery Network</h4>
+            <hr>
+            <h2 class="pg">
+                &emsp;You know Discord's stupid 8MB file limit for non-nitro users? This website is here to allow my friends to upload their (usually) 30 second game clips or other media for free. You just copy the link and you're ready to go! This website is open source and free to use! As long as you don't upload anything that goes against our <a class="tos" href="../terms">Terms of Service</a>, you're allowed to upload anything up to 1GB in size! 
+            </h2>
+        </div>
+    </div>
+
+
+
+    <style>
+        @font-face {
+            font-family: KFhimajiMOCO;
+            src: url("https://okayu.okawaffles.com/content/2.otf");
+        }
+
+        body {
+            background-color: #3d3d3d;
+            font-family: KFhimajiMOCO;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        
+        .column {
+            flex: 50%;
+            border-radius: 35px;
+        }
+        .container {
+            display: flex;
+        }
+        img {
+            width: 25%;
+            height: auto;
+        }
+        .cl {
+            text-align: center;
+            background-color: #333;
+            margin-right: 5%;
+        }
+        .cr {
+            text-align: center;
+            background-color: #333;
+            margin-left: 5%;
+        }
+        .pg {
+            text-align: left;
+            padding: 32px;
+        }
+        .tos {
+            color:#068eb8;
+        }
+
+
+
+        .navi-ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #333;
+        }
+
+        .navi-li-left {
+            float: left;
+        }
+        .navi-li-right {
+            float: right;
+        }
+
+        .navi-li-left a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 20px 20px;
+            text-decoration: none;
+        }
+        .navi-li-right a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 20px 20px;
+            text-decoration: none;
+        }
+
+        /* Change the link color to #111 (black) on hover */
+        .navi-li a:hover {
+            background-color: #111;
+        }
+
+
+        .container {
+            padding: 2.5%;
+            color: white;
+        }
+        @keyframes titleToTop {
+            0% { 
+                transform: translateY(1200%);
+                opacity: 0%;
+            }
+            100% { 
+                transform: translateY(0%); 
+                opacity: 100%;
+            }
+        }
+        @keyframes subToTop {
+            0% { 
+                transform: translateY(2400%);
+                opacity: 0%;
+            }
+            100% { 
+                transform: translateY(0%); 
+                opacity: 100%;
+            }
+        }
+
+        .title {
+            font-size: 86px;
+            animation: titleToTop 1.5s ease;
+        }
+        .subtitle {
+            font-size: 48px;
+        }
+        .sa {
+            transform: translateY(2400%);
+            animation: subToTop 1.5s ease;
+            animation-fill-mode: forwards;  
+            animation-delay: 100ms;
+        }
+        .sb {
+            transform: translateY(2400%);
+            animation: subToTop 1.5s ease;
+            animation-fill-mode: forwards;  
+            animation-delay: 200ms;
+        }
+        
+
+        @keyframes charaFly {
+            0% { 
+                transform: translateY(200%);
+            }
+            100% { 
+                transform: translateY(0%); 
+            }
+        }
+        
+        .characters {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .chara-center {
+            transform: translateY(200%);
+
+            animation: 1s charaFly ease;
+            animation-fill-mode: forwards;
+            animation-delay: 1250ms;
+        }
+        .chara-first {
+            transform: translateY(200%);
+ 
+            animation: 1s charaFly ease;
+            animation-fill-mode: forwards;
+            animation-delay: 1500ms;
+        }
+        .chara-last {
+            transform: translateY(200%);
+
+            animation: 1s charaFly ease;
+            animation-fill-mode: forwards;
+            animation-delay: 1500ms;
+        }
+    </style>
+</body>
+</html>

@@ -53,15 +53,15 @@ const genNewToken = size => [...Array(size)].map(() => Math.floor(Math.random() 
 // Web pages
 
 app.get('/', (req, res) => {
-    res.render('landing.ejs');
+    res.render('landing/okayu.ejs');
     res.end();
 });
 app.get('/korone', (req, res) => {
-    res.render('landing_korone.ejs');
+    res.render('landing/korone.ejs');
     res.end();
 });
 app.get('/mira', (req, res) => {
-    res.render('landing_mira.ejs');
+    res.render('landing/mira.ejs');
     res.end();
 });
 
@@ -96,6 +96,11 @@ app.get('/info', (req, res) => {
     res.end();
 })
 
+app.get('/terms', (req, res) => {
+    res.render('terms.ejs');
+    res.end();
+})
+
 
 app.get('/manage/upload', (req, res) => {
     let token = req.cookies.token;
@@ -125,7 +130,7 @@ app.post('/cdnUpload', (req, res) => {
 app.post('/login', (req, res) => {
     let form = new formidable.IncomingForm();
     form.parse(req, (err, fields, files) => {
-        if (verifyLogin(fields.un, fields.pw)) {
+        if (verifyLogin(fields.un, fields.pw)) { 
             let token = genNewToken(32);
             let d = new Date();
             let session = {
