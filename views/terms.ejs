@@ -18,12 +18,29 @@
 
     <div class="container">
         <h1 class="title">Terms of Service</h1>
-        <h2 class="subtitle sa">You can upload your files for free here!</h2>
+        <h2 class="subtitle sa">This page defines what you can and cannot do with our services.</h2>
+        <h3 class="sb">Last updated May 10th, 2022 by okasoft development team</h3>
+
+        <br><hr class="hrFlyUp"><br>
+
+        <h3 class="nofont terms">
+            &emsp;&emsp;When we speak of "we," "us," "our," and "okasoft," we are referring to okasoft development team as a whole, including all services and child products. When speaking of "OkayuCDN," we are referring to OkayuCDN as a whole, including it and its child services (such as OCDN-FYTDLR).
+            <br>
+            <br>
+            &emsp;&emsp;When using our services, you must abide to this set of rules/regulations outlined here. If you do not, your account is subject to punishment ranging from a temporary ban from our site to a permanent deletion of your account and content, along with an IP-wide ban.
+            <br>
+            <br>
+            <br>
+             - Rules and regulations -
+            <br>
+            <br>
+            Rule-bend policy:<br>&emsp;&emsp;Even though our Terms of Service does not outline all cases, this does *not* make everything legal. If okasoft staff find you to be in violation of our Terms of Service in one way or another, you will be punished accordingly.
+            <br><br>
+            Upload rules:<br>&emsp;&emsp;You may upload any content that does not fall under the "NSFW (Not Safe for Work)" category. If found to be in violation, you will receive a one-month restriction. Illegal content, such as pirated content, child pornography, or unlawfully-obtained content is strongly prohibited. Your account will be deleted and you will receive a site-wide permanent ban.
+        </h3>
     </div>
 
-    <div class="characters">
-        <img src="./assets/images/okayu_450.png" class="chara-center" />
-    </div>
+    
 
 
 
@@ -37,10 +54,12 @@
             background-color: #3d3d3d;
             font-family: KFhimajiMOCO;
             margin: 0;
-            overflow: hidden;
+            
         }
 
-        
+        .nofont {
+            font-family: 'Courier New', Courier, monospace;
+        }
 
         .navi-ul {
             list-style-type: none;
@@ -82,83 +101,12 @@
             padding: 2.5%;
             color: white;
         }
-        @keyframes titleToTop {
-            0% { 
-                transform: translateY(1200%);
-                opacity: 0%;
-            }
-            100% { 
-                transform: translateY(0%); 
-                opacity: 100%;
-            }
-        }
-        @keyframes subToTop {
-            0% { 
-                transform: translateY(2400%);
-                opacity: 0%;
-            }
-            100% { 
-                transform: translateY(0%); 
-                opacity: 100%;
-            }
-        }
 
         .title {
             font-size: 86px;
-            animation: titleToTop 1.5s ease;
         }
         .subtitle {
             font-size: 48px;
-        }
-        .sa {
-            transform: translateY(2400%);
-            animation: subToTop 1.5s ease;
-            animation-fill-mode: forwards;  
-            animation-delay: 100ms;
-        }
-        .sb {
-            transform: translateY(2400%);
-            animation: subToTop 1.5s ease;
-            animation-fill-mode: forwards;  
-            animation-delay: 200ms;
-        }
-        
-
-        @keyframes charaFly {
-            0% { 
-                transform: translateY(200%);
-            }
-            100% { 
-                transform: translateY(0%); 
-            }
-        }
-        
-        .characters {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .chara-center {
-            transform: translateY(200%);
-
-            animation: 1s charaFly ease;
-            animation-fill-mode: forwards;
-            animation-delay: 1250ms;
-        }
-        .chara-first {
-            transform: translateY(200%);
- 
-            animation: 1s charaFly ease;
-            animation-fill-mode: forwards;
-            animation-delay: 1500ms;
-        }
-        .chara-last {
-            transform: translateY(200%);
-
-            animation: 1s charaFly ease;
-            animation-fill-mode: forwards;
-            animation-delay: 1500ms;
         }
     </style>
 </body>
