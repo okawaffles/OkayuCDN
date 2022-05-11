@@ -1,16 +1,24 @@
+// By okawaffles
+// v3 - 2022
+// I'm so proud of how far I've come.
+
 var okayuLogger = require('./cs-modules/okayuLogger/index.js');
 var fs = require('fs');
+
+// Check dependencies
 
 try {
     require('express');
     require('cookie-parser');
     require('ejs');
     require('formidable');
-} catch(err) {
+} catch(err) { // exit if fail
     okayuLogger.error('boot', "Missing dependencies! Please install express, cookie-parser, formidable, and ejs");
     okayuLogger.info('boot', "Exit...");
     process.exit(-1);
 }
+
+// requires
 
 var cookieParser = require('cookie-parser');
 var formidable = require('formidable');
@@ -20,7 +28,9 @@ app.use(express.static('/views'));
 app.use('/assets', express.static(__dirname + '/views/assets'));
 app.use(cookieParser());
 app.set('view engine', 'ejs');
-// app.use((req, res, next) => { res.status(404).render("404.ejs"); })
+
+
+// load config...
 
 var config = require('./config.json');
 
@@ -51,8 +61,8 @@ function verifyLogin(username, password) {
 const genNewToken = size => [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
 
 
-// Web pages
-
+// Web pages //
+// Landing
 app.get('/', (req, res) => {
     res.render('landing/okayu.ejs');
     res.end();
@@ -65,6 +75,8 @@ app.get('/mira', (req, res) => {
     res.render('landing/mira.ejs');
     res.end();
 });
+
+// user-viewable
 
 app.get('/content/*', (req, res) => {
     let user = req.url.split('/')[2];
@@ -167,14 +179,14 @@ app.post('/signup', (req, res) => {
     });
 });
 
-// KEEP LAST!!
+// Keep Last !! 404 handler
 app.get('*', (req, res) => {
     res.render("404.ejs");
     res.end();
 })
 
 
-// Listen on port
+// Listen on port (use nginx to reverse proxy)
 var server = app.listen(config.port, () => {
     okayuLogger.info('express', `Listening on port ${config.port}`);
 });
