@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,6 +8,7 @@
     <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico">
     <title>Welcome to OkayuCDN</title>
 </head>
+
 <body>
     <ul class="navi-ul">
         <li class="navi-li-left navi-li"><a href="../home" class="navi-a">Home</a></li>
@@ -18,8 +20,8 @@
 
     <div class="container">
         <h1 class="title">Welcome to OkayuCDN!</h1>
-        <h2 class="subtitle sa">You can upload your files for free here!</h3>
-        <h2 class="subtitle sb">Any file type is supported and can be embedded!</h3>
+        <h2 class="subtitle sa">You can upload your files for free here!</h2>
+        <h2 class="subtitle sb">Any file type is supported and can be embedded!</h2>
     </div>
 
     <div class="characters">
@@ -41,8 +43,6 @@
             overflow: hidden;
         }
 
-        
-
         .navi-ul {
             list-style-type: none;
             margin: 0;
@@ -54,6 +54,7 @@
         .navi-li-left {
             float: left;
         }
+
         .navi-li-right {
             float: right;
         }
@@ -65,6 +66,7 @@
             padding: 20px 20px;
             text-decoration: none;
         }
+
         .navi-li-right a {
             display: block;
             color: white;
@@ -83,23 +85,27 @@
             padding: 2.5%;
             color: white;
         }
+
         @keyframes titleToTop {
-            0% { 
+            0% {
                 transform: translateY(1200%);
                 opacity: 0%;
             }
-            100% { 
-                transform: translateY(0%); 
+
+            100% {
+                transform: translateY(0%);
                 opacity: 100%;
             }
         }
+
         @keyframes subToTop {
-            0% { 
+            0% {
                 transform: translateY(2400%);
                 opacity: 0%;
             }
-            100% { 
-                transform: translateY(0%); 
+
+            100% {
+                transform: translateY(0%);
                 opacity: 100%;
             }
         }
@@ -108,32 +114,61 @@
             font-size: 86px;
             animation: titleToTop 1.5s ease;
         }
+
         .subtitle {
             font-size: 48px;
         }
+
         .sa {
             transform: translateY(2400%);
             animation: subToTop 1.5s ease;
-            animation-fill-mode: forwards;  
+            animation-fill-mode: forwards;
             animation-delay: 100ms;
         }
+
         .sb {
             transform: translateY(2400%);
             animation: subToTop 1.5s ease;
-            animation-fill-mode: forwards;  
+            animation-fill-mode: forwards;
             animation-delay: 200ms;
         }
-        
 
-        @keyframes charaFly {
-            0% { 
-                transform: translateY(200%);
+
+        @media screen and (max-width: 600px) {
+            .title {
+                font-size: 43px;
             }
-            100% { 
-                transform: translateY(0%); 
+
+            .subtitle {
+                font-size: 24px;
+            }
+
+            .chara-center {
+                width: 100%;
+                display: none;
             }
         }
-        
+
+
+        @keyframes charaFly {
+            0% {
+                transform: translateY(200%);
+            }
+
+            100% {
+                transform: translateY(0%);
+            }
+        }
+        @keyframes charaFlyMobile {
+            0% {
+                transform: translateY(400%);
+            }
+
+            100% {
+                transform: translateY(100%);
+            }
+        }
+
         .characters {
             position: absolute;
             left: 50%;
@@ -141,26 +176,13 @@
         }
 
         .chara-center {
-            transform: translateY(200%);
+            transform: translateY(400%);
 
             animation: 1s charaFly ease;
             animation-fill-mode: forwards;
             animation-delay: 1250ms;
         }
-        .chara-first {
-            transform: translateY(200%);
- 
-            animation: 1s charaFly ease;
-            animation-fill-mode: forwards;
-            animation-delay: 1500ms;
-        }
-        .chara-last {
-            transform: translateY(200%);
-
-            animation: 1s charaFly ease;
-            animation-fill-mode: forwards;
-            animation-delay: 1500ms;
-        }
     </style>
 </body>
+
 </html>

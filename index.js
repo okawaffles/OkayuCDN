@@ -19,6 +19,7 @@ var app = express();
 app.use(express.static('/views'));
 app.use('/assets', express.static(__dirname + '/views/assets'));
 app.use(cookieParser());
+app.set('view engine', 'ejs');
 // app.use((req, res, next) => { res.status(404).render("404.ejs"); })
 
 var config = require('./config.json');
@@ -28,7 +29,7 @@ okayuLogger.info("boot", `Server must be restarted to change config.\nAccount Cr
 
 // Check to be sure that template.json has been removed
 // From /db/sessionStorage and /db/userLoginData
-if (fs.existsSync(`./db/sessionStorage/template.json`) || fs.existsSync(`./db/userLoginData/template.json`)) okayuLogger.warn('accMgr', "Template JSONs have not been deleted! Please delete them from the database!");
+if (fs.existsSync(`./db/sessionStorage/template.json`) || fs.existsSync(`./db/userLoginData/template.json`)) okayuLogger.warn('auth', "Template JSONs have not been deleted! Please delete them from the database!");
 
 // Additional Functions
 
@@ -143,7 +144,22 @@ app.post('/login', (req, res) => {
         } else res.render('login_failed.ejs');
     });
 });
-
+app.post('/signup', (req, res) => {
+    let form = new formidable.IncomingForm();
+    form.parse(req, (err, fields, files) => {
+        if (!fs.existsSync(`./db/userLoginData/${fields.un}.json`)) {
+            let data = {
+                password:fields.pw,
+                email:fields.em,
+                name:fields.nm,
+            };
+            fs.writeFileSync(`./db/sessionStorage/${fields.un}.json`, JSON.stringify(data));
+            res.redirect(`/login`);
+        } else {
+            res.render(`signup_failed`, { 'error':"Username already exists!" });
+        }
+    });
+});
 
 // KEEP LAST!!
 app.get('*', (req, res) => {

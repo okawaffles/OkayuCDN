@@ -18,15 +18,19 @@
     <br>
     <div class="pad upload-pane">
         <h2 class="title">Welcome to OkayuCDN!</h2>
-        <h4 class="method">Let's get you logged in and ready to go!</h4>
+        <h4 class="method">We're happy to see new users!</h4>
         <hr><br>
-        <form class="uploadForm" action="/login" method="POST">
+        <form class="uploadForm" action="/signup" method="POST">
             <input type="text" placeholder="Username" name="un" required /><br>
             <input type="password" placeholder="Password" name="pw" required /><br>
+            <input type="text" placeholder="Real Name" name="nm" required /><br>
+            <input type="email" placeholder="Email" name="em" required /><br>
+            <label class="tos">
+                <input type="checkbox" required class="cb" /> I have read and agreed to the <a href='../terms'>Terms of Service</a>
+            </label><br>
             <input type="submit" class="submitBtn" value="Go"/>
+            <p style="color: red;">Failed to sign up: <%= error %></p>
         </form>
-        <br>
-        <button class="noacc" onclick="location = `../signup`">I don't have an account</button>
     </div>
 
     <style>
@@ -57,20 +61,6 @@
         .submitBtn:hover {
             background-color: #3b6082;
         }
-
-        .noacc {
-            background-color: #2a455e;
-            color: white;
-            border: 0px;
-            width: 256px;
-            height: 32px;
-            font-family: KFhimajiMOCO;
-            font-size: medium;
-        }
-        .noacc:hover {
-            background-color: #3b6082;
-        }
-
         hr {
             border: 0;
             clear:both;
@@ -123,6 +113,22 @@
             border-radius: 20px;
             padding: 3%;
             color: white;
+        }
+
+        .p {
+            display: block;
+            padding-left: 15px;
+            text-indent: -15px;
+        }
+
+        .cb {
+            width: 15px;
+            height: 15px;
+            padding: 0;
+            margin: 0;
+            vertical-align: bottom;
+            position: relative;
+            top: -1px;
         }
     </style>
 </body>
