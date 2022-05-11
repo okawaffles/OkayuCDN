@@ -26,7 +26,7 @@ try {
 var cookieParser = require('cookie-parser');
 var formidable = require('formidable');
 var express = require('express');
-var crpyto = require('crypto');
+var cryplib = require('crypto');
 
 var app = express();
 
@@ -49,6 +49,10 @@ if (fs.existsSync(`./db/sessionStorage/template.json`) || fs.existsSync(`./db/us
 
 // Additional Functions
 
+function hash(string) {
+    return cryplib.createHash('sha256').update(string).digest('hex');
+}
+
 function verifyToken(token) {
     if (fs.existsSync(`./db/sessionStorage/${token}.json`)) {
         var userData = JSON.parse(fs.readFileSync(`./db/sessionStorage/${token}.json`));
@@ -61,12 +65,10 @@ function verifyLogin(username, password) {
     if (fs.existsSync(`./db/userLoginData/${username}.json`)) {
         var userData = JSON.parse(fs.readFileSync(`./db/userLoginData/${username}.json`));
 
-        // Encrypt password with AES-256-CBC Encryption
-        const algorithm = "aes-256-cbc";
-        const cipher = crypto.createCipheriv(algorithm, userData.encKey, userData.initVector);
-        let encryptedPasswd = cipher.update(password, "utf-8", "hex");
+        // Encrypt field password (sha256)
+        let encryptedPasswd = hash(password);
 
-        // Compare encryption (Unencrypted password is never stored in memory)
+        // Compare encryption (Unencrypted password is never stored in memory) do they match?
         if (encryptedPasswd === userData.password) return true; else return false;
     } else return false;
 }
@@ -177,16 +179,10 @@ app.post('/signup', (req, res) => {
     form.parse(req, (err, fields, files) => {
         if (config.enableAccountCreation) {
             if (!fs.existsSync(`./db/userLoginData/${fields.un}.json`)) {
-                // Encrypt password with AES-256-CBC Encryption
-                const algorithm = "aes-256-cbc";
-                const initVector = crypto.randomBytes(16);
-                const encKey = crypto.randomBytes(32);
-                const cipher = crypto.createCipheriv(algorithm, Securitykey, initVector);
-                let encryptedPasswd = cipher.update(fields.pw, "utf-8", "hex");
+                // Encrypt password with SHA-256 hash
+                let encryptedPasswd = hash(fields.pw);
 
                 let data = {
-                    initVector:initVector,
-                    encKey:encKey,
                     password:encryptedPasswd,
                     email:fields.em,
                     name:fields.nm,

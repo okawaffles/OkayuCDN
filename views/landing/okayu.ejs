@@ -16,6 +16,12 @@
 </head>
 
 <body>
+    <ul class="navi-ul">
+        <li class="navi-li-left navi-li"><a href="../home" class="navi-a">Home</a></li>
+        <li class="navi-li-right navi-li"><a href="../info" class="navi-a">You are viewing the Landing Page.</a></li>
+    </ul>
+
+
     <script>
         let hr, mn, se;
         function getTime() {
@@ -67,6 +73,56 @@
 
         app.stage.on("pointermove", updMXY);
     </script>
+
+    <style>
+        @font-face {
+            font-family: KFhimajiMOCO;
+            src: url("https://okayu.okawaffles.com/content/2.otf");
+        }
+        body {
+            position: fixed;
+            top: 0;
+            font-family: KFhimajiMOCO;
+        }
+
+
+        .navi-ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #333;
+        }
+
+        .navi-li-left {
+            float: left;
+        }
+
+        .navi-li-right {
+            float: right;
+        }
+
+        .navi-li-left a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 20px 20px;
+            text-decoration: none;
+        }
+
+        .navi-li-right a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 20px 20px;
+            text-decoration: none;
+        }
+
+        /* Change the link color to #111 (black) on hover */
+        .navi-li a:hover {
+            background-color: #111;
+        }
+    </style>
 </body>
 
 </html>
