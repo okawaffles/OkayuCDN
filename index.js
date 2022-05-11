@@ -12,18 +12,24 @@ try {
     require('cookie-parser');
     require('ejs');
     require('formidable');
+    require('crypto');
 } catch(err) { // exit if fail
-    okayuLogger.error('boot', "Missing dependencies! Please install express, cookie-parser, formidable, and ejs");
+    okayuLogger.error('boot', "Missing dependencies! Please install express, cookie-parser, formidable, crypto, and ejs");
     okayuLogger.info('boot', "Exit...");
     process.exit(-1);
 }
 
-// requires
+
+
+// requirements and setup
 
 var cookieParser = require('cookie-parser');
 var formidable = require('formidable');
 var express = require('express');
+var crpyto = require('crypto');
+
 var app = express();
+
 app.use(express.static('/views'));
 app.use('/assets', express.static(__dirname + '/views/assets'));
 app.use(cookieParser());
@@ -54,7 +60,14 @@ function verifyToken(token) {
 function verifyLogin(username, password) {
     if (fs.existsSync(`./db/userLoginData/${username}.json`)) {
         var userData = JSON.parse(fs.readFileSync(`./db/userLoginData/${username}.json`));
-        if (password === userData.password) return true; else return false;
+
+        // Encrypt password with AES-256-CBC Encryption
+        const algorithm = "aes-256-cbc";
+        const cipher = crypto.createCipheriv(algorithm, userData.encKey, userData.initVector);
+        let encryptedPasswd = cipher.update(password, "utf-8", "hex");
+
+        // Compare encryption (Unencrypted password is never stored in memory)
+        if (encryptedPasswd === userData.password) return true; else return false;
     } else return false;
 }
 
@@ -158,17 +171,27 @@ app.post('/login', (req, res) => {
         } else res.render('login_failed.ejs');
     });
 });
+
 app.post('/signup', (req, res) => {
     let form = new formidable.IncomingForm();
     form.parse(req, (err, fields, files) => {
         if (config.enableAccountCreation) {
             if (!fs.existsSync(`./db/userLoginData/${fields.un}.json`)) {
+                // Encrypt password with AES-256-CBC Encryption
+                const algorithm = "aes-256-cbc";
+                const initVector = crypto.randomBytes(16);
+                const encKey = crypto.randomBytes(32);
+                const cipher = crypto.createCipheriv(algorithm, Securitykey, initVector);
+                let encryptedPasswd = cipher.update(fields.pw, "utf-8", "hex");
+
                 let data = {
-                    password:fields.pw,
+                    initVector:initVector,
+                    encKey:encKey,
+                    password:encryptedPasswd,
                     email:fields.em,
                     name:fields.nm,
                 };
-                fs.writeFileSync(`./db/sessionStorage/${fields.un}.json`, JSON.stringify(data));
+                fs.writeFileSync(`./db/userLoginData/${fields.un}.json`, JSON.stringify(data));
                 res.redirect(`/login`);
             } else {
                 res.render(`signup_failed`, { 'error':"Username already exists!" });
