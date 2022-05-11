@@ -25,7 +25,7 @@ app.set('view engine', 'ejs');
 var config = require('./config.json');
 
 okayuLogger.info("boot", `Starting OkayuCDN Server ${config.version}${config.buildType}`);
-okayuLogger.info("boot", `Server must be restarted to change config.\nAccount Creation: ${config.enableAccountCreation}\nUploading: ${config.enableUploading}\nAnonymous Uploading (if available): ${config.enableAnonymousUploading}`);
+okayuLogger.info("boot", `Server must be restarted to change config.\nAccount Creation: ${config.enableAccountCreation}\nUploading: ${config.enableUploading}\nAnonymous Uploading (not implemented): ${config.enableAnonymousUploading}`);
 
 // Check to be sure that template.json has been removed
 // From /db/sessionStorage and /db/userLoginData
@@ -125,7 +125,9 @@ app.get('/signup', (req, res) => {
 // POST Request handlers
 
 app.post('/cdnUpload', (req, res) => {
-    // to be finished when i can figure out formidable
+    if (config.enableUploading) {
+        // to be finished when i can figure out formidable
+    } else res.render('upload_failed.ejs', { 'error':'Uploading is currently disabled.' })
 });
 
 app.post('/login', (req, res) => {
@@ -147,16 +149,20 @@ app.post('/login', (req, res) => {
 app.post('/signup', (req, res) => {
     let form = new formidable.IncomingForm();
     form.parse(req, (err, fields, files) => {
-        if (!fs.existsSync(`./db/userLoginData/${fields.un}.json`)) {
-            let data = {
-                password:fields.pw,
-                email:fields.em,
-                name:fields.nm,
-            };
-            fs.writeFileSync(`./db/sessionStorage/${fields.un}.json`, JSON.stringify(data));
-            res.redirect(`/login`);
+        if (config.enableAccountCreation) {
+            if (!fs.existsSync(`./db/userLoginData/${fields.un}.json`)) {
+                let data = {
+                    password:fields.pw,
+                    email:fields.em,
+                    name:fields.nm,
+                };
+                fs.writeFileSync(`./db/sessionStorage/${fields.un}.json`, JSON.stringify(data));
+                res.redirect(`/login`);
+            } else {
+                res.render(`signup_failed`, { 'error':"Username already exists!" });
+            }
         } else {
-            res.render(`signup_failed`, { 'error':"Username already exists!" });
+            res.render(`signup_failed`, { 'error':"Account registration is currently unavailable." });
         }
     });
 });
