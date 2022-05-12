@@ -174,7 +174,7 @@ app.get('/signup', (req, res) => {
 
 // POST Request handlers
 
-app.post('/cdnUpload', (req, res) => {
+app.post('/manage/cdnUpload', (req, res) => {
     if (config.enableUploading) {
         // to be finished when i can figure out formidable
     } else res.render('upload_failed.ejs', { 'error':'Uploading is currently disabled.' })
