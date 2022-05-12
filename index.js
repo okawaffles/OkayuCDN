@@ -162,6 +162,11 @@ app.get('/manage/content', (req, res) => {
 app.get('/login', (req, res) => {
     res.render('login.ejs');
 });
+app.get('/logout', (req, res) => {
+    if(fs.existsSync(`./db/sessionStorage/${req.cookies.token}.json`)) fs.rmSync(`./db/sessionStorage/${req.cookies.token}.json`);
+    res.cookie("token", "logout");
+    res.redirect('/home');
+})
 
 app.get('/signup', (req, res) => {
     res.render('signup.ejs');

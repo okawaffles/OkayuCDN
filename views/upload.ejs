@@ -22,9 +22,9 @@
         <h4 class="method">Method: POST (You -> Endpoint -> OkayuCDN)</h4>
         <form class="uploadForm" action="./cdnUpload" method="POST">
             <input type="file" name="uploaded" required />
-            <input type="text" name="filename" required placeholder="Name Your File WITH EXTENSION (like example.txt)" />
-            <p>Spaces are not allowed in filenames.</p>
-            <input type="submit" />
+            <input type="text" name="filename" required placeholder="Name Your File WITH EXTENSION (like example.txt)" pattern="[a-zA-Z0-9._-]{3-50}" style="width: 250px; float: right;" />
+            <p style="text-align: center;">Non-alphanumeric characters (besides '.' ) are not allowed in filenames.</p>
+            <input type="submit" style="position: absolute; left: 50%; transform: translateX(-50%)"/>
         </form>
     </div>
 
