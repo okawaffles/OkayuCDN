@@ -53,6 +53,13 @@ function hash(string) {
     return cryplib.createHash('sha256').update(string).digest('hex');
 }
 
+function getUsername(token) {
+    if (fs.existsSync(`./db/sessionStorage/${token}.json`)) {
+        var userData = JSON.parse(fs.readFileSync(`./db/sessionStorage/${token}.json`));
+        return userData.user;
+    }
+}
+
 function verifyToken(token) {
     if (fs.existsSync(`./db/sessionStorage/${token}.json`)) {
         var userData = JSON.parse(fs.readFileSync(`./db/sessionStorage/${token}.json`));
@@ -141,6 +148,17 @@ app.get('/manage/upload', (req, res) => {
     }
 });
 
+app.get('/manage/content', (req, res) => {
+    let token = req.cookies.token;
+    if (!token) { 
+        res.redirect('/login');
+    } else if (verifyToken(token)) {
+        res.render('manage.ejs');
+    } else {
+        res.redirect('/login');
+    }
+});
+
 app.get('/login', (req, res) => {
     res.render('login.ejs');
 });
@@ -197,6 +215,19 @@ app.post('/signup', (req, res) => {
         }
     });
 });
+
+app.post('/manage/delFile', (req, res) => {
+    let form = new formidable.IncomingForm();
+    form.parse(req, (err, fields, files) => {
+        let token = req.cookies.token;
+        if(fs.existsSync(`./content/${getUsername(token)}/${fields.filename}`)) {
+            fs.rmSync(`./db/content/${getUsername(token)}/${fields.filename}`);
+            res.redirect(`/manage/content`);
+        } else {
+            res.render('manage_failed.ejs', { 'error':'File does not exist in your profile.' });
+        }
+    })
+})
 
 // Keep Last !! 404 handler
 app.get('*', (req, res) => {

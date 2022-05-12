@@ -18,14 +18,17 @@
     </ul>
     <br>
     <div class="pad upload-pane">
-        <h3 class="title">Welcome to OkayuCDN.</h3>
+        <h2 class="title">Welcome to OkayuCDN.</h2>
         <h4 class="method">Method: POST (You -> Endpoint -> OkayuCDN)</h4>
         <form class="uploadForm" action="./cdnUpload" method="POST">
             <input type="file" name="uploaded" required />
-            <input type="text" name="filename" required placeholder="Name Your File" />
+            <input type="text" name="filename" required placeholder="Name Your File WITH EXTENSION (like example.txt)" />
+            <p>Spaces are not allowed in filenames.</p>
             <input type="submit" />
         </form>
     </div>
+
+    <h3 class="version">OkayuCDN v3.0.0s - nginx 80 -> 2773</h3>
 
     <style>
         @font-face {
@@ -82,6 +85,13 @@
             background-color: #333;
             border-radius: 20px;
             padding: 3%;
+            color: white;
+        }
+
+        .version {
+            position: fixed;
+            bottom: -10px;
+            right: 10px;
             color: white;
         }
     </style>
