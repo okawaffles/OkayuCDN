@@ -176,7 +176,19 @@ app.get('/signup', (req, res) => {
 
 app.post('/manage/cdnUpload', (req, res) => {
     if (config.enableUploading) {
-        // to be finished when i can figure out formidable
+        const form = new formidable.IncomingForm();
+        form.parse(req, function(err, fields, files){
+  
+            var oldPath = files.profilePic.path;
+            var newPath = path.join(__dirname, 'uploads')
+                    + '/'+files.profilePic.name
+            var rawData = fs.readFileSync(oldPath)
+      
+            fs.writeFile(newPath, rawData, function(err){
+                if(err) console.log(err)
+                return res.send("Successfully uploaded")
+            })
+        })
     } else res.render('upload_failed.ejs', { 'error':'Uploading is currently disabled.' })
 });
 
