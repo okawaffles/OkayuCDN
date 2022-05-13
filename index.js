@@ -258,6 +258,16 @@ app.post('/manage/delFile', (req, res) => {
     })
 })
 
+
+// extra sites for friends
+app.get(`/ytdl`, (req, res) => {
+    res.render('hosted/ytdl.ejs');
+});
+app.post(`/ytdl`, (req, res) => {
+
+})
+
+
 // Keep Last !! 404 handler
 app.get('*', (req, res) => {
     res.render("404.ejs");
