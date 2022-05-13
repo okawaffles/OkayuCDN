@@ -15,20 +15,15 @@
         <li class="navi-li-left navi-li"><a href="../manage/upload" class="navi-a">Upload</a></li>
         <li class="navi-li-left navi-li"><a href="../manage/content" class="navi-a">Manage</a></li>
         <li class="navi-li-right navi-li"><a href="../logout" class="navi-a">Log Out</a></li>
-        <li class="navi-li-right navi-li"><a href="./upload" class="navi-a">にほんごじゃない</a></li>
     </ul>
     <br>
     <div class="pad upload-pane">
-        <h3 class="title">Welcome to OkayuCDN.</h3>
-        <h4 class="method">Method: POST (You -> Endpoint -> OkayuCDN)</h4>
-        <form class="uploadForm" action="./cdnUpload" method="POST" enctype="multipart/form-data">
-            <input type="file" name="uploaded" required />
-            <input type="text" name="filename" required placeholder="Name Your File WITH EXTENSION (like example.txt)" pattern="[a-zA-Z0-9._-]{3-50}" style="width: 250px; float: right;" />
-            <p style="text-align: center;">Non-alphanumeric characters (besides '.' ) are not allowed in filenames.</p>
-            <input type="submit" style="position: absolute; left: 50%; transform: translateX(-50%)"/><br><br>
-            <p style="color: red;">Upload Failed: <%= error %></p>
-        </form>
+        <h2 class="title">Thank you for using OkayuCDN.</h2>
+        <h4 class="method">Your file has been uploaded! View it here:<br><%= link %></h4>
+        
     </div>
+
+    <h3 class="version">OkayuCDN v3.0.0s - nginx 80 -> 2773</h3>
 
     <style>
         @font-face {
@@ -85,6 +80,13 @@
             background-color: #333;
             border-radius: 20px;
             padding: 3%;
+            color: white;
+        }
+
+        .version {
+            position: fixed;
+            bottom: -10px;
+            right: 10px;
             color: white;
         }
     </style>

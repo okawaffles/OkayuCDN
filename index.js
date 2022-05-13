@@ -175,19 +175,31 @@ app.get('/signup', (req, res) => {
 // POST Request handlers
 
 app.post('/manage/cdnUpload', (req, res) => {
+    okayuLogger.info('upload', 'Recieved upload POST... working...');
     if (config.enableUploading) {
         const form = new formidable.IncomingForm();
         form.parse(req, function(err, fields, files){
-  
-            var oldPath = files.profilePic.path;
-            var newPath = path.join(__dirname, 'uploads')
-                    + '/'+files.profilePic.name
-            var rawData = fs.readFileSync(oldPath)
-      
-            fs.writeFile(newPath, rawData, function(err){
-                if(err) console.log(err)
-                return res.send("Successfully uploaded")
-            })
+            okayuLogger.info('upload', 'Parsing form and files...');
+            var token = req.cookies.token;
+
+            if (!fs.existsSync(`./content/${getUsername(token)}`)) // when uploading on a new account
+                fs.mkdirSync(`./content/${getUsername(token)}`);
+
+            if (!fs.existsSync(`./content/${getUsername(token)}/${fields.filename}`)) {
+                okayuLogger.info('upload', 'Finishing up...');
+                var oldPath = files.uploaded.filepath;
+                var newPath = `./content/${getUsername(token)}/${fields.filename}`
+                
+                fs.rename(oldPath, newPath, function(err){
+                    if (err) {
+                        okayuLogger.error('upload', err);
+                        res.render('upload_failed.ejs', { 'error':'Unknown Internal Server Error' });
+                    } else {
+                        res.render('upload_success.ejs', { 'link':`https://okayu.okawaffles.com/content/${getUsername(token)}/${fields.filename}`});
+                        okayuLogger.info('upload', 'Finished!');
+                    }
+                })
+            } else res.render('upload_failed.ejs', { 'error':"You already have a file uploaded with that name!" })
         })
     } else res.render('upload_failed.ejs', { 'error':'Uploading is currently disabled.' })
 });
@@ -254,7 +266,13 @@ app.get('*', (req, res) => {
 
 
 // Listen on port (use nginx to reverse proxy)
-var server = app.listen(config.port, () => {
-    okayuLogger.info('express', `Listening on port ${config.port}`);
-});
-server.setTimeout(18000000);
+var server;
+try {
+    server = app.listen(config.port, () => {
+        okayuLogger.info('express', `Listening on port ${config.port}`);
+    });
+    server.setTimeout(18000000);
+} catch (err) {
+    okayuLogger.error('express', "Failed to start server. Port is already in use!");
+    process.exit(-1);
+}

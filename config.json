@@ -2,7 +2,8 @@
     "version":"3.0.0",
     "buildType":"b",
     "enableAccountCreation":true,
-    "enableUploading":false,
+    "enableUploading":true,
     "enableAnonymousUploading":false,
+    "maintenance":true,
     "port":80
 }
