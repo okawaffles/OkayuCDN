@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico">
-    <title>Upload to OkayuCDN</title>
+    <title>YouTube Downloader</title>
 </head>
 
 <body>
@@ -14,16 +14,15 @@
         <li class="navi-li-left navi-li"><a href="../home" class="navi-a">Home</a></li>
         <li class="navi-li-left navi-li"><a href="../manage/upload" class="navi-a">Upload</a></li>
         <li class="navi-li-left navi-li"><a href="../manage/content" class="navi-a">Manage</a></li>
-        <li class="navi-li-right navi-li"><a href="../logout" class="navi-a">Log Out</a></li>
+        <li class="navi-li-right navi-li"><a href="./logout" class="navi-a">Log Out</a></li>
     </ul>
     <br>
     <div class="pad upload-pane">
         <h2 class="title">YouTube Video to MP3</h2>
-        <h4 class="method">Method: POST (You -> Endpoint -> OkayuCDN (tmp) -> You)</h4>
-        <form class="uploadForm" action="./cdnUpload" method="POST" enctype="multipart/form-data">
-            <input type="file" id="uploaded" name="uploaded" required />
-            <input type="text" name="filename" required placeholder="Name Your File WITH EXTENSION (like example.txt)" pattern="[a-zA-Z0-9._-]{3-50}" style="width: 250px; float: right;" />
-            <p style="text-align: center;">Non-alphanumeric characters (besides '.' ) are not allowed in filenames.</p>
+        <h4 class="method">Warning: This adds to your OkayuCDN Storage!</h4>
+        <form class="uploadForm" action="./ytdl" method="POST" enctype="multipart/form-data">
+            <input type="text" name="link" required placeholder="Link" style="width: 250px; text-align: center;" />
+            <p style="text-align: center;">This may take up to 5 minutes. Please be patient.</p>
             <input type="submit" style="position: absolute; left: 50%; transform: translateX(-50%)"/>
         </form>
     </div>

@@ -13,8 +13,9 @@ try {
     require('ejs');
     require('formidable');
     require('crypto');
-} catch(err) { // exit if fail
-    okayuLogger.error('boot', "Missing dependencies! Please install express, cookie-parser, formidable, crypto, and ejs");
+    require('ytdl-core');
+} catch (err) { // exit if fail
+    okayuLogger.error('boot', "Missing dependencies! Please install express, cookie-parser, formidable, crypto, ytdl-core, and ejs");
     okayuLogger.info('boot', "Exit...");
     process.exit(-1);
 }
@@ -27,6 +28,7 @@ var cookieParser = require('cookie-parser');
 var formidable = require('formidable');
 var express = require('express');
 var cryplib = require('crypto');
+var ytdl = require('ytdl-core');
 
 var app = express();
 
@@ -103,13 +105,13 @@ app.get('/mira', (req, res) => {
 app.get('/content/*', (req, res) => {
     let user = req.url.split('/')[2];
     let item = req.url.split('/')[3];
-    let file = "none"; 
+    let file = "none";
     try {
         file = fs.readFileSync(`./content/${user}/${item}`);
         if (file != "none") {
             res.send(file);
         }
-    } catch(err) {
+    } catch (err) {
         res.render('404.ejs');
     }
     res.end();
@@ -139,7 +141,7 @@ app.get('/terms', (req, res) => {
 
 app.get('/manage/upload', (req, res) => {
     let token = req.cookies.token;
-    if (!token) { 
+    if (!token) {
         res.redirect('/login');
     } else if (verifyToken(token)) {
         res.render('upload.ejs');
@@ -150,7 +152,7 @@ app.get('/manage/upload', (req, res) => {
 
 app.get('/manage/content', (req, res) => {
     let token = req.cookies.token;
-    if (!token) { 
+    if (!token) {
         res.redirect('/login');
     } else if (verifyToken(token)) {
         res.render('manage.ejs');
@@ -163,7 +165,7 @@ app.get('/login', (req, res) => {
     res.render('login.ejs');
 });
 app.get('/logout', (req, res) => {
-    if(fs.existsSync(`./db/sessionStorage/${req.cookies.token}.json`)) fs.rmSync(`./db/sessionStorage/${req.cookies.token}.json`);
+    if (fs.existsSync(`./db/sessionStorage/${req.cookies.token}.json`)) fs.rmSync(`./db/sessionStorage/${req.cookies.token}.json`);
     res.cookie("token", "logout");
     res.redirect('/home');
 })
@@ -178,7 +180,7 @@ app.post('/manage/cdnUpload', (req, res) => {
     okayuLogger.info('upload', 'Recieved upload POST... working...');
     if (config.enableUploading) {
         const form = new formidable.IncomingForm();
-        form.parse(req, function(err, fields, files){
+        form.parse(req, function (err, fields, files) {
             okayuLogger.info('upload', 'Parsing form and files...');
             var token = req.cookies.token;
 
@@ -189,30 +191,30 @@ app.post('/manage/cdnUpload', (req, res) => {
                 okayuLogger.info('upload', 'Finishing up...');
                 var oldPath = files.uploaded.filepath;
                 var newPath = `./content/${getUsername(token)}/${fields.filename}`
-                
-                fs.rename(oldPath, newPath, function(err){
+
+                fs.rename(oldPath, newPath, function (err) {
                     if (err) {
                         okayuLogger.error('upload', err);
-                        res.render('upload_failed.ejs', { 'error':'Unknown Internal Server Error' });
+                        res.render('upload_failed.ejs', { 'error': 'Unknown Internal Server Error' });
                     } else {
-                        res.render('upload_success.ejs', { 'link':`https://okayu.okawaffles.com/content/${getUsername(token)}/${fields.filename}`});
+                        res.render('upload_success.ejs', { 'link': `https://okayu.okawaffles.com/content/${getUsername(token)}/${fields.filename}` });
                         okayuLogger.info('upload', 'Finished!');
                     }
                 })
-            } else res.render('upload_failed.ejs', { 'error':"You already have a file uploaded with that name!" })
+            } else res.render('upload_failed.ejs', { 'error': "You already have a file uploaded with that name!" })
         })
-    } else res.render('upload_failed.ejs', { 'error':'Uploading is currently disabled.' })
+    } else res.render('upload_failed.ejs', { 'error': 'Uploading is currently disabled.' })
 });
 
 app.post('/login', (req, res) => {
     let form = new formidable.IncomingForm();
     form.parse(req, (err, fields, files) => {
-        if (verifyLogin(fields.un, fields.pw)) { 
+        if (verifyLogin(fields.un, fields.pw)) {
             let token = genNewToken(32);
             let d = new Date();
             let session = {
-                user:fields.un,
-                expires:parseInt((d.getMilliseconds() + 604800000))
+                user: fields.un,
+                expires: parseInt((d.getMilliseconds() + 604800000))
             };
             fs.writeFileSync(`./db/sessionStorage/${token}.json`, JSON.stringify(session));
             res.cookie(`token`, token);
@@ -230,17 +232,17 @@ app.post('/signup', (req, res) => {
                 let encryptedPasswd = hash(fields.pw);
 
                 let data = {
-                    password:encryptedPasswd,
-                    email:fields.em,
-                    name:fields.nm,
+                    password: encryptedPasswd,
+                    email: fields.em,
+                    name: fields.nm,
                 };
                 fs.writeFileSync(`./db/userLoginData/${fields.un}.json`, JSON.stringify(data));
                 res.redirect(`/login`);
             } else {
-                res.render(`signup_failed`, { 'error':"Username already exists!" });
+                res.render(`signup_failed`, { 'error': "Username already exists!" });
             }
         } else {
-            res.render(`signup_failed`, { 'error':"Account registration is currently unavailable." });
+            res.render(`signup_failed`, { 'error': "Account registration is currently unavailable." });
         }
     });
 });
@@ -249,11 +251,11 @@ app.post('/manage/delFile', (req, res) => {
     let form = new formidable.IncomingForm();
     form.parse(req, (err, fields, files) => {
         let token = req.cookies.token;
-        if(fs.existsSync(`./content/${getUsername(token)}/${fields.filename}`)) {
+        if (fs.existsSync(`./content/${getUsername(token)}/${fields.filename}`)) {
             fs.rmSync(`./db/content/${getUsername(token)}/${fields.filename}`);
             res.redirect(`/manage/content`);
         } else {
-            res.render('manage_failed.ejs', { 'error':'File does not exist in your profile.' });
+            res.render('manage_failed.ejs', { 'error': 'File does not exist in your profile.' });
         }
     })
 })
@@ -261,10 +263,37 @@ app.post('/manage/delFile', (req, res) => {
 
 // extra sites for friends
 app.get(`/ytdl`, (req, res) => {
-    res.render('hosted/ytdl.ejs');
+    let token = req.cookies.token;
+    if (!token) {
+        res.redirect('/login');
+    } else if (verifyToken(token)) {
+        res.render('hosted/ytdl.ejs');
+    } else {
+        res.redirect('/login');
+    }
 });
 app.post(`/ytdl`, (req, res) => {
+    let form = new formidable.IncomingForm();
+    form.parse(req, async (err, fields, files) => {
+        let token = req.cookies.token;
 
+        if (!fs.existsSync(`./content/${getUsername(token)}`)) // when uploading on a new account
+            fs.mkdirSync(`./content/${getUsername(token)}`);
+
+        if (fields.link.includes('watch?v=')) {
+            let dest = fs.createWriteStream(`./content/${getUsername(token)}/${hash(fields.link)}.mp3`);
+            ytdl(fields.link, {filter:'audioonly'}).pipe(dest);
+            dest.on('finish', () => {
+                res.redirect(`/content/${getUsername(token)}/${hash(fields.link)}.mp3`);
+                res.end();
+            })
+        } else {
+            res.json({
+                'error':'603','desc':'NO VALID LINK'
+            });
+            res.end();
+        }
+    })
 })
 
 
