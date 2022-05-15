@@ -262,7 +262,7 @@ app.post('/manage/delFile', (req, res) => {
 
 
 // extra sites for friends
-app.get(`/ytdl`, (req, res) => {
+app.get(`/ytdl_mp3`, (req, res) => {
     let token = req.cookies.token;
     if (!token) {
         res.redirect('/login');
@@ -272,7 +272,7 @@ app.get(`/ytdl`, (req, res) => {
         res.redirect('/login');
     }
 });
-app.post(`/ytdl`, (req, res) => {
+app.post(`/ytdl3`, (req, res) => {
     let form = new formidable.IncomingForm();
     form.parse(req, async (err, fields, files) => {
         let token = req.cookies.token;
