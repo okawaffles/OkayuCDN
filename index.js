@@ -106,13 +106,18 @@ app.get('/content/*', (req, res) => {
     let user = req.url.split('/')[2];
     let item = req.url.split('/')[3];
     let file = "none";
-    try {
-        file = fs.readFileSync(`./content/${user}/${item}`);
-        if (file != "none") {
-            res.send(file);
+    if (user === "2.otf") {
+        file = fs.readFileSync(`./content/okawaffles/kfhimajimoco.otf`);
+        res.send(file);
+    } else {
+        try {
+            file = fs.readFileSync(`./content/${user}/${item}`);
+            if (file != "none") {
+                res.send(file);
+            }
+        } catch (err) {
+            res.render('404.ejs');
         }
-    } catch (err) {
-        res.render('404.ejs');
     }
     res.end();
 });
