@@ -125,7 +125,7 @@ app.get('/content/*', (req, res) => {
 
 // User Viewable Pages
 app.get('/home', (req, res) => {
-    res.render('home.ejs');
+    res.render('home.ejs', { 'version':config.version + config.buildType});
     res.end();
 });
 app.get('/ja', (req, res) => {
@@ -140,6 +140,10 @@ app.get('/info', (req, res) => {
 
 app.get('/terms', (req, res) => {
     res.render('terms.ejs');
+    res.end();
+})
+app.get('/account', (req, res) => {
+    res.render('myAccount.ejs');
     res.end();
 })
 
@@ -193,16 +197,18 @@ app.post('/manage/cdnUpload', (req, res) => {
                 fs.mkdirSync(`./content/${getUsername(token)}`);
 
             if (!fs.existsSync(`./content/${getUsername(token)}/${fields.filename}`)) {
-                okayuLogger.info('upload', 'Finishing up...');
                 var oldPath = files.uploaded.filepath;
-                var newPath = `./content/${getUsername(token)}/${fields.filename}`
+                var fExt = files.uploaded.originalFilename.split('.').at(-1);
+                var newPath = `./content/${getUsername(token)}/${fields.filename}.${fExt}`
+
+                okayuLogger.info('upload', `User ${getUsername(token)} is uploading ${fields.filename}.${fExt} ...`);
 
                 fs.rename(oldPath, newPath, function (err) {
                     if (err) {
                         okayuLogger.error('upload', err);
                         res.render('upload_failed.ejs', { 'error': 'Unknown Internal Server Error' });
                     } else {
-                        res.render('upload_success.ejs', { 'link': `https://okayu.okawaffles.com/content/${getUsername(token)}/${fields.filename}` });
+                        res.render('upload_success.ejs', { 'link': `https://okayu.okawaffles.com/content/${getUsername(token)}/${fields.filename}.${fExt}` });
                         okayuLogger.info('upload', 'Finished!');
                     }
                 })
@@ -233,16 +239,20 @@ app.post('/signup', (req, res) => {
     form.parse(req, (err, fields, files) => {
         if (config.enableAccountCreation) {
             if (!fs.existsSync(`./db/userLoginData/${fields.un}.json`)) {
-                // Encrypt password with SHA-256 hash
-                let encryptedPasswd = hash(fields.pw);
+                if (!fields.un === "2.otf") {
+                    // Encrypt password with SHA-256 hash
+                    let encryptedPasswd = hash(fields.pw);
 
-                let data = {
-                    password: encryptedPasswd,
-                    email: fields.em,
-                    name: fields.nm,
-                };
-                fs.writeFileSync(`./db/userLoginData/${fields.un}.json`, JSON.stringify(data));
-                res.redirect(`/login`);
+                    let data = {
+                        password: encryptedPasswd,
+                        email: fields.em,
+                        name: fields.nm,
+                    };
+                    fs.writeFileSync(`./db/userLoginData/${fields.un}.json`, JSON.stringify(data));
+                    res.redirect(`/login`);
+                } else {
+                    res.render(`signup_failed`, { 'error': "This name cannot be used." });
+                }
             } else {
                 res.render(`signup_failed`, { 'error': "Username already exists!" });
             }
@@ -287,14 +297,14 @@ app.post(`/ytdl3`, (req, res) => {
 
         if (fields.link.includes('watch?v=')) {
             let dest = fs.createWriteStream(`./content/${getUsername(token)}/${hash(fields.link)}.mp3`);
-            ytdl(fields.link, {filter:'audioonly'}).pipe(dest);
+            ytdl(fields.link, { filter: 'audioonly' }).pipe(dest);
             dest.on('finish', () => {
                 res.redirect(`/content/${getUsername(token)}/${hash(fields.link)}.mp3`);
                 res.end();
             })
         } else {
             res.json({
-                'error':'603','desc':'NO VALID LINK'
+                'error': '603', 'desc': 'NO VALID LINK'
             });
             res.end();
         }
