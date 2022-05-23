@@ -20,7 +20,7 @@
         <h2 class="title">Welcome to OkayuCDN!</h2>
         <h4 class="method">Let's get you logged in and ready to go!</h4>
         <hr><br>
-        <form class="uploadForm" id="form" action="/login" method="POST">
+        <form class="uploadForm" id="form" action="/login?redir=<%= redir %>" method="POST">
             <input type="text" placeholder="Username" name="un" required /><br>
             <input type="password" placeholder="Password" name="pw" required /><br>
             <input type="submit" class="submitBtn" id="submit" value="Go"/>

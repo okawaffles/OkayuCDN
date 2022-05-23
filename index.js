@@ -69,6 +69,15 @@ function verifyToken(token) {
         if (userData.expires > d.getMilliseconds()) return true; else return false;
     } else return false;
 }
+function checkRestriction(token) {
+    if (fs.existsSync(`./db/sessionStorage/${token}.json`)) {
+        var userData = JSON.parse(fs.readFileSync(`./db/userLoginData/${getUsername(token)}.json`));
+        if (userData.restricted) {
+            okayuLogger.info('login', `${getUsername(token)} is banned for ${userData.restricted}`);
+            return userData.restricted;
+        } else return false;
+    } else return false;
+}
 
 function verifyLogin(username, password) {
     if (fs.existsSync(`./db/userLoginData/${username}.json`)) {
@@ -151,27 +160,30 @@ app.get('/account', (req, res) => {
 app.get('/manage/upload', (req, res) => {
     let token = req.cookies.token;
     if (!token) {
-        res.redirect('/login');
+        res.redirect('/login?redir=/manage/upload');
     } else if (verifyToken(token)) {
         res.render('upload.ejs');
     } else {
-        res.redirect('/login');
+        res.redirect('/login?redir=/manage/upload');
     }
 });
 
 app.get('/manage/content', (req, res) => {
     let token = req.cookies.token;
     if (!token) {
-        res.redirect('/login');
+        res.redirect('/login?redir=/manage/content');
     } else if (verifyToken(token)) {
         res.render('manage.ejs');
     } else {
-        res.redirect('/login');
+        res.redirect('/login?redir=/manage/content');
     }
 });
 
-app.get('/login', (req, res) => {
-    res.render('login.ejs');
+app.get('/login*', (req, res) => {
+    let args = req.url.split('?')[1];
+    let redir = args.split('&')[0].split('=')[1];
+    if (redir === undefined) redir = "/home";
+    res.render('login.ejs', { redir:redir });
 });
 app.get('/logout', (req, res) => {
     if (fs.existsSync(`./db/sessionStorage/${req.cookies.token}.json`)) fs.rmSync(`./db/sessionStorage/${req.cookies.token}.json`);
@@ -182,6 +194,19 @@ app.get('/logout', (req, res) => {
 app.get('/signup', (req, res) => {
     res.render('signup.ejs');
 });
+
+app.get('/admin', (req, res) => {
+    let token = req.cookies.token;
+    if (!token) {
+        res.redirect('/login?redir=/admin');
+    } else if (verifyToken(token)) {
+        if (getUsername(token) === "okawaffles" || getUsername(token) === "shears") {
+            res.render('admin.ejs');
+        } else res.render('forbidden.ejs');
+    } else {
+        res.redirect('/login?redir=/admin');
+    }
+})
 
 // POST Request handlers
 
@@ -217,7 +242,9 @@ app.post('/manage/cdnUpload', (req, res) => {
     } else res.render('upload_failed.ejs', { 'error': 'Uploading is currently disabled.' })
 });
 
-app.post('/login', (req, res) => {
+app.post('/login?*', (req, res) => {
+    let args = req.url.split('?')[1];
+    let redir = args.split('&')[0].split('=')[1];
     let form = new formidable.IncomingForm();
     form.parse(req, (err, fields, files) => {
         if (verifyLogin(fields.un, fields.pw)) {
@@ -229,8 +256,9 @@ app.post('/login', (req, res) => {
             };
             fs.writeFileSync(`./db/sessionStorage/${token}.json`, JSON.stringify(session));
             res.cookie(`token`, token);
-            res.redirect(`/manage/upload`);
-        } else res.render('login_failed.ejs');
+            if (checkRestriction(token) === false) res.redirect(redir);
+                else res.redirect('forbidden.ejs', { reason:checkRestriction(token) });
+        } else res.render('login_failed.ejs', { redir:redir });
     });
 });
 
@@ -275,16 +303,43 @@ app.post('/manage/delFile', (req, res) => {
     })
 })
 
+app.post('/admin/delFile', (req, res) => {
+    let form = new formidable.IncomingForm();
+    form.parse(req, (err, fields, files) => {
+        let token = req.cookies.token;
+        if (fs.existsSync(`./content/${fields.username}/${fields.filename}`)) {
+            fs.rmSync(`./db/content/${fields.username}/${fields.filename}`);
+            res.redirect(`/manage/content`);
+        } else res.redirect('/admin');
+    })
+})
+app.post('/admin/resUser', (req, res) => {
+    let form = new formidable.IncomingForm();
+    form.parse(req, (err, fields, files) => {
+        let token = req.cookies.token;
+        if (fs.existsSync(`./db/userLoginData/${fields.username}.json`)) {
+            let userdata = JSON.parse(fs.readFileSync(`./db/userLoginData/${fields.username}.json`));
+            let newdata = {
+                password: userdata.password,
+                email: userdata.email,
+                name: userdata.name,
+                restricted: fields.reason
+            };
+            fs.writeFileSync(`./db/userLoginData/${fields.username}.json`, JSON.stringify(newdata));
+        } else res.redirect('/admin');
+    })
+})
+
 
 // extra sites for friends
 app.get(`/ytdl_mp3`, (req, res) => {
     let token = req.cookies.token;
     if (!token) {
-        res.redirect('/login');
+        res.redirect('/login?redir=/ytdl_mp3');
     } else if (verifyToken(token)) {
         res.render('hosted/ytdl.ejs');
     } else {
-        res.redirect('/login');
+        res.redirect('/login?redir=/ytdl_mp3');
     }
 });
 app.post(`/ytdl3`, (req, res) => {

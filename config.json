@@ -1,9 +1,9 @@
 {
-    "version":"3.1.0",
-    "buildType":"b+hf",
+    "version":"3.2.0",
+    "buildType":"s",
     "enableAccountCreation":true,
     "enableUploading":true,
     "enableAnonymousUploading":false,
     "maintenance":true,
-    "port":80
+    "port":2773
 }

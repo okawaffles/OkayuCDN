@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico">
+    <title>Upload to OkayuCDN</title>
+</head>
+
+<body>
+    <ul class="navi-ul">
+        <li class="navi-li-left navi-li"><a href="../home" class="navi-a">Home</a></li>
+        <li class="navi-li-left navi-li"><a href="../manage/upload" class="navi-a">Upload</a></li>
+        <li class="navi-li-left navi-li"><a href="../manage/content" class="navi-a">Manage</a></li>
+        <li class="navi-li-right navi-li"><a href="../logout" class="navi-a">Log Out</a></li>
+    </ul>
+    <br>
+    <div class="pad upload-pane">
+        <h2 class="title">Delete Content</h2>
+        <form class="uploadForm" action="./admin/delFile" method="POST" enctype="multipart/form-data">
+            <input type="text" name="username" required placeholder="Username" pattern="[a-zA-Z0-9_-]{3-50}" style="width: 250px; float: right;" />
+            <input type="text" name="filename" required placeholder="Filename" pattern="[a-zA-Z0-9_-]{3-50}" style="width: 250px; float: right;" />
+            <p style="text-align: center;">File will be deleted forever</p>
+            <input type="submit" style="position: absolute; left: 50%; transform: translateX(-50%)"/>
+        </form>
+    </div>
+    <br>
+    <div class="pad upload-pane">
+        <h2 class="title">Restrict User</h2>
+        <form class="uploadForm" action="./admin/resUser" method="POST" enctype="multipart/form-data">
+            <input type="text" name="username" required placeholder="Username" pattern="[a-zA-Z0-9_-]{3-50}" style="width: 250px; float: right;" />
+            <input type="text" name="reason" required placeholder="Reason" pattern="[a-zA-Z0-9_-]{3-50}" style="width: 250px; float: right;" />
+            <p style="text-align: center;">User json will be modified</p>
+            <input type="submit" style="position: absolute; left: 50%; transform: translateX(-50%)"/>
+        </form>
+    </div>
+
+    <h3 class="version">OkayuCDN Admin Panel</h3>
+
+    <style>
+        @font-face {
+            font-family: KFhimajiMOCO;
+            src: url("https://okayu.okawaffles.com/content/2.otf");
+        }
+
+        body {
+            background-color: #3d3d3d;
+            font-family: KFhimajiMOCO;
+            margin: 0;
+        }
+
+        
+
+        .navi-ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #333;
+        }
+
+        .navi-li-left {
+            float: left;
+        }
+        .navi-li-right {
+            float: right;
+        }
+
+        .navi-li-left a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 20px 20px;
+            text-decoration: none;
+        }
+        .navi-li-right a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 20px 20px;
+            text-decoration: none;
+        }
+
+        /* Change the link color to #111 (black) on hover */
+        .navi-li a:hover {
+            background-color: #111;
+        }
+
+        .upload-pane {
+            display: grid;
+            place-items: center;
+            background-color: #333;
+            border-radius: 20px;
+            padding: 3%;
+            color: white;
+        }
+
+        .version {
+            position: fixed;
+            bottom: -10px;
+            right: 10px;
+            color: white;
+        }
+    </style>
+</body>
+
+</html>
