@@ -111,22 +111,24 @@ app.get('/mira', (req, res) => {
 
 // user-viewable
 
-app.get('/content/*', (req, res) => {
-    let user = req.url.split('/')[2];
-    let item = req.url.split('/')[3];
+app.get('/content/2.otf', (req, res) => {
+    file = fs.readFileSync(`./content/okawaffles/kfhimajimoco.otf`);
+    res.send(file);
+});
+
+app.get('/content/:user/:item', (req, res) => {
+    let user = req.params.user;
+    let item = req.params.item;
     let file = "none";
-    if (user === "2.otf") {
-        file = fs.readFileSync(`./content/okawaffles/kfhimajimoco.otf`);
-        res.send(file);
-    } else {
-        try {
-            file = fs.readFileSync(`./content/${user}/${item}`);
-            if (file != "none") {
-                res.send(file);
-            }
-        } catch (err) {
-            res.render('404.ejs');
+    try {
+        file = fs.readFileSync(`./content/${user}/${item}`);
+        if (file != "none") {
+            res.send(file);
+        } else {
+            res.json({ 'error':'204','description':'content found but was unable to be read. contact okawaffles#0001 on discord for more information.' })
         }
+    } catch (err) {
+        res.render('404.ejs');
     }
     res.end();
 });
@@ -180,10 +182,14 @@ app.get('/manage/content', (req, res) => {
 });
 
 app.get('/login*', (req, res) => {
-    let args = req.url.split('?')[1];
-    let redir = args.split('&')[0].split('=')[1];
-    if (redir === undefined) redir = "/home";
-    res.render('login.ejs', { redir:redir });
+    let args, redir;
+    try {
+        args = req.url.split('?')[1];
+        redir = args.split('&')[0].split('=')[1];
+        res.render('login.ejs', { redir:redir });
+    } catch (err) {
+        res.redirect('/login?redir=/home')
+    }
 });
 app.get('/logout', (req, res) => {
     if (fs.existsSync(`./db/sessionStorage/${req.cookies.token}.json`)) fs.rmSync(`./db/sessionStorage/${req.cookies.token}.json`);
@@ -202,7 +208,7 @@ app.get('/admin', (req, res) => {
     } else if (verifyToken(token)) {
         if (getUsername(token) === "okawaffles" || getUsername(token) === "shears") {
             res.render('admin.ejs');
-        } else res.render('forbidden.ejs');
+        } else res.render('forbidden.ejs', { "reason":"admin-panel-denied-message" });
     } else {
         res.redirect('/login?redir=/admin');
     }
@@ -310,7 +316,7 @@ app.post('/admin/delFile', (req, res) => {
     form.parse(req, (err, fields, files) => {
         if (fs.existsSync(`./content/${fields.username}/${fields.filename}`)) {
             fs.rmSync(`./db/content/${fields.username}/${fields.filename}`);
-            res.redirect(`/manage/content`);
+            res.json({'code':'200'});
         } else res.redirect('/admin');
     })
 })
@@ -326,6 +332,7 @@ app.post('/admin/resUser', (req, res) => {
                 restricted: fields.reason
             };
             fs.writeFileSync(`./db/userLoginData/${fields.username}.json`, JSON.stringify(newdata));
+            res.json({'code':'200'});
         } else res.redirect('/admin');
     })
 })

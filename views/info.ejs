@@ -8,6 +8,11 @@
     <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico">
     <meta name="viewport" content="width=device-width">
     <title>Welcome to OkayuCDN</title>
+
+    <meta content="Info | OkayuCDN" property="og:title">
+    <meta content="Free file uploading for all." property="og:description">
+    <meta content="https://okayu.okawaffles.com/info" property="og:url">
+    <meta content="#9000e3" data-react-helmet="true" name="theme-color">
 </head>
 
 <body>
@@ -18,35 +23,33 @@
         <li class="navi-li-right navi-li"><a href="../info" class="navi-a">Info</a></li>
     </ul>
 
-    <br>
-
     <div class="row">
         <div class="column cl">
-            <h1>Nekomata Okayu</h1>
-            <h4>Nekomata Okayu is intellectual property of COVER corp.</h4>
-            <hr>
-            <img src="assets/images/okayu_full.png">
-        </div>
-        <div class="column cr rs">
-            <h1>What is OkayuCDN's purpose?</h1>
-            <h4>Okayu Content Delivery Network</h4>
+            <h1>About the Site</h1>
+            <h4>(It's a scuffed setup)</h4>
             <hr>
             <h2 class="pg">
-                &emsp;&emsp;You know Discord's stupid 8MB file limit for non-nitro users? This website is here to allow my
-                friends to upload their (usually) 30 second game clips or other media for free. You just copy the link
-                and you're ready to go! This website is open source and free to use! As long as you don't upload
-                anything that goes against our <a class="tos" href="../terms">Terms of Service</a>, you're allowed to
-                upload anything up to 1GB in size!
+                &emsp;&emsp;I created this website for the sole purpose of allowing people (mainly my friends) to share files larger than 8MB in size on Discord. You can upload anything you want to it up to 1GB in size. I named it after Nekomata Okayu because I like her (and cause "okayu" looks nice as a subdomain and is easy to remember!). Did you know there's a few hidden landing pages? Try adding "/korone" or "/mira" to the landing page, and you might see some new characters! 
+            </h2>
+        </div>
+        <div class="column cr rs">
+            <h1>Credits and Attribution</h1>
+            <h4>Imagine if I did this from pure scratch...</h4>
+            <hr>
+            <h2 class="pg">
+                &emsp;&emsp;OkayuCDN uses various libraries from npm: express.js, cookie-parser, crypto, ejs, formidable, and ytdl-core. Okayu (Nekomata Okayu) is intellectual property of hololive and/or COVER corp. OkayuCDN is open-source, and you can view and edit the source code <a class="tos" href="https://github.com/okawaffles/okayucdnv3">here</a>. OkayuCDN was 100% developed by me and tested by 3 friends (tysm)! If you fix a bug or contribute in any way, you will be added here! The font used here is KFhimajiMOCO (<a class="tos" href="https://okayu.okawaffles.com/content/okawaffles/kfhimajimoco.otf">download</a>)
             </h2>
         </div>
     </div>
 
-
+    <div class="characters">
+        <img src="./assets/images/okayu_450.png" class="chara-center" />
+    </div>
 
     <style>
         @font-face {
             font-family: KFhimajiMOCO;
-            src: url("https://okayu.okawaffles.com/content/2.otf");
+            src: url("https://okayu.okawaffles.com/content/okawaffles/kfhimajimoco.otf");
         }
 
         * {
@@ -57,17 +60,21 @@
             background-color: #3d3d3d;
             font-family: KFhimajiMOCO;
             margin: 0;
+            overflow: hidden;
+            overflow-y: scroll;
         }
 
 
         .column {
             float: left;
-            width: 50%;
+            width: 49%;
             padding: 2.5%;
             color: white;
             background: #333;
             text-align: center;
             height: auto;
+
+            margin: 8px;
 
             border-radius: 20px;
         }
@@ -79,6 +86,7 @@
 
         .pg {
             text-align: left;
+            line-height: 1.5;
         }
 
         /* Clear floats after the columns */
@@ -91,22 +99,29 @@
             width: 20%;
         }
 
+        .mobilebr {
+            display: none;
+        }
+
         /* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
         @media screen and (max-width: 600px) {
             .column {
                 width: 100%;
+                margin-bottom: 16px;
+                margin-left: 0;
+                margin-right: 0;
+            }
+            body {
+                overflow: visible;
+            }
+            .chara-center {
+                width: 50%;
+                height: 50%;
             }
         }
 
         .tos {
             color: #068eb8;
-        }
-
-        /* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
-        @media screen and (max-width: 600px) {
-            .column {
-                width: 100%;
-            }
         }
 
 
@@ -146,6 +161,13 @@
         /* Change the link color to #111 (black) on hover */
         .navi-li a:hover {
             background-color: #111;
+        }
+
+        .chara-center {
+            position: sticky;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
         }
     </style>
 </body>
