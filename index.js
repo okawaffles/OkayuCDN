@@ -279,7 +279,7 @@ app.post('/signup', (req, res) => {
                         name: fields.nm,
                     };
                     fs.writeFileSync(`./db/userLoginData/${fields.un}.json`, JSON.stringify(data));
-                    res.redirect(`/login`);
+                    res.redirect(`/login?redir=/home`);
                 } else {
                     res.render(`signup_failed`, { 'error': "This name cannot be used." });
                 }
