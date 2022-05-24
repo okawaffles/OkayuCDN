@@ -254,10 +254,12 @@ app.post('/login?*', (req, res) => {
                 user: fields.un,
                 expires: parseInt((d.getMilliseconds() + 604800000))
             };
-            fs.writeFileSync(`./db/sessionStorage/${token}.json`, JSON.stringify(session));
-            res.cookie(`token`, token);
-            if (checkRestriction(token) === false) res.redirect(redir);
-                else res.redirect('forbidden.ejs', { reason:checkRestriction(token) });
+            
+            if (checkRestriction(token) === false) {
+                res.cookie(`token`, token); 
+                res.redirect(redir); 
+                fs.writeFileSync(`./db/sessionStorage/${token}.json`, JSON.stringify(session));
+            } else res.render('forbidden.ejs', { reason:checkRestriction(token) });
         } else res.render('login_failed.ejs', { redir:redir });
     });
 });
@@ -267,7 +269,7 @@ app.post('/signup', (req, res) => {
     form.parse(req, (err, fields, files) => {
         if (config.enableAccountCreation) {
             if (!fs.existsSync(`./db/userLoginData/${fields.un}.json`)) {
-                if (!fields.un === "2.otf") {
+                if (!(fields.un === "2.otf")) {
                     // Encrypt password with SHA-256 hash
                     let encryptedPasswd = hash(fields.pw);
 
@@ -306,7 +308,6 @@ app.post('/manage/delFile', (req, res) => {
 app.post('/admin/delFile', (req, res) => {
     let form = new formidable.IncomingForm();
     form.parse(req, (err, fields, files) => {
-        let token = req.cookies.token;
         if (fs.existsSync(`./content/${fields.username}/${fields.filename}`)) {
             fs.rmSync(`./db/content/${fields.username}/${fields.filename}`);
             res.redirect(`/manage/content`);
@@ -316,7 +317,6 @@ app.post('/admin/delFile', (req, res) => {
 app.post('/admin/resUser', (req, res) => {
     let form = new formidable.IncomingForm();
     form.parse(req, (err, fields, files) => {
-        let token = req.cookies.token;
         if (fs.existsSync(`./db/userLoginData/${fields.username}.json`)) {
             let userdata = JSON.parse(fs.readFileSync(`./db/userLoginData/${fields.username}.json`));
             let newdata = {
