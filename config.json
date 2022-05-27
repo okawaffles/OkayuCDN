@@ -5,5 +5,5 @@
     "enableUploading":true,
     "enableAnonymousUploading":false,
     "maintenance":true,
-    "port":5500
+    "port":2773
 }

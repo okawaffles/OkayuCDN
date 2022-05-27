@@ -22,13 +22,16 @@ app.get('/content/:user/:item', (req, res) => {
         if (file != "none") {
             res.send(file);
         } else {
-            res.json({ 'error':'204','description':'content found but was unable to be read. contact okawaffles#0001 on discord for more information.' })
+            res.json({ 'error':'500','description':'content found but was unable to be read. contact okawaffles#0001 on discord for more information.' })
         }
     } catch (err) {
         res.render('404.ejs');
     }
     res.end();
 });
+app.get('/status', (req, res) => {
+    res.json({'status':'503','description':'Server is down for maintenance.'})
+})
 
 app.get('*', (req, res) => {
     res.render('maintenance.ejs', { 'version':config.version + config.buildType});

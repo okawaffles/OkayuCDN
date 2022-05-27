@@ -14,8 +14,9 @@ try {
     require('formidable');
     require('crypto');
     require('ytdl-core');
+    require('cors')
 } catch (err) { // exit if fail
-    okayuLogger.error('boot', "Missing dependencies! Please install express, cookie-parser, formidable, crypto, ytdl-core, and ejs");
+    okayuLogger.error('boot', "Missing dependencies! Please install express, cookie-parser, formidable, crypto, ytdl-core, cors, and ejs");
     okayuLogger.info('boot', "Exit...");
     process.exit(-1);
 }
@@ -101,8 +102,9 @@ app.use('*', (req, res, next) => {
     if (fs.existsSync(`./db/ip403/${pip}`)) {
         let reason = fs.readFileSync(`./db/ip403/${pip}`);
         res.render('forbidden.ejs', { "reason":reason });
+        okayuLogger.info('RequestInfo', `[IP-BAN] ${pip} :: ${req.method} ${req.originalUrl}`);
     } else {
-        console.log(ip, pip);
+        okayuLogger.info('RequestInfo', `${pip} :: ${req.method} ${req.originalUrl}`);
         next();
     }
 })
@@ -139,13 +141,16 @@ app.get('/content/:user/:item', (req, res) => {
         if (file != "none") {
             res.send(file);
         } else {
-            res.json({ 'error':'204','description':'content found but was unable to be read. contact okawaffles#0001 on discord for more information.' })
+            res.jsonp({ 'error':'500','description':'content found but was unable to be read. contact okawaffles#0001 on discord for more information.' })
         }
     } catch (err) {
         res.render('404.ejs');
     }
     res.end();
 });
+app.get('/status?callback=:cb', (req, res) => {
+    res.json({'status':'200'});
+})
 
 
 // User Viewable Pages
