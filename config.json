@@ -1,9 +1,9 @@
 {
-    "version":"3.3.0",
+    "version":"3.4.0",
     "buildType":"s",
     "enableAccountCreation":true,
     "enableUploading":true,
     "enableAnonymousUploading":false,
     "maintenance":true,
-    "port":2773
+    "port":5500
 }

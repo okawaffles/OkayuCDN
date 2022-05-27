@@ -94,6 +94,20 @@ function verifyLogin(username, password) {
 const genNewToken = size => [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
 
 
+app.use('*', (req, res, next) => {
+    var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    ip = ip.split(':');
+    let pip = ip[ip.length - 1]
+    if (fs.existsSync(`./db/ip403/${pip}`)) {
+        let reason = fs.readFileSync(`./db/ip403/${pip}`);
+        res.render('forbidden.ejs', { "reason":reason });
+    } else {
+        console.log(ip, pip);
+        next();
+    }
+})
+
+
 // Web pages //
 // Landing
 app.get('/', (req, res) => {
