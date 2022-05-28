@@ -32,7 +32,7 @@
         <img src="./assets/images/okayu_450.png" class="chara-center" />
     </div>
 
-    <h3>v<%= version %></h3>
+    <h3>v<%= version %></h3><br>
 
     <style>
         @font-face {
@@ -86,7 +86,7 @@
 
 
         .container {
-            padding: 2.5%;
+            padding-left: 2.5%;
             color: white;
         }
 
@@ -116,7 +116,9 @@
 
         .title {
             font-size: 86px;
+            transform: translateY(2400%);
             animation: titleToTop 1.5s ease;
+            animation-fill-mode: forwards;
         }
 
         .subtitle {

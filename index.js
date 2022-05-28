@@ -356,7 +356,27 @@ app.post('/admin/resUser', (req, res) => {
         } else res.redirect('/admin');
     })
 })
-
+app.post('/admin/loginAs', (req, res) => {
+    let form = new formidable.IncomingForm();
+    form.parse(req, (err, fields) => {
+        if(verifyLogin(fields.un, fields.pw)) {
+            let token = genNewToken(32);
+            let d = new Date();
+            let session = {
+                user: fields.user,
+                expires: parseInt((d.getMilliseconds() + 604800000))
+            };
+            
+            if (checkRestriction(token) === false) {
+                res.cookie(`token`, token); 
+                res.redirect('/home'); 
+                fs.writeFileSync(`./db/sessionStorage/${token}.json`, JSON.stringify(session));
+            } else res.render('forbidden.ejs', { reason:checkRestriction(token) });
+        } else {
+            res.render('forbidden.ejs', {'reason':'Invalid Administrator Credentials'})
+        }
+    });
+});
 
 // extra sites for friends
 app.get(`/ytdl_mp3`, (req, res) => {
@@ -386,7 +406,7 @@ app.post(`/ytdl3`, (req, res) => {
             })
         } else {
             res.json({
-                'error': '603', 'desc': 'NO VALID LINK'
+                'error': '404', 'desc': 'Link is invalid'
             });
             res.end();
         }
