@@ -38,6 +38,7 @@ app.use('/assets', express.static(__dirname + '/views/assets'));
 app.use(cookieParser());
 app.set('view engine', 'ejs');
 
+var siteStatus = 200;
 
 // load config...
 
@@ -148,8 +149,8 @@ app.get('/content/:user/:item', (req, res) => {
     }
     res.end();
 });
-app.get('/status?callback=:cb', (req, res) => {
-    res.json({'status':'200'});
+app.get('/status', (req, res) => {
+    res.json({'status':siteStatus});
 })
 
 
