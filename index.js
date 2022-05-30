@@ -153,7 +153,7 @@ app.get('/status', (req, res) => {
     res.json({'status':siteStatus});
 })
 app.get('/robots.txt', (req, res) => {
-    res.send('./views/assets/robots.txt')
+    res.send(fs.readFileSync('./views/assets/robots.txt'))
 })
 
 
