@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico">
+    <title>OkayuCDNへようこそ</title>
+
+    <meta content="OkayuCDNへようこそ" property="og:title">
+    <meta content="Free file uploading for all." property="og:description">
+    <meta content="https://okayu.okawaffles.com/home" property="og:url">
+    <meta content="#9000e3" data-react-helmet="true" name="theme-color">
+</head>
+<body>
+    <ul class="navi-ul">
+        <li class="navi-li-left navi-li"><a href="../ja" class="navi-a">ホーム</a></li>
+        <li class="navi-li-left navi-li"><a href="../manage/upload" class="navi-a">アップロード</a></li>
+        <li class="navi-li-left navi-li"><a href="../manage/content" class="navi-a">おさめる</a></li>
+        <li class="navi-li-right navi-li"><a href="../home" class="navi-a">インフォ</a></li>
+        <li class="navi-li-right navi-li"><a href="../home" class="navi-a">English</a></li>
+    </ul>
+
+    <div class="container">
+        <h1 class="title">OkayuCDNへようこそ!</h1>
+        <h2 class="subtitle sa">ここにあなたのファイルを無料のアップロードします。</h2>
+        <h2 class="subtitle sb">全部のファイルタイプは支持ます。</h2>
+    </div>
+
+    <div class="characters">
+        <img src="./assets/images/okayu_450.png" class="chara-center" />
+    </div>
+
+
+
+    <style>
+        @font-face {
+            font-family: GenJyuuGothic;
+            src: url("./assets/fonts/GenJyuuGothic.ttf");
+        }
+
+        body {
+            background-color: #3d3d3d;
+            font-family: GenJyuuGothic;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        
+
+        .navi-ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #333;
+        }
+
+        .navi-li-left {
+            float: left;
+        }
+
+        .navi-li-right {
+            float: right;
+        }
+
+        .navi-li-left a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 20px 20px;
+            text-decoration: none;
+        }
+
+        .navi-li-right a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 20px 20px;
+            text-decoration: none;
+        }
+
+        /* Change the link color to #111 (black) on hover */
+        .navi-li a:hover {
+            background-color: #111;
+        }
+
+
+        .container {
+            padding-left: 2.5%;
+            color: white;
+        }
+
+        @keyframes titleToTop {
+            0% {
+                transform: translateY(1200%);
+                opacity: 0%;
+            }
+
+            100% {
+                transform: translateY(0%);
+                opacity: 100%;
+            }
+        }
+
+        @keyframes subToTop {
+            0% {
+                transform: translateY(2400%);
+                opacity: 0%;
+            }
+
+            100% {
+                transform: translateY(0%);
+                opacity: 100%;
+            }
+        }
+
+        .title {
+            font-size: 86px;
+            transform: translateY(2400%);
+            animation: titleToTop 1.5s ease;
+            animation-fill-mode: forwards;
+        }
+
+        .subtitle {
+            font-size: 48px;
+        }
+
+        .sa {
+            transform: translateY(2400%);
+            animation: subToTop 1.5s ease;
+            animation-fill-mode: forwards;
+            animation-delay: 100ms;
+        }
+
+        .sb {
+            transform: translateY(2400%);
+            animation: subToTop 1.5s ease;
+            animation-fill-mode: forwards;
+            animation-delay: 200ms;
+        }
+
+
+        @media screen and (max-width: 600px) {
+            .title {
+                font-size: 43px;
+            }
+
+            .subtitle {
+                font-size: 24px;
+            }
+
+            /*.chara-center {
+                width: 100%;
+                display: none;
+            }*/
+        }
+
+
+        @keyframes charaFly {
+            0% {
+                bottom: -100%;
+            }
+
+            100% {
+                bottom: 0;
+            }
+        }
+        @keyframes charaFlyMobile {
+            0% {
+                transform: translateY(400%);
+            }
+
+            100% {
+                transform: translateY(100%);
+            }
+        }
+
+        .chara-center {
+            position: absolute;
+            bottom: -100%;
+            left: 50%;
+            transform: translateX(-50%);
+
+            animation: 1s charaFly ease;
+            animation-fill-mode: forwards;
+            animation-delay: 1250ms;
+        }
+
+        h3 {
+            position: fixed;
+            bottom: -10px;
+            right: 10px;
+            color: white;
+        }
+    </style>
+</body>
+</html>

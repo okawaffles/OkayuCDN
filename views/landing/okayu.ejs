@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
 <html lang="en">
 
 <head>
@@ -55,13 +56,16 @@
         app.stage.addChild(okayu);
 
         getTime();
-        let title = new PIXI.Text(`okayu`, { fontFamily: "Courier New", fontSize: 120, align: 'center', fill: "#87d1ff" });
+        let title = new PIXI.Text(`${hr}:${mn}:${se}`, { fontFamily: "Courier New", fontSize: 120, align: 'center', fill: "#222742", stroke: "#222742", strokeThickness:"10" });
         title.x = swid / 2 - (title.width / 2);
         title.y = 200;
         app.stage.addChild(title);
 
         let elapsed = 0.0;
         app.ticker.add((delta) => {
+            getTime();
+            title.text = `${hr}:${mn}:${se}`
+
             elapsed += delta;
             okayu.y = (shei - (440 * okayuScale)) + Math.cos(elapsed / 50.0) * 10.0;
             title.y = 200 + -Math.cos(elapsed / 50.0) * 10.0;
@@ -82,7 +86,7 @@
     <style>
         @font-face {
             font-family: KFhimajiMOCO;
-            src: url("https://okayu.okawaffles.com/content/2.otf");
+            src: url("/assets/fonts/GenJyuuGothic.ttf");
         }
         body {
             position: fixed;

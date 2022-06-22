@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico">
+    <title>Upload to OkayuCDN</title>
+
+    <meta content="Login | OkayuCDN" property="og:title">
+    <meta content="Free file uploading for all." property="og:description">
+    <meta content="https://okayu.okawaffles.com/login" property="og:url">
+    <meta content="#9000e3" data-react-helmet="true" name="theme-color">
+</head>
+
+<body>
+    <ul class="navi-ul">
+        <li class="navi-li-left navi-li"><a href="/home" class="navi-a">Home</a></li>
+        <li class="navi-li-left navi-li"><a href="/manage/upload" class="navi-a">Upload</a></li>
+        <li class="navi-li-left navi-li"><a href="/manage/content" class="navi-a">Manage</a></li>
+    </ul>
+    <br>
+    <div class="pad upload-pane">
+        <h2 class="title">OkayuCDNヘようこそ!</h2>
+        <h4 class="method">Let's get you logged in and ready to go!</h4>
+        <hr><br>
+        <form class="uploadForm" id="form" action="/login?redir=<%= redir %>" method="POST">
+            <input type="text" placeholder="Username" name="un" required /><br>
+            <input type="password" placeholder="Password" name="pw" required /><br>
+            <input type="submit" class="submitBtn" id="submit" value="Go"/>
+        </form>
+        <br>
+        <button class="noacc" onclick="location = `../signup`">私はログインを有ません</button>
+    </div>
+
+    <style>
+        @font-face {
+            font-family: KFhimajiMOCO;
+            src: url("https://okayu.okawaffles.com/content/2.otf");
+        }
+
+        body {
+            background-color: #3d3d3d;
+            font-family: KFhimajiMOCO;
+            margin: 0;
+        }
+
+        .uploadForm {
+            display: grid;
+            place-items: center;
+        }
+        .submitBtn {
+            background-color: #2a455e;
+            color: white;
+            border: 0px;
+            width: 128px;
+            height: 32px;
+            font-family: KFhimajiMOCO;
+            font-size: medium;
+        }
+        .submitBtn:hover {
+            background-color: #3b6082;
+        }
+
+        .noacc {
+            background-color: #2a455e;
+            color: white;
+            border: 0px;
+            width: 256px;
+            height: 32px;
+            font-family: KFhimajiMOCO;
+            font-size: medium;
+        }
+        .noacc:hover {
+            background-color: #3b6082;
+        }
+
+        hr {
+            border: 0;
+            clear:both;
+            display:block;
+            width: 96%;               
+            background-color: white;
+            height: 1px;
+        }
+
+
+        .navi-ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #333;
+        }
+
+        .navi-li-left {
+            float: left;
+        }
+        .navi-li-right {
+            float: right;
+        }
+
+        .navi-li-left a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 20px 20px;
+            text-decoration: none;
+        }
+        .navi-li-right a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 20px 20px;
+            text-decoration: none;
+        }
+
+        /* Change the link color to #111 (black) on hover */
+        .navi-li a:hover {
+            background-color: #111;
+        }
+
+        .upload-pane {
+            display: grid;
+            place-items: center;
+            background-color: #333;
+            border-radius: 20px;
+            padding: 3%;
+            color: white;
+        }
+    </style>
+</body>
+
+</html>

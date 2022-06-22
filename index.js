@@ -129,7 +129,7 @@ app.get('/mira', (req, res) => {
 // user-viewable
 
 app.get('/content/2.otf', (req, res) => {
-    file = fs.readFileSync(`./content/okawaffles/kfhimajimoco.otf`);
+    file = fs.readFileSync(`./views/assets/fonts/kfhimajimoco.otf`);
     res.send(file);
 });
 
@@ -163,7 +163,7 @@ app.get('/home', (req, res) => {
     res.end();
 });
 app.get('/ja', (req, res) => {
-    res.render('home_ja.ejs');
+    res.render('japanese/home.ejs');
     res.end();
 });
 
