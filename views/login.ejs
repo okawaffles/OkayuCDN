@@ -25,13 +25,16 @@
         <h2 class="title">Welcome to OkayuCDN!</h2>
         <h4 class="method">Let's get you logged in and ready to go!</h4>
         <hr><br>
+        <!--<button class="fraise">
+            Log in with Fraise
+        </button>-->
         <form class="uploadForm" id="form" action="/login?redir=<%= redir %>" method="POST">
             <input type="text" placeholder="Username" name="un" required /><br>
             <input type="password" placeholder="Password" name="pw" required /><br>
             <input type="submit" class="submitBtn" id="submit" value="Go"/>
         </form>
         <br>
-        <button class="noacc" onclick="location = `../signup`">I don't have an account</button>
+        <!--<button class="noacc" onclick="location = `../signup`">I don't have an account</button>-->
     </div>
 
     <style>
@@ -128,6 +131,11 @@
             border-radius: 20px;
             padding: 3%;
             color: white;
+        }
+
+        .fraise {
+            background-color: pink;
+            margin: 24px;
         }
     </style>
 </body>

@@ -204,7 +204,9 @@ app.get('/manage/content', (req, res) => {
     }
 });
 
-app.get('/login*', (req, res) => {
+app.get('/login', (req, res) => {
+    // OLD LOGIN GET CODE
+
     let args, redir;
     try {
         args = req.url.split('?')[1];
@@ -213,6 +215,21 @@ app.get('/login*', (req, res) => {
     } catch (err) {
         res.redirect('/login?redir=/home')
     }
+
+    /* NEW LOGIN GET CODE
+    let redir = req.query.redir;
+    let token = genNewToken(32);
+    let loginTok = {
+        app:"okayu",
+        user:token
+    }
+    fs.writeFileSync(`../../_newCodesies/FraiseAuth/connectTokens/${token}.json`, JSON.stringify(loginTok));
+    res.redirect(`http://localhost:3000/sl?tok=${token}&redir=${redir}`);
+    //res.redirect(`https://fraise.okawaffles.com/sl?tok=${token}&redir=${redir}`);
+    // CHANGE THIS!!!!!!*/
+});
+app.get(`/fraise`, (req, res) => {
+
 });
 app.get('/logout', (req, res) => {
     if (fs.existsSync(`./db/sessionStorage/${req.cookies.token}.json`)) fs.rmSync(`./db/sessionStorage/${req.cookies.token}.json`);
@@ -416,6 +433,10 @@ app.post(`/ytdl3`, (req, res) => {
     })
 })
 
+app.get('/wallpaper', (req, res) => {
+    res.render('landing/okayu_noBar.ejs');
+})
+
 
 // Keep Last !! 404 handler
 app.get('*', (req, res) => {
@@ -426,12 +447,9 @@ app.get('*', (req, res) => {
 
 // Listen on port (use nginx to reverse proxy)
 var server;
-try {
-    server = app.listen(config.port, () => {
-        okayuLogger.info('express', `Listening on port ${config.port}`);
-    });
-    server.setTimeout(18000000);
-} catch (err) {
-    okayuLogger.error('express', "Failed to start server. Port is already in use!");
-    process.exit(-1);
-}
+server = app.listen(config.port, (err) => {
+    if(err) {
+        okayuLogger.info('express', `Failed to listen on port ${config.port}! It is already in use!`);
+    } else okayuLogger.info('express', `Listening on port ${config.port}`);
+});
+server.setTimeout(18000000);
