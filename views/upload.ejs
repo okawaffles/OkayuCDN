@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico">
     <title>Upload to OkayuCDN</title>
+    <link rel="stylesheet" href="/assets/styles/uploadStyles.css">
 
     <meta content="Upload | OkayuCDN" property="og:title">
     <meta content="Free file uploading for all." property="og:description">
@@ -22,7 +23,7 @@
         <li class="navi-li-right navi-li"><a href="../logout" class="navi-a">Log Out</a></li>
     </ul>
     <br>
-    <div class="pad upload-pane">
+    <!--<div class="pad upload-pane">
         <h2 class="title">Welcome to OkayuCDN.</h2>
         <h4 class="method">Method: POST (You -> Endpoint -> OkayuCDN)</h4>
         <form class="uploadForm" action="./cdnUpload" method="POST" enctype="multipart/form-data">
@@ -31,74 +32,26 @@
             <p style="text-align: center;">Non-alphanumeric characters are not allowed in filenames.</p>
             <input type="submit" style="position: absolute; left: 50%; transform: translateX(-50%)"/>
         </form>
-    </div>
+    </div>-->
 
-    <h3 class="version">OkayuCDN v3.5.0</h3>
+    <div class="pad upload-pane">
+        <div>
+            <span>Upload to OkayuCDN (beta)</span>
+            <p>This is currently in a very early state of development, bugs may arise!</p>
+            <input type="button" class="chooseFiles" id="uploaded" value="Select file" />
+            <input type="text" name="filename" required placeholder="Name Your File" pattern="[a-zA-Z0-9_-]{50}" style="width: 250px; float: left;" id="filename" />
+            <button id="uploadBtn">Go</button>
+            <br>
+            <div class="progressUpload"></div><br>
+        </div>
+    </div>
+    <script src="/assets/scripts/uploadscript.js"></script>
+    <script>assignUserName("<%= USERNAME %>");</script>
+
+    <h3 class="version">OkayuCDN v4.0.0</h3>
 
     <style>
-        @font-face {
-            font-family: KFhimajiMOCO;
-            src: url("/assets/fonts/GenJyuuGothic.ttf");
-        }
-
-        body {
-            background-color: #3d3d3d;
-            font-family: KFhimajiMOCO;
-            margin: 0;
-        }
-
         
-
-        .navi-ul {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background-color: #333;
-        }
-
-        .navi-li-left {
-            float: left;
-        }
-        .navi-li-right {
-            float: right;
-        }
-
-        .navi-li-left a {
-            display: block;
-            color: white;
-            text-align: center;
-            padding: 20px 20px;
-            text-decoration: none;
-        }
-        .navi-li-right a {
-            display: block;
-            color: white;
-            text-align: center;
-            padding: 20px 20px;
-            text-decoration: none;
-        }
-
-        /* Change the link color to #111 (black) on hover */
-        .navi-li a:hover {
-            background-color: #111;
-        }
-
-        .upload-pane {
-            display: grid;
-            place-items: center;
-            background-color: #333;
-            border-radius: 20px;
-            padding: 3%;
-            color: white;
-        }
-
-        .version {
-            position: fixed;
-            bottom: -10px;
-            right: 10px;
-            color: white;
-        }
     </style>
 </body>
 

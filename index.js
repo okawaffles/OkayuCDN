@@ -187,7 +187,7 @@ app.get('/manage/upload', (req, res) => {
     if (!token) {
         res.redirect('/login?redir=/manage/upload');
     } else if (verifyToken(token)) {
-        res.render('upload.ejs');
+        res.render('upload.ejs', { USERNAME:getUsername(token) });
     } else {
         res.redirect('/login?redir=/manage/upload');
     }
@@ -267,19 +267,25 @@ app.post('/manage/cdnUpload', (req, res) => {
             if (!fs.existsSync(`./content/${getUsername(token)}`)) // when uploading on a new account
                 fs.mkdirSync(`./content/${getUsername(token)}`);
 
-            if (!fs.existsSync(`./content/${getUsername(token)}/${fields.filename}`)) {
-                var oldPath = files.uploaded.filepath;
-                var fExt = files.uploaded.originalFilename.split('.').at(-1);
-                var newPath = `./content/${getUsername(token)}/${fields.filename}.${fExt}`
+            if (!fs.existsSync(`./content/${getUsername(token)}/${files.file0.originalFilename}`)) {
+                if (files.file0.originalFilename.includes(" ") || files.file0.size == 0) {
+                    okayuLogger.info('upload', 'file is empty or bad name, return.')
+                    return;
+                }
 
-                okayuLogger.info('upload', `User ${getUsername(token)} is uploading ${fields.filename}.${fExt} ...`);
+                var oldPath = files.file0.filepath;
+                var fExt = files.file0.originalFilename.split('.').at(-1);
+                var newPath = `./content/${getUsername(token)}/${files.file0.originalFilename}`
+                //var newPath = `C:/Users/321ha/Desktop/${files.file0.originalFilename}`
+    
+                okayuLogger.info('upload', `User ${getUsername(token)} is uploading ${files.file0.originalFilename} ...`);
 
                 fs.rename(oldPath, newPath, function (err) {
                     if (err) {
                         okayuLogger.error('upload', err);
                         res.render('upload_failed.ejs', { 'error': 'Unknown Internal Server Error' });
                     } else {
-                        res.render('upload_success.ejs', { 'link': `https://okayu.okawaffles.com/content/${getUsername(token)}/${fields.filename}.${fExt}` });
+                        res.render('upload_success.ejs', { 'link': `https://okayu.okawaffles.com/content/${getUsername(token)}/${files.file0.originalFilename}` });
                         okayuLogger.info('upload', 'Finished!');
                     }
                 })
