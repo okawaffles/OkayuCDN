@@ -455,6 +455,19 @@ app.get('/wallpaper', (req, res) => {
 })
 
 
+// New Fraise Account Page
+app.get('fraise', (req, res) => {
+    let a;
+    if (!req.query.a) a = '0'; else a = req.query.a;
+    if (a == '0') {
+        res.render('fraise.ejs', {
+            username:getUsername(req.query.token),
+            bio:'I\'m using Fraise!'
+        });
+    }
+})
+
+
 // Keep Last !! 404 handler
 app.get('*', (req, res) => {
     res.render("404.ejs");
