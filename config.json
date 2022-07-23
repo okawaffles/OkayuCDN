@@ -1,6 +1,6 @@
 {
     "version":"4.0.0",
-    "buildType":"s",
+    "buildType":"b",
     "enableAccountCreation":true,
     "enableUploading":true,
     "enableAnonymousUploading":false,

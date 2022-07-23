@@ -1,82 +1,89 @@
-.progressupload{
+.progressupload {
 	height: 20px;
 	margin-top: 25px;
 }
-.progress{
+
+.progress {
 	background-color: green;
 	width: 0%;
 	height: 20px;
-	
+
 }
-.progressBar{
+
+.progressBar {
 	padding-top: 2px;
 	padding-bottom: 2px;
 }
 
+.uploader {
+	text-align: center;
+}
 
 
 /* old css */
 
 @font-face {
-  font-family: KFhimajiMOCO;
-  src: url("/assets/fonts/GenJyuuGothic.ttf");
+	font-family: KFhimajiMOCO;
+	src: url("/assets/fonts/GenJyuuGothic.ttf");
 }
 
 body {
-  background-color: #3d3d3d;
-  font-family: KFhimajiMOCO;
-  margin: 0;
+	background-color: #3d3d3d;
+	font-family: KFhimajiMOCO;
+	margin: 0;
 }
 
 
 
 .navi-ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  background-color: #333;
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	background-color: #333;
 }
 
 .navi-li-left {
-  float: left;
+	float: left;
 }
+
 .navi-li-right {
-  float: right;
+	float: right;
 }
 
 .navi-li-left a {
-  display: block;
-  color: white;
-  text-align: center;
-  padding: 20px 20px;
-  text-decoration: none;
+	display: block;
+	color: white;
+	text-align: center;
+	padding: 20px 20px;
+	text-decoration: none;
 }
+
 .navi-li-right a {
-  display: block;
-  color: white;
-  text-align: center;
-  padding: 20px 20px;
-  text-decoration: none;
+	display: block;
+	color: white;
+	text-align: center;
+	padding: 20px 20px;
+	text-decoration: none;
 }
 
 /* Change the link color to #111 (black) on hover */
 .navi-li a:hover {
-  background-color: #111;
+	background-color: #111;
 }
 
 .upload-pane {
-  display: grid;
-  place-items: center;
-  background-color: #333;
-  border-radius: 20px;
-  padding: 3%;
-  color: white;
+	display: grid;
+	place-items: center;
+	background-color: #333;
+	border-radius: 20px;
+	padding: 3%;
+	color: white;
 }
 
 .version {
-  position: fixed;
-  bottom: -10px;
-  right: 10px;
-  color: white;
+	position: fixed;
+	bottom: -10px;
+	right: 10px;
+	color: white;
 }

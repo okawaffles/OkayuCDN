@@ -37,10 +37,12 @@ function updateProgress(e){
 	progress.style.width = (((e.loaded/e.total)*100))+ "%";
     if(progress.style.width == "100%") {
         progress.innerHTML = `<br><p>File available at https://okayu.okawaffles.com/content/${endUserName}/${endFileName}</p>`
+		document.location = `/success?f=${endFileName}`;
     }
 
 }
 function resetProgressBar(){
+	progress.innerHTML = ``
 	progress.style.width = "0%";
 }
 function addProgressBar(){

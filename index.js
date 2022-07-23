@@ -88,7 +88,7 @@ function verifyLogin(username, password) {
         // Encrypt field password (sha256)
         let encryptedPasswd = hash(password);
 
-        // Compare encryption (Unencrypted password is never stored in memory) do they match?
+        // Compare encryption (Unencrypted password is never stored in database) do they match?
         if (encryptedPasswd === userData.password) return true; else return false;
     } else return false;
 }
@@ -253,6 +253,17 @@ app.get('/admin', (req, res) => {
         res.redirect('/login?redir=/admin');
     }
 })
+
+app.get('/success', (req, res) => {
+    if(!req.query.f) {
+        res.status(404);
+        res.end();
+        return;
+    } else {
+        //res.render('upload_success.ejs', {f:req.query.f,u:getUsername(req.cookies.token)});
+        res.render('upload_finish.ejs', {l:`https://okayu.okawaffles.com/content/${getUsername(req.cookies.token)}/${req.query.f}`});
+    }
+});
 
 // POST Request handlers
 
