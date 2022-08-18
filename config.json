@@ -1,6 +1,6 @@
 {
     "version":"4.0.0",
-    "buildType":"b",
+    "buildType":"ptb",
     "enableAccountCreation":true,
     "enableUploading":true,
     "enableAnonymousUploading":false,

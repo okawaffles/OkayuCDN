@@ -15,7 +15,13 @@ var endFileName;
 var endUserName;
 
 document.getElementById("uploadBtn").onclick = function(){
-	sendFiles(selectDialog.files);
+	if (/^([a-z0-9_-]{1,50})$/.test(document.getElementById('filename').value)) {
+		document.getElementById('visibleToggle').style = "display: inline;";
+		sendFiles(selectDialog.files);
+	}
+	else {
+		alert("Filename not valid.");
+	}
 }
 
 function sendFiles(files){

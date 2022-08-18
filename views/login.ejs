@@ -31,13 +31,16 @@
         <form class="uploadForm" id="form" action="/login?redir=<%= redir %>" method="POST">
             <input type="text" placeholder="Username" name="un" required /><br>
             <input type="password" placeholder="Password" name="pw" required /><br>
-            <input type="submit" class="submitBtn" id="submit" value="Go"/>
+            <input type="submit" class="submitBtn" id="submit" value="Go" />
         </form>
         <br>
-        <!--<button class="noacc" onclick="location = `../signup`">I don't have an account</button>-->
+        <button class="noacc" onclick="location = `../signup`">I don't have an account</button>
+        <div class="line" style="--primary: white; display: none;"></div>
     </div>
 
     <style>
+
+
         @font-face {
             font-family: KFhimajiMOCO;
             src: url("/assets/fonts/GenJyuuGothic.ttf");
@@ -53,6 +56,7 @@
             display: grid;
             place-items: center;
         }
+
         .submitBtn {
             background-color: #2a455e;
             color: white;
@@ -62,6 +66,7 @@
             font-family: KFhimajiMOCO;
             font-size: medium;
         }
+
         .submitBtn:hover {
             background-color: #3b6082;
         }
@@ -75,15 +80,16 @@
             font-family: KFhimajiMOCO;
             font-size: medium;
         }
+
         .noacc:hover {
             background-color: #3b6082;
         }
 
         hr {
             border: 0;
-            clear:both;
-            display:block;
-            width: 96%;               
+            clear: both;
+            display: block;
+            width: 96%;
             background-color: white;
             height: 1px;
         }
@@ -100,6 +106,7 @@
         .navi-li-left {
             float: left;
         }
+
         .navi-li-right {
             float: right;
         }
@@ -111,6 +118,7 @@
             padding: 20px 20px;
             text-decoration: none;
         }
+
         .navi-li-right a {
             display: block;
             color: white;
@@ -131,6 +139,10 @@
             border-radius: 20px;
             padding: 3%;
             color: white;
+        }
+
+        button {
+            margin: 10px;
         }
 
         .fraise {

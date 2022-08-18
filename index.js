@@ -16,7 +16,7 @@ try {
     require('ytdl-core');
     require('cors')
 } catch (err) { // exit if fail
-    okayuLogger.error('boot', "Missing dependencies! Please install express, cookie-parser, formidable, crypto, ytdl-core, cors, and ejs");
+    okayuLogger.error('boot', "Missing dependencies! Please run 'npm ci'");
     okayuLogger.info('boot', "Exit...");
     process.exit(-1);
 }

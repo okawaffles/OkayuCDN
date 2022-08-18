@@ -42,6 +42,9 @@
             <input type="text" name="filename" required placeholder="Name Your File" pattern="[a-zA-Z0-9_-]{50}" style="width: 250px; float: left;" id="filename" />
             <button id="uploadBtn">Go</button>
             <br>
+            <div id="visibleToggle" style="display: none;">
+                <div class="line" style="--primary: white;"></div>
+            </div>
             <div class="progressUpload"></div><br>
         </div>
     </div>
@@ -51,7 +54,43 @@
     <h3 class="version">OkayuCDN v4.0.0</h3>
 
     <style>
-        
+        /**
+  * Line
+  *
+  * @author jh3y - jheytompkins.com
+*/
+@-webkit-keyframes line {
+            from {
+                background-position: -60px 0;
+            }
+
+            to {
+                background-position: 60px 0;
+            }
+        }
+
+        @keyframes line {
+            from {
+                background-position: -60px 0;
+            }
+
+            to {
+                background-position: 60px 0;
+            }
+        }
+
+        .line:before {
+            -webkit-animation: line .75s infinite alternate ease-in-out;
+            animation: line .75s infinite alternate ease-in-out;
+            background: -webkit-gradient(linear, left top, right top, from(var(--primary)), to(var(--primary)));
+            background: linear-gradient(90deg, var(--primary), var(--primary));
+            background-repeat: no-repeat;
+            background-size: 60px 20px;
+            content: '';
+            display: block;
+            height: 20px;
+            width: 60px;
+        }
     </style>
 </body>
 
