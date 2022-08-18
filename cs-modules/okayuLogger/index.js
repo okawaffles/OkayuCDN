@@ -10,7 +10,7 @@ function getTime() {
 }
 
 function info(name, text) {
-    console.log(`[${getTime()}] INFO | [${name}] ${text}`);
+    console.log(`[${getTime()}] INFO  | [${name}] ${text}`);
 }
 
 function warn(name, text) {
@@ -19,7 +19,7 @@ function warn(name, text) {
     let mn = d.getMinutes();
     let sc = d.getSeconds();
 
-    console.log(`[${getTime()}] WARN | [${name}] ${text}`);
+    console.log(`[${getTime()}] WARN  | [${name}] ${text}`);
 }
 
 function error(name, text) {
