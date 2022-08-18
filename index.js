@@ -97,6 +97,7 @@ const genNewToken = size => [...Array(size)].map(() => Math.floor(Math.random() 
 
 
 app.use('*', (req, res, next) => {
+    res.setHeader('X-Powered-By', "OkayuCDN");
     var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     ip = ip.split(':');
     let pip = ip[ip.length - 1]
@@ -159,7 +160,10 @@ app.get('/robots.txt', (req, res) => {
 
 // User Viewable Pages
 app.get('/home', (req, res) => {
-    res.render('home.ejs', { 'version':config.version + config.buildType});
+    if (req.query.useBetaSite != "true")
+        res.render('home.ejs', {'version':config.version + config.buildType});
+    else
+        res.render('home_beta.ejs', {'version':config.version + config.buildType});
     res.end();
 });
 app.get('/ja', (req, res) => {
@@ -288,15 +292,14 @@ app.post('/manage/cdnUpload', (req, res) => {
                 var fExt = files.file0.originalFilename.split('.').at(-1);
                 var newPath = `./content/${getUsername(token)}/${files.file0.originalFilename}`
                 //var newPath = `C:/Users/321ha/Desktop/${files.file0.originalFilename}`
+                console.log({newPath});
     
                 okayuLogger.info('upload', `User ${getUsername(token)} is uploading ${files.file0.originalFilename} ...`);
 
                 fs.rename(oldPath, newPath, function (err) {
                     if (err) {
                         okayuLogger.error('upload', err);
-                        res.render('upload_failed.ejs', { 'error': 'Unknown Internal Server Error' });
                     } else {
-                        res.render('upload_success.ejs', { 'link': `https://okayu.okawaffles.com/content/${getUsername(token)}/${files.file0.originalFilename}` });
                         okayuLogger.info('upload', 'Finished!');
                     }
                 })
@@ -452,19 +455,6 @@ app.post(`/ytdl3`, (req, res) => {
 
 app.get('/wallpaper', (req, res) => {
     res.render('landing/okayu_noBar.ejs');
-})
-
-
-// New Fraise Account Page
-app.get('fraise', (req, res) => {
-    let a;
-    if (!req.query.a) a = '0'; else a = req.query.a;
-    if (a == '0') {
-        res.render('fraise.ejs', {
-            username:getUsername(req.query.token),
-            bio:'I\'m using Fraise!'
-        });
-    }
 })
 
 
