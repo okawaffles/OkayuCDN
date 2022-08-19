@@ -484,7 +484,17 @@ app.get('/qus', (req, res) => {
         if (!udat.premium) res.json({size:size, userTS:totalUserStorage}); else res.json({size:size, userTS:1099511627776});
     })
 })
-
+function qus(user) {
+    let udat = JSON.parse(fs.readFileSync(`./db/userLoginData/${user}.json`, 'utf-8'));
+    let totalUserStorage = udat.storage;
+    let size = 0;
+    fs.readdir(`./content/${user}`, (err, files) => {
+        files.forEach(file => {
+            size += fs.statSync(`./content/${user}/${file}`).size;
+        });
+        if (!udat.premium) return {size:size, userTS:totalUserStorage}; else return {size:size, userTS:1099511627776};
+    })
+}
 
 
 // Keep Last !! 404 handler
