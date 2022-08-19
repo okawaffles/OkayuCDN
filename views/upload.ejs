@@ -2,6 +2,8 @@
 <html lang="en">
 
 <head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,30 +38,34 @@
 
     <div class="pad upload-pane">
         <div class="uploader">
-            <span>Upload to OkayuCDN (beta)</span>
+            <h1>Upload to OkayuCDN (beta)</h1>
             <p>This is currently in a very early state of development, bugs may arise!</p>
-            <input type="button" class="chooseFiles" id="uploaded" value="Select file" />
-            <input type="text" name="filename" required placeholder="Name Your File" pattern="[a-zA-Z0-9_-]{50}" style="width: 250px; float: left;" id="filename" />
-            <button id="uploadBtn">Go</button>
-            <br>
-            <div id="visibleToggle" style="display: none;">
-                <div class="line" style="--primary: white;"></div>
+            <div id="hider" style="display: none">
+                <input type="button" class="chooseFiles" id="uploaded" value="Select file" />
+                <input type="text" name="filename" required placeholder="Name Your File" pattern="[a-zA-Z0-9_-]{50}"
+                    style="width: 250px; float: left;" id="filename" />
+                <button id="uploadBtn">Go</button>
             </div>
+            <br>
             <div class="progressUpload"></div><br>
         </div>
+        <div id="visibleToggle">
+            <div class="line" style="--primary: white; display: flex; align-items: center;"></div>
+        </div>
+        <h3 id="storageAmount" style="display: none;"></h3>
     </div>
     <script src="/assets/scripts/uploadscript.js"></script>
-    <script>assignUserName("<%= USERNAME %>");</script>
+    <script>assignUserName("<%= USERNAME %>"); getStorage()</script>
 
     <h3 class="version">OkayuCDN v4.0.0</h3>
 
     <style>
         /**
-  * Line
-  *
-  * @author jh3y - jheytompkins.com
-*/
-@-webkit-keyframes line {
+          * Line
+          *
+          * @author jh3y - jheytompkins.com
+        */
+        @-webkit-keyframes line {
             from {
                 background-position: -60px 0;
             }

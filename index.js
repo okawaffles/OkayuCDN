@@ -202,10 +202,21 @@ app.get('/manage/content', (req, res) => {
     if (!token) {
         res.redirect('/login?redir=/manage/content');
     } else if (verifyToken(token)) {
-        res.render('manage.ejs');
+        res.render('manage.ejs', {USERNAME:getUsername(token)});
     } else {
         res.redirect('/login?redir=/manage/content');
     }
+});
+
+app.get('/quc', (req, res) => {
+    let list = [];
+    let usf = `./content/${req.query.user}`;
+    fs.readdir(usf, (err, files) => {
+        files.forEach(file => {
+            list.push(file);
+        });
+        res.json({listing:list});
+    });
 });
 
 app.get('/login', (req, res) => {
@@ -343,6 +354,8 @@ app.post('/signup', (req, res) => {
                         password: encryptedPasswd,
                         email: fields.em,
                         name: fields.nm,
+                        storage: 26843545600,
+                        premium:false
                     };
                     fs.writeFileSync(`./db/userLoginData/${fields.un}.json`, JSON.stringify(data));
                     res.redirect(`/login?redir=/home`);
@@ -456,6 +469,22 @@ app.post(`/ytdl3`, (req, res) => {
 app.get('/wallpaper', (req, res) => {
     res.render('landing/okayu_noBar.ejs');
 })
+
+
+// New account things (file storage size)
+app.get('/qus', (req, res) => {
+    let user = req.query.user;
+    let udat = JSON.parse(fs.readFileSync(`./db/userLoginData/${user}.json`, 'utf-8'));
+    let totalUserStorage = udat.storage;
+    let size = 0;
+    fs.readdir(`./content/${user}`, (err, files) => {
+        files.forEach(file => {
+            size += fs.statSync(`./content/${user}/${file}`).size;
+        });
+        if (!udat.premium) res.json({size:size, userTS:totalUserStorage}); else res.json({size:size, userTS:1099511627776});
+    })
+})
+
 
 
 // Keep Last !! 404 handler

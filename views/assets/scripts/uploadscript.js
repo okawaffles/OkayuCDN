@@ -16,7 +16,6 @@ var endUserName;
 
 document.getElementById("uploadBtn").onclick = function(){
 	if (/^([a-z0-9_-]{1,50})$/.test(document.getElementById('filename').value)) {
-		document.getElementById('visibleToggle').style = "display: inline;";
 		sendFiles(selectDialog.files);
 	}
 	else {
@@ -63,4 +62,19 @@ function addProgressBar(){
 
 function assignUserName(NAME) {
     endUserName = NAME;
+}
+
+function getStorage(userTotalStorage) {
+	document.getElementById('visibleToggle').style = "display: inline;";
+	$.getJSON(`/qus?user=${endUserName}`, function(data) {
+		document.getElementById('storageAmount').innerHTML = `You have used ${(((data.size / 1024) / 1024) / 1024).toFixed(2)}GB of storage (of your ${((data.userTS / 1024) / 1024) / 1024}GB)`
+		document.getElementById('storageAmount').style = "";
+		document.getElementById('visibleToggle').style = "display: none;";
+		
+		if (data.size < data.userTS) {
+			document.getElementById('hider').style = "";
+		} else {
+			alert('You seem to have run out of storage! Please use the manage page to remove content before continuing.')
+		}
+	})
 }

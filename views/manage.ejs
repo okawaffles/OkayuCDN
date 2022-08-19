@@ -2,6 +2,8 @@
 <html lang="en">
 
 <head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,14 +29,63 @@
         <h4 class="method">Type the file name to delete your file.</h4><br>
         <form class="uploadForm" action="./delFile" method="POST">
             <div class="partone">
-                <input type="text" name="filename" class="filename" required placeholder="Name of your file WITH EXTENSION!" style="width: 470px;"/>
+                <input type="text" name="filename" class="filename" required
+                    placeholder="Name of your file WITH EXTENSION!" style="width: 470px;" />
                 <input type="submit" value="Delete" class="delete" /><br>
             </div>
-            <label class="warn"><input type="checkbox" required class="cb" /> I understand that deleting a file means it cannot be recovered.</label><br>
+            <label class="warn"><input type="checkbox" required class="cb" /> I understand that deleting a file means it
+                cannot be recovered.</label><br>
         </form>
+        <hr style="width: 100%">
+        <h2>Your Content:</h2><br>
+        <div class="line" id="loader" style="--primary: white;"></div>
+        <div id="contentList" style="display:none;">
+
+        </div>
     </div>
 
+    <script src="/assets/scripts/managescript.js"></script>
+    <script>setUser("<%= USERNAME %>")</script>
+
     <style>
+        /**
+  * Line
+  *
+  * @author jh3y - jheytompkins.com
+*/
+        @-webkit-keyframes line {
+            from {
+                background-position: -60px 0;
+            }
+
+            to {
+                background-position: 60px 0;
+            }
+        }
+
+        @keyframes line {
+            from {
+                background-position: -60px 0;
+            }
+
+            to {
+                background-position: 60px 0;
+            }
+        }
+
+        .line:before {
+            -webkit-animation: line .75s infinite alternate ease-in-out;
+            animation: line .75s infinite alternate ease-in-out;
+            background: -webkit-gradient(linear, left top, right top, from(var(--primary)), to(var(--primary)));
+            background: linear-gradient(90deg, var(--primary), var(--primary));
+            background-repeat: no-repeat;
+            background-size: 60px 20px;
+            content: '';
+            display: block;
+            height: 20px;
+            width: 60px;
+        }
+
         @font-face {
             font-family: KFhimajiMOCO;
             src: url("/assets/fonts/GenJyuuGothic.ttf");
@@ -46,7 +97,7 @@
             margin: 0;
         }
 
-        
+
 
         .navi-ul {
             list-style-type: none;
@@ -59,6 +110,7 @@
         .navi-li-left {
             float: left;
         }
+
         .navi-li-right {
             float: right;
         }
@@ -70,6 +122,7 @@
             padding: 20px 20px;
             text-decoration: none;
         }
+
         .navi-li-right a {
             display: block;
             color: white;
