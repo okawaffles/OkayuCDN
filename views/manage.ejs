@@ -30,11 +30,11 @@
         <form class="uploadForm" action="./delFile" method="POST">
             <div class="partone">
                 <input type="text" name="filename" class="filename" required
-                    placeholder="Name of your file WITH EXTENSION!" style="width: 470px;" />
-                <input type="submit" value="Delete" class="delete" /><br>
+                    placeholder="Name of your file WITH EXTENSION!" style="width: 100%;" />
+                    <label class="warn"><input type="checkbox" required class="cb" /> I understand that deleting a file means it
+                        cannot be recovered.</label><br>
+                <input type="submit" value="Delete" class="delete" style="display: flex; justify-content: center;" /><br><br>
             </div>
-            <label class="warn"><input type="checkbox" required class="cb" /> I understand that deleting a file means it
-                cannot be recovered.</label><br>
         </form>
         <hr style="width: 100%">
         <h2>Your Content:</h2><br>
@@ -152,6 +152,23 @@
             width: 96px;
             height: 24px;
             font-family: KFhimajiMOCO;
+        }
+        @media screen and (max-width: 600px) {
+            .navi-a {
+                font-size: 12px;
+            }
+            .upload-pane {
+                width: 90%;
+                padding: 10px;
+                margin: 10px;
+                justify-content: center;
+            }
+            .uploadForm {
+                width: 75%;
+            }
+            .filename {
+                width: 80%;
+            }
         }
     </style>
 </body>

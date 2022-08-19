@@ -26,6 +26,13 @@
         <li class="navi-li-left navi-li"><a href="../home" class="navi-a">Home</a></li>
         <li class="navi-li-right navi-li"><a href="../mira" class="navi-a">You are viewing the Landing Page.</a></li>
     </ul>
+    <style>
+        @media screen and (max-width: 600px) {
+            .navi-a {
+                font-size: 12px;
+            }
+        }
+    </style>
 
 
     <script>
@@ -37,6 +44,7 @@
             if (d.getSeconds() < 10) se = `0${d.getSeconds()}`; else se = d.getSeconds();
         }
 
+        let fs = 120;
         let mX = 0;
         let mY = 0;
         let swid = screen.width;
@@ -49,14 +57,18 @@
         bgi.scale.set(1.1, 1.1);
         bgi.anchor.set(0.5);
         app.stage.addChild(bgi);
-        okayuScale = 1.5 * (shei/1080);
+        okayuScale = (swid/1080);
+        if (swid < 1280) {
+            fs = 60; 
+            okayuScale = 1.3;
+        }
         okayu.x = (swid / 2) - ((360 * okayuScale) / 2);
         okayu.y = shei - (450 * okayuScale);
         okayu.scale.set(okayuScale, okayuScale);
         app.stage.addChild(okayu);
 
         getTime();
-        let title = new PIXI.Text(`${hr}:${mn}:${se}`, { fontFamily: "Courier New", fontSize: 120, align: 'center', fill: "#222742", stroke: "#222742", strokeThickness:"10" });
+        let title = new PIXI.Text(`${hr}:${mn}:${se}`, { fontFamily: "Courier New", fontSize: fs, align: 'center', fill: "#222742", stroke: "#222742", strokeThickness:"10" });
         title.x = swid / 2 - (title.width / 2);
         title.y = 200;
         app.stage.addChild(title);

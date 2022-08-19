@@ -156,6 +156,9 @@ app.get('/status', (req, res) => {
 app.get('/robots.txt', (req, res) => {
     res.send(fs.readFileSync('./views/assets/robots.txt'))
 })
+app.get('/favicon.ico', (req, res) => {
+    res.send('/views/assets/favicon.ico');
+})
 
 
 // User Viewable Pages
