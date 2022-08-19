@@ -22,20 +22,22 @@
         <li class="navi-li-right navi-li"><a href="../info" class="navi-a">Info</a></li>
     </ul>
     <ul class="banner-ul">
-        <p style="text-align: center">Notice: OkayuCDN Accounts have been converted to Fraise accounts.</p>
+        <!-- <p>abc-123</p> -->
     </ul>
 
     <div class="container">
         <h1 class="title">Welcome to OkayuCDN!</h1>
         <h2 class="subtitle sa">You can upload your files for free here!</h2>
-        <h2 class="subtitle sb">Any file type is supported and can be embedded!</h2>
+        <h2 class="subtitle sb">Any file type is supported and they can be embedded in Discord!</h2>
+        <!--<div class="container line"></div>-->
     </div>
 
     <div class="characters">
         <img src="./assets/images/okayu_450.png" class="chara-center" />
     </div>
 
-    <h3>v<%= version %></h3><br>
+    <h3>v<%= version %>
+    </h3><br>
 
     <style>
         @font-face {
@@ -56,6 +58,7 @@
             padding: 0;
             overflow: hidden;
             background-color: #333;
+            border-radius: 0 0 15px 15px;
         }
 
         .navi-li-left {
@@ -168,6 +171,7 @@
                 bottom: 0;
             }
         }
+
         @keyframes charaFlyMobile {
             0% {
                 transform: translateY(400%);
