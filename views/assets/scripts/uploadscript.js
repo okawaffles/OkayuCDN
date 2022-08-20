@@ -28,7 +28,8 @@ function sendFiles(files){
 	resetProgressBar();
 	var req = new XMLHttpRequest();	
 	req.upload.addEventListener("progress", updateProgress);
-	req.open("POST", "http://azuki.okawaffles.com/manage/cdnUpload");
+	req.setRequestHeader('Content-type', 'application/json')
+	req.open("POST", "/manage/cdnUpload");
 	var form = new FormData();
 	for(var file = 0; file < files.length; file++){		
 		
