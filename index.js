@@ -383,7 +383,7 @@ app.post('/manage/delFile', (req, res) => {
     form.parse(req, (err, fields, files) => {
         let token = req.cookies.token;
         if (fs.existsSync(`./content/${getUsername(token)}/${fields.filename}`)) {
-            fs.rmSync(`./db/content/${getUsername(token)}/${fields.filename}`);
+            fs.rmSync(`./content/${getUsername(token)}/${fields.filename}`);
             res.redirect(`/manage/content`);
         } else {
             res.render('manage_failed.ejs', { 'error': 'File does not exist in your profile.' });
