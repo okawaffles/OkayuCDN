@@ -134,7 +134,6 @@ app.get('/korone', (req, res) => {
 });
 app.get('/mira', (req, res) => {
     res.render('landing/mira.ejs');
-    mailToAllUsers();
     res.end();
 });
 
