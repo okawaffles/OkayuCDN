@@ -4,6 +4,6 @@
     "enableAccountCreation":true,
     "enableUploading":true,
     "enableAnonymousUploading":false,
-    "dev_mode":true,
+    "dev_mode":false,
     "port":2773
 }

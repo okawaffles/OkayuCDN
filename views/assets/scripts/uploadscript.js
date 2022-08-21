@@ -29,7 +29,7 @@ function sendFiles(files){
 	var req = new XMLHttpRequest();	
 	req.upload.addEventListener("progress", updateProgress);
 	req.open("POST", "/manage/cdnUpload");
-	req.setRequestHeader('Content-type', 'application/json');
+	//req.setRequestHeader('Content-type', 'application/json');
 	var form = new FormData();
 	for(var file = 0; file < files.length; file++){		
 		
@@ -42,8 +42,8 @@ function updateProgress(e){
 	
 	progress.style.width = (((e.loaded/e.total)*100))+ "%";
     if(progress.style.width == "100%") {
+		document.getElementById('visibleToggle').style = "display: inline;";
 		setTimeout(() => {
-			document.getElementById('visibleToggle').style = "display: inline;";
 			progress.innerHTML = `<br><p>File available at https://okayu.okawaffles.com/content/${endUserName}/${endFileName}</p>`
 			document.location = `/success?f=${endFileName}`;
 		}, 3000);
