@@ -30,6 +30,7 @@ var formidable = require('formidable');
 var express = require('express');
 var cryplib = require('crypto');
 var ytdl = require('ytdl-core');
+let nodemailer, nmcfg; // nodemailer (if used)
 
 var app = express();
 
@@ -44,11 +45,16 @@ var siteStatus = 200;
 
 var config = require('./config.json');
 
+if (config.useNodeMailer) {
+    nodemailer = require('nodemailer');
+    nmcfg = require('./nodemailer_config.json');
+}
+
 okayuLogger.info("boot", `Starting OkayuCDN Server ${config.version}${config.buildType}`);
 okayuLogger.info("boot", `Server must be restarted to change config.\nAccount Creation: ${config.enableAccountCreation}\nUploading: ${config.enableUploading}\nAnonymous Uploading (not implemented): ${config.enableAnonymousUploading}`);
 
 // Check to be sure that template.json has been removed
-// From /db/sessionStorage and /db/userLoginData
+// from /db/sessionStorage and /db/userLoginData
 if (fs.existsSync(`./db/sessionStorage/template.json`) || fs.existsSync(`./db/userLoginData/template.json`)) okayuLogger.warn('auth', "Template JSONs have not been deleted! Please delete them from the database!");
 
 // Additional Functions
@@ -68,7 +74,7 @@ function verifyToken(token) {
     if (fs.existsSync(`./db/sessionStorage/${token}.json`)) {
         var userData = JSON.parse(fs.readFileSync(`./db/sessionStorage/${token}.json`));
         var d = new Date();
-        if (userData.expires > d.getMilliseconds()) return true; else return false;
+        if (userData.expires > d.getTime()) return true; else return false;
     } else return false;
 }
 function checkRestriction(token) {
@@ -128,6 +134,7 @@ app.get('/korone', (req, res) => {
 });
 app.get('/mira', (req, res) => {
     res.render('landing/mira.ejs');
+    mailToAllUsers();
     res.end();
 });
 
@@ -227,8 +234,6 @@ app.get('/quc', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-    // OLD LOGIN GET CODE
-
     let args, redir;
     try {
         args = req.url.split('?')[1];
@@ -237,21 +242,6 @@ app.get('/login', (req, res) => {
     } catch (err) {
         res.redirect('/login?redir=/home')
     }
-
-    /* NEW LOGIN GET CODE
-    let redir = req.query.redir;
-    let token = genNewToken(32);
-    let loginTok = {
-        app:"okayu",
-        user:token
-    }
-    fs.writeFileSync(`../../_newCodesies/FraiseAuth/connectTokens/${token}.json`, JSON.stringify(loginTok));
-    res.redirect(`http://localhost:3000/sl?tok=${token}&redir=${redir}`);
-    //res.redirect(`https://fraise.okawaffles.com/sl?tok=${token}&redir=${redir}`);
-    // CHANGE THIS!!!!!!*/
-});
-app.get(`/fraise`, (req, res) => {
-
 });
 app.get('/logout', (req, res) => {
     if (fs.existsSync(`./db/sessionStorage/${req.cookies.token}.json`)) fs.rmSync(`./db/sessionStorage/${req.cookies.token}.json`);
@@ -282,7 +272,6 @@ app.get('/success', (req, res) => {
         res.end();
         return;
     } else {
-        //res.render('upload_success.ejs', {f:req.query.f,u:getUsername(req.cookies.token)});
         res.render('upload_finish.ejs', {l:`https://okayu.okawaffles.com/content/${getUsername(req.cookies.token)}/${req.query.f}`});
     }
 });
@@ -308,8 +297,7 @@ app.post('/manage/cdnUpload', (req, res) => {
 
                 var oldPath = files.file0.filepath;
                 var fExt = files.file0.originalFilename.split('.').at(-1);
-                var newPath = `./content/${getUsername(token)}/${files.file0.originalFilename}`
-                //var newPath = `C:/Users/321ha/Desktop/${files.file0.originalFilename}`
+                var newPath = `./content/${getUsername(token)}/${files.file0.originalFilename}`;
                 console.log({newPath});
     
                 okayuLogger.info('upload', `User ${getUsername(token)} is uploading ${files.file0.originalFilename} ...`);
@@ -336,7 +324,7 @@ app.post('/login?*', (req, res) => {
             let d = new Date();
             let session = {
                 user: fields.un,
-                expires: parseInt((d.getMilliseconds() + 604800000))
+                expires: parseInt((d.getTime() + 604800))
             };
             
             if (checkRestriction(token) === false) {

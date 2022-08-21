@@ -5,5 +5,6 @@
     "enableUploading":true,
     "enableAnonymousUploading":false,
     "dev_mode":false,
-    "port":2773
+    "port":2773,
+    "useNodeMailer":true
 }

@@ -1,3 +1,6 @@
 /node_modules
 .replit
 okayuCDN-full.code-workspace
+
+# this config is for if you would like to use nodemailer
+nodemailer_config.json
