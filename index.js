@@ -18,7 +18,7 @@ try {
 } catch (err) { // exit if fail
     okayuLogger.error('boot', "Missing dependencies! Please run 'npm ci'");
     okayuLogger.info('boot', "Exit...");
-    process.exit(-1);
+    process.exit(1);
 }
 
 
