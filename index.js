@@ -107,7 +107,11 @@ app.use('*', (req, res, next) => {
         okayuLogger.info('RequestInfo', `[IP-BAN] ${pip} :: ${req.method} ${req.originalUrl}`);
     } else {
         okayuLogger.info('RequestInfo', `${pip} :: ${req.method} ${req.originalUrl}`);
-        next();
+        if (!config.dev_mode) {
+            next();
+        } else {
+            if( pip == "192.168.1.229" || pip == "192.168.1.1" ) next(); else res.render('forbidden.ejs', {'reason':'Server is in development mode.'} );
+        }
     }
 })
 
