@@ -28,8 +28,8 @@ function sendFiles(files){
 	resetProgressBar();
 	var req = new XMLHttpRequest();	
 	req.upload.addEventListener("progress", updateProgress);
-	req.setRequestHeader('Content-type', 'application/json')
 	req.open("POST", "/manage/cdnUpload");
+	req.setRequestHeader('Content-type', 'application/json');
 	var form = new FormData();
 	for(var file = 0; file < files.length; file++){		
 		
