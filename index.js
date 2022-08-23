@@ -50,8 +50,10 @@ if (config.useNodeMailer) {
     nmcfg = require('./nodemailer_config.json');
 }
 
+let asciiart = fs.readFileSync('./asciiart.txt', 'utf-8');
+console.log(asciiart);
 okayuLogger.info("boot", `Starting OkayuCDN Server ${config.version}${config.buildType}`);
-okayuLogger.info("boot", `Server must be restarted to change config.\nAccount Creation: ${config.enableAccountCreation}\nUploading: ${config.enableUploading}\nAnonymous Uploading (not implemented): ${config.enableAnonymousUploading}`);
+okayuLogger.info("boot", `Server must be restarted to change config.`);
 
 // Check to be sure that template.json has been removed
 // from /db/sessionStorage and /db/userLoginData
@@ -502,9 +504,11 @@ app.get('*', (req, res) => {
 
 // Listen on port (use nginx to reverse proxy)
 var server;
-server = app.listen(config.port, (err) => {
-    if(err) {
-        okayuLogger.info('express', `Failed to listen on port ${config.port}! It is already in use!`);
-    } else okayuLogger.info('express', `Listening on port ${config.port}`);
+server = app.listen(config.port).on('error', function(err) {
+    okayuLogger.error('express', `Failed to listen on port ${config.port}! It is already in use!`);
+    process.exit(1);
 });
-server.setTimeout(18000000);
+
+setTimeout(() => {
+    okayuLogger.info('express', `Listening on port ${config.port}`);
+}, 1000);
