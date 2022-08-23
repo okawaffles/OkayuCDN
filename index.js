@@ -221,17 +221,6 @@ app.get('/manage/content', (req, res) => {
     }
 });
 
-app.get('/quc', (req, res) => {
-    let list = [];
-    let usf = `./content/${req.query.user}`;
-    fs.readdir(usf, (err, files) => {
-        files.forEach(file => {
-            list.push(file);
-        });
-        res.json({listing:list});
-    });
-});
-
 app.get('/login', (req, res) => {
     let args, redir;
     try {
@@ -259,7 +248,7 @@ app.get('/admin', (req, res) => {
     } else if (verifyToken(token)) {
         if (getUsername(token) === "okawaffles" || getUsername(token) === "shears") {
             res.render('admin.ejs');
-        } else res.render('forbidden.ejs', { "reason":"admin-panel-denied-message" });
+        } else res.render('forbidden.ejs', { "reason":"No access." });
     } else {
         res.redirect('/login?redir=/admin');
     }
@@ -489,6 +478,19 @@ function qus(user) {
         if (!udat.premium) return {size:size, userTS:totalUserStorage}; else return {size:size, userTS:1099511627776};
     })
 }
+
+app.get('/quc', (req, res) => {
+    let list = [];
+    let sizelist = [];
+    let usf = `./content/${req.query.user}`;
+    fs.readdir(usf, (err, files) => {
+        files.forEach(file => {
+            list.push(file);
+            sizelist.push(fs.statSync(`${usf}/${file}`).size);
+        });
+        res.json({listing:list,sizelist:sizelist});
+    });
+});
 
 
 // Keep Last !! 404 handler

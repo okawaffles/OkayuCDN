@@ -34,15 +34,14 @@
             <div class="partone">
                 <input type="text" name="filename" class="filename" required
                     placeholder="Name of your file WITH EXTENSION!" style="width: 100%;" />
-                    <label class="warn"><input type="checkbox" required class="cb" /> I understand that deleting a file means it
-                        cannot be recovered.</label><br>
+                    <label class="warn"><input type="checkbox" required class="cb" /> I understand that deleting a file means it cannot be recovered.</label><br>
                 <input type="submit" value="Delete" class="delete" style="display: flex; justify-content: center;" /><br><br>
             </div>
         </form>
         <hr style="width: 100%">
         <h2>Your Content:</h2><br>
         <div class="line" id="loader" style="--primary: white;"></div>
-        <div id="contentList" style="display:none;">
+        <div id="contentList" style="display:none; width: 100%; background-color: #111;">
 
         </div>
     </div>
@@ -95,7 +94,7 @@
         }
 
         body {
-            background-color: #3d3d3d;
+            background-color: #1c273b;
             font-family: KFhimajiMOCO;
             margin: 0;
         }
@@ -107,7 +106,7 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background-color: #333;
+            background-color: #141924;
         }
 
         .navi-li-left {
@@ -142,7 +141,7 @@
         .upload-pane {
             display: grid;
             place-items: center;
-            background-color: #333;
+            background-color: #141924;
             border-radius: 20px;
             padding: 3%;
             color: white;
