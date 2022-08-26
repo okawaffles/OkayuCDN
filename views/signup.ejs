@@ -27,19 +27,20 @@
     <div class="pad upload-pane">
         <h2 class="title">Welcome to OkayuCDN!</h2>
         <h4 class="method">We're happy to see new users!</h4>
-        <hr><br>
         <form class="uploadForm" action="/signup" method="POST">
             <p style="text-align: center;">6-25 characters, letters and numbers only.</p>
-            <input type="text" placeholder="Username" pattern="[a-zA-Z0-9]{6,25}" name="un" required /><br>
-            <input type="password" placeholder="Password" name="pw" required /><br>
-            <input type="text" placeholder="Real Name" name="nm" required /><br>
-            <input type="email" placeholder="Email" name="em" required /><br>
-            <label class="tos">
-                <input type="checkbox" required class="cb" /> I have read and agreed to the <a href='../terms'>Terms of
-                    Service</a>
-            </label><br>
-            <input type="submit" class="submitBtn" value="Go" />
+            <input type="text" placeholder="Username" class="input_text" pattern="[a-zA-Z0-9]{6,25}" name="un" required /><br>
+            <input type="password" placeholder="Password" name="pw" class="input_text" required /><br>
+            <input type="text" placeholder="Real Name" name="nm" class="input_text" required /><br>
+            <input type="email" placeholder="Email" name="em" class="input_text" required /><br>
+            <p class="tos">By signing up, you agree to our <a style="color:cornflowerblue;" href="../terms">Terms of Service</a>.</p>
+            <div class="wrap">
+                <input type="submit" class="go" id="submit" value="Go" />
+            </div>
         </form>
+        <div class="wrap">
+            <button class="go acc" onclick="location = `../login?redir=/home`">I already have an account</button>
+        </div>
     </div>
 
     <style>
@@ -59,27 +60,63 @@
             place-items: center;
         }
 
-        .submitBtn {
-            background-color: #2a455e;
-            color: white;
-            border: 0px;
-            width: 128px;
-            height: 32px;
+        .wrap {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .go {
+            margin-top: 20px;
+            width: 300px;
+            height: 45px;
             font-family: KFhimajiMOCO;
-            font-size: medium;
+            font-size: 16px;
+            letter-spacing: 2.5px;
+            font-weight: 500;
+            color: #000;
+            background-color: #fff;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease 0s;
+            cursor: pointer;
+            outline: none;
         }
-
-        .submitBtn:hover {
-            background-color: #3b6082;
+        .go:hover {
+            background-color: #2EE59D;
+            box-shadow: 0px 15px 20px rgba(107, 107, 107, 0.4);
+            color: #fff;
+            transform: translateY(-7px);
         }
-
-        hr {
-            border: 0;
-            clear: both;
-            display: block;
-            width: 96%;
+        .input_text {
+            margin: 5px;
+            width: 300px;
+            height: 30px;
+            border-radius: 10px;
             background-color: white;
-            height: 1px;
+            border: none;
+            color: black;
+            font-family: KFhimajiMOCO;
+            font-weight: 500;
+            text-align: center;
+        }
+        .acc {
+            margin-top: 50px;
+        }
+        .title {
+            font-size: 30pt;
+            text-align: center;
+            margin: auto;
+        }
+        .method {
+            font-size: 15pt;
+            text-align: center;
+            margin: auto;
+        }
+        .tos {
+            margin:auto;
         }
 
 
@@ -123,26 +160,14 @@
         .upload-pane {
             display: grid;
             place-items: center;
-            background-color: #141924;
+            /* background-color: #141924; */
             border-radius: 20px;
-            padding: 3%;
+            padding: 3% 3%;
             color: white;
-        }
-
-        .p {
-            display: block;
-            padding-left: 15px;
-            text-indent: -15px;
-        }
-
-        .cb {
-            width: 15px;
-            height: 15px;
-            padding: 0;
-            margin: 0;
-            vertical-align: bottom;
-            position: relative;
-            top: -1px;
+            width: fit-content;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
         }
         @media screen and (max-width: 600px) {
             .navi-a {

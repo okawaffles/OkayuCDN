@@ -3,8 +3,8 @@
 // I'm so proud of how far I've come.
 
 var okayuLogger = require('./cs-modules/okayuLogger/index.js');
-var fs = require('fs');
-
+let reqProcessor = require('./cs-modules/reqProcessor');
+var fs = require('fs'); 
 // Check dependencies
 
 try {
@@ -71,6 +71,12 @@ function getUsername(token) {
         return userData.user;
     }
 }
+function getPremiumStat(token) {
+    if (fs.existsSync(`./db/sessionStorage/${token}.json`)) {
+        var userData = JSON.parse(fs.readFileSync(`./db/sessionStorage/${token}.json`));
+        return userData.premium;
+    }
+}
 
 function verifyToken(token) {
     if (fs.existsSync(`./db/sessionStorage/${token}.json`)) {
@@ -115,10 +121,11 @@ app.use('*', (req, res, next) => {
         okayuLogger.info('RequestInfo', `[IP-BAN] ${pip} :: ${req.method} ${req.originalUrl}`);
     } else {
         okayuLogger.info('RequestInfo', `${pip} :: ${req.method} ${req.originalUrl}`);
+        //reqProcessor.process(req.method, ip, req.originalUrl);
         if (!config.dev_mode) {
             next();
         } else {
-            if( pip == "192.168.1.229" || pip == "192.168.1.1" ) next(); else res.render('forbidden.ejs', {'reason':'Server is in development mode.'} );
+            if ( pip == "192.168.1.229" || pip == "192.168.1.1" || pip == "127.0.0.1" ) next(); else res.render('forbidden.ejs', {'reason':'Server is in development mode.'} );
         }
     }
 })
@@ -421,7 +428,7 @@ app.get(`/ytdl_mp3`, (req, res) => {
     let token = req.cookies.token;
     if (!token) {
         res.redirect('/login?redir=/ytdl_mp3');
-    } else if (verifyToken(token)) {
+    } else if (verifyToken(token) && getPremiumStat(token)) {
         res.render('hosted/ytdl.ejs');
     } else {
         res.redirect('/login?redir=/ytdl_mp3');
@@ -493,6 +500,16 @@ app.get('/quc', (req, res) => {
         res.json({listing:list,sizelist:sizelist});
     });
 });
+
+app.get('/cec', (req, res) => {
+    let user = req.query.user;
+    let file = req.query.file;
+    if (!user || !file) {
+        res.send("<h1>400</h1> <hr> <h3>Please append queries \"?user=USERNAME&file=FILENAME\" to your request!</h3>");
+    } else {
+        res.json({result:fs.existsSync(`./content/${user}/${file}`)});
+    }
+})
 
 
 // Keep Last !! 404 handler

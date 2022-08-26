@@ -22,21 +22,9 @@
     </ul>
     <br>
     <div class="pad upload-pane">
-        <h2 class="title">Welcome to OkayuCDN!</h2>
-        <h4 class="method">We're happy to see new users!</h4>
-        <hr><br>
-        <form class="uploadForm" action="/signup" method="POST">
-            <p style="text-align: center;">6-25 characters, letters and numbers only.</p>
-            <input type="text" placeholder="Username" name="un" pattern="[a-zA-Z0-9]{6,25}" required /><br>
-            <input type="password" placeholder="Password" name="pw" required /><br>
-            <input type="text" placeholder="Real Name" name="nm" required /><br>
-            <input type="email" placeholder="Email" name="em" required /><br>
-            <label class="tos">
-                <input type="checkbox" required class="cb" /> I have read and agreed to the <a href='../terms'>Terms of Service</a>
-            </label><br>
-            <input type="submit" class="submitBtn" value="Go"/>
-            <p style="color: red;">Failed to sign up: <%= error %></p>
-        </form>
+        <h2 class="title">Oh Nyao!</h2>
+        <h4 class="method">An error occurred while signing up!</h4>
+        <p style="color: red;">Failed to sign up: <%= error %></p>
     </div>
 
     <style>
@@ -55,25 +43,15 @@
             display: grid;
             place-items: center;
         }
-        .submitBtn {
-            background-color: #2a455e;
-            color: white;
-            border: 0px;
-            width: 128px;
-            height: 32px;
-            font-family: KFhimajiMOCO;
-            font-size: medium;
+       
+        .title {
+            font-size: 30pt;
+            margin: auto;
+            text-align: center;
         }
-        .submitBtn:hover {
-            background-color: #3b6082;
-        }
-        hr {
-            border: 0;
-            clear:both;
-            display:block;
-            width: 96%;               
-            background-color: white;
-            height: 1px;
+        .method {
+            font-size: 15pt;
+            text-align: center;
         }
 
 
@@ -115,10 +93,14 @@
         .upload-pane {
             display: grid;
             place-items: center;
-            background-color: #141924;
+            /* background-color: #141924; */
             border-radius: 20px;
-            padding: 3%;
+            padding: 3% 3%;
             color: white;
+            width: fit-content;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
         .p {
