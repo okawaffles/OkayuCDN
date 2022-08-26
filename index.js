@@ -4,7 +4,7 @@
 
 var okayuLogger = require('./cs-modules/okayuLogger/index.js');
 let reqProcessor = require('./cs-modules/reqProcessor');
-var fs = require('fs'); 
+var fs = require('fs');
 // Check dependencies
 
 try {
@@ -117,7 +117,7 @@ app.use('*', (req, res, next) => {
     let pip = ip[ip.length - 1]
     if (fs.existsSync(`./db/ip403/${pip}`)) {
         let reason = fs.readFileSync(`./db/ip403/${pip}`);
-        res.render('forbidden.ejs', { "reason":reason });
+        res.render('forbidden.ejs', { "reason": reason });
         okayuLogger.info('RequestInfo', `[IP-BAN] ${pip} :: ${req.method} ${req.originalUrl}`);
     } else {
         okayuLogger.info('RequestInfo', `${pip} :: ${req.method} ${req.originalUrl}`);
@@ -125,7 +125,7 @@ app.use('*', (req, res, next) => {
         if (!config.dev_mode) {
             next();
         } else {
-            if ( pip == "192.168.1.229" || pip == "192.168.1.1" || pip == "127.0.0.1" ) next(); else res.render('forbidden.ejs', {'reason':'Server is in development mode.'} );
+            if (pip == "192.168.1.229" || pip == "192.168.1.1" || pip == "127.0.0.1") next(); else res.render('forbidden.ejs', { 'reason': 'Server is in development mode.' });
         }
     }
 })
@@ -162,7 +162,13 @@ app.get('/content/:user/:item', (req, res) => {
         if (file != "none") {
             res.send(file);
         } else {
-            res.jsonp({ 'error':'500','description':'content found but was unable to be read. contact okawaffles#0001 on discord for more information.' })
+            res.json(
+                {
+                    'response': '500',
+                    'error': 'CDS-FF (DELIVERY_SERVICE_CANNOT_READ)',
+                    'description': 'Content found but was unable to be read. Contact support@okawaffles.com if you encounter this error.'
+                }
+            )
         }
     } catch (err) {
         res.render('404.ejs');
@@ -170,7 +176,7 @@ app.get('/content/:user/:item', (req, res) => {
     res.end();
 });
 app.get('/status', (req, res) => {
-    res.json({'status':siteStatus});
+    res.json({ 'status': siteStatus });
 })
 app.get('/robots.txt', (req, res) => {
     res.send(fs.readFileSync('./views/assets/robots.txt'))
@@ -183,9 +189,9 @@ app.get('/favicon.ico', (req, res) => {
 // User Viewable Pages
 app.get('/home', (req, res) => {
     if (req.query.useBetaSite != "true")
-        res.render('home.ejs', {'version':config.version + config.buildType});
+        res.render('home.ejs', { 'version': config.version + config.buildType });
     else
-        res.render('home_beta.ejs', {'version':config.version + config.buildType});
+        res.render('home_beta.ejs', { 'version': config.version + config.buildType });
     res.end();
 });
 app.get('/ja', (req, res) => {
@@ -213,7 +219,7 @@ app.get('/manage/upload', (req, res) => {
     if (!token) {
         res.redirect('/login?redir=/manage/upload');
     } else if (verifyToken(token)) {
-        res.render('upload.ejs', { USERNAME:getUsername(token) });
+        res.render('upload.ejs', { USERNAME: getUsername(token) });
     } else {
         res.redirect('/login?redir=/manage/upload');
     }
@@ -224,7 +230,7 @@ app.get('/manage/content', (req, res) => {
     if (!token) {
         res.redirect('/login?redir=/manage/content');
     } else if (verifyToken(token)) {
-        res.render('manage.ejs', {USERNAME:getUsername(token)});
+        res.render('manage.ejs', { USERNAME: getUsername(token) });
     } else {
         res.redirect('/login?redir=/manage/content');
     }
@@ -235,7 +241,7 @@ app.get('/login', (req, res) => {
     try {
         args = req.url.split('?')[1];
         redir = args.split('&')[0].split('=')[1];
-        res.render('login.ejs', { redir:redir });
+        res.render('login.ejs', { redir: redir });
     } catch (err) {
         res.redirect('/login?redir=/home')
     }
@@ -257,19 +263,19 @@ app.get('/admin', (req, res) => {
     } else if (verifyToken(token)) {
         if (getUsername(token) === "okawaffles" || getUsername(token) === "shears") {
             res.render('admin.ejs');
-        } else res.render('forbidden.ejs', { "reason":"No access." });
+        } else res.render('forbidden.ejs', { "reason": "No access." });
     } else {
         res.redirect('/login?redir=/admin');
     }
 })
 
 app.get('/success', (req, res) => {
-    if(!req.query.f) {
+    if (!req.query.f) {
         res.status(404);
         res.end();
         return;
     } else {
-        res.render('upload_finish.ejs', {l:`https://okayu.okawaffles.com/content/${getUsername(req.cookies.token)}/${req.query.f}`});
+        res.render('upload_finish.ejs', { l: `https://okayu.okawaffles.com/content/${getUsername(req.cookies.token)}/${req.query.f}` });
     }
 });
 
@@ -295,8 +301,8 @@ app.post('/manage/cdnUpload', (req, res) => {
                 var oldPath = files.file0.filepath;
                 var fExt = files.file0.originalFilename.split('.').at(-1);
                 var newPath = `./content/${getUsername(token)}/${files.file0.originalFilename}`;
-                console.log({newPath});
-    
+                console.log({ newPath });
+
                 okayuLogger.info('upload', `User ${getUsername(token)} is uploading ${files.file0.originalFilename} ...`);
 
                 fs.rename(oldPath, newPath, function (err) {
@@ -323,13 +329,13 @@ app.post('/login?*', (req, res) => {
                 user: fields.un,
                 expires: parseInt((d.getTime() + 604800))
             };
-            
+
             if (checkRestriction(token) === false) {
-                res.cookie(`token`, token); 
-                res.redirect(redir); 
+                res.cookie(`token`, token);
+                res.redirect(redir);
                 fs.writeFileSync(`./db/sessionStorage/${token}.json`, JSON.stringify(session));
-            } else res.render('forbidden.ejs', { reason:checkRestriction(token) });
-        } else res.render('login_failed.ejs', { redir:redir });
+            } else res.render('forbidden.ejs', { reason: checkRestriction(token) });
+        } else res.render('login_failed.ejs', { redir: redir });
     });
 });
 
@@ -347,7 +353,7 @@ app.post('/signup', (req, res) => {
                         email: fields.em,
                         name: fields.nm,
                         storage: 26843545600,
-                        premium:false
+                        premium: false
                     };
                     fs.writeFileSync(`./db/userLoginData/${fields.un}.json`, JSON.stringify(data));
                     res.redirect(`/login?redir=/home`);
@@ -381,7 +387,7 @@ app.post('/admin/delFile', (req, res) => {
     form.parse(req, (err, fields, files) => {
         if (fs.existsSync(`./content/${fields.username}/${fields.filename}`)) {
             fs.rmSync(`./db/content/${fields.username}/${fields.filename}`);
-            res.json({'code':'200'});
+            res.json({ 'code': '200' });
         } else res.redirect('/admin');
     })
 })
@@ -397,28 +403,28 @@ app.post('/admin/resUser', (req, res) => {
                 restricted: fields.reason
             };
             fs.writeFileSync(`./db/userLoginData/${fields.username}.json`, JSON.stringify(newdata));
-            res.json({'code':'200'});
+            res.json({ 'code': '200' });
         } else res.redirect('/admin');
     })
 })
 app.post('/admin/loginAs', (req, res) => {
     let form = new formidable.IncomingForm();
     form.parse(req, (err, fields) => {
-        if(verifyLogin(fields.un, fields.pw)) {
+        if (verifyLogin(fields.un, fields.pw)) {
             let token = genNewToken(32);
             let d = new Date();
             let session = {
                 user: fields.user,
                 expires: parseInt((d.getMilliseconds() + 604800000))
             };
-            
+
             if (checkRestriction(token) === false) {
-                res.cookie(`token`, token); 
-                res.redirect('/home'); 
+                res.cookie(`token`, token);
+                res.redirect('/home');
                 fs.writeFileSync(`./db/sessionStorage/${token}.json`, JSON.stringify(session));
-            } else res.render('forbidden.ejs', { reason:checkRestriction(token) });
+            } else res.render('forbidden.ejs', { reason: checkRestriction(token) });
         } else {
-            res.render('forbidden.ejs', {'reason':'Invalid Administrator Credentials'})
+            res.render('forbidden.ejs', { 'reason': 'Invalid Administrator Credentials' })
         }
     });
 });
@@ -438,7 +444,7 @@ app.get('/qus', (req, res) => {
         files.forEach(file => {
             size += fs.statSync(`./content/${user}/${file}`).size;
         });
-        if (!udat.premium) res.json({size:size, userTS:totalUserStorage}); else res.json({size:size, userTS:1099511627776});
+        if (!udat.premium) res.json({ size: size, userTS: totalUserStorage }); else res.json({ size: size, userTS: 1099511627776 });
     })
 })
 function qus(user) {
@@ -449,7 +455,7 @@ function qus(user) {
         files.forEach(file => {
             size += fs.statSync(`./content/${user}/${file}`).size;
         });
-        if (!udat.premium) return {size:size, userTS:totalUserStorage}; else return {size:size, userTS:1099511627776};
+        if (!udat.premium) return { size: size, userTS: totalUserStorage }; else return { size: size, userTS: 1099511627776 };
     })
 }
 
@@ -462,7 +468,7 @@ app.get('/quc', (req, res) => {
             list.push(file);
             sizelist.push(fs.statSync(`${usf}/${file}`).size);
         });
-        res.json({listing:list,sizelist:sizelist});
+        res.json({ listing: list, sizelist: sizelist });
     });
 });
 
@@ -472,9 +478,9 @@ app.get('/cec', (req, res) => {
     if (!user || !file) {
         res.send("<h1>400</h1> <hr> <h3>Please append queries \"?user=USERNAME&file=FILENAME\" to your request!</h3>");
     } else {
-        res.json({result:fs.existsSync(`./content/${user}/${file}`)});
+        res.json({ result: fs.existsSync(`./content/${user}/${file}`) });
     }
-})
+});
 
 
 // Keep Last !! 404 handler
@@ -486,7 +492,7 @@ app.get('*', (req, res) => {
 
 // Listen on port (use nginx to reverse proxy)
 var server;
-server = app.listen(config.port).on('error', function(err) {
+server = app.listen(config.port).on('error', function (err) {
     okayuLogger.error('express', `Failed to listen on port ${config.port}! It is already in use!`);
     process.exit(1);
 });
