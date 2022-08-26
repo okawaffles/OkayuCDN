@@ -423,41 +423,6 @@ app.post('/admin/loginAs', (req, res) => {
     });
 });
 
-// extra sites for friends
-app.get(`/ytdl_mp3`, (req, res) => {
-    let token = req.cookies.token;
-    if (!token) {
-        res.redirect('/login?redir=/ytdl_mp3');
-    } else if (verifyToken(token) && getPremiumStat(token)) {
-        res.render('hosted/ytdl.ejs');
-    } else {
-        res.redirect('/login?redir=/ytdl_mp3');
-    }
-});
-app.post(`/ytdl3`, (req, res) => {
-    let form = new formidable.IncomingForm();
-    form.parse(req, async (err, fields, files) => {
-        let token = req.cookies.token;
-
-        if (!fs.existsSync(`./content/${getUsername(token)}`)) // when uploading on a new account
-            fs.mkdirSync(`./content/${getUsername(token)}`);
-
-        if (fields.link.includes('watch?v=')) {
-            let dest = fs.createWriteStream(`./content/${getUsername(token)}/${hash(fields.link)}.mp3`);
-            ytdl(fields.link, { filter: 'audioonly' }).pipe(dest);
-            dest.on('finish', () => {
-                res.redirect(`/content/${getUsername(token)}/${hash(fields.link)}.mp3`);
-                res.end();
-            })
-        } else {
-            res.json({
-                'error': '404', 'desc': 'Link is invalid'
-            });
-            res.end();
-        }
-    })
-})
-
 app.get('/wallpaper', (req, res) => {
     res.render('landing/okayu_noBar.ejs');
 })
