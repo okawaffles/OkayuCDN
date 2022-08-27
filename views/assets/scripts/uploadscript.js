@@ -35,15 +35,27 @@ function sendFiles(files){
 	}
 	req.send(form);
 }
+
 function updateProgress(e){
 	
 	progress.style.width = (((e.loaded/e.total)*100))+ "%";
     if(progress.style.width == "100%") {
-		document.getElementById('visibleToggle').style = "display: inline;";
+		document.getElementById('visibleToggle').style = "display: inline; margin-top:50px;";
+		progress.innerHTML = `<br><p>Hold on! We're delaying to make sure the server got your file...</p>`
+		let success = false;
+
 		setTimeout(() => {
-			progress.innerHTML = `<br><p>File available at https://okayu.okawaffles.com/content/${endUserName}/${endFileName}</p>`
-			document.location = `/success?f=${endFileName}`;
-		}, 3000);
+			$.getJSON(`/cec?user=${endUserName}&file=${endFileName}`, function(data) {
+				success = data.result;
+				if (!success) {
+					progress.innerHTML = `<br><p style="color:red;">File upload couldn't be verified (Error: OKAYU-UUS-CEC)</p>`
+					document.getElementById('visibleToggle').style = "display: none;";
+				} else {
+					progress.innerHTML = `<br><p>Finished, please wait...</p>`
+					document.location = `/success?f=${endFileName}`;
+				}
+			})
+		}, 5000);
     }
 
 }

@@ -3,7 +3,6 @@
     "buildType":"_ptb",
     "enableAccountCreation":true,
     "enableUploading":true,
-    "enableAnonymousUploading":false,
     "dev_mode":false,
     "port":2773,
     "useNodeMailer":false

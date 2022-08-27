@@ -75,10 +75,14 @@ body {
 .upload-pane {
 	display: grid;
 	place-items: center;
-	background-color: #141924;
+	/* background-color: #141924; */
 	border-radius: 20px;
-	padding: 3%;
+	padding: 3% 3%;
 	color: white;
+	width: fit-content;
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
 }
 
 .version {
@@ -88,8 +92,58 @@ body {
 	color: white;
 }
 
+.wrap {
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.go {
+	margin-top: 30px;
+	width: 300px;
+	height: 45px;
+	font-family: KFhimajiMOCO;
+	font-size: 16px;
+	letter-spacing: 2.5px;
+	font-weight: 500;
+	color: #000;
+	background-color: #fff;
+	border: none;
+	border-radius: 10px;
+	box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+	transition: all 0.3s ease 0s;
+	cursor: pointer;
+	outline: none;
+}
+
+.go:hover {
+	background-color: #2EE59D;
+	box-shadow: 0px 15px 20px rgba(107, 107, 107, 0.4);
+	color: #fff;
+	transform: translateY(-7px);
+}
+
+input[type="text"] {
+	margin: 5px;
+	width: 300px;
+	height: 30px;
+	border-radius: 10px;
+	background-color: white;
+	border: none;
+	color: black;
+	font-family: KFhimajiMOCO;
+	font-weight: 500;
+	text-align: center;
+}
+
 @media screen and (max-width: 600px) {
 	.navi-a {
 		font-size: 12px;
 	}
+
+	.wrap {
+		width: 100%;
+	}
+
 }

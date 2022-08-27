@@ -24,13 +24,15 @@
     <br>
     <div class="pad upload-pane">
         <h2 class="title">Thank you for using OkayuCDN.</h2>
-        <h4 class="method">Your file has been uploaded! View it here:<br><%=l%></h4>
+        <h4 class="method">Your file has been uploaded! View it here:<br>
+            <%=l%>
+        </h4>
         <br>
-        <p style="color:red;">If you get a 404 error, make sure your filename is valid (Non-alphanumeric characters are not allowed).</p>
-        <p style="color: red;">If your file is large (like a video), it may take a few minutes for it to process.</p>
+        <p style="color: red;">If your file is large (like a long video), it may be too large for the server to process,
+            and such, you will get a 404 error.</p>
     </div>
 
-    <h3 class="version">OkayuCDN v4.0.0</h3>
+    <h3 class="version">OkayuCDN v4</h3>
 
     <style>
         @font-face {
@@ -44,7 +46,7 @@
             margin: 0;
         }
 
-        
+
 
         .navi-ul {
             list-style-type: none;
@@ -57,6 +59,7 @@
         .navi-li-left {
             float: left;
         }
+
         .navi-li-right {
             float: right;
         }
@@ -68,6 +71,7 @@
             padding: 20px 20px;
             text-decoration: none;
         }
+
         .navi-li-right a {
             display: block;
             color: white;
@@ -84,10 +88,15 @@
         .upload-pane {
             display: grid;
             place-items: center;
-            background-color: #141924;
+            /* background-color: #141924; */
             border-radius: 20px;
-            padding: 3%;
+            padding: 3% 3%;
             color: white;
+            width: fit-content;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
         }
 
         .version {
@@ -96,6 +105,7 @@
             right: 10px;
             color: white;
         }
+
         @media screen and (max-width: 600px) {
             .navi-a {
                 font-size: 12px;

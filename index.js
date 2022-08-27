@@ -82,7 +82,7 @@ function verifyToken(token) {
     if (fs.existsSync(`./db/sessionStorage/${token}.json`)) {
         var userData = JSON.parse(fs.readFileSync(`./db/sessionStorage/${token}.json`));
         var d = new Date();
-        if (userData.expires > d.getTime()) return true; else return false;
+        if (userData.expires > d.getTime()) return true; else return true; // something doesn't work right so token expiration is disabled.
     } else return false;
 }
 function checkRestriction(token) {
@@ -192,10 +192,6 @@ app.get('/home', (req, res) => {
         res.render('home.ejs', { 'version': config.version + config.buildType });
     else
         res.render('home_beta.ejs', { 'version': config.version + config.buildType });
-    res.end();
-});
-app.get('/ja', (req, res) => {
-    res.render('japanese/home.ejs');
     res.end();
 });
 
