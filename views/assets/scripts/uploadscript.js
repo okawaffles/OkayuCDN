@@ -1,8 +1,5 @@
 var browse = document.getElementsByClassName('chooseFiles')[0];
-var selectDialog = document.createElement("INPUT");
-selectDialog.setAttribute("type", "file");
-selectDialog.setAttribute("multiple", "false");
-selectDialog.style.display = "none";
+var selectDialog = document.getElementById('uploaded');
 var progressUpload = document.getElementsByClassName("progressUpload")[0];
 var progress;
 addProgressBar();
@@ -15,7 +12,7 @@ var endFileName;
 var endUserName;
 
 document.getElementById("uploadBtn").onclick = function(){
-	if (/^([a-z0-9_-]{1,50})$/.test(document.getElementById('filename').value)) {
+	if (/^([a-zA-Z0-9_-]{1,50})$/.test(document.getElementById('filename').value)) {
 		sendFiles(selectDialog.files);
 	}
 	else {
