@@ -425,6 +425,22 @@ app.post('/admin/loginAs', (req, res) => {
     });
 });
 
+app.get('/view/:user/:item', (req, res) => {
+    let data;
+    try { data = fs.statSync(`./content/${req.params.user}/${req.params.item}`); } catch (err) {
+        res.render('404.ejs');
+        res.end();
+        return;
+    }
+
+    res.render('view_info.ejs',  {
+        username:req.params.user,
+        filename:req.params.item,
+        filesize:data.size / 1024 / 1024,
+        filetype:req.params.item.split('.')[req.params.item.split('.').length -1]
+    });
+});
+
 app.get('/wallpaper', (req, res) => {
     res.render('landing/okayu_noBar.ejs');
 })
