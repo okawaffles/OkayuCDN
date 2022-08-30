@@ -9,7 +9,7 @@
     <title>View File Info | OkayuCDN</title>
 
     <meta content="<%= filename %> | OkayuCDN" property="og:title">
-    <meta content="Upload files for free" property="og:description">
+    <meta content="Uploaded by <%= username %>" property="og:description">
     <meta content="https://okayu.okawaffles.com/view/<%= username %>/<%= filename %>" property="og:url">
     <meta content="#9000e3" data-react-helmet="true" name="theme-color">
 </head>
@@ -28,13 +28,17 @@
         <h4 class="method" id="size">Size:</h4>
         <h4 class="method" id="type">File Type:</h4>
 
+        <div id="previewArea">
+            
+        </div>
+
         <div class="wrap">
             <button class="go" onclick="document.location = `/content/<%= username %>/<%= filename %>`">Download</button>
         </div>
     </div>
 
     <script src="/assets/scripts/viewfileinfo.js"></script>
-    <script>doInfo("<%= filesize %>", "<%= filetype %>")</script>
+    <script>doInfo("<%= filesize %>", "<%= filetype %>", "<%= username %>", "<%= filename %>")</script>
 
     <style>
         @font-face {
