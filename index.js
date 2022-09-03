@@ -424,10 +424,6 @@ app.post('/admin/loginAs', (req, res) => {
         }
     });
 });
-app.get('/admin/restart', (req, res) => {
-    // test
-    process.exit();
-});
 
 app.get('/view/:user/:item', (req, res) => {
     let data;
