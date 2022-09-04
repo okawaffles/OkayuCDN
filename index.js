@@ -433,11 +433,11 @@ app.get('/view/:user/:item', (req, res) => {
         return;
     }
 
-    res.render('view_info.ejs',  {
-        username:req.params.user,
-        filename:req.params.item,
-        filesize:data.size / 1024 / 1024,
-        filetype:req.params.item.split('.')[req.params.item.split('.').length -1]
+    res.render('view_info.ejs', {
+        username: req.params.user,
+        filename: req.params.item,
+        filesize: data.size / 1024 / 1024,
+        filetype: req.params.item.split('.')[req.params.item.split('.').length - 1]
     });
 });
 
@@ -449,15 +449,19 @@ app.get('/wallpaper', (req, res) => {
 // New account things (file storage size)
 app.get('/qus', (req, res) => {
     let user = req.query.user;
-    let udat = JSON.parse(fs.readFileSync(`./db/userLoginData/${user}.json`, 'utf-8'));
-    let totalUserStorage = udat.storage;
     let size = 0;
-    fs.readdir(`./content/${user}`, (err, files) => {
-        files.forEach(file => {
-            size += fs.statSync(`./content/${user}/${file}`).size;
+    try {
+        let udat = JSON.parse(fs.readFileSync(`./db/userLoginData/${user}.json`, 'utf-8'));
+        let totalUserStorage = udat.storage;
+        fs.readdir(`./content/${user}`, (err, files) => {
+            files.forEach(file => {
+                size += fs.statSync(`./content/${user}/${file}`).size;
+            });
+            if (!udat.premium) res.json({ size: size, userTS: totalUserStorage }); else res.json({ size: size, userTS: 1099511627776 });
         });
-        if (!udat.premium) res.json({ size: size, userTS: totalUserStorage }); else res.json({ size: size, userTS: 1099511627776 });
-    })
+    } catch (err) {
+        res.json({size: 0, userTS: 26843545600});
+    }
 })
 function qus(user) {
     let udat = JSON.parse(fs.readFileSync(`./db/userLoginData/${user}.json`, 'utf-8'));
