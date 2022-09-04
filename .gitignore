@@ -2,7 +2,6 @@
 .replit
 okayuCDN-full.code-workspace
 /db/sessionStorage
-/db/userLoginData
 /db/ip403
 
 # this config is for if you would like to use nodemailer

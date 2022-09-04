@@ -27,17 +27,12 @@
         <li class="navi-li-left navi-li"><a href="../manage/content" class="navi-a">Manage</a></li>
         <li class="navi-li-right navi-li"><a href="../logout" class="navi-a">Log Out</a></li>
     </ul>
-    <br>
-    <!--<div class="pad upload-pane">
-        <h2 class="title">Welcome to OkayuCDN.</h2>
-        <h4 class="method">Method: POST (You -> Endpoint -> OkayuCDN)</h4>
-        <form class="uploadForm" action="./cdnUpload" method="POST" enctype="multipart/form-data">
-            <input type="file" id="uploaded" name="uploaded" required />
-            <input type="text" name="filename" required placeholder="Name Your File" pattern="[a-zA-Z0-9_-]{3-50}" style="width: 250px; float: right;" />
-            <p style="text-align: center;">Non-alphanumeric characters are not allowed in filenames.</p>
-            <input type="submit" style="position: absolute; left: 50%; transform: translateX(-50%)"/>
-        </form>
-    </div>-->
+   
+    <div id="banner-hider" style="display: none;">
+        <ul class="banner-ul">
+            <p id="banner-contents">Hey ${username}! You seem to be a bug-tester! Thanks for your help! We've upped your storage as a thank-you!</p>
+        </ul>
+    </div>
 
     <div class="pad upload-pane">
         <div class="uploader">
@@ -60,7 +55,7 @@
         </div>
     </div>
     <script src="/assets/scripts/uploadscript.js"></script>
-    <script>assignUserName("<%= USERNAME %>"); getStorage()</script>
+    <script>assignUserName("<%= USERNAME %>", "<%= isBT %>"); getStorage()</script>
 
     <h3 class="version">OkayuCDN v4</h3>
 

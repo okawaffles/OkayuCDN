@@ -71,6 +71,12 @@ function getUsername(token) {
         return userData.user;
     }
 }
+function getUserData(token) {
+    if (fs.existsSync(`./db/sessionStorage/${token}.json`)) {
+        var userData = JSON.parse(fs.readFileSync(`./db/userLoginData/${getUsername(token)}.json`));
+        return userData;
+    }
+}
 function getPremiumStat(token) {
     if (fs.existsSync(`./db/sessionStorage/${token}.json`)) {
         var userData = JSON.parse(fs.readFileSync(`./db/sessionStorage/${token}.json`));
@@ -80,18 +86,14 @@ function getPremiumStat(token) {
 
 function verifyToken(token) {
     if (fs.existsSync(`./db/sessionStorage/${token}.json`)) {
-        var userData = JSON.parse(fs.readFileSync(`./db/sessionStorage/${token}.json`));
-        var d = new Date();
-        if (userData.expires > d.getTime()) return true; else return true; // something doesn't work right so token expiration is disabled.
+        return true;
     } else return false;
 }
-function checkRestriction(token) {
-    if (fs.existsSync(`./db/sessionStorage/${token}.json`)) {
-        var userData = JSON.parse(fs.readFileSync(`./db/userLoginData/${getUsername(token)}.json`));
-        if (userData.restricted) {
-            okayuLogger.info('login', `${getUsername(token)} is banned for ${userData.restricted}`);
-            return userData.restricted;
-        } else return false;
+function checkRestriction(username) {
+    var userData = JSON.parse(fs.readFileSync(`./db/userLoginData/${username}.json`));
+    if (userData.restricted) {
+        okayuLogger.info('login', `${username} is banned for ${userData.restricted}`);
+        return userData.restricted;
     } else return false;
 }
 
@@ -113,8 +115,7 @@ const genNewToken = size => [...Array(size)].map(() => Math.floor(Math.random() 
 app.use('*', (req, res, next) => {
     res.setHeader('X-Powered-By', "OkayuCDN");
     var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-    ip = ip.split(':');
-    let pip = ip[ip.length - 1]
+    let pip = ip;
     if (fs.existsSync(`./db/ip403/${pip}`)) {
         let reason = fs.readFileSync(`./db/ip403/${pip}`);
         res.render('forbidden.ejs', { "reason": reason });
@@ -215,7 +216,7 @@ app.get('/manage/upload', (req, res) => {
     if (!token) {
         res.redirect('/login?redir=/manage/upload');
     } else if (verifyToken(token)) {
-        res.render('upload.ejs', { USERNAME: getUsername(token) });
+        res.render('upload.ejs', { USERNAME: getUsername(token), isBT: getUserData(token).tags.bugtester });
     } else {
         res.redirect('/login?redir=/manage/upload');
     }
@@ -244,7 +245,7 @@ app.get('/login', (req, res) => {
 });
 app.get('/logout', (req, res) => {
     if (fs.existsSync(`./db/sessionStorage/${req.cookies.token}.json`)) fs.rmSync(`./db/sessionStorage/${req.cookies.token}.json`);
-    res.cookie("token", "logout");
+    res.cookie("token", "logout", { expires: new Date(Date.now() + 604800000) });
     res.redirect('/home');
 })
 
@@ -317,20 +318,21 @@ app.post('/login?*', (req, res) => {
     let args = req.url.split('?')[1];
     let redir = args.split('&')[0].split('=')[1];
     let form = new formidable.IncomingForm();
+    let username;
     form.parse(req, (err, fields, files) => {
+        username = fields.un;
         if (verifyLogin(fields.un, fields.pw)) {
             let token = genNewToken(32);
             let d = new Date();
             let session = {
-                user: fields.un,
-                expires: parseInt((d.getTime() + 604800))
+                user: fields.un
             };
 
-            if (checkRestriction(token) === false) {
+            if (checkRestriction(fields.un) == false) {
                 res.cookie(`token`, token);
                 res.redirect(redir);
                 fs.writeFileSync(`./db/sessionStorage/${token}.json`, JSON.stringify(session));
-            } else res.render('forbidden.ejs', { reason: checkRestriction(token) });
+            } else res.render('forbidden.ejs', { reason: checkRestriction(username) });
         } else res.render('login_failed.ejs', { redir: redir });
     });
 });
@@ -349,7 +351,11 @@ app.post('/signup', (req, res) => {
                         email: fields.em,
                         name: fields.nm,
                         storage: 26843545600,
-                        premium: false
+                        premium: false,
+                        tags: {
+                            bugtester: false,
+                            okasoft: false
+                        }
                     };
                     fs.writeFileSync(`./db/userLoginData/${fields.un}.json`, JSON.stringify(data));
                     res.redirect(`/login?redir=/home`);
@@ -489,7 +495,7 @@ app.get('/quc', (req, res) => {
     let sizelist = [];
     let usf = `./content/${req.query.user}`;
     if (!fs.existsSync(usf)) {
-        res.json({listing: {0:"You haven't uploaded anything."}, sizelist: {0:0}});
+        res.json({ listing: { 0: "You haven't uploaded anything." }, sizelist: { 0: 0 } });
         return;
     }
     fs.readdir(usf, (err, files) => {

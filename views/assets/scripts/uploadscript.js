@@ -48,7 +48,7 @@ function updateProgress(e){
 			$.getJSON(`/cec?user=${endUserName}&file=${endFileName}`, function(data) {
 				success = data.result;
 				if (!success) {
-					progress.innerHTML = `<br><p style="color:red;">File upload couldn't be verified (Error: OKAYU-UUS-CEC)</p>`
+					progress.innerHTML = `<br><p style="color:red;">Something went wrong when uploading your file. Error Info: UUS-CEC (UPLOAD_SERVICE_DID_NOT_SUCCEED)</p>`
 					document.getElementById('visibleToggle').style = "display: none;";
 				} else {
 					progress.innerHTML = `<br><p>Finished, please wait...</p>`
@@ -73,11 +73,15 @@ function addProgressBar(){
 	progress = document.getElementsByClassName("progress")[0];
 }
 
-function assignUserName(NAME) {
-    endUserName = NAME;
+function assignUserName(username, bugTester) {
+    endUserName = username;
+	if (bugTester == "true") {
+		document.getElementById('banner-hider').style = "";
+		document.getElementById('banner-contents').innerHTML = `Hey ${username}! You seem to be a bug-tester! Thanks for your help! We've upped your storage as a thank-you!`;
+	}
 }
 
-function getStorage(userTotalStorage) {
+function getStorage() {
 	document.getElementById('visibleToggle').style = "display: inline;";
 	$.getJSON(`/qus?user=${endUserName}`, function(data) {
 		document.getElementById('storageAmount').innerHTML = `You have used ${(((data.size / 1024) / 1024) / 1024).toFixed(2)}GB of storage (of your ${((data.userTS / 1024) / 1024) / 1024}GB)`
