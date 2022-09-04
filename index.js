@@ -2,35 +2,32 @@
 // v3 - 2022
 // I'm so proud of how far I've come.
 
-var okayuLogger = require('./cs-modules/okayuLogger/index.js');
-let reqProcessor = require('./cs-modules/reqProcessor');
+const cache = require('./cs-modules/cacheHelper');
 var fs = require('fs');
 // Check dependencies
 
 try {
+    require('okayulogger');
     require('express');
     require('cookie-parser');
     require('ejs');
     require('formidable');
     require('crypto');
     require('ytdl-core');
-    require('cors')
 } catch (err) { // exit if fail
-    okayuLogger.error('boot', "Missing dependencies! Please run 'npm ci'");
-    okayuLogger.info('boot', "Exit...");
+    console.error("Error: Missing dependencies! Please run 'npm ci'");
+    console.log("Exit...");
     process.exit(1);
 }
 
 
 
 // requirements and setup
-
+const {info, error, warn} = require('okayulogger');
 var cookieParser = require('cookie-parser');
 var formidable = require('formidable');
 var express = require('express');
 var cryplib = require('crypto');
-var ytdl = require('ytdl-core');
-let nodemailer, nmcfg; // nodemailer (if used)
 
 var app = express();
 
@@ -45,19 +42,15 @@ var siteStatus = 200;
 
 var config = require('./config.json');
 
-if (config.useNodeMailer) {
-    nodemailer = require('nodemailer');
-    nmcfg = require('./nodemailer_config.json');
-}
-
 let asciiart = fs.readFileSync('./asciiart.txt', 'utf-8');
 console.log(asciiart);
-okayuLogger.info("boot", `Starting OkayuCDN Server ${config.version}${config.buildType}`);
-okayuLogger.info("boot", `Server must be restarted to change config.`);
+info("boot", `Starting OkayuCDN Server ${config.version}${config.buildType}`);
+info("boot", `Server must be restarted to change config.`);
 
 // Check to be sure that template.json has been removed
 // from /db/sessionStorage and /db/userLoginData
-if (fs.existsSync(`./db/sessionStorage/template.json`) || fs.existsSync(`./db/userLoginData/template.json`)) okayuLogger.warn('auth', "Template JSONs have not been deleted! Please delete them from the database!");
+if (fs.existsSync(`./db/sessionStorage/template.json`) || fs.existsSync(`./db/userLoginData/template.json`))
+    warn('auth', "template.json is present in either/both /db/sessionStorage or /db/userLoginData. Please remove it.");
 
 // Additional Functions
 
@@ -79,7 +72,7 @@ function getUserData(token) {
 }
 function getPremiumStat(token) {
     if (fs.existsSync(`./db/sessionStorage/${token}.json`)) {
-        var userData = JSON.parse(fs.readFileSync(`./db/sessionStorage/${token}.json`));
+        var userData = JSON.parse(fs.readFileSync(`./db/userLoginData/${getUsername(token)}.json`));
         return userData.premium;
     }
 }
@@ -92,7 +85,7 @@ function verifyToken(token) {
 function checkRestriction(username) {
     var userData = JSON.parse(fs.readFileSync(`./db/userLoginData/${username}.json`));
     if (userData.restricted) {
-        okayuLogger.info('login', `${username} is banned for ${userData.restricted}`);
+        info('login', `${username} is banned for ${userData.restricted}`);
         return userData.restricted;
     } else return false;
 }
@@ -119,9 +112,9 @@ app.use('*', (req, res, next) => {
     if (fs.existsSync(`./db/ip403/${pip}`)) {
         let reason = fs.readFileSync(`./db/ip403/${pip}`);
         res.render('forbidden.ejs', { "reason": reason });
-        okayuLogger.info('RequestInfo', `[IP-BAN] ${pip} :: ${req.method} ${req.originalUrl}`);
+        info('RequestInfo', `[IP-BAN] ${pip} :: ${req.method} ${req.originalUrl}`);
     } else {
-        okayuLogger.info('RequestInfo', `${pip} :: ${req.method} ${req.originalUrl}`);
+        info('RequestInfo', `${pip} :: ${req.method} ${req.originalUrl}`);
         //reqProcessor.process(req.method, ip, req.originalUrl);
         if (!config.dev_mode) {
             next();
@@ -278,12 +271,65 @@ app.get('/success', (req, res) => {
 
 // POST Request handlers
 
+app.post('/manage/cdnUpload', async (req, res) => {
+    info('UserUploadService', 'Got upload-is-done request!');
+    const token = req.cookies.token;
+    if (!verifyToken(token)) return;
+    if (!config.enableUploading) return;
+
+    const username = getUsername(token);
+
+    const form = new formidable.IncomingForm();
+    form.parse(req, function (err, fields, files) {
+        if (!fs.existsSync(`./content/${username}`))
+            fs.mkdirSync(`./content/${username}`);
+        
+        const newName = files.file0.originalFilename;
+        const newPath = `./content/${username}/${newName}`;
+        const oldName = files.file0.filepath;
+        // If the user has already uploaded with this filename.
+        if (fs.existsSync(`./content/${username}/${newName}`)) {
+            error('UserUploadService', 'File already exists, abort.');
+            cache.cacheRes('uus', 'nau', username);
+            return;
+        }
+        if (files.file0.size == 0 || !newName || newName.includes(" ")) {
+            error('UserUploadService', 'File is either empty or has a non-valid name, abort.');
+            cache.cacheRes('uus', 'bsn', username);
+            return;
+        }
+        qus(username, (data) => {
+            if (files.file0.size > (data.userTS - data.size)) {
+                error('UserUploadService', 'File is too large for user\'s upload limit, abort.');
+                cache.cacheRes('uus', 'nes', username);
+                return;
+            }
+        });
+        // User passed all checks so far...
+        info('UserUploadService', 'User has passed all checks, finish upload.');
+        fs.rename(oldName, newPath, function (err) {
+            if (err) {
+                error('fs.renameSync', err);
+                error('UserUploadService', 'Failed to rename file. Caching UUS-ISE for the user.');
+                cache.cacheRes('uus', 'ise', username);
+                return;
+            } else {
+                info('UserUploadService', 'File upload finished successfully!');
+                cache.cacheRes('uus', 'aok', username);
+                return;
+            }
+        });
+    });
+})
+
+/* Old Upload Code 
+
 app.post('/manage/cdnUpload', (req, res) => {
-    okayuLogger.info('upload', 'Recieved upload POST... working...');
+    info('upload', 'Recieved upload POST... working...');
     if (config.enableUploading) {
         const form = new formidable.IncomingForm();
         form.parse(req, function (err, fields, files) {
-            okayuLogger.info('upload', 'Parsing form and files...');
+            info('upload', 'Parsing form and files...');
             var token = req.cookies.token;
 
             if (!fs.existsSync(`./content/${getUsername(token)}`)) // when uploading on a new account
@@ -291,7 +337,7 @@ app.post('/manage/cdnUpload', (req, res) => {
 
             if (!fs.existsSync(`./content/${getUsername(token)}/${files.file0.originalFilename}`)) {
                 if (files.file0.originalFilename.includes(" ") || files.file0.size == 0) {
-                    okayuLogger.info('upload', 'file is empty or bad name, return.')
+                    info('upload', 'file is empty or bad name, return.')
                     return;
                 }
 
@@ -300,19 +346,20 @@ app.post('/manage/cdnUpload', (req, res) => {
                 var newPath = `./content/${getUsername(token)}/${files.file0.originalFilename}`;
                 console.log({ newPath });
 
-                okayuLogger.info('upload', `User ${getUsername(token)} is uploading ${files.file0.originalFilename} ...`);
+                info('upload', `User ${getUsername(token)} is uploading ${files.file0.originalFilename} ...`);
 
                 fs.rename(oldPath, newPath, function (err) {
                     if (err) {
-                        okayuLogger.error('upload', err);
+                        error('upload', err);
                     } else {
-                        okayuLogger.info('upload', 'Finished!');
+                        info('upload', 'Finished!');
                     }
                 })
             } else res.render('upload_failed.ejs', { 'error': "You already have a file uploaded with that name!" })
         })
     } else res.render('upload_failed.ejs', { 'error': 'Uploading is currently disabled.' })
 });
+*/
 
 app.post('/login?*', (req, res) => {
     let args = req.url.split('?')[1];
@@ -478,7 +525,7 @@ function qus(user) {
         let udat = JSON.parse(fs.readFileSync(`./db/userLoginData/${user}.json`, 'utf-8'));
         let totalUserStorage = udat.storage;
         let size = 0;
-        fs.readdir(`./content/${user}`, (err, files) => {
+        fs.readdirSync(`./content/${user}`, (err, files) => {
             files.forEach(file => {
                 size += fs.statSync(`./content/${user}/${file}`).size;
             });
@@ -517,6 +564,20 @@ app.get('/cec', (req, res) => {
     }
 });
 
+app.get('/getres', (req, res) => {
+    let user = req.query.user;
+    let service = req.query.service;
+    if (!user || !service) {
+        res.send("<h1>400</h1> <hr> <h3>Please append queries \"?user=USERNAME&service=SERVICE\" to your request!</h3>");
+    } else {
+        if (!fs.existsSync(`./cache/${user}.${service}.json`)) {
+            res.status(404);
+            return;
+        }
+        res.json(JSON.parse(fs.readFileSync(`./cache/${user}.${service}.json`, 'utf-8')));
+    }
+});
+
 
 // Keep Last !! 404 handler
 app.get('*', (req, res) => {
@@ -528,10 +589,10 @@ app.get('*', (req, res) => {
 // Listen on port (use nginx to reverse proxy)
 var server;
 server = app.listen(config.port).on('error', function (err) {
-    okayuLogger.error('express', `Failed to listen on port ${config.port}! It is already in use!`);
+    error('express', `Failed to listen on port ${config.port}! It is already in use!`);
     process.exit(1);
 });
 
 setTimeout(() => {
-    okayuLogger.info('express', `Listening on port ${config.port}`);
+    info('express', `Listening on port ${config.port}`);
 }, 1000);

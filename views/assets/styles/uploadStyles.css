@@ -4,10 +4,10 @@
 }
 
 .progress {
-	background-color: green;
+	background-color: #45ffbb;
 	width: 0%;
 	height: 20px;
-
+	border-radius: 4px;
 }
 
 .progressBar {

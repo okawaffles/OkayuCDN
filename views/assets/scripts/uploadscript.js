@@ -45,10 +45,10 @@ function updateProgress(e){
 		let success = false;
 
 		setTimeout(() => {
-			$.getJSON(`/cec?user=${endUserName}&file=${endFileName}`, function(data) {
-				success = data.result;
+			$.getJSON(`/getres?user=${endUserName}&service=uus`, function(data) {
+				success = data.success;
 				if (!success) {
-					progress.innerHTML = `<br><p style="color:red;">Something went wrong when uploading your file. Error Info: UUS-CEC (UPLOAD_SERVICE_DID_NOT_SUCCEED)</p>`
+					progress.innerHTML = `<br><p style="color:red;">Something went wrong when uploading your file.<br>Error Info: ${data.details} (${data.code})</p>`
 					document.getElementById('visibleToggle').style = "display: none;";
 				} else {
 					progress.innerHTML = `<br><p>Finished, please wait...</p>`
