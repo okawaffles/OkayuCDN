@@ -450,6 +450,10 @@ app.get('/wallpaper', (req, res) => {
 app.get('/qus', (req, res) => {
     let user = req.query.user;
     let size = 0;
+    if (!fs.existsSync(`./content/${req.query.user}`)) {
+        res.json({ size: 0, userTS: 26843545600 });
+        return;
+    }
     try {
         let udat = JSON.parse(fs.readFileSync(`./db/userLoginData/${user}.json`, 'utf-8'));
         let totalUserStorage = udat.storage;
@@ -460,25 +464,34 @@ app.get('/qus', (req, res) => {
             if (!udat.premium) res.json({ size: size, userTS: totalUserStorage }); else res.json({ size: size, userTS: 1099511627776 });
         });
     } catch (err) {
-        res.json({size: 0, userTS: 26843545600});
+        res.json({ size: 0, userTS: 26843545600 });
     }
 })
 function qus(user) {
-    let udat = JSON.parse(fs.readFileSync(`./db/userLoginData/${user}.json`, 'utf-8'));
-    let totalUserStorage = udat.storage;
-    let size = 0;
-    fs.readdir(`./content/${user}`, (err, files) => {
-        files.forEach(file => {
-            size += fs.statSync(`./content/${user}/${file}`).size;
-        });
-        if (!udat.premium) return { size: size, userTS: totalUserStorage }; else return { size: size, userTS: 1099511627776 };
-    })
+    try {
+        let udat = JSON.parse(fs.readFileSync(`./db/userLoginData/${user}.json`, 'utf-8'));
+        let totalUserStorage = udat.storage;
+        let size = 0;
+        fs.readdir(`./content/${user}`, (err, files) => {
+            files.forEach(file => {
+                size += fs.statSync(`./content/${user}/${file}`).size;
+            });
+            if (!udat.premium) return { size: size, userTS: totalUserStorage }; else return { size: size, userTS: 1099511627776 };
+        })
+    }
+    catch (e) {
+        return { size: 0, userTS: 26843545600 };
+    }
 }
 
 app.get('/quc', (req, res) => {
     let list = [];
     let sizelist = [];
     let usf = `./content/${req.query.user}`;
+    if (!fs.existsSync(usf)) {
+        res.json({listing: {0:"You haven't uploaded anything."}, sizelist: {0:0}});
+        return;
+    }
     fs.readdir(usf, (err, files) => {
         files.forEach(file => {
             list.push(file);
