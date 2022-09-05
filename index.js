@@ -205,7 +205,13 @@ app.get('/manage/upload', (req, res) => {
     if (!token) {
         res.redirect('/login?redir=/manage/upload');
     } else if (verifyToken(token)) {
-        res.render('upload.ejs', { USERNAME: getUsername(token), isBT: getUserData(token).tags.bugtester, premium: getPremiumStat(token) });
+        let isBT = false;
+        try {
+            isBT = getUserData(token).tags.bugtester;
+        } catch (err) {
+            isBT = false;
+        }
+        res.render('upload.ejs', { USERNAME: getUsername(token), isBT: isBT, premium: getPremiumStat(token) });
     } else {
         res.redirect('/login?redir=/manage/upload');
     }
