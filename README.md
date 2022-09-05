@@ -1,6 +1,6 @@
 ![Boot Test](https://github.com/okawaffles/OkayuCDNv3/actions/workflows/node.js.yml/badge.svg)
 
-# a file upload server. ~~version 3.~~ now version 4 but i dont want to create a new repo.
+# A File Upload Server
 
 ## Why?
 cause i can. and cause im tired of my friends complaining about not being able to upload files larger than 8mb on discord. also its fun.
