@@ -1,6 +1,6 @@
 {
     "version":"5.0.0",
-    "buildType":"ptb",
+    "buildType":"ptb1",
     "enableAccountCreation":true,
     "enableUploading":true,
     "dev_mode":false,

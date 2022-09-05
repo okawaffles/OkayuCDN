@@ -73,11 +73,13 @@ function addProgressBar(){
 	progress = document.getElementsByClassName("progress")[0];
 }
 
-function assignUserName(username, bugTester) {
+function assignUserName(username, bugTester, premium) {
     endUserName = username;
+	if (!premium) document.getElementById('premium-tag').style.display = "inline";
 	if (bugTester == "true") {
 		document.getElementById('banner-hider').style = "";
 		document.getElementById('banner-contents').innerHTML = `Hey ${username}! You seem to be a bug-tester! Thanks for your help! We've upped your storage as a thank-you!`;
+		document.getElementById('bugtest-tag').style.display = "inline";
 	}
 }
 

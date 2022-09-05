@@ -7,7 +7,7 @@ var fs = require('fs');
 // Check dependencies
 
 try {
-    require('okayulogger');
+    require('okayulogger'); // requires chalk
     require('express');
     require('cookie-parser');
     require('ejs');
@@ -28,6 +28,7 @@ var cookieParser = require('cookie-parser');
 var formidable = require('formidable');
 var express = require('express');
 var cryplib = require('crypto');
+const chalk = require('chalk');
 
 var app = express();
 
@@ -114,7 +115,7 @@ app.use('*', (req, res, next) => {
         res.render('forbidden.ejs', { "reason": reason });
         info('RequestInfo', `[IP-BAN] ${pip} :: ${req.method} ${req.originalUrl}`);
     } else {
-        info('RequestInfo', `${pip} :: ${req.method} ${req.originalUrl}`);
+        info('RequestInfo', `${chalk.red(pip)} :: ${chalk.green(req.method)} ${chalk.green(req.originalUrl)}`);
         //reqProcessor.process(req.method, ip, req.originalUrl);
         if (!config.dev_mode) {
             next();
@@ -140,12 +141,7 @@ app.get('/mira', (req, res) => {
     res.end();
 });
 
-// user-viewable
-
-app.get('/content/2.otf', (req, res) => {
-    file = fs.readFileSync(`./views/assets/fonts/kfhimajimoco.otf`);
-    res.send(file);
-});
+// Main
 
 app.get('/content/:user/:item', (req, res) => {
     let user = req.params.user;
@@ -209,7 +205,7 @@ app.get('/manage/upload', (req, res) => {
     if (!token) {
         res.redirect('/login?redir=/manage/upload');
     } else if (verifyToken(token)) {
-        res.render('upload.ejs', { USERNAME: getUsername(token), isBT: getUserData(token).tags.bugtester });
+        res.render('upload.ejs', { USERNAME: getUsername(token), isBT: getUserData(token).tags.bugtester, premium: getPremiumStat(token) });
     } else {
         res.redirect('/login?redir=/manage/upload');
     }
@@ -361,9 +357,8 @@ app.post('/manage/cdnUpload', (req, res) => {
 });
 */
 
-app.post('/login?*', (req, res) => {
-    let args = req.url.split('?')[1];
-    let redir = args.split('&')[0].split('=')[1];
+app.post('/login', (req, res) => {
+    let redir = req.query.redir;
     let form = new formidable.IncomingForm();
     let username;
     form.parse(req, (err, fields, files) => {
@@ -376,7 +371,7 @@ app.post('/login?*', (req, res) => {
             };
 
             if (checkRestriction(fields.un) == false) {
-                res.cookie(`token`, token);
+                res.cookie(`token`, token, { expires: new Date(Date.now() + 604800000) });
                 res.redirect(redir);
                 fs.writeFileSync(`./db/sessionStorage/${token}.json`, JSON.stringify(session));
             } else res.render('forbidden.ejs', { reason: checkRestriction(username) });
@@ -464,11 +459,10 @@ app.post('/admin/loginAs', (req, res) => {
             let d = new Date();
             let session = {
                 user: fields.user,
-                expires: parseInt((d.getMilliseconds() + 604800000))
             };
 
             if (checkRestriction(token) === false) {
-                res.cookie(`token`, token);
+                res.cookie(`token`, token, { expires: new Date(Date.now() + 604800000) });
                 res.redirect('/home');
                 fs.writeFileSync(`./db/sessionStorage/${token}.json`, JSON.stringify(session));
             } else res.render('forbidden.ejs', { reason: checkRestriction(token) });
