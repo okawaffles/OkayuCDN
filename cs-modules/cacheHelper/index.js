@@ -1,3 +1,5 @@
+const {info, error, warn} = require('okayulogger');
+
 const fs = require('fs');
 function cacheRes(_process, _code, _username) {
     let code = _code.toLowerCase();
@@ -19,4 +21,27 @@ function cacheRes(_process, _code, _username) {
     fs.writeFileSync(`./cache/${_username}.${_process}.json`, data);
 }
 
-module.exports = {cacheRes};
+function cleanCache() {
+    info('cacheHelper', 'Cleaning up cache...')
+    fs.readdir('./cache', function (err, files) {
+        files.forEach(file => {
+            if(file != "placeholder") fs.rmSync(`./cache/${file}`);
+        });
+        info('cacheHelper', 'Finished cleaning cache.');
+    });
+}
+function cleanTokens() {
+    info('cacheHelper', 'Cleaning up tokens...')
+    fs.readdir('./db/sessionStorage', function (err, files) {
+        files.forEach(file => {
+            fs.rmSync(`./db/sessionStorage/${file}`);
+        });
+        info('cacheHelper', 'Finished cleaning tokens.');
+    });
+}
+
+function prepareDirectories() {
+    // todo
+}
+
+module.exports = {cacheRes, cleanCache, cleanTokens, prepareDirectories};

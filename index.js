@@ -53,6 +53,11 @@ info("boot", `Server must be restarted to change config.`);
 if (fs.existsSync(`./db/sessionStorage/template.json`) || fs.existsSync(`./db/userLoginData/template.json`))
     warn('auth', "template.json is present in either/both /db/sessionStorage or /db/userLoginData. Please remove it.");
 
+// Clean cache and tokens
+cache.prepareDirectories();
+cache.cleanCache();
+cache.cleanTokens();
+
 // Additional Functions
 
 function hash(string) {

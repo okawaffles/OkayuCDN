@@ -1,4 +1,4 @@
-var okayuLogger = require('./cs-modules/okayuLogger/index.js');
+var okayuLogger = require('okayulogger');
 var config = require('./config.json');
 okayuLogger.info("boot", `Starting OkayuCDN Server ${config.version}${config.buildType}`);
 okayuLogger.info("boot", `Starting in Maintenance Mode! Server must be restarted to change config.`);
@@ -19,10 +19,16 @@ app.get('/content/:user/:item', (req, res) => {
     let file = "none";
     try {
         file = fs.readFileSync(`./content/${user}/${item}`);
-        if (file != "none") {
+        if (file == "none") {
             res.send(file);
         } else {
-            res.json({ 'error':'500','description':'content found but was unable to be read. contact okawaffles#0001 on discord for more information.' })
+            res.json(
+                {
+                    'response': '500',
+                    'error': 'CDS-FF (DELIVERY_SERVICE_CANNOT_READ)',
+                    'description': 'Content found but was unable to be read. Contact support@okawaffles.com if you encounter this error.'
+                }
+            )
         }
     } catch (err) {
         res.render('404.ejs');
@@ -30,6 +36,7 @@ app.get('/content/:user/:item', (req, res) => {
     res.end();
 });
 app.get('/status', (req, res) => {
+    res.status(503);
     res.json({'status':'503','description':'Server is down for maintenance.'})
 })
 
