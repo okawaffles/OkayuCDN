@@ -23,7 +23,7 @@ try {
 
 
 // requirements and setup
-const {info, error, warn} = require('okayulogger');
+const { info, error, warn } = require('okayulogger');
 var cookieParser = require('cookie-parser');
 var formidable = require('formidable');
 var express = require('express');
@@ -56,7 +56,7 @@ if (fs.existsSync(`./db/sessionStorage/template.json`) || fs.existsSync(`./db/us
 // Clean cache and tokens
 cache.prepareDirectories();
 cache.cleanCache();
-cache.cleanTokens();
+if (!config.dev_mode) cache.cleanTokens(); // dont clean tokens on devmode boot
 
 // Additional Functions
 
@@ -125,7 +125,7 @@ app.use('*', (req, res, next) => {
         if (!config.dev_mode) {
             next();
         } else {
-            if (pip == "192.168.1.229" || pip == "192.168.1.1" || pip == "127.0.0.1") next(); else res.render('forbidden.ejs', { 'reason': 'Server is in development mode.' });
+            if (pip == "::1" || pip == "192.168.1.1" || pip == "127.0.0.1") next(); else res.render('forbidden.ejs', { 'reason': 'Server is in development mode.' });
         }
     }
 })
@@ -234,14 +234,10 @@ app.get('/manage/content', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-    let args, redir;
-    try {
-        args = req.url.split('?')[1];
-        redir = args.split('&')[0].split('=')[1];
-        res.render('login.ejs', { redir: redir });
-    } catch (err) {
-        res.redirect('/login?redir=/home')
-    }
+    if (!req.query.redir)
+        res.redirect('/login?redir=/home');
+    else
+        res.render('login.ejs', { redir: req.query.redir });
 });
 app.get('/logout', (req, res) => {
     if (fs.existsSync(`./db/sessionStorage/${req.cookies.token}.json`)) fs.rmSync(`./db/sessionStorage/${req.cookies.token}.json`);
@@ -290,7 +286,7 @@ app.post('/manage/cdnUpload', async (req, res) => {
     form.parse(req, function (err, fields, files) {
         if (!fs.existsSync(`./content/${username}`))
             fs.mkdirSync(`./content/${username}`);
-        
+
         const newName = files.file0.originalFilename;
         const newPath = `./content/${username}/${newName}`;
         const oldName = files.file0.filepath;
@@ -328,45 +324,6 @@ app.post('/manage/cdnUpload', async (req, res) => {
         });
     });
 })
-
-/* Old Upload Code 
-
-app.post('/manage/cdnUpload', (req, res) => {
-    info('upload', 'Recieved upload POST... working...');
-    if (config.enableUploading) {
-        const form = new formidable.IncomingForm();
-        form.parse(req, function (err, fields, files) {
-            info('upload', 'Parsing form and files...');
-            var token = req.cookies.token;
-
-            if (!fs.existsSync(`./content/${getUsername(token)}`)) // when uploading on a new account
-                fs.mkdirSync(`./content/${getUsername(token)}`);
-
-            if (!fs.existsSync(`./content/${getUsername(token)}/${files.file0.originalFilename}`)) {
-                if (files.file0.originalFilename.includes(" ") || files.file0.size == 0) {
-                    info('upload', 'file is empty or bad name, return.')
-                    return;
-                }
-
-                var oldPath = files.file0.filepath;
-                var fExt = files.file0.originalFilename.split('.').at(-1);
-                var newPath = `./content/${getUsername(token)}/${files.file0.originalFilename}`;
-                console.log({ newPath });
-
-                info('upload', `User ${getUsername(token)} is uploading ${files.file0.originalFilename} ...`);
-
-                fs.rename(oldPath, newPath, function (err) {
-                    if (err) {
-                        error('upload', err);
-                    } else {
-                        info('upload', 'Finished!');
-                    }
-                })
-            } else res.render('upload_failed.ejs', { 'error': "You already have a file uploaded with that name!" })
-        })
-    } else res.render('upload_failed.ejs', { 'error': 'Uploading is currently disabled.' })
-});
-*/
 
 app.post('/login', (req, res) => {
     let redir = req.query.redir;
@@ -440,12 +397,15 @@ app.post('/manage/delFile', (req, res) => {
 app.post('/admin/delFile', (req, res) => {
     let form = new formidable.IncomingForm();
     form.parse(req, (err, fields, files) => {
-        if (fs.existsSync(`./content/${fields.username}/${fields.filename}`)) {
-            fs.rmSync(`./db/content/${fields.username}/${fields.filename}`);
+        try {
+            fs.rmSync(`./content/${fields.username}/${fields.filename}`);
             res.json({ 'code': '200' });
-        } else res.redirect('/admin');
+        } catch (e) {
+            res.json({ 'code': '404', 'e':e });
+        }
     })
 })
+
 app.post('/admin/resUser', (req, res) => {
     let form = new formidable.IncomingForm();
     form.parse(req, (err, fields, files) => {
@@ -466,6 +426,7 @@ app.post('/admin/loginAs', (req, res) => {
     let form = new formidable.IncomingForm();
     form.parse(req, (err, fields) => {
         if (verifyLogin(fields.un, fields.pw)) {
+            warn('admin', `An admin is logging in as user '${fields.user}'`)
             let token = genNewToken(32);
             let d = new Date();
             let session = {
@@ -600,4 +561,5 @@ server = app.listen(config.port).on('error', function (err) {
 
 setTimeout(() => {
     info('express', `Listening on port ${config.port}`);
+    if (config.dev_mode) warn('dev_mode', 'Server is in development mode. Some security features are disabled and non local users cannot access the website.');
 }, 1000);

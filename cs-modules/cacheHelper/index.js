@@ -25,7 +25,7 @@ function cleanCache() {
     info('cacheHelper', 'Cleaning up cache...')
     fs.readdir('./cache', function (err, files) {
         files.forEach(file => {
-            if(file != "placeholder") fs.rmSync(`./cache/${file}`);
+            fs.rmSync(`./cache/${file}`);
         });
         info('cacheHelper', 'Finished cleaning cache.');
     });
@@ -41,7 +41,11 @@ function cleanTokens() {
 }
 
 function prepareDirectories() {
-    // todo
+    if (!fs.existsSync('./db')) fs.mkdirSync('./db');
+    if (!fs.existsSync('./db/sessionStorage')) fs.mkdirSync('./db/sessionStorage');
+    if (!fs.existsSync('./db/userLoginData')) fs.mkdirSync('./db/userLoginData');
+    if (!fs.existsSync('./content')) fs.mkdirSync('./content');
+    if (!fs.existsSync('./cache')) fs.mkdirSync('./cache');
 }
 
 module.exports = {cacheRes, cleanCache, cleanTokens, prepareDirectories};
