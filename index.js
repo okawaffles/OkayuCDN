@@ -553,8 +553,7 @@ app.get('*', (req, res) => {
 
 
 // Listen on port (use nginx to reverse proxy)
-var server;
-server = app.listen(config.port).on('error', function (err) {
+app.listen(config.port).on('error', function (err) {
     error('express', `Failed to listen on port ${config.port}! It is already in use!`);
     process.exit(1);
 });
