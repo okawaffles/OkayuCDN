@@ -461,7 +461,9 @@ app.get('/view/:user/:item', (req, res) => {
 });
 
 app.get('/wallpaper', (req, res) => {
-    res.render('landing/okayu_noBar.ejs');
+    if(req.query.moe == "true") {
+        res.render('landing/okayu_noBar.ejs', {pagetitle:"waffle.moe", desc:"not much is here yet"});
+    } else res.render('landing/okayu_noBar.ejs', {pagetitle:"OkayuCDN Wallpaper", desc:"Landing page without the navbar!"});
 })
 
 
