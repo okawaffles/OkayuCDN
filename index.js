@@ -310,15 +310,23 @@ app.post('/manage/cdnUpload', async (req, res) => {
         });
         // User passed all checks so far...
         info('UserUploadService', 'User has passed all checks, finish upload.');
-        fs.rename(oldName, newPath, function (err) {
+        fs.copyFileSync(oldName, newPath, 0, function (err) {
             if (err) {
-                error('fs.renameSync', err);
-                error('UserUploadService', 'Failed to rename file. Caching UUS-ISE for the user.');
+                error('fs.copyFileSync', err);
+                error('UserUploadService', 'Failed to copy file. Caching UUS-ISE for the user.');
                 cache.cacheRes('uus', 'ise', username);
-                return;
             } else {
                 info('UserUploadService', 'File upload finished successfully!');
                 cache.cacheRes('uus', 'aok', username);
+
+                info('UserUploadService', 'Cleaning temp file...');
+                fs.rmSync(oldName, function (err) {
+                    if (err) {
+                        error('fs.rmSync', err);
+                        error('UserUploadService', 'Could not delete the temp file.');
+                        return;
+                    }
+                });
                 return;
             }
         });

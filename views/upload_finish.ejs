@@ -16,10 +16,10 @@
 
 <body>
     <ul class="navi-ul">
-        <li class="navi-li-left navi-li"><a href="../home" class="navi-a">Home</a></li>
-        <li class="navi-li-left navi-li"><a href="../manage/upload" class="navi-a">Upload</a></li>
-        <li class="navi-li-left navi-li"><a href="../manage/content" class="navi-a">Manage</a></li>
-        <li class="navi-li-right navi-li"><a href="../logout" class="navi-a">Log Out</a></li>
+        <li class="navi-li-left navi-li"><a href="../home" class="navi-a" id="nav_home">Home</a></li>
+        <li class="navi-li-left navi-li"><a href="../manage/upload" class="navi-a" id="nav_upload">Upload</a></li>
+        <li class="navi-li-left navi-li"><a href="../manage/content" class="navi-a" id="nav_manage">Manage</a></li>
+        <li class="navi-li-right navi-li"><a href="../logout" class="navi-a" id="nav_logout">Log Out</a></li>
     </ul>
     <br>
     <div class="pad upload-pane">
@@ -28,11 +28,11 @@
             <%=l%>
         </h4>
         <br>
-        <p style="color: red;">If your file is large (like a long video), it may be too large for the server to process,
-            and such, you will get a 404 error.</p>
+        <!-- <p style="color: red;">If your file is large (like a long video), it may be too large for the server to process,
+            and such, you will get a 404 error.</p> -->
     </div>
 
-    <h3 class="version">OkayuCDN v4</h3>
+    <h3 class="version">OkayuCDN v5</h3>
 
     <style>
         @font-face {

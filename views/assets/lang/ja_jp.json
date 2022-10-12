@@ -1,0 +1,10 @@
+{
+    "pages": {
+        "home": {
+            "NAV_HOME":"ホーム",
+            "NAV_UPLOAD":"アップロード",
+            "NAV_MANAGE":"",
+            "NAV_INFO":"インフォ"
+        }
+    }
+}
