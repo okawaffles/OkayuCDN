@@ -2,6 +2,9 @@
 <html lang="en">
 
 <head>
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"
+        integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,9 +29,9 @@
     </ul> -->
 
     <div class="container">
-        <h1 class="title">Welcome to OkayuCDN!</h1>
-        <h2 class="subtitle sa">You can upload your files for free here!</h2>
-        <h2 class="subtitle sb">Any file type is supported and they can be embedded in Discord!</h2>
+        <h1 class="title" id="t_title">Welcome to OkayuCDN!</h1>
+        <h2 class="subtitle sa" id="t_sa">You can upload your files for free here!</h2>
+        <h2 class="subtitle sb" id="t_sb">Any file type is supported and they can be embedded in Discord!</h2>
         <!--<div class="container line"></div>-->
     </div>
 
@@ -38,6 +41,10 @@
 
     <h3>v<%= version %>
     </h3><br>
+
+    <!-- ja lang script -->
+    <script src="../assets/scripts/jaLangMgr.js"></script>
+    <script>loadLanguage('home');</script>
 
     <style>
         @font-face {
@@ -154,6 +161,7 @@
             .subtitle {
                 font-size: 24px;
             }
+
             .navi-a {
                 font-size: 12px;
             }
@@ -211,6 +219,7 @@
             color: white;
             text-align: center;
         }
+
         .learnmore {
             color: white;
         }

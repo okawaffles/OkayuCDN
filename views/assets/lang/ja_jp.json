@@ -1,10 +1,16 @@
 {
+    "shared": {
+        "NAV_HOME":"ホーム",
+        "NAV_UPLOAD":"アップロード",
+        "NAV_MANAGE":"収める",
+        "NAV_INFO":"インフォ"
+    },
+
     "pages": {
         "home": {
-            "NAV_HOME":"ホーム",
-            "NAV_UPLOAD":"アップロード",
-            "NAV_MANAGE":"",
-            "NAV_INFO":"インフォ"
+            "T_TITLE":"OkayuCDNへようこそ！",
+            "T_SA":"ここに無料ためにあなたのファイルをアップロード",
+            "T_SB":"全部のファイルタイプは支持です"
         }
     }
 }
