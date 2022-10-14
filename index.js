@@ -64,7 +64,7 @@ let siteStatus = 200;
 
 // Ascii art is no longer required to boot
 let asciiart = fs.readFileSync('./asciiart.txt', 'utf-8');
-if (!asciiart || config.newConfigTest.startFlags["DISABLE_ASCII_ART"]) asciiart = "";
+if (!asciiart || config.start_flags["DISABLE_ASCII_ART"]) asciiart = "";
 console.log(asciiart);
 
 // end of new index start

@@ -1,13 +1,16 @@
 {
     "version":"5.0.0",
     "build_type":"ptb2",
-    "start_flags": [
+    "start_flags_available": [
         "DISABLE_ACCOUNT_CREATION",
         "DISABLE_UPLOADING",
         "DEV_MODE",
         "DISABLE_ASCII_ART",
         "DISABLE_CACHE_CLEAN",
         "DISABLE_TOKEN_CLEAN"
+    ],
+    "start_flags":[
+        
     ],
     "port":2773,
     "dev_port":"2773"
