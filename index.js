@@ -9,7 +9,7 @@ const cache = require('./cs-modules/cacheHelper');
 // Check+Load dependencies
 let okayuLogger, express, cookieParser, formidable, cryplib, ytdl, chalk;
 try {
-    okayuLogger = require('okayulogger');
+    require('okayulogger');
     express = require('express');
     cookieParser = require('cookie-parser');
     formidable = require('formidable');
@@ -23,6 +23,7 @@ try {
     console.log(e);
     process.exit(1);
 }
+const {info,warn,error} = require('okayulogger');
 
 // Check+Load config
 let config;
