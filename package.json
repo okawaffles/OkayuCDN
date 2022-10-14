@@ -11,6 +11,6 @@
     "ytdl-core": "^4.11.0"
   },
   "scripts": {
-    "test": "npm ci && npm install && node test.js"
+    "test": "npm ci && npm install && node index.js GITHUB_ACTIONS_TEST"
   }
 }
