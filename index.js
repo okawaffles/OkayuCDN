@@ -9,9 +9,9 @@ const cache = require('./cs-modules/cacheHelper');
 // Check+Load dependencies
 let okayuLogger, express, cookieParser, formidable, cryplib, ytdl, chalk;
 try {
-    okayuLogger = require('okayuLogger');
+    okayuLogger = require('okayulogger');
     express = require('express');
-    cookieParser = require('cookieParser');
+    cookieParser = require('cookie-parser');
     formidable = require('formidable');
     cryplib = require('crypto'); // stop using this in v5.0s!!!
     ytdl = require('ytdl-core');
