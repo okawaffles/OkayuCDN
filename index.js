@@ -574,6 +574,6 @@ app.listen(config.port).on('error', function (err) {
 });
 
 setTimeout(() => {
-    if (!process.argv[2] == "GITHUB_ACTIONS_TEST") info('express', `Listening on port ${config.port}`);
+    if (!process.argv.includes("GITHUB_ACTIONS_TEST")) info('express', `Listening on port ${config.port}`);
     if (config.dev_mode) warn('dev_mode', 'Server is in development mode. Some security features are disabled and non local users cannot access the website.');
 }, 1000);
