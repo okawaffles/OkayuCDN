@@ -1,9 +1,14 @@
 {
     "version":"5.0.0",
-    "buildType":"ptb1.3",
-    "enableAccountCreation":true,
-    "enableUploading":true,
-    "dev_mode":false,
+    "build_type":"ptb2",
+    "start_flags": [
+        "DISABLE_ACCOUNT_CREATION",
+        "DISABLE_UPLOADING",
+        "DEV_MODE",
+        "DISABLE_ASCII_ART",
+        "DISABLE_CACHE_CLEAN",
+        "DISABLE_TOKEN_CLEAN"
+    ],
     "port":2773,
-    "useNodeMailer":false
+    "dev_port":"2773"
 }

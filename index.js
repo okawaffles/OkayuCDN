@@ -1,50 +1,74 @@
 // By okawaffles
-// v3 - 2022
+// v5 - 2022
 // I'm so proud of how far I've come.
 
-const cache = require('./cs-modules/cacheHelper');
-var fs = require('fs');
-// Check dependencies
 
+const fs = require('fs');
+const cache = require('./cs-modules/cacheHelper');
+
+// Check+Load dependencies
+let okayuLogger, express, cookieParser, formidable, cryplib, ytdl, chalk;
 try {
-    require('okayulogger'); // requires chalk
-    require('express');
-    require('cookie-parser');
-    require('ejs');
-    require('formidable');
-    require('crypto');
-    require('ytdl-core');
-} catch (err) { // exit if fail
-    console.error("Error: Missing dependencies! Please run 'npm ci'");
-    console.log("Exit...");
+    okayuLogger = require('okayuLogger');
+    express = require('express');
+    cookieParser = require('cookieParser');
+    formidable = require('formidable');
+    cryplib = require('crypto'); // stop using this in v5.0s!!!
+    ytdl = require('ytdl-core');
+    chalk = require('chalk');
+
+    require('ejs'); // do not assign ejs to a variable as we don't need to
+} catch (e) {
+    console.log('Error: Missing dependencies. Please run "npm ci"!');
+    console.log(e);
     process.exit(1);
 }
 
+// Check+Load config
+let config;
+try {
+    config = require('./config.json');
+} catch (e) {
+    error('boot', 'Could not load server config (config.json)');
+    error('boot', e);
+    // write new config later
+    process.exit(1);
+}
 
-
-// requirements and setup
-const { info, error, warn } = require('okayulogger');
-var cookieParser = require('cookie-parser');
-var formidable = require('formidable');
-var express = require('express');
-var cryplib = require('crypto');
-const chalk = require('chalk');
-
-var app = express();
-
+// Prepare express
+let app = express();
+app.set('view engine', 'ejs');
 app.use(express.static('/views'));
 app.use('/assets', express.static(__dirname + '/views/assets'));
 app.use(cookieParser());
-app.set('view engine', 'ejs');
+// this function shows the IP of every request:
+app.use('*', (req, res, next) => {
+    res.setHeader('X-Powered-By', "OkayuCDN");
+    var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    let pip = ip;
+    if (fs.existsSync(`./db/ip403/${pip}`)) {
+        res.render('forbidden.ejs', { "reason":fs.readFileSync(`./db/ip403/${pip}`) });
+        info('RequestInfo', `[IP-BAN] ${pip} :: ${req.method} ${req.originalUrl}`);
+    } else {
+        info('RequestInfo', `${chalk.red(pip)} :: ${chalk.green(req.method)} ${chalk.green(req.originalUrl)}`);
+        if (!config.dev_mode)
+            next();
+        else if (pip == "::1" || pip == "192.168.1.1" || pip == "127.0.0.1") 
+            next(); 
+        else res.render('forbidden.ejs', { 'reason': 'Server is in development mode.' });
+    }
+})
 
-var siteStatus = 200;
+// Global variables for something I honestly don't know (likely status, etc?)
+let siteStatus = 200;
 
-// load config...
-
-var config = require('./config.json');
-
+// Ascii art is no longer required to boot
 let asciiart = fs.readFileSync('./asciiart.txt', 'utf-8');
+if (!asciiart || config.newConfigTest.startFlags["DISABLE_ASCII_ART"]) asciiart = "";
 console.log(asciiart);
+
+// end of new index start
+
 info("boot", `Starting OkayuCDN Server ${config.version}${config.buildType}`);
 info("boot", `Server must be restarted to change config.`);
 
@@ -109,26 +133,6 @@ function verifyLogin(username, password) {
 }
 
 const genNewToken = size => [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
-
-
-app.use('*', (req, res, next) => {
-    res.setHeader('X-Powered-By', "OkayuCDN");
-    var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-    let pip = ip;
-    if (fs.existsSync(`./db/ip403/${pip}`)) {
-        let reason = fs.readFileSync(`./db/ip403/${pip}`);
-        res.render('forbidden.ejs', { "reason": reason });
-        info('RequestInfo', `[IP-BAN] ${pip} :: ${req.method} ${req.originalUrl}`);
-    } else {
-        info('RequestInfo', `${chalk.red(pip)} :: ${chalk.green(req.method)} ${chalk.green(req.originalUrl)}`);
-        //reqProcessor.process(req.method, ip, req.originalUrl);
-        if (!config.dev_mode) {
-            next();
-        } else {
-            if (pip == "::1" || pip == "192.168.1.1" || pip == "127.0.0.1") next(); else res.render('forbidden.ejs', { 'reason': 'Server is in development mode.' });
-        }
-    }
-})
 
 
 // Web pages //

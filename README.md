@@ -17,6 +17,7 @@ idk if you want. it only works half the time, though (as of now, trying to fix t
 ### To-do
 - Clean up index.js (mainly the first part of the file)
 - Switch to new config system
+- Stop using outdated crypto library
 
 ### Notes
 this repo is very messy and honestly i probably wont clean it up.
