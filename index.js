@@ -7,13 +7,16 @@ const fs = require('fs');
 const cache = require('./cs-modules/cacheHelper');
 
 // Check+Load dependencies
-let okayuLogger, express, cookieParser, formidable, cryplib, ytdl, chalk;
+let express, cookieParser, formidable, cryplib, ytdl, chalk;
+const { info, warn, error } = require('okayulogger');
 try {
     require('okayulogger');
     express = require('express');
     cookieParser = require('cookie-parser');
     formidable = require('formidable');
-    cryplib = require('crypto'); // stop using this in v5.0s!!!
+    if (parseInt(process.version.split('v')[1].split('.')[0]) < 15)
+        error('boot', 'Your node version does not support crypto!');
+    cryplib = require('crypto'); // switched away from npm crypto to built-in crypto
     ytdl = require('ytdl-core');
     chalk = require('chalk');
 
@@ -23,7 +26,6 @@ try {
     console.log(e);
     process.exit(1);
 }
-const {info,warn,error} = require('okayulogger');
 
 // Check+Load config
 let config;
@@ -48,14 +50,14 @@ app.use('*', (req, res, next) => {
     var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     let pip = ip;
     if (fs.existsSync(`./db/ip403/${pip}`)) {
-        res.render('forbidden.ejs', { "reason":fs.readFileSync(`./db/ip403/${pip}`) });
+        res.render('forbidden.ejs', { "reason": fs.readFileSync(`./db/ip403/${pip}`) });
         info('RequestInfo', `[IP-BAN] ${pip} :: ${req.method} ${req.originalUrl}`);
     } else {
         info('RequestInfo', `${chalk.red(pip)} :: ${chalk.green(req.method)} ${chalk.green(req.originalUrl)}`);
         if (!config.dev_mode)
             next();
-        else if (pip == "::1" || pip == "192.168.1.1" || pip == "127.0.0.1") 
-            next(); 
+        else if (pip == "::1" || pip == "192.168.1.1" || pip == "127.0.0.1")
+            next();
         else res.render('forbidden.ejs', { 'reason': 'Server is in development mode.' });
     }
 })
@@ -70,7 +72,7 @@ console.log(asciiart);
 
 // end of new index start
 
-info("boot", `Starting OkayuCDN Server ${config.version}${config.buildType}`);
+info("boot", `Starting OkayuCDN Server ${config.version}${config.build_type}`);
 info("boot", `Server must be restarted to change config.`);
 
 // Check to be sure that template.json has been removed
@@ -189,9 +191,9 @@ app.get('/favicon.ico', (req, res) => {
 // User Viewable Pages
 app.get('/home', (req, res) => {
     if (req.query.useBetaSite != "true")
-        res.render('home.ejs', { 'version': config.version + config.buildType });
+        res.render('home.ejs', { 'version': config.version + config.build_type });
     else
-        res.render('home_beta.ejs', { 'version': config.version + config.buildType });
+        res.render('home_beta.ejs', { 'version': config.version + config.build_type });
     res.end();
 });
 
@@ -414,7 +416,7 @@ app.post('/admin/delFile', (req, res) => {
             fs.rmSync(`./content/${fields.username}/${fields.filename}`);
             res.json({ 'code': '200' });
         } catch (e) {
-            res.json({ 'code': '404', 'e':e });
+            res.json({ 'code': '404', 'e': e });
         }
     })
 })
@@ -474,9 +476,9 @@ app.get('/view/:user/:item', (req, res) => {
 });
 
 app.get('/wallpaper', (req, res) => {
-    if(req.query.moe == "true") {
-        res.render('landing/okayu_noBar.ejs', {pagetitle:"waffle.moe", desc:"not much is here yet"});
-    } else res.render('landing/okayu_noBar.ejs', {pagetitle:"OkayuCDN Wallpaper", desc:"Landing page without the navbar!"});
+    if (req.query.moe == "true") {
+        res.render('landing/okayu_noBar.ejs', { pagetitle: "waffle.moe", desc: "not much is here yet" });
+    } else res.render('landing/okayu_noBar.ejs', { pagetitle: "OkayuCDN Wallpaper", desc: "Landing page without the navbar!" });
 })
 
 
@@ -568,12 +570,21 @@ app.get('*', (req, res) => {
 
 
 // Listen on port (use nginx to reverse proxy)
-if (!process.argv[2] == "GITHUB_ACTIONS_TEST") app.listen(config.port).on('error', function (err) {
-    error('express', `Failed to listen on port ${config.port}! It is already in use!`);
-    process.exit(1);
-});
+if (process.argv[2] != "GITHUB_ACTIONS_TEST") {
+    if (!config.start_flags.includes("DEV_MODE")) {
+        app.listen(config.port).on('error', function (err) {
+            error('express', `Failed to listen on port ${config.port}! Is it already in use?`);
+            process.exit(1);
+        });
+    } else {
+        app.listen(config.dev_port).on('error', function (err) {
+            error('express', `Failed to listen on port ${config.dev_port}! Is it already in use?`);
+            process.exit(1);
+        });
+    }
+}
 
 setTimeout(() => {
-    info('express', `Listening on port ${config.port}`);
-    if (config.dev_mode) warn('dev_mode', 'Server is in development mode. Some security features are disabled and non local users cannot access the website.');
+    info('express', `Listening on port ${config.start_flags.includes("DEV_MODE") ? config.dev_port : config.port}`);
+    if (config.start_flags.includes("DEV_MODE")) warn('dev_mode', 'Server is in development mode. Some security features are disabled and non local users cannot access the website.');
 }, 1000);
