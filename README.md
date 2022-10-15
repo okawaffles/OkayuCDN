@@ -1,24 +1,26 @@
 ![Boot Test](https://github.com/okawaffles/OkayuCDNv3/actions/workflows/node.js.yml/badge.svg)
 
 # A File Upload Server
+You create an account. You log in. You upload a file. You send the link. It embeds.
+It's *that* easy.
 
 ## Why?
-cause i can. and cause im tired of my friends complaining about not being able to upload files larger than 8mb on discord. also its fun.
+I felt like it. I wanted to make something useful. Now my friends can upload files greater than 8MB on discord.
 
 ## Should I use it?
-idk if you want. it only works half the time, though (as of now, trying to fix that)
+Sure, go ahead. It's not intended to be used as a major server and it is quite unoptimized. Just don't pass it off as your own, please.
 
-## How do I set it up
+## How do I set it up?
+*Note that the domain is hard-coded, so you will need to manually change it inside of the .ejs files.*
 1. `git clone https://github.com/okawaffles/okayucdnv3.git`
-2. edit index.js and stuff to match your domain or something, if you want.
-3. `npm ci`
-4. `node .`
+2. `npm ci`
+3. `node .`
+4. Optionally, use nginx, etc. to make a reverse proxy.
 
 ### To-do
-- Clean up index.js (mainly the first part of the file)
-- Switch to new config system
-- Stop using outdated crypto library
+- release ptb2
+- figure out if the slow uploading is my server to blame or if it is my code?
 
 ### Notes
-this repo is very messy and honestly i probably wont clean it up.
-this isn't intended to be used as a major server and is mainly a hobby project to me.
+- Please do not use OkayuCDN in a commercial environment. It is not intended to be used in commercial environments and I *do not* own the rights to Nekomata Okayu. You are putting yourself at risk if you use this in a commercial environment.
+- READ THE LICENSE, PLEASE
