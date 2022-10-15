@@ -1,0 +1,30 @@
+- WAFFLE co License for Open-Source Software -
+Version 1 | October 15th, 2022
+
+I am keeping things short and simple with this license.
+Read it from start to finish and you will be good to go.
+
+YOU MAY:
+- Modify, redistribute, or use pieces of source code in your own software.
+- Redistribute the application with credit towards the original author.
+- Use the program in cooperation with other software, with credit towards the original author.
+
+YOU MUST NOT:
+- Charge money for the software.
+- Charge money for features of the software.
+- Use the software in a commercial environment.
+- Claim credit for creation of the software.
+- Violate the rights of anyone else using the software.
+
+
+Warranty Disclaimer:
+There is NO warranty provided with this software to the extent permitted by applicable law. 
+Except when stated otherwise, the software is provided "as-is" without warranty of any kind.
+The user assumes all risk as to the quality and performance of the software.
+
+Liability:
+In no event are the creators of the software, or any other party other than the end-user, liable for damages caused by the software.
+This includes loss of data, data being rendered inaccurate, losses sustained by you and/or third parties, or a failure of the software to operate with any other software.
+The end-user assumes all responsibility for damages and losses caused by the software.
+
+END OF LICENSE
