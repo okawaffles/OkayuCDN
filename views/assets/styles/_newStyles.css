@@ -12,6 +12,9 @@ body {
     background-color: #24252A;
 }
 
+
+/* navbar desktop */
+
 li, a, button {
     font-size: 18px;
     color: #edf0f1;
@@ -41,7 +44,13 @@ header {
     padding: 25px 25px;
 }
 .nav_links li a:hover {
-    color: #0088a9;
+    /*color: #0088a9;*/
+    box-shadow: inset 0 -3px 0 #0088a983;
+    background-color: #25262c93;
+}
+.active {
+    box-shadow: inset 0 -3px 0 #0087a9;
+    background-color: #25262c;
 }
 
 button {

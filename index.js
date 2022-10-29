@@ -193,7 +193,7 @@ app.get('/home', (req, res) => {
     if (req.query.useBetaSite != "true")
         res.render('home.ejs', { 'version': config.version + config.build_type });
     else
-        res.render('home_beta.ejs', { 'version': config.version + config.build_type });
+        res.render('./new/home.ejs', { 'version': config.version + config.build_type });
     res.end();
 });
 
