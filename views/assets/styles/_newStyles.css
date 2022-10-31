@@ -1,3 +1,8 @@
+/*
+    do not support mobile devices at the moment.
+    tbd if I will bother doing mobile device support.
+*/
+
 @font-face {
     font-family: GenJyuuGothic;
     src: url("/assets/fonts/GenJyuuGothic.ttf");
@@ -175,4 +180,66 @@ button:hover {
     bottom: 0px;
     right: 10px;
     color: white;
+}
+
+/* login */
+
+.login_title {
+    padding: 25px 0 15px;
+    color: white;
+    font-size: 30pt;
+    margin: auto;
+    text-align: center;
+}
+.login_subtitle {
+    padding-bottom: 15px;
+    color: white;
+    font-size: 15pt;
+    text-align: center;
+}
+
+.uploadForm {
+    display: grid;
+    place-items: center;
+}
+
+.wrap {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.go {
+    padding: 9px 25px;
+    background-color: rgba(0,136,169,1);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease 0s;
+    color: white;
+    font-size: 18px;
+    width: 250px;
+}
+.go:hover {
+    background-color: rgba(0,136,169,0.8);
+}
+.noacc {
+    background-color: rgba(150,0,0,1);
+}
+.noacc:hover {
+    background-color: rgba(150,0,0,0.8);
+}
+
+.username, .password {
+    margin: 5px;
+    width: 300px;
+    height: 30px;
+    border-radius: 10px;
+    background-color: white;
+    border: none;
+    color: black;
+    font-family: GenJyuuGothic;
+    font-weight: 500;
+    text-align: center;
 }

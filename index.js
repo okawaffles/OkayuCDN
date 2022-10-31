@@ -183,8 +183,10 @@ app.get('/status', (req, res) => {
 app.get('/robots.txt', (req, res) => {
     res.send(fs.readFileSync('./views/assets/robots.txt'))
 })
+
+// dont forget to specify the root, lol
 app.get('/favicon.ico', (req, res) => {
-    res.send('/views/assets/favicon.ico');
+    res.send(fs.readFileSync('./views/assets/images/favicon.ico'));
 })
 
 
@@ -241,10 +243,15 @@ app.get('/manage/content', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-    if (!req.query.redir)
-        res.redirect('/login?redir=/home');
-    else
-        res.render('login.ejs', { redir: req.query.redir });
+    if (req.query.useBetaSite) {
+        res.render('./new/login.ejs', {redir: '/home'});
+        res.end();
+    } else {
+        if (!req.query.redir)
+            res.redirect('/login?redir=/home');
+        else
+            res.render('login.ejs', { redir: req.query.redir });
+    }
 });
 app.get('/logout', (req, res) => {
     if (fs.existsSync(`./db/sessionStorage/${req.cookies.token}.json`)) fs.rmSync(`./db/sessionStorage/${req.cookies.token}.json`);

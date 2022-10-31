@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to OkayuCDN!</title>
+    <link rel="stylesheet" href="/assets/styles/_newStyles.css">
+</head>
+<body>
+    <header>
+        <img class="logo" src="/assets/images/logo.png" width="200"></img>
+        <nav>
+            <ul class="nav_links">
+                <li><a href="../home">Home</a></li>
+                <li><a href="../manage/upload?useBetaSite=true">Upload</a></li>
+                <li><a href="../manage/content?useBetaSite=true">Manage</a></li>
+                <li><a href="../info?useBetaSite=true">Info</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="upload-pane">
+        <h2 class="login_title">Welcome to OkayuCDN!</h2>
+        <h4 class="login_subtitle">Let's get you logged in and ready to go!</h4>
+        <form class="uploadForm" id="form" action="/login?redir=<%= redir %>" method="POST">
+            <input type="text" placeholder="Username" class="username" name="un" required /><br>
+            <input type="password" placeholder="Password" class="password" name="pw" required /><br>
+            <div class="wrap">
+                <input type="submit" class="go" id="submit" value="Go" />
+            </div>
+        </form>
+        <br>
+        <div class="wrap">
+            <button class="noacc" onclick="location = `../signup`">I don't have an account</button>
+        </div>
+        <div class="line" style="--primary: white; display: none;"></div>
+    </div>
+</body>
+</html>
