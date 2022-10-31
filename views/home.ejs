@@ -127,7 +127,69 @@
             }
         }
 
-        
+        @keyframes titleToTop {
+    0% {
+        transform: translateY(1200%);
+        opacity: 0%;
+    }
+
+    100% {
+        transform: translateY(0%);
+        opacity: 100%;
+    }
+}
+
+@keyframes subToTop {
+    0% {
+        transform: translateY(2400%);
+        opacity: 0%;
+    }
+
+    100% {
+        transform: translateY(0%);
+        opacity: 100%;
+    }
+}
+
+.title {
+    margin-left: 25px;
+    font-size: 86px;
+    transform: translateY(2400%);
+    animation: titleToTop 1.5s ease;
+    animation-fill-mode: forwards;
+    color: white;
+}
+
+.subtitle {
+    margin-left: 25px;
+    font-size: 48px;
+    color: white;
+}
+
+.sa {
+    transform: translateY(2400%);
+    animation: subToTop 1.5s ease;
+    animation-fill-mode: forwards;
+    animation-delay: 100ms;
+}
+
+.sb {
+    transform: translateY(2400%);
+    animation: subToTop 1.5s ease;
+    animation-fill-mode: forwards;
+    animation-delay: 200ms;
+}
+
+.chara-center {
+    position: absolute;
+    bottom: -100%;
+    left: 50%;
+    transform: translateX(-50%);
+
+    animation: 1s charaFly ease;
+    animation-fill-mode: forwards;
+    animation-delay: 1250ms;
+}
 
 
         @media screen and (max-width: 600px) {
