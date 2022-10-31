@@ -10,6 +10,7 @@
 }
 body {
     background-color: #24252A;
+    overflow: hidden;
 }
 
 
@@ -63,4 +64,115 @@ button {
 }
 button:hover {
     background-color: rgba(0,136,169,0.8);
+}
+
+/* home */
+
+@keyframes titleToTop {
+    0% {
+        transform: translateY(1200%);
+        opacity: 0%;
+    }
+
+    100% {
+        transform: translateY(0%);
+        opacity: 100%;
+    }
+}
+
+@keyframes subToTop {
+    0% {
+        transform: translateY(2400%);
+        opacity: 0%;
+    }
+
+    100% {
+        transform: translateY(0%);
+        opacity: 100%;
+    }
+}
+
+.title {
+    margin-left: 25px;
+    font-size: 86px;
+    transform: translateY(2400%);
+    animation: titleToTop 1.5s ease;
+    animation-fill-mode: forwards;
+    color: white;
+}
+
+.subtitle {
+    margin-left: 25px;
+    font-size: 48px;
+    color: white;
+}
+
+.sa {
+    transform: translateY(2400%);
+    animation: subToTop 1.5s ease;
+    animation-fill-mode: forwards;
+    animation-delay: 100ms;
+}
+
+.sb {
+    transform: translateY(2400%);
+    animation: subToTop 1.5s ease;
+    animation-fill-mode: forwards;
+    animation-delay: 200ms;
+}
+
+.chara-center {
+    position: absolute;
+    bottom: -100%;
+    left: 50%;
+    transform: translateX(-50%);
+
+    animation: 1s charaFly ease;
+    animation-fill-mode: forwards;
+    animation-delay: 1250ms;
+}
+
+@keyframes charaFly {
+    0% {
+        bottom: -100%;
+    }
+
+    100% {
+        bottom: 0;
+    }
+}
+
+@keyframes charaFlyMobile {
+    0% {
+        transform: translateY(400%);
+    }
+
+    100% {
+        transform: translateY(100%);
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .title {
+        font-size: 43px;
+    }
+
+    .subtitle {
+        font-size: 24px;
+    }
+
+    .navi-a {
+        font-size: 12px;
+    }
+
+    .chara-center {
+        width: 85%;
+    }
+}
+
+.v {
+    position: fixed;
+    bottom: 0px;
+    right: 10px;
+    color: white;
 }
