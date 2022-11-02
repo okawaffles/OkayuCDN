@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to OkayuCDN!</title>
+    <link rel="stylesheet" href="/assets/styles/_newStyles.css">
+</head>
+<body>
+    <header>
+        <img class="logo" src="/assets/images/logo.png" width="200"></img>
+        <nav>
+            <ul class="nav_links">
+                <li><a href="#" class="active">Home</a></li>
+                <li><a href="/manage/upload?useBetaSite=true">Upload</a></li>
+                <li><a href="/manage/content?useBetaSite=true">Manage</a></li>
+                <li><a href="/info?useBetaSite=true">Info</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h1 class="title" id="t_title">Oh nyao!</h1>
+        <h2 class="subtitle sa" id="t_sa">We're down for maintenance! But we'll be back soon!</h2>
+        <h2 class="subtitle sb" id="t_sb">Your content should still be available!</h2>
+    </div>
+
+    <div class="characters">
+        <img src="./assets/images/okayu_450.png" class="chara-center" />
+    </div>
+
+    <h3 class="v">v<%= version %>
+    </h3><br>
+</body>
+</html>

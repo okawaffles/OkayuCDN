@@ -260,7 +260,7 @@ app.get('/logout', (req, res) => {
 })
 
 app.get('/signup', (req, res) => {
-    res.render('signup.ejs');
+    if (req.query.useBetaSite) res.render('new/signup.ejs'); else res.render('signup.ejs');
 });
 
 app.get('/admin', (req, res) => {
