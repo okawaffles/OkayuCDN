@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to OkayuCDN!</title>
+    <link rel="stylesheet" href="/assets/styles/_newStyles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+</head>
+<body>
+    <header>
+        <img class="logo" src="/assets/images/logo.png" width="200"></img>
+        <nav>
+            <ul class="nav_links">
+                <li><a href="../home">Home</a></li>
+                <li><a href="../manage/upload">Upload</a></li>
+                <li><a href="../mybox" class="active">My Box</a></li>
+                <li><a href="../info">Info</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="mybox_form_pane">
+        <h2 class="mybox_title">My Box</h2>
+        <h4 class="mybox_subtitle">Manage the files in your Box</h4><br>
+        <form class="login_form" action="./delFile" method="POST">
+            <div class="partone">
+                <input type="text" name="filename" class="input_text mb_input" required
+                    placeholder="Name of your file WITH EXTENSION!" style="width: 100%;" />
+                <p class="p mybox_all">Deleted files cannot be recovered, even by staff! Be sure you have the right file!</p>
+                <input type="submit" value="Delete" class="go" /><br><br>
+            </div>
+        </form>
+        <hr style="width: 100%">
+        <h2 class="mybox_contentH2">Your Content:</h2><br>
+        <div class="loader_container"><span id="loader"></span></div>
+        <div id="content_container">
+
+        </div>
+    </div>
+
+    <script src="/assets/scripts/managescript.js"></script>
+    <script>
+    setUser("<%= USERNAME %>");
+    </script>
+</body>
+</html>

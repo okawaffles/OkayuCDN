@@ -241,10 +241,20 @@ app.get('/manage/content', (req, res) => {
         res.redirect('/login?redir=/manage/content');
     }
 });
+app.get('/mybox', (req, res) => {
+    let token = req.cookies.token;
+    if (!token) {
+        res.redirect('/login?redir=/mybox&useBetaSite=true');
+    } else if (verifyToken(token)) {
+        res.render('new/mybox.ejs', { USERNAME: getUsername(token) });
+    } else {
+        res.redirect('/login?redir=/mybox&useBetaSite=true');
+    }
+});
 
 app.get('/login', (req, res) => {
     if (req.query.useBetaSite) {
-        res.render('./new/login.ejs', {redir: '/home'});
+        res.render('./new/login.ejs', {redir: req.query.redir});
         res.end();
     } else {
         if (!req.query.redir)
@@ -567,7 +577,6 @@ app.get('/getres', (req, res) => {
         res.json(JSON.parse(fs.readFileSync(`./cache/${user}.${service}.json`, 'utf-8')));
     }
 });
-
 
 // Keep Last !! 404 handler
 app.get('*', (req, res) => {
