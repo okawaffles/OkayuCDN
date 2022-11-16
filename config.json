@@ -1,6 +1,6 @@
 {
     "version":"5.0.0",
-    "build_type":"ptb2",
+    "build_type":"ptb-final",
     "start_flags_available": [
         "DISABLE_ACCOUNT_CREATION",
         "DISABLE_UPLOADING",
@@ -13,5 +13,6 @@
         
     ],
     "port":2773,
-    "dev_port":2773
+    "dev_port":2773,
+    "domain_unused":"https://okayu.okawaffles.com"
 }

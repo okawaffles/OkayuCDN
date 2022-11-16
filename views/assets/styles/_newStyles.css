@@ -98,7 +98,7 @@ button:hover {
 }
 
 .title {
-    margin-left: 25px;
+    margin: 20px 50px;
     font-size: 86px;
     transform: translateY(2400%);
     animation: titleToTop 1.5s ease;
@@ -107,7 +107,7 @@ button:hover {
 }
 
 .subtitle {
-    margin-left: 25px;
+    margin: 20px 50px;
     font-size: 48px;
     color: white;
 }
@@ -318,9 +318,11 @@ button:hover {
 }
 
 .loader_container {
+    padding-top: 25px;
     width: 100%;
     display: flex;
     align-items: center;
+    justify-content: space-around;
 }
 
 #loader {
@@ -376,3 +378,21 @@ button:hover {
     100% { transform: rotate(360deg) }
   }
    
+
+/* Info */
+.section_header {
+    color: white;
+    font-size: 48px;
+}
+.hr-info {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+.info-main {
+    text-align: center;
+    color: white;
+}
+
+.info_item, .stats_item {
+    font-size: 2em;
+}

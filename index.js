@@ -578,6 +578,10 @@ app.get('/getres', (req, res) => {
     }
 });
 
+app.get('/devel', (req, res) => {
+    res.render(`new/${req.query.p}.ejs`);
+})
+
 // Keep Last !! 404 handler
 app.get('*', (req, res) => {
     res.render("404.ejs");
@@ -604,3 +608,36 @@ setTimeout(() => {
     info('express', `Listening on port ${config.start_flags.includes("DEV_MODE") ? config.dev_port : config.port}`);
     if (config.start_flags.includes("DEV_MODE")) warn('dev_mode', 'Server is in development mode. Some security features are disabled and non local users cannot access the website.');
 }, 1000);
+
+/* stats */
+
+function stats(mode, stat) {
+    stats = JSON.parse(fs.readFileSync('./stats.json'));
+    if (mode == 0) {
+        // read stats
+        return {
+            uploads:stats.uploads,
+            accounts:stats.accounts
+        };
+    } else if (mode == 1) {
+        // increase value of stat
+        let u = stats.uploads;
+        let a = stats.accounts;
+        switch (stat) {
+            case "uploads":
+                u = stats.uploads + 1;
+                break;
+            case "accounts":
+                a = stats.accounts + 1;
+                break;
+            default:
+                info('stats', 'Invalid option');
+                break;
+        }
+        let finalstats = {
+            uploads:u,
+            accounts:a
+        }
+        fs.writeFileSync('stats.json', JSON.stringify(finalstats));
+    }
+}
