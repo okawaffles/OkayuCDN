@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico">
+    <title>View File Info | OkayuCDN</title>
+
+    <meta content="<%= filename %> | OkayuCDN" property="og:title">
+    <meta content="Uploaded by <%= username %>" property="og:description">
+    <meta content="https://okayu.okawaffles.com/view/<%= username %>/<%= filename %>" property="og:url">
+    <meta content="#9000e3" data-react-helmet="true" name="theme-color">
+</head>
+
+<body>
+    <ul class="navi-ul">
+        <li class="navi-li-left navi-li"><a href="/home" class="navi-a">Home</a></li>
+        <li class="navi-li-left navi-li"><a href="/manage/upload" class="navi-a">Upload</a></li>
+        <li class="navi-li-left navi-li"><a href="/manage/content" class="navi-a">Manage</a></li>
+    </ul>
+    <br>
+    <div class="pad upload-pane">
+        <h2 class="title"><%= filename %></h2>
+        <h4 class="method">Uploaded by <%= username %></h4>
+        
+        <h4 class="method" id="size">Size:</h4>
+        <h4 class="method" id="type">File Type:</h4>
+
+        <div id="previewArea">
+            
+        </div>
+
+        <div class="wrap">
+            <button class="go" onclick="document.location = `/content/<%= username %>/<%= filename %>`">Download</button>
+        </div>
+    </div>
+
+    <script src="/assets/scripts/viewfileinfo.js"></script>
+    <script>doInfo("<%= filesize %>", "<%= filetype %>", "<%= username %>", "<%= filename %>")</script>
+
+    <style>
+        @font-face {
+            font-family: KFhimajiMOCO;
+            src: url("/assets/fonts/GenJyuuGothic.ttf");
+        }
+
+        body {
+            background-color: #1c273b;
+            font-family: KFhimajiMOCO;
+            margin: 0;
+        }
+
+        .uploadForm {
+            display: grid;
+            place-items: center;
+        }
+
+        .wrap {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .go {
+            margin-top: 20px;
+            width: 300px;
+            height: 45px;
+            font-family: KFhimajiMOCO;
+            font-size: 16px;
+            letter-spacing: 2.5px;
+            font-weight: 500;
+            color: #000;
+            background-color: #fff;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease 0s;
+            cursor: pointer;
+            outline: none;
+        }
+        .go:hover {
+            background-color: #2EE59D;
+            box-shadow: 0px 15px 20px rgba(107, 107, 107, 0.4);
+            color: #fff;
+            transform: translateY(-7px);
+        }
+        .input_text {
+            margin: 5px;
+            width: 300px;
+            height: 30px;
+            border-radius: 10px;
+            background-color: white;
+            border: none;
+            color: black;
+            font-family: KFhimajiMOCO;
+            font-weight: 500;
+            text-align: center;
+        }
+        .acc {
+            margin-top: 50px;
+        }
+        .title {
+            font-size: 30pt;
+            text-align: center;
+            margin: auto;
+        }
+        .method {
+            font-size: 15pt;
+            text-align: center;
+            margin: auto;
+        }
+        .tos {
+            margin:auto;
+        }
+
+
+        .navi-ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #141924;
+        }
+
+        .navi-li-left {
+            float: left;
+        }
+
+        .navi-li-right {
+            float: right;
+        }
+
+        .navi-li-left a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 20px 20px;
+            text-decoration: none;
+        }
+
+        .navi-li-right a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 20px 20px;
+            text-decoration: none;
+        }
+
+        /* Change the link color to #111 (black) on hover */
+        .navi-li a:hover {
+            background-color: #111;
+        }
+
+        .upload-pane {
+            display: grid;
+            place-items: center;
+            /* background-color: #141924; */
+            border-radius: 20px;
+            padding: 3% 3%;
+            color: white;
+            width: fit-content;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        @media screen and (max-width: 600px) {
+            .navi-a {
+                font-size: 12px;
+            }
+        }
+    </style>
+</body>
+
+</html>

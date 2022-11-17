@@ -135,7 +135,43 @@ function verifyLogin(username, password) {
     } else return false;
 }
 
+/* stats */
+
+function stats(mode, stat) {
+    let values = JSON.parse(fs.readFileSync('./stats.json'));
+    if (mode == 'r') {
+        // read stats
+        return {
+            uploads: values.uploads,
+            accounts: values.accounts
+        };
+    } else if (mode == 'w') {
+        // increase value of stat
+        let u = values.uploads;
+        let a = values.accounts;
+        switch (stat) {
+            case "uploads":
+                u = values.uploads + 1;
+                break;
+            case "accounts":
+                a = values.accounts + 1;
+                break;
+            default:
+                info('stats', 'Invalid option');
+                break;
+        }
+        let finalstats = {
+            uploads: u,
+            accounts: a
+        }
+        fs.writeFileSync('stats.json', JSON.stringify(finalstats));
+    }
+}
+
 const genNewToken = size => [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+
+
+
 
 
 // Web pages //
@@ -200,7 +236,8 @@ app.get('/home', (req, res) => {
 });
 
 app.get('/info', (req, res) => {
-    res.render('info.ejs');
+    let values = stats('r');
+    res.render('info.ejs', { uploads: values.uploads, accounts: values.accounts });
     res.end();
 })
 
@@ -244,24 +281,19 @@ app.get('/manage/content', (req, res) => {
 app.get('/mybox', (req, res) => {
     let token = req.cookies.token;
     if (!token) {
-        res.redirect('/login?redir=/mybox&useBetaSite=true');
+        res.redirect('/login?redir=/mybox');
     } else if (verifyToken(token)) {
-        res.render('new/mybox.ejs', { USERNAME: getUsername(token) });
+        res.render('mybox.ejs', { USERNAME: getUsername(token) });
     } else {
-        res.redirect('/login?redir=/mybox&useBetaSite=true');
+        res.redirect('/login?redir=/mybox');
     }
 });
 
 app.get('/login', (req, res) => {
-    if (req.query.useBetaSite) {
-        res.render('./new/login.ejs', {redir: req.query.redir});
-        res.end();
-    } else {
-        if (!req.query.redir)
-            res.redirect('/login?redir=/home');
-        else
-            res.render('login.ejs', { redir: req.query.redir });
-    }
+    if (!req.query.redir)
+        res.redirect('/login?redir=/home');
+    else
+        res.render('login.ejs', { redir: req.query.redir });
 });
 app.get('/logout', (req, res) => {
     if (fs.existsSync(`./db/sessionStorage/${req.cookies.token}.json`)) fs.rmSync(`./db/sessionStorage/${req.cookies.token}.json`);
@@ -584,7 +616,7 @@ app.get('/devel', (req, res) => {
 
 // Keep Last !! 404 handler
 app.get('*', (req, res) => {
-    res.render("404.ejs");
+    res.render("notfound.ejs", {'version':config.version + config.build_type});
     res.end();
 })
 
@@ -608,36 +640,3 @@ setTimeout(() => {
     info('express', `Listening on port ${config.start_flags.includes("DEV_MODE") ? config.dev_port : config.port}`);
     if (config.start_flags.includes("DEV_MODE")) warn('dev_mode', 'Server is in development mode. Some security features are disabled and non local users cannot access the website.');
 }, 1000);
-
-/* stats */
-
-function stats(mode, stat) {
-    stats = JSON.parse(fs.readFileSync('./stats.json'));
-    if (mode == 0) {
-        // read stats
-        return {
-            uploads:stats.uploads,
-            accounts:stats.accounts
-        };
-    } else if (mode == 1) {
-        // increase value of stat
-        let u = stats.uploads;
-        let a = stats.accounts;
-        switch (stat) {
-            case "uploads":
-                u = stats.uploads + 1;
-                break;
-            case "accounts":
-                a = stats.accounts + 1;
-                break;
-            default:
-                info('stats', 'Invalid option');
-                break;
-        }
-        let finalstats = {
-            uploads:u,
-            accounts:a
-        }
-        fs.writeFileSync('stats.json', JSON.stringify(finalstats));
-    }
-}
