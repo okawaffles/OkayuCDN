@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to OkayuCDN!</title>
+    <title>Oh Nyao... | OkayuCDN!</title>
     <link rel="stylesheet" href="/assets/styles/_newStyles.css">
     <script src="https://kit.fontawesome.com/dc1b60441b.js" crossorigin="anonymous"></script>
 </head>
@@ -21,23 +21,17 @@
         </nav>
     </header>
 
-    <div class="view_info upload-pane">
-        <h2 class="login_title"><%= filename %></h2>
-        <h4 class="login_subtitle">Uploaded by <%= username %></h4>
-        
-        <h4 class="login_subtitle" id="size">Size:</h4>
-        <h4 class="login_subtitle" id="type">File Type:</h4>
-
-        <div class="view_preview" id="previewArea">
-            
-        </div>
-
-        <div class="wrap">
-            <button class="go" onclick="document.location = `/content/<%= username %>/<%= filename %>`">Download</button>
-        </div>
+    <div class="container">
+        <h1 class="title" id="t_title">Oh Nyao!</h1>
+        <h2 class="subtitle sa" id="t_sa">The requested content or page wasn't found!</h2>
+        <h2 class="subtitle sb" id="t_sb">If this is a mistake, please contact okawaffles!</h2>
     </div>
 
-    <script src="/assets/scripts/viewfileinfo.js"></script>
-    <script>doInfo("<%= filesize %>", "<%= filetype %>", "<%= username %>", "<%= filename %>")</script>
+    <div class="characters">
+        <img src="./assets/images/okayu_404.png" class="chara-center" />
+    </div>
+
+    <h3 class="v">v<%= version %>
+    </h3><br>
 </body>
 </html>

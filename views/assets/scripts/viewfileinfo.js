@@ -29,6 +29,8 @@ let knownFileTypes = {
 
 
     "EXE": "Windows Executable (EXE)",
+    "MSI": "Windows Installer (MSI)",
+    "DMG": "MacOS Installer",
     "BAT": "Windows Batch File (BAT)",
     "CMD": "Windows Batch File (CMD)",
     "ISO": "Disk Image (ISO)",
@@ -48,9 +50,11 @@ let knownFileTypes = {
     "JSON": "JavaScript Object Notation (JSON)",
     "GITIGNORE": "Git Ignore File",
     "MD": "Markdown File (MD)",
+    "MARKDOWN": "Markdown File (MARKDOWN)",
     "CSS": "Cascading Stylesheet (CSS)",
     "YAML": "YAML File (YAML)",
     "YML": "YAML File (YML)",
+    "MAKEFILE":"Makefile",
 
     "TTF": "TrueType Font (TTF)",
     "OTF": "Font (OTF)",

@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>okayu pointer landing</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/5.1.3/pixi.min.js"></script>
+    <script src="https://kit.fontawesome.com/dc1b60441b.js" crossorigin="anonymous"></script>
     <style type="text/css">
         body {
             margin: 0;
@@ -19,13 +20,25 @@
     <meta content="Upload files for free" property="og:description">
     <meta content="https://okayu.okawaffles.com/" property="og:url">
     <meta content="#9000e3" data-react-helmet="true" name="theme-color">
+
+    <link rel="stylesheet" href="/assets/styles/_newStyles.css">
 </head>
 
 <body>
-    <ul class="navi-ul">
+    <!--<ul class="navi-ul">
         <li class="navi-li-left navi-li"><a href="../home" class="navi-a">Home</a></li>
         <li class="navi-li-right navi-li"><a href="../mira" class="navi-a">You are viewing the Landing Page.</a></li>
-    </ul>
+    </ul>-->
+
+    <header>
+        <img class="logo" src="/assets/images/logo.png" width="200" onclick="window.location = '/home'"></img>
+        <nav>
+            <ul class="nav_links">
+                <li><a href="/mira"><i class="fa-solid fa-plane-arrival"></i> You are viewing the Landing Page.</a></li>
+            </ul>
+        </nav>
+    </header>
+
     <style>
         @media screen and (max-width: 600px) {
             .navi-a {
