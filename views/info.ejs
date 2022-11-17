@@ -2,182 +2,43 @@
 <html lang="en">
 
 <head>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3456757610882390"
-     crossorigin="anonymous"></script>
-
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico">
-    <meta name="viewport" content="width=device-width">
-    <title>Welcome to OkayuCDN</title>
-
-    <meta content="Info | OkayuCDN" property="og:title">
-    <meta content="Info and Attribution" property="og:description">
-    <meta content="https://okayu.okawaffles.com/info" property="og:url">
-    <meta content="#9000e3" data-react-helmet="true" name="theme-color">
+    <title>Info | OkayuCDN</title>
+    <link rel="stylesheet" href="/assets/styles/_newStyles.css">
+    <script src="https://kit.fontawesome.com/dc1b60441b.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
-    <ul class="navi-ul">
-        <li class="navi-li-left navi-li"><a href="../home" class="navi-a">Home</a></li>
-        <li class="navi-li-left navi-li"><a href="../manage/upload" class="navi-a">Upload</a></li>
-        <li class="navi-li-left navi-li"><a href="../manage/content" class="navi-a">Manage</a></li>
-        <li class="navi-li-right navi-li"><a href="../info" class="navi-a">Info</a></li>
-    </ul>
+    <header>
+        <img class="logo" src="/assets/images/logo.png" width="200"></img>
+        <nav>
+            <ul class="nav_links">
+                <li><a href="/home"><i class="fa-solid fa-house"></i> Home</a></li>
+                <li><a href="/manage/upload"><i class="fa-solid fa-upload"></i> Upload</a></li>
+                <li><a href="/mybox"><i class="fa-solid fa-box"></i> My Box</a></li>
+                <li><a href="#" class="active"><i class="fa-solid fa-circle-info"></i> Info</a></li>
+            </ul>
+        </nav>
+    </header>
 
-    <div class="row">
-        <div class="column cl">
-            <h1>About the Site</h1>
-            <h4>What's an Okayu?</h4>
-            <hr>
-            <h2 class="pg">
-                &emsp;&emsp;I created this website for the sole purpose of allowing people (mainly my friends) to share files larger than 8MB in size on Discord. You can upload anything you want (as long as it abides to our Terms of Service!) to it up to 1GB in size. I named it after Nekomata Okayu because I like her (and cause "okayu" looks nice as a subdomain and is easy to remember!). Did you know there's a few hidden landing pages? Try adding "/korone" or "/mira" to the landing page, and you might see some new characters! 
-            </h2>
+    <div class="info-main">
+        <div class="stats">
+            <h1 class="section_header">Stats</h1>
+            <h3 class="stats_item">Total Uploads: <%= uploads %></h3>
+            <h3 class="stats_item">Total Accounts: <%= accounts %></h3>
         </div>
-        <div class="column cr rs">
-            <h1>Credits and Attribution</h1>
-            <h4>Imagine if I did this from pure scratch...</h4>
-            <hr>
-            <h2 class="pg">
-                &emsp;&emsp;OkayuCDN uses various libraries from npm: express.js, cookie-parser, crypto, ejs, formidable, and ytdl-core. Okayu (Nekomata Okayu) is intellectual property of hololive and/or COVER corp. OkayuCDN is open-source, and you can view and edit the source code <a class="tos" href="https://github.com/okawaffles/okayucdnv3">here</a>. OkayuCDN was 100% developed by me and tested by 3 friends (tysm)! If you fix a bug or contribute in any way, you will be added here! The font used here is GenJyuuGothic (<a class="tos" href="https://okayu.okawaffles.com/assets/fonts/GenJyuuGothic.ttf">download</a>), which is the same as Nekopara's!
-            </h2>
+        <hr class="hr-info">
+        <div class="infopane">
+            <h1 class="section_header">Info</h1>
+            <h3 class="info_item"><i class="fa-brands fa-node"></i> Powered by Node.JS and express.js</h3>
+            <h3 class="info_item"><i class="fa-solid fa-font"></i> Fonts used: Gen Jyuu Gothic & Font Awesome (Icons)</h3>
+            <h3 class="info_item"><i class="fa-solid fa-heart"></i> Supporters: PanickedShears, KBGKaden</h3>
+            <h3 class="info_item"><i class="fa-solid fa-bug"></i> Bugtesters: PanickedShears, KBGKaden, catcodraws</h3>
         </div>
     </div>
 
-    <div class="characters">
-        <img src="./assets/images/okayu_450.png" class="chara-center" />
-    </div>
-
-    <style>
-        @font-face {
-            font-family: KFhimajiMOCO;
-            src: url("/assets/fonts/GenJyuuGothic.ttf");
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            background-color: #1c273b;
-            font-family: KFhimajiMOCO;
-            margin: 0;
-            overflow: hidden;
-            overflow-y: scroll;
-        }
-
-
-        .column {
-            float: left;
-            width: 49%;
-            padding: 2.5%;
-            color: white;
-            background-color: #141924;
-            text-align: center;
-            height: auto;
-
-            margin: 8px;
-
-            border-radius: 20px;
-        }
-
-        .row {
-            padding-left: 10px;
-            padding-right: 10px;
-        }
-
-        .pg {
-            text-align: left;
-            line-height: 1.5;
-        }
-
-        /* Clear floats after the columns */
-        .row:after {
-            content: "";
-            display: table;
-            clear: both;
-        }
-        img {
-            width: 20%;
-        }
-
-        .mobilebr {
-            display: none;
-        }
-
-        /* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
-        @media screen and (max-width: 1619px) {
-            .column {
-                width: 100%;
-                margin-bottom: 16px;
-                margin-left: 0;
-                margin-right: 0;
-            }
-            body {
-                overflow: visible;
-            }
-            .chara-center {
-                width: 50%;
-                height: 50%;
-            }
-            .navi-a {
-                font-size: 12px;
-            }
-        }
-
-        .tos {
-            color: #068eb8;
-        }
-
-
-
-        .navi-ul {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background-color: #141924;
-        }
-
-        .navi-li-left {
-            float: left;
-        }
-
-        .navi-li-right {
-            float: right;
-        }
-
-        .navi-li-left a {
-            display: block;
-            color: white;
-            text-align: center;
-            padding: 20px 20px;
-            text-decoration: none;
-        }
-
-        .navi-li-right a {
-            display: block;
-            color: white;
-            text-align: center;
-            padding: 20px 20px;
-            text-decoration: none;
-        }
-
-        /* Change the link color to #111 (black) on hover */
-        .navi-li a:hover {
-            background-color: #111;
-        }
-
-        .chara-center {
-            margin-top: -60px;
-            padding: none;
-            position: sticky;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-    </style>
 </body>
 
 </html>
