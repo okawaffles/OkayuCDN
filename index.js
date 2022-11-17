@@ -407,14 +407,14 @@ app.post('/login', (req, res) => {
                 res.redirect(redir);
                 fs.writeFileSync(`./db/sessionStorage/${token}.json`, JSON.stringify(session));
             } else res.render('forbidden.ejs', { reason: checkRestriction(username) });
-        } else res.render('login_failed.ejs', { redir: redir });
+        } else res.render('error_general', { error: 'Username or password incorrect!' });
     });
 });
 
 app.post('/signup', (req, res) => {
     let form = new formidable.IncomingForm();
     form.parse(req, (err, fields, files) => {
-        if (config.enableAccountCreation) {
+        if (!config.start_flags['DISABLE_ACCOUNT_CREATION']) {
             if (!fs.existsSync(`./db/userLoginData/${fields.un}.json`)) {
                 if (!(fields.un === "2.otf")) {
                     // Encrypt password with SHA-256 hash
@@ -434,13 +434,13 @@ app.post('/signup', (req, res) => {
                     fs.writeFileSync(`./db/userLoginData/${fields.un}.json`, JSON.stringify(data));
                     res.redirect(`/login?redir=/home`);
                 } else {
-                    res.render(`signup_failed`, { 'error': "This name cannot be used." });
+                    res.render(`error_general`, { 'error': "This name cannot be used." });
                 }
             } else {
-                res.render(`signup_failed`, { 'error': "Username already exists!" });
+                res.render(`error_general`, { 'error': "Username already exists!" });
             }
         } else {
-            res.render(`signup_failed`, { 'error': "Account registration is currently unavailable." });
+            res.render(`error_general`, { 'error': "Account registration is currently unavailable." });
         }
     });
 });
