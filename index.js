@@ -46,7 +46,7 @@ app.use('/assets', express.static(__dirname + '/views/assets'));
 app.use(cookieParser());
 // this function shows the IP of every request:
 app.use('*', (req, res, next) => {
-    res.setHeader('X-Powered-By', "OkayuCDN");
+    res.setHeader('X-Powered-By', `OkayuCDN ${config.version}${config.build_type}`);
     var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     let pip = ip;
     if (fs.existsSync(`./db/ip403/${pip}`)) {
