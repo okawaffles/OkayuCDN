@@ -18,8 +18,7 @@ Sure, go ahead. It's not intended to be used as a major server and it is quite u
 4. Optionally, use nginx, etc. to make a reverse proxy.
 
 ### To-do
-- release ptb2
-- figure out if the slow uploading is my server to blame or if it is my code?
+- change my box to use buttons instead of typing
 
 ### Notes
 - Please do not use OkayuCDN in a commercial environment. It is not intended to be used in commercial environments and I *do not* own the rights to Nekomata Okayu. You are putting yourself at risk if you use this in a commercial environment.
