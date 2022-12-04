@@ -41,6 +41,7 @@ app.get('/status', (req, res) => {
 })
 
 app.get('*', (req, res) => {
+    res.status(503);
     res.render('maintenance.ejs', { 'version':config.version + config.buildType});
     res.end();
 })

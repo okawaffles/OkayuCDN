@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to OkayuCDN!</title>
+    <link rel="stylesheet" href="/assets/styles/_newStyles.css">
+    <script src="https://kit.fontawesome.com/dc1b60441b.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <header>
+        <img class="logo" src="/assets/images/logo.png" width="200"></img>
+        <nav>
+            <ul class="nav_links">
+                <li><a href="#"><i class="fa-solid fa-house"></i> Home</a></li>
+                <li><a href="/manage/upload"><i class="fa-solid fa-upload"></i> Upload</a></li>
+                <li><a href="/mybox"><i class="fa-solid fa-box"></i> My Box</a></li>
+                <li><a href="/info"><i class="fa-solid fa-circle-info"></i> Info</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="sc">
+        <h1>Your file has been uploaded successfully!</h1>
+        <hr>
+        <h2>View it here:</h2>
+        <h3><%=l%></h3>
+        <button id="share" class="sc_share" onclick="try { navigator.share({
+            title:'OkayuCDN',
+            text:'View my file on OkayuCDN!',
+            url:'<%=l%>'
+        }) } catch(e) { 
+            navigator.clipboard.writeText('<%=l%>');
+            document.getElementById('share').innerHTML = 'Copied link!';
+            setTimeout(() => {
+                document.getElementById('share').innerHTML = 'Share';
+            }, 1500);
+         }">Share</button>
+
+         <button class="sc_view" onclick="window.location = '<%=vl%>'">View</button>
+    </div>
+</body>
+</html>

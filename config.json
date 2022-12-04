@@ -1,6 +1,6 @@
 {
     "version":"5.0.0",
-    "build_type":"ptb-final",
+    "build_type":"s",
     "start_flags_available": [
         "DISABLE_ACCOUNT_CREATION",
         "DISABLE_UPLOADING",

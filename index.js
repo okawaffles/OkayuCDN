@@ -7,7 +7,7 @@ const fs = require('fs');
 const cache = require('./cs-modules/cacheHelper');
 
 // Check+Load dependencies
-let express, cookieParser, formidable, cryplib, ytdl, chalk;
+let express, cookieParser, formidable, cryplib, ytdl, chalk, path;
 const { info, warn, error } = require('okayulogger');
 try {
     require('okayulogger');
@@ -19,6 +19,7 @@ try {
     cryplib = require('crypto'); // switched away from npm crypto to built-in crypto
     ytdl = require('ytdl-core');
     chalk = require('chalk');
+    path = require('path');
 
     require('ejs'); // do not assign ejs to a variable as we don't need to
 } catch (e) {
@@ -46,7 +47,7 @@ app.use('/assets', express.static(__dirname + '/views/assets'));
 app.use(cookieParser());
 // this function shows the IP of every request:
 app.use('*', (req, res, next) => {
-    res.setHeader('X-Powered-By', "OkayuCDN");
+    res.setHeader('X-Powered-By', `OkayuCDN ${config.version}${config.build_type}`);
     var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     let pip = ip;
     if (fs.existsSync(`./db/ip403/${pip}`)) {
@@ -83,7 +84,7 @@ if (fs.existsSync(`./db/sessionStorage/template.json`) || fs.existsSync(`./db/us
 // Clean cache and tokens
 cache.prepareDirectories();
 cache.cleanCache();
-if (!config.dev_mode) cache.cleanTokens(); // dont clean tokens on devmode boot
+if (!config.start_flags.includes("DEV_MODE")) cache.cleanTokens(); // dont clean tokens on devmode boot
 
 // Additional Functions
 
@@ -324,7 +325,7 @@ app.get('/success', (req, res) => {
         res.end();
         return;
     } else {
-        res.render('upload_finish.ejs', { l: `https://okayu.okawaffles.com/content/${getUsername(req.cookies.token)}/${req.query.f}` });
+        res.render('upload_finish.ejs', { l: `https://okayu.okawaffles.com/content/${getUsername(req.cookies.token)}/${req.query.f}`, vl: `https://okayu.okawaffles.com/view/${getUsername(req.cookies.token)}/${req.query.f}` });
     }
 });
 
@@ -333,18 +334,19 @@ app.get('/success', (req, res) => {
 app.post('/manage/cdnUpload', async (req, res) => {
     info('UserUploadService', 'Got upload-is-done request!');
     const token = req.cookies.token;
-    if (!verifyToken(token)) return;
-    if (!config.enableUploading) return;
+    if (!verifyToken(token)) { error('login', 'Token is invalid. Abort.'); return; }
+    if (config.start_flags['DISABLE_UPLOADING']) { warn('UserUploadService', 'Uploading is disabled. Abort.'); return; }
 
     const username = getUsername(token);
 
     const form = new formidable.IncomingForm();
     form.parse(req, function (err, fields, files) {
+        if (err) { error('formidable', err); return; }
         if (!fs.existsSync(`./content/${username}`))
             fs.mkdirSync(`./content/${username}`);
 
         const newName = files.file0.originalFilename;
-        const newPath = `./content/${username}/${newName}`;
+        const newPath = path.join(__dirname, `/content/${username}/${newName}`);
         const oldName = files.file0.filepath;
         // If the user has already uploaded with this filename.
         if (fs.existsSync(`./content/${username}/${newName}`)) {
@@ -366,9 +368,10 @@ app.post('/manage/cdnUpload', async (req, res) => {
         });
         // User passed all checks so far...
         info('UserUploadService', 'User has passed all checks, finish upload.');
-        fs.copyFileSync(oldName, newPath, 0, function (err) {
+        // fs.copyFileSync is a little bitch
+        fs.copyFile(oldName, newPath, fs.constants.COPYFILE_EXCL, (err) => {
             if (err) {
-                error('fs.copyFileSync', err);
+                error('fs.copyFile', err);
                 error('UserUploadService', 'Failed to copy file. Caching UUS-ISE for the user.');
                 cache.cacheRes('uus', 'ise', username);
             } else {
@@ -376,7 +379,7 @@ app.post('/manage/cdnUpload', async (req, res) => {
                 cache.cacheRes('uus', 'aok', username);
 
                 info('UserUploadService', 'Cleaning temp file...');
-                fs.rmSync(oldName, function (err) {
+                fs.rmSync(oldName, {recursive: false}, (err) => {
                     if (err) {
                         error('fs.rmSync', err);
                         error('UserUploadService', 'Could not delete the temp file.');
@@ -407,14 +410,14 @@ app.post('/login', (req, res) => {
                 res.redirect(redir);
                 fs.writeFileSync(`./db/sessionStorage/${token}.json`, JSON.stringify(session));
             } else res.render('forbidden.ejs', { reason: checkRestriction(username) });
-        } else res.render('login_failed.ejs', { redir: redir });
+        } else res.render('error_general', { error: 'Username or password incorrect!' });
     });
 });
 
 app.post('/signup', (req, res) => {
     let form = new formidable.IncomingForm();
     form.parse(req, (err, fields, files) => {
-        if (config.enableAccountCreation) {
+        if (!config.start_flags['DISABLE_ACCOUNT_CREATION']) {
             if (!fs.existsSync(`./db/userLoginData/${fields.un}.json`)) {
                 if (!(fields.un === "2.otf")) {
                     // Encrypt password with SHA-256 hash
@@ -434,13 +437,13 @@ app.post('/signup', (req, res) => {
                     fs.writeFileSync(`./db/userLoginData/${fields.un}.json`, JSON.stringify(data));
                     res.redirect(`/login?redir=/home`);
                 } else {
-                    res.render(`signup_failed`, { 'error': "This name cannot be used." });
+                    res.render(`error_general`, { 'error': "This name cannot be used." });
                 }
             } else {
-                res.render(`signup_failed`, { 'error': "Username already exists!" });
+                res.render(`error_general`, { 'error': "Username already exists!" });
             }
         } else {
-            res.render(`signup_failed`, { 'error': "Account registration is currently unavailable." });
+            res.render(`error_general`, { 'error': "Account registration is currently unavailable." });
         }
     });
 });
@@ -603,7 +606,11 @@ app.get('/getres', (req, res) => {
         res.send("<h1>400</h1> <hr> <h3>Please append queries \"?user=USERNAME&service=SERVICE\" to your request!</h3>");
     } else {
         if (!fs.existsSync(`./cache/${user}.${service}.json`)) {
-            res.status(404);
+            res.json({
+                code:"SCH-RNF",
+                details:"Could not find requested result cache. You may not be logged in."
+            });
+            res.end();
             return;
         }
         res.json(JSON.parse(fs.readFileSync(`./cache/${user}.${service}.json`, 'utf-8')));
