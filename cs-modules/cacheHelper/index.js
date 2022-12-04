@@ -1,10 +1,13 @@
 const {info, error, warn} = require('okayulogger');
 
 const fs = require('fs');
-function cacheRes(_process, _code, _username) {
+const path = require('path');
+
+function cacheRes(process, _code, username) {
+    console.log("cache result")
     let code = _code.toLowerCase();
     let object;
-    switch (_process.toLowerCase()) {
+    switch (process.toLowerCase()) {
         case "uus":
             if (code == "nau") object = {success:false,details:"You have already uploaded a file by this name",code:"UUS-NAU"};
             if (code == "nes") object = {success:false,details:"You do not have enough storage for this file to be uploaded.",code:"UUS-NES"};
@@ -18,7 +21,7 @@ function cacheRes(_process, _code, _username) {
             break;
     }
     data = JSON.stringify(object);
-    fs.writeFileSync(`./cache/${_username}.${_process}.json`, data);
+    fs.writeFileSync(path.join(__dirname, `../../cache/${username}.${process}.json`), data);
 }
 
 function cleanCache() {

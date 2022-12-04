@@ -13,7 +13,7 @@
         <img class="logo" src="/assets/images/logo.png" width="200"></img>
         <nav>
             <ul class="nav_links">
-                <li><a href="/home"><i class="fa-solid fa-house"></i> Home</a></li>
+                <li><a href="#"><i class="fa-solid fa-house"></i> Home</a></li>
                 <li><a href="/manage/upload"><i class="fa-solid fa-upload"></i> Upload</a></li>
                 <li><a href="/mybox"><i class="fa-solid fa-box"></i> My Box</a></li>
                 <li><a href="/info"><i class="fa-solid fa-circle-info"></i> Info</a></li>
@@ -21,9 +21,24 @@
         </nav>
     </header>
 
-    <h2 class="error_header">Oh Nyao...</h2>
-    <h3 class="error"><%= error%></h3>
-    
-    </h3><br>
+    <div class="sc">
+        <h1>Your file has been uploaded successfully!</h1>
+        <hr>
+        <h2>View it here:</h2>
+        <h3><%=l%></h3>
+        <button id="share" class="sc_share" onclick="try { navigator.share({
+            title:'OkayuCDN',
+            text:'View my file on OkayuCDN!',
+            url:'<%=l%>'
+        }) } catch(e) { 
+            navigator.clipboard.writeText('<%=l%>');
+            document.getElementById('share').innerHTML = 'Copied link!';
+            setTimeout(() => {
+                document.getElementById('share').innerHTML = 'Share';
+            }, 1500);
+         }">Share</button>
+
+         <button class="sc_view" onclick="window.location = '<%=vl%>'">View</button>
+    </div>
 </body>
 </html>

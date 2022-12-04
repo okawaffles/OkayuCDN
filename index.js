@@ -325,7 +325,7 @@ app.get('/success', (req, res) => {
         res.end();
         return;
     } else {
-        res.render('upload_finish.ejs', { l: `https://okayu.okawaffles.com/content/${getUsername(req.cookies.token)}/${req.query.f}` });
+        res.render('upload_finish.ejs', { l: `https://okayu.okawaffles.com/content/${getUsername(req.cookies.token)}/${req.query.f}`, vl: `https://okayu.okawaffles.com/view/${getUsername(req.cookies.token)}/${req.query.f}` });
     }
 });
 
@@ -368,9 +368,10 @@ app.post('/manage/cdnUpload', async (req, res) => {
         });
         // User passed all checks so far...
         info('UserUploadService', 'User has passed all checks, finish upload.');
-        fs.copyFileSync(oldName, newPath, fs.constants.COPYFILE_EXCL, function (err) {
+        // fs.copyFileSync is a little bitch
+        fs.copyFile(oldName, newPath, fs.constants.COPYFILE_EXCL, (err) => {
             if (err) {
-                error('fs.copyFileSync', err);
+                error('fs.copyFile', err);
                 error('UserUploadService', 'Failed to copy file. Caching UUS-ISE for the user.');
                 cache.cacheRes('uus', 'ise', username);
             } else {
@@ -378,7 +379,7 @@ app.post('/manage/cdnUpload', async (req, res) => {
                 cache.cacheRes('uus', 'aok', username);
 
                 info('UserUploadService', 'Cleaning temp file...');
-                fs.rmSync(oldName, function (err) {
+                fs.rmSync(oldName, {recursive: false}, (err) => {
                     if (err) {
                         error('fs.rmSync', err);
                         error('UserUploadService', 'Could not delete the temp file.');
@@ -605,7 +606,10 @@ app.get('/getres', (req, res) => {
         res.send("<h1>400</h1> <hr> <h3>Please append queries \"?user=USERNAME&service=SERVICE\" to your request!</h3>");
     } else {
         if (!fs.existsSync(`./cache/${user}.${service}.json`)) {
-            res.status(404);
+            res.json({
+                code:"SCH-RNF",
+                details:"Could not find requested result cache. You may not be logged in."
+            });
             res.end();
             return;
         }
