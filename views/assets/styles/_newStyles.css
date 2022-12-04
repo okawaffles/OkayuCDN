@@ -455,3 +455,74 @@ button:hover {
     color: red;
     font-size: 1.5em;
 }
+
+/* upload page */
+/* i rlly dont wanna redo this so im just reusing old styles */
+.up_progressupload {
+	height: 20px;
+	margin-top: 25px;
+}
+.up_progress {
+	background-color: #45ffbb;
+	width: 0%;
+	height: 20px;
+	border-radius: 4px;
+}
+.progressupload {
+	height: 20px;
+	margin-top: 25px;
+}
+.uploader {
+	text-align: center;
+    color: white;
+}
+
+.banner-ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	background-color: teal;
+	color: white;
+	text-align: center;
+}
+
+#premium-tag {
+	color: white;
+	background-color: #ffbb3c;
+	padding: 5px 10px;
+	border-radius: 16px;
+	font-size: 16px;
+	margin: 5px;
+	display: none;
+}
+#bugtest-tag {
+	color: white;
+	background-color: teal;
+	padding: 5px 10px;
+	border-radius: 16px;
+	font-size: 16px;
+	margin: 5px;
+	display: none;
+}
+.upload-pane {
+	display: grid;
+	place-items: center;
+	/* background-color: #141924; */
+	border-radius: 20px;
+	padding: 3% 3%;
+	color: white;
+	width: fit-content;
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+}
+.version {
+	position: fixed;
+	bottom: 7px;
+	right: 10px;
+	color: white;
+}
+.up_wrap {
+    margin: 10px;
+}

@@ -7,7 +7,7 @@ const fs = require('fs');
 const cache = require('./cs-modules/cacheHelper');
 
 // Check+Load dependencies
-let express, cookieParser, formidable, cryplib, ytdl, chalk;
+let express, cookieParser, formidable, cryplib, ytdl, chalk, path;
 const { info, warn, error } = require('okayulogger');
 try {
     require('okayulogger');
@@ -19,6 +19,7 @@ try {
     cryplib = require('crypto'); // switched away from npm crypto to built-in crypto
     ytdl = require('ytdl-core');
     chalk = require('chalk');
+    path = require('path');
 
     require('ejs'); // do not assign ejs to a variable as we don't need to
 } catch (e) {
@@ -83,7 +84,7 @@ if (fs.existsSync(`./db/sessionStorage/template.json`) || fs.existsSync(`./db/us
 // Clean cache and tokens
 cache.prepareDirectories();
 cache.cleanCache();
-if (!config.dev_mode) cache.cleanTokens(); // dont clean tokens on devmode boot
+if (!config.start_flags.includes("DEV_MODE")) cache.cleanTokens(); // dont clean tokens on devmode boot
 
 // Additional Functions
 
@@ -333,18 +334,19 @@ app.get('/success', (req, res) => {
 app.post('/manage/cdnUpload', async (req, res) => {
     info('UserUploadService', 'Got upload-is-done request!');
     const token = req.cookies.token;
-    if (!verifyToken(token)) return;
-    if (!config.enableUploading) return;
+    if (!verifyToken(token)) { error('login', 'Token is invalid. Abort.'); return; }
+    if (config.start_flags['DISABLE_UPLOADING']) { warn('UserUploadService', 'Uploading is disabled. Abort.'); return; }
 
     const username = getUsername(token);
 
     const form = new formidable.IncomingForm();
     form.parse(req, function (err, fields, files) {
+        if (err) { error('formidable', err); return; }
         if (!fs.existsSync(`./content/${username}`))
             fs.mkdirSync(`./content/${username}`);
 
         const newName = files.file0.originalFilename;
-        const newPath = `./content/${username}/${newName}`;
+        const newPath = path.join(__dirname, `/content/${username}/${newName}`);
         const oldName = files.file0.filepath;
         // If the user has already uploaded with this filename.
         if (fs.existsSync(`./content/${username}/${newName}`)) {
@@ -366,7 +368,7 @@ app.post('/manage/cdnUpload', async (req, res) => {
         });
         // User passed all checks so far...
         info('UserUploadService', 'User has passed all checks, finish upload.');
-        fs.copyFileSync(oldName, newPath, 0, function (err) {
+        fs.copyFileSync(oldName, newPath, fs.constants.COPYFILE_EXCL, function (err) {
             if (err) {
                 error('fs.copyFileSync', err);
                 error('UserUploadService', 'Failed to copy file. Caching UUS-ISE for the user.');
@@ -604,6 +606,7 @@ app.get('/getres', (req, res) => {
     } else {
         if (!fs.existsSync(`./cache/${user}.${service}.json`)) {
             res.status(404);
+            res.end();
             return;
         }
         res.json(JSON.parse(fs.readFileSync(`./cache/${user}.${service}.json`, 'utf-8')));

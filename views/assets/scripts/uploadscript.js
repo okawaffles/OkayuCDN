@@ -1,6 +1,6 @@
 var browse = document.getElementsByClassName('chooseFiles')[0];
 var selectDialog = document.getElementById('uploaded');
-var progressUpload = document.getElementsByClassName("progressUpload")[0];
+var progressUpload = document.getElementById("progressUpload");
 var progress;
 addProgressBar();
 browse.addEventListener("click", function(){	
@@ -11,14 +11,20 @@ browse.addEventListener("click", function(){
 var endFileName;
 var endUserName;
 
-document.getElementById("uploadBtn").onclick = function(){
-	if (/^([a-zA-Z0-9_-]{1,50})$/.test(document.getElementById('filename').value)) {
-		sendFiles(selectDialog.files);
+try {
+	document.getElementById("uploadBtn").onclick = function(){
+		if (/^([a-zA-Z0-9_-]{1,50})$/.test(document.getElementById('filename').value)) {
+			sendFiles(selectDialog.files);
+		}
+		else {
+			alert("Filename not valid.");
+		}
 	}
-	else {
-		alert("Filename not valid.");
-	}
+} catch (e) {
+	alert('Error in uploadscript.ejs')
+	console.log(e);
 }
+
 
 function sendFiles(files){
 	
@@ -50,9 +56,11 @@ function updateProgress(e){
 				if (!success) {
 					progress.innerHTML = `<br><p style="color:red;">Something went wrong when uploading your file.<br>Error Info: ${data.details} (${data.code})</p>`
 					document.getElementById('visibleToggle').style = "display: none;";
+					console.log(`err: ${data.code}`);
 				} else {
 					progress.innerHTML = `<br><p>Finished, please wait...</p>`
 					document.location = `/success?f=${endFileName}`;
+					console.log(`ok: ${data}`);
 				}
 			})
 		}, 5000);
@@ -68,9 +76,9 @@ function addProgressBar(){
 	progressBar.className = "progressBar";
 	progressUpload.appendChild(progressBar);
 	var innerDIV = document.createElement("div");
-	innerDIV.className = "progress";
+	innerDIV.className = "up_progress";
 	progressBar.appendChild(innerDIV);
-	progress = document.getElementsByClassName("progress")[0];
+	progress = document.getElementsByClassName("up_progress")[0];
 }
 
 function assignUserName(username, bugTester, premium) {
@@ -97,3 +105,6 @@ function getStorage() {
 		}
 	})
 }
+
+//debug
+console.log('loaded uploadscript.js');

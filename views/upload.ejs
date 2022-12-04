@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3456757610882390"
+     crossorigin="anonymous"></script>
+     
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico">
+    <title>Upload | OkayuCDN</title>
+    <link rel="stylesheet" href="/assets/styles/_newStyles.css">
+    <script src="https://kit.fontawesome.com/dc1b60441b.js" crossorigin="anonymous"></script>
+
+    <meta content="Upload | OkayuCDN" property="og:title">
+    <meta content="Upload files for free" property="og:description">
+    <meta content="https://okayu.okawaffles.com/manage/upload" property="og:url">
+    <meta content="#9000e3" data-react-helmet="true" name="theme-color">
+</head>
+
+<body>
+    <header>
+        <img class="logo" src="/assets/images/logo.png" width="200"></img>
+        <nav>
+            <ul class="nav_links">
+                <li><a href="#" class="active"><i class="fa-solid fa-house"></i> Home</a></li>
+                <li><a href="/manage/upload"><i class="fa-solid fa-upload"></i> Upload</a></li>
+                <li><a href="/mybox"><i class="fa-solid fa-box"></i> My Box</a></li>
+                <li><a href="/info"><i class="fa-solid fa-circle-info"></i> Info</a></li>
+            </ul>
+        </nav>
+    </header>
+   
+    <div id="banner-hider" style="display: none;">
+        <ul class="banner-ul">
+            <p id="banner-contents">Hey ${username}! You seem to be a bug-tester! Thanks for your help! We've upped your storage as a thank-you!</p>
+        </ul>
+    </div>
+
+    <div class="pad upload-pane">
+        <div class="uploader">
+            <h1>Upload to OkayuCDN</h1>
+            <p>This is currently in an testing state, bugs may arise!</p>
+            <h3 id="storageAmount" style="display: none;"></h3>
+            <div id="hider" style="display: none">
+                <input type="file" class="chooseFiles" id="uploaded" value="Select file" required /><br><br>
+                <input type="text" class="filename" name="filename" required placeholder="Name Your File" pattern="[a-zA-Z0-9_-]{50}"
+                    style="width: 250px;" id="filename" /><br>
+                <div class="wrap up_wrap">
+                    <button class="go" id="uploadBtn">Upload</button>
+                </div>
+            </div>
+            <br>
+            <div class="up_progressupload" id="progressUpload"></div><br>
+        </div>
+        <div id="visibleToggle">
+            <div class="line" style="--primary: white; display: flex; align-items: center;"></div>
+        </div>
+    </div>
+
+    <h3 class="version"><label id="premium-tag">Premium</label><label id="bugtest-tag">Bugtester</label>OkayuCDN v5</h3><br>
+
+    <script src="/assets/scripts/uploadscript.js"></script>
+    <script>assignUserName("<%= USERNAME %>", "<%= isBT %>", "<%= premium %>"); getStorage()</script>
+
+    <style>
+        /**
+          * Line
+          *
+          * @author jh3y - jheytompkins.com
+        */
+        @-webkit-keyframes line {
+            from {
+                background-position: -60px 0;
+            }
+
+            to {
+                background-position: 60px 0;
+            }
+        }
+
+        @keyframes line {
+            from {
+                background-position: -60px 0;
+            }
+
+            to {
+                background-position: 60px 0;
+            }
+        }
+
+        .line:before {
+            -webkit-animation: line .75s infinite alternate ease-in-out;
+            animation: line .75s infinite alternate ease-in-out;
+            background: -webkit-gradient(linear, left top, right top, from(var(--primary)), to(var(--primary)));
+            background: linear-gradient(90deg, var(--primary), var(--primary));
+            background-repeat: no-repeat;
+            background-size: 60px 20px;
+            content: '';
+            display: block;
+            height: 20px;
+            width: 60px;
+        }
+    </style>
+</body>
+
+</html>
