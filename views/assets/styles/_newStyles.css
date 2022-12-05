@@ -19,7 +19,9 @@ body {
     background-color: #24252A;
     overflow: hidden;
 }
-
+.view_body {
+    overflow: scroll;
+}
 
 /* navbar desktop */
 
