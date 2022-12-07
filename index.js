@@ -29,9 +29,10 @@ try {
 }
 
 // Check+Load config
-let config;
+let config, pjson;
 try {
     config = require('./config.json');
+    pjson = require('./package.json');
 } catch (e) {
     error('boot', 'Could not load server config (config.json)');
     error('boot', e);
@@ -47,7 +48,7 @@ app.use('/assets', express.static(__dirname + '/views/assets'));
 app.use(cookieParser());
 // this function shows the IP of every request:
 app.use('*', (req, res, next) => {
-    res.setHeader('X-Powered-By', `OkayuCDN ${config.version}${config.build_type}`);
+    res.setHeader('X-Powered-By', `OkayuCDN ${pjson.version}`);
     var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     let pip = ip;
     if (fs.existsSync(`./db/ip403/${pip}`)) {
@@ -73,8 +74,8 @@ console.log(asciiart);
 
 // end of new index start
 
-info("boot", `Starting OkayuCDN Server ${config.version}${config.build_type}`);
-info("boot", `Server must be restarted to change config.`);
+info("boot", `Starting OkayuCDN Server ${pjson.version}`);
+info("boot", `Thanks for using OkayuCDN! Report bugs at ${pjson.bugs.url}`);
 
 // Check to be sure that template.json has been removed
 // from /db/sessionStorage and /db/userLoginData
@@ -229,10 +230,7 @@ app.get('/favicon.ico', (req, res) => {
 
 // User Viewable Pages
 app.get('/home', (req, res) => {
-    if (req.query.useBetaSite != "true")
-        res.render('home.ejs', { 'version': config.version + config.build_type });
-    else
-        res.render('./new/home.ejs', { 'version': config.version + config.build_type });
+    res.render('home.ejs', { 'version': pjson.version });
     res.end();
 });
 
@@ -303,7 +301,7 @@ app.get('/logout', (req, res) => {
 })
 
 app.get('/signup', (req, res) => {
-    if (req.query.useBetaSite) res.render('new/signup.ejs'); else res.render('signup.ejs');
+    res.render('signup.ejs');
 });
 
 app.get('/admin', (req, res) => {
@@ -377,6 +375,7 @@ app.post('/manage/cdnUpload', async (req, res) => {
             } else {
                 info('UserUploadService', 'File upload finished successfully!');
                 cache.cacheRes('uus', 'aok', username);
+                stats('w', 'uploads'); // increase upload statistic (write, uploads)
 
                 info('UserUploadService', 'Cleaning temp file...');
                 fs.rmSync(oldName, {recursive: false}, (err) => {
@@ -400,7 +399,6 @@ app.post('/login', (req, res) => {
         username = fields.un;
         if (verifyLogin(fields.un, fields.pw)) {
             let token = genNewToken(32);
-            let d = new Date();
             let session = {
                 user: fields.un
             };
@@ -435,6 +433,7 @@ app.post('/signup', (req, res) => {
                         }
                     };
                     fs.writeFileSync(`./db/userLoginData/${fields.un}.json`, JSON.stringify(data));
+                    stats('w', 'accounts'); // increase acc statistic (write, accounts)
                     res.redirect(`/login?redir=/home`);
                 } else {
                     res.render(`error_general`, { 'error': "This name cannot be used." });
@@ -495,7 +494,6 @@ app.post('/admin/loginAs', (req, res) => {
         if (verifyLogin(fields.un, fields.pw)) {
             warn('admin', `An admin is logging in as user '${fields.user}'`)
             let token = genNewToken(32);
-            let d = new Date();
             let session = {
                 user: fields.user,
             };
@@ -624,7 +622,7 @@ app.get('/devel', (req, res) => {
 
 // Keep Last !! 404 handler
 app.get('*', (req, res) => {
-    res.render("notfound.ejs", {'version':config.version + config.build_type});
+    res.render("notfound.ejs", {'version': pjson.version});
     res.end();
 })
 
