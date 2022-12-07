@@ -1,5 +1,5 @@
 {
-    "version":"5.0.0",
+    "version":"5.0.1",
     "build_type":"s",
     "start_flags_available": [
         "DISABLE_ACCOUNT_CREATION",
