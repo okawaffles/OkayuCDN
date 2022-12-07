@@ -19,7 +19,8 @@ body {
     background-color: #24252A;
     overflow: hidden;
 }
-.view_body {
+.view_body,
+.mybox_body {
     overflow: scroll;
 }
 
