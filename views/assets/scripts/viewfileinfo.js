@@ -35,8 +35,12 @@ let knownFileTypes = {
     "CMD": "Windows Batch File (CMD)",
     "ISO": "Disk Image (ISO)",
     "DLL": "Dynamic Link Library (DLL)",
+    "LIB": "Object File Library (LIB)",
     "CUR": "Cursor File (CUR)",
     "INF": "Setup Information (INF)",
+    "JAR": "Java / Executable JAR File (JAR)",
+    "APK": "Android Installable App Package (APK)",
+    "IPA": "IOS Installable App Package (IPA)",
 
     "PDF": "Document (PDF)",
     "TXT": "Text File (TXT)",
@@ -55,6 +59,15 @@ let knownFileTypes = {
     "YAML": "YAML File (YAML)",
     "YML": "YAML File (YML)",
     "MAKEFILE":"Makefile",
+    "JAVA": "Java / Java Source File (JAVA)",
+    "CLASS": "Java / Java Class File (CLASS)",
+    "XML": "Extensible Markup Language (XML)",
+    "VSIX": "Microsoft Visual Studio Extension (VSIX)",
+    "VCXPROJ": "Microsoft Visual Studio Project File (VCXPROJ)",
+    "SLN": "Microsoft Visual Studio Solution (SLN)",
+
+    "VTT": "Subtitles (VTT)",
+    "ASS": "Subtitles (ASS)",
 
     "TTF": "TrueType Font (TTF)",
     "OTF": "Font (OTF)",
@@ -68,7 +81,12 @@ let knownFileTypes = {
     "VRM": "Virtual Reality Model (VRM)",
     "OBJ": "Object File (OBJ)",
     "STL": "3D Model (STL)",
-    "3MF": "3D Model (3MF)"
+    "3MF": "3D Model (3MF)",
+    "FBX": "3D Model (FBX)",
+    "GCODE": "Sliced 3D Object (GCODE)",
+    "UNITYPACKAGE": "Unity Engine Package (UNITYPACKAGE)",
+
+    "MCWORLD": "Minecraft Bedrock World (MCWORLD)"
 }
 
 function getFileTypeDesc(_ft) {
