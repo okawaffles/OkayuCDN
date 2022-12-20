@@ -607,7 +607,7 @@ app.get('/getres', (req, res) => {
         if (!fs.existsSync(`./cache/${user}.${service}.json`)) {
             res.json({
                 code:"SCH-RNF",
-                details:"Could not find requested result cache. You may not be logged in."
+                details:"No upload verification cache was found. Try refreshing and trying again."
             });
             res.end();
             return;

@@ -1,4 +1,6 @@
 ![Boot Test](https://github.com/okawaffles/OkayuCDNv3/actions/workflows/node.js.yml/badge.svg)
+![Commits](https://img.shields.io/github/commit-activity/m/okawaffles/okayucdn/dev?style=flat-square)
+![Commits since last release](https://img.shields.io/github/commits-difference/okawaffles/okayucdn?base=main&head=dev&label=commits%20since%20last%20release&style=flat-square)
 
 # A File Upload Server
 You create an account. You log in. You upload a file. You send the link. It embeds.
