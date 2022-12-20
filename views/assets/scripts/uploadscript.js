@@ -35,9 +35,17 @@ function sendFiles(files){
 	//req.setRequestHeader('Content-type', 'application/json');
 	var form = new FormData();
 	for(var file = 0; file < files.length; file++){		
+		if (navigator.userAgent.includes("Android")) {
+			let arr = files[file].name.split('.');
+			let arr_last = arr.length - 1;
+			
+			form.append("file" + file, files[file], document.getElementById("filename").value + "." + arr[arr_last]);
+			endFileName = document.getElementById("filename").value + "." + arr[arr_last]
+		} else {
+			form.append("file" + file, files[file], document.getElementById("filename").value + "." + files[file].name.split('.').at(-1));
+			endFileName = document.getElementById("filename").value + "." + files[file].name.split('.').at(-1)
+		}
 		
-		form.append("file" + file, files[file], document.getElementById("filename").value + "." + files[file].name.split('.').at(-1));
-		endFileName = document.getElementById("filename").value + "." + files[file].name.split('.').at(-1)
 	}
 	req.send(form);
 }
