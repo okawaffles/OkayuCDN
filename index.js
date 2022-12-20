@@ -268,14 +268,8 @@ app.get('/manage/upload', (req, res) => {
 });
 
 app.get('/manage/content', (req, res) => {
-    let token = req.cookies.token;
-    if (!token) {
-        res.redirect('/login?redir=/manage/content');
-    } else if (verifyToken(token)) {
-        res.render('manage.ejs', { USERNAME: getUsername(token) });
-    } else {
-        res.redirect('/login?redir=/manage/content');
-    }
+    res.redirect('/mybox');
+    res.end();
 });
 app.get('/mybox', (req, res) => {
     let token = req.cookies.token;
@@ -326,6 +320,28 @@ app.get('/success', (req, res) => {
         res.render('upload_finish.ejs', { l: `https://okayu.okawaffles.com/content/${getUsername(req.cookies.token)}/${req.query.f}`, vl: `https://okayu.okawaffles.com/view/${getUsername(req.cookies.token)}/${req.query.f}` });
     }
 });
+
+// this get request is basically a post request
+app.get('/deleteFile', (req, res) => {
+    if (!req.query.item) {
+        res.status(404);
+        res.end(); return;
+    }
+    if (!verifyToken(req.cookies.token)) {
+        res.status(403);
+        res.end(); return;
+    }
+    
+    fs.rm(path.join(__dirname + `/content/${getUsername(req.cookies.token)}/${item}`), (err) => {
+        if (err) {
+            res.status();
+            return;
+        } else {
+            res.redirect('/manage/content');
+            return;
+        }
+    })
+})
 
 // POST Request handlers
 

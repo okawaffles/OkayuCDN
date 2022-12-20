@@ -93,6 +93,13 @@ button:hover {
     background-color: rgba(0, 136, 169, 0.8);
 }
 
+.btn-red {
+    background-color: rgba(150, 0, 0, 1);
+}
+.btn-red:hover {
+    background-color: rgba(150, 0, 0, 0.8);
+}
+
 /* home */
 
 @keyframes titleToTop {
@@ -319,6 +326,7 @@ button:hover {
 .mybox_subtitle {
     color: white;
     font-size: 28px;
+    padding-bottom: 10px;
 }
 
 .mb_input {
@@ -336,16 +344,29 @@ button:hover {
 
 .content_container {
     width: 100%;
-    text-align: center;
 }
 
 .content_items {
-    text-align: center;
+    display: flex;
+    justify-content: center;
     color: white;
     font-size: 18px;
-    width: 100%;
+    width: 50%;
     padding: 0px;
     border-radius: 12px;
+    flex-direction: row;
+    margin-left: 25%;
+}
+.delete {
+    margin-left: auto;
+    order: 2;
+}
+
+@media screen and (max-width: 600px) {
+    .content_items {
+        width: 100%;
+        margin-left: auto;
+    }
 }
 
 .loader_container {
