@@ -1,11 +1,11 @@
 - waffle.moe License for Open-Source Software -
-Version 1 | October 15th, 2022
+Version 1.1 | December 29th, 2022
 
 I am keeping things short and simple with this license.
 Read it from start to finish and you will be good to go.
 
 YOU MAY:
-- Modify, redistribute, or use pieces of source code in your own software.
+- Modify, redistribute, or use pieces of source code in your own software, with credit towards the original author.
 - Redistribute the application with credit towards the original author.
 - Use the program in cooperation with other software, with credit towards the original author.
 
@@ -14,7 +14,7 @@ YOU MUST NOT:
 - Charge money for features of the software.
 - Use the software in a commercial environment.
 - Claim credit for creation of the software.
-- Violate the rights of anyone else using the software.
+- Violate the rights of anyone else in/by using the software.
 
 
 Warranty Disclaimer:

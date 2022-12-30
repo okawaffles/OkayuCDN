@@ -614,3 +614,8 @@ button:hover {
         width: 95%;
     }
 }
+
+/* extras */
+.red {
+    background-color: red;
+}
