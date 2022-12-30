@@ -318,7 +318,7 @@ app.get('/success', (req, res) => {
         res.end();
         return;
     } else {
-        res.render('upload_finish.ejs', { l: `https://okayu.okawaffles.com/content/${getUsername(req.cookies.token)}/${req.query.f}`, vl: `https://okayu.okawaffles.com/view/${getUsername(req.cookies.token)}/${req.query.f}` });
+        res.render('upload_finish.ejs', { l: `${config.domain}/content/${getUsername(req.cookies.token)}/${req.query.f}`, vl: `${config.domain}/view/${getUsername(req.cookies.token)}/${req.query.f}` });
     }
 });
 
@@ -537,8 +537,8 @@ app.get('/view/:user/:item', (req, res) => {
             filetype: req.params.item.split('.')[req.params.item.split('.').length - 1]
         });
     } catch (err) {
-        res.render('404.ejs');
-        res.end();
+        res.render('notfound.ejs', {version:pjson.version});
+        //res.end();
         return;
     }
 });

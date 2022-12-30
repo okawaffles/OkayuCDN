@@ -13,5 +13,5 @@
     ],
     "port":2773,
     "dev_port":2773,
-    "domain_unused":"https://okayu.okawaffles.com"
+    "domain":"https://okayu.okawaffles.com"
 }
