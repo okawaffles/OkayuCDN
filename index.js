@@ -84,8 +84,8 @@ if (fs.existsSync(`./db/sessionStorage/template.json`) || fs.existsSync(`./db/us
 
 // Clean cache and tokens
 cache.prepareDirectories();
-cache.cleanCache();
-if (!config.start_flags.includes("DEV_MODE")) cache.cleanTokens(); // dont clean tokens on devmode boot
+if (!config.start_flags.includes("DISABLE_CACHE_CLEAN")) cache.cleanCache();
+if (!config.start_flags.includes("DEV_MODE") || !config.start_flags.includes("DISABLE_TOKEN_CLEAN")) cache.cleanTokens(); // dont clean tokens on devmode boot
 
 // Additional Functions
 
@@ -322,19 +322,19 @@ app.get('/success', (req, res) => {
 });
 
 // this get request is basically a post request
-app.get('/deleteFile', (req, res) => {
-    if (!req.query.item) {
-        res.status(404);
+app.get('/deleteItem', (req, res) => {
+    if (!req.query.itemName) {
+        res.json({"status":404,"description":"The requested item was not found.","ISE-CODE":"CMS-QNS"});
         res.end(); return;
     }
     if (!verifyToken(req.cookies.token)) {
-        res.status(403);
+        res.json({"status":403,"description":"The user does not have permission to delete this file.","ISE-CODE":"CMS-CFV"});
         res.end(); return;
     }
     
-    fs.rm(path.join(__dirname + `/content/${getUsername(req.cookies.token)}/${item}`), (err) => {
+    fs.rm(path.join(__dirname + `/content/${getUsername(req.cookies.token)}/${itemName}`), (err) => {
         if (err) {
-            res.status();
+            res.status(500);
             return;
         } else {
             res.redirect('/manage/content');
