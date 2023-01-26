@@ -141,7 +141,7 @@ function verifyLogin(username, password) {
 /* stats */
 
 function stats(mode, stat) {
-    let values = JSON.parse(fs.readFileSync('./stats.json'));
+    let values = JSON.parse(fs.readFileSync(path.join(__dirname, '/db/stats.json')));
     if (mode == 'r') {
         // read stats
         return {
@@ -167,7 +167,7 @@ function stats(mode, stat) {
             uploads: u,
             accounts: a
         }
-        fs.writeFileSync('stats.json', JSON.stringify(finalstats));
+        fs.writeFileSync(path.join(__dirname, '/db/stats.json'), JSON.stringify(finalstats));
     }
 }
 

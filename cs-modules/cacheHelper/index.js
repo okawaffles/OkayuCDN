@@ -4,7 +4,6 @@ const fs = require('fs');
 const path = require('path');
 
 function cacheRes(process, _code, username) {
-    console.log("cache result")
     let code = _code.toLowerCase();
     let object;
     switch (process.toLowerCase()) {

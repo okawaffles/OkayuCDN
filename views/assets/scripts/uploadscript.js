@@ -51,7 +51,7 @@ function sendFiles(files){
 }
 
 function updateProgress(e){
-	
+	console.log((((e.loaded/e.total)*100))+ "%");
 	progress.style.width = (((e.loaded/e.total)*100))+ "%";
     if(progress.style.width == "100%") {
 		document.getElementById('visibleToggle').style = "display: inline; margin-top:50px;";
@@ -68,7 +68,7 @@ function updateProgress(e){
 				} else {
 					progress.innerHTML = `<br><p>Finished, please wait...</p>`
 					document.location = `/success?f=${endFileName}`;
-					console.log(`ok: ${data}`);
+					console.log(`ok: ${data.toString()}`);
 				}
 			})
 		}, 5000);
