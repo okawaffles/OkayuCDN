@@ -346,7 +346,7 @@ app.get('/deleteItem', (req, res) => {
 
 // POST Request handlers
 
-app.post('/manage/cdnUpload', async (req, res) => {
+app.post('/api/upload', async (req, res) => {
     info('UserUploadService', 'Got upload-is-done request!');
     const token = req.cookies.token;
     if (!verifyToken(token)) { error('login', 'Token is invalid. Abort.'); return; }

@@ -3,16 +3,16 @@ var selectDialog = document.getElementById('uploaded');
 var progressUpload = document.getElementById("progressUpload");
 var progress;
 addProgressBar();
-browse.addEventListener("click", function(){	
+browse.addEventListener("click", function () {
 	selectDialog.click();
-	
+
 });
 
 var endFileName;
 var endUserName;
 
 try {
-	document.getElementById("uploadBtn").onclick = function(){
+	document.getElementById("uploadBtn").onclick = function () {
 		if (/^([a-zA-Z0-9_-]{1,50})$/.test(document.getElementById('filename').value)) {
 			sendFiles(selectDialog.files);
 		}
@@ -26,40 +26,40 @@ try {
 }
 
 
-function sendFiles(files){
-	
+function sendFiles(files) {
+
 	resetProgressBar();
-	var req = new XMLHttpRequest();	
+	var req = new XMLHttpRequest();
 	req.upload.addEventListener("progress", updateProgress);
-	req.open("POST", "/manage/cdnUpload");
-	//req.setRequestHeader('Content-type', 'application/json');
+	req.open("POST", "/api/upload");
 	var form = new FormData();
-	for(var file = 0; file < files.length; file++){		
+	for (var file = 0; file < files.length; file++) {
 		if (navigator.userAgent.includes("Android")) {
 			let arr = files[file].name.split('.');
 			let arr_last = arr.length - 1;
-			
+
 			form.append("file" + file, files[file], document.getElementById("filename").value + "." + arr[arr_last]);
 			endFileName = document.getElementById("filename").value + "." + arr[arr_last]
 		} else {
 			form.append("file" + file, files[file], document.getElementById("filename").value + "." + files[file].name.split('.').at(-1));
 			endFileName = document.getElementById("filename").value + "." + files[file].name.split('.').at(-1)
 		}
-		
+
 	}
+
 	req.send(form);
 }
 
-function updateProgress(e){
-	console.log((((e.loaded/e.total)*100))+ "%");
-	progress.style.width = (((e.loaded/e.total)*100))+ "%";
-    if(progress.style.width == "100%") {
+function updateProgress(e) {
+	console.log((((e.loaded / e.total) * 100)) + "%");
+	progress.style.width = (((e.loaded / e.total) * 100)) + "%";
+	if (progress.style.width == "100%") {
 		document.getElementById('visibleToggle').style = "display: inline; margin-top:50px;";
 		progress.innerHTML = `<br><p>Hold on! We're delaying to make sure the server got your file...</p>`
 		let success = false;
 
 		setTimeout(() => {
-			$.getJSON(`/getres?user=${endUserName}&service=uus`, function(data) {
+			$.getJSON(`/getres?user=${endUserName}&service=uus`, function (data) {
 				success = data.success;
 				if (!success) {
 					progress.innerHTML = `<br><p style="color:red;">Something went wrong when uploading your file.<br>Error Info: ${data.details} (${data.code})</p>`
@@ -72,14 +72,14 @@ function updateProgress(e){
 				}
 			})
 		}, 5000);
-    }
+	}
 
 }
-function resetProgressBar(){
+function resetProgressBar() {
 	progress.innerHTML = ``
 	progress.style.width = "0%";
 }
-function addProgressBar(){
+function addProgressBar() {
 	var progressBar = document.createElement("div");
 	progressBar.className = "progressBar";
 	progressUpload.appendChild(progressBar);
@@ -90,7 +90,7 @@ function addProgressBar(){
 }
 
 function assignUserName(username, bugTester, premium) {
-    endUserName = username;
+	endUserName = username;
 	if (premium) document.getElementById('premium-tag').style.display = "inline";
 	if (bugTester == "true") {
 		document.getElementById('banner-hider').style = "";
@@ -114,11 +114,11 @@ function assignUserName(username, bugTester, premium) {
 
 function getStorage() {
 	document.getElementById('visibleToggle').style = "display: inline;";
-	$.getJSON(`/qus?user=${endUserName}`, function(data) {
+	$.getJSON(`/qus?user=${endUserName}`, function (data) {
 		document.getElementById('storageAmount').innerHTML = `You have used ${(((data.size / 1024) / 1024) / 1024).toFixed(2)}GB of storage (of your ${((data.userTS / 1024) / 1024) / 1024}GB)`
 		document.getElementById('storageAmount').style = "";
 		document.getElementById('visibleToggle').style = "display: none;";
-		
+
 		if (data.size < data.userTS) {
 			document.getElementById('hider').style = "";
 		} else {
