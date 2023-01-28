@@ -21,7 +21,7 @@ try {
 		}
 	}
 } catch (e) {
-	alert('Error in uploadscript.ejs')
+	alert('Error in uploadscript.js')
 	console.log(e);
 }
 
@@ -99,6 +99,7 @@ function assignUserName(username, bugTester, premium) {
 	}
 
 	let reason;
+	if (navigator.userAgent.includes("iOS") || navigator.userAgent.includes("iPadOS")) reason = "Warning: You appear to be using an i[Pad]OS device. You likely cannot upload due to a WebKit bug.";
 	if (navigator.userAgent.includes("CrOS")) reason = "Warning: You appear to be using a ChromeOS device. This operating system sometimes doesn't work as expected.";
 	if (navigator.userAgent.includes("Symbian")) reason = "Warning: You appear to be using a Symbian device. This operating system is not supported.";
 	if (navigator.userAgent.includes("Fire OS")) reason = "Warning: You appear to be using a Fire OS device. This device is untested. Please report bugs on the GitHub page.";
