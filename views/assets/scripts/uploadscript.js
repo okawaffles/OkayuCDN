@@ -66,9 +66,10 @@ function updateProgress(e) {
 					success = data.success;
 					if (!success) {
 						if (data.code == "SCH-RNF") {
-							progress.innerHTML = `<br><p style="color:red;">Waiting for a valid response from the server... (this is normal with large files, please be patient)</p>`
+							progress.innerHTML = `<br><p style="color:red;">If you uploaded a large file, this error may appear. Please wait a moment, then check My Box to see if you uploaded it.</p>`
 							document.getElementById('visibleToggle').style = "display: none;";
 							console.log(`err: ${data.code}`);
+							waitingForServer = false;
 						} else {
 							progress.innerHTML = `<br><p style="color:red;">An error occurred while uploading your file. Error: ${data.details} (Code: ${data.code})</p>`
 							document.getElementById('visibleToggle').style = "display: none;";
