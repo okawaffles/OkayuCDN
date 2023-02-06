@@ -65,9 +65,16 @@ function updateProgress(e) {
 				$.getJSON(`/api/getres?user=${endUserName}&service=uus`, function (data) {
 					success = data.success;
 					if (!success) {
-						progress.innerHTML = `<br><p style="color:red;">Waiting for a valid response from the server... (this is normal with large files, please be patient)</p>`
-						document.getElementById('visibleToggle').style = "display: none;";
-						console.log(`err: ${data.code}`);
+						if (data.code == "SCH-RNF") {
+							progress.innerHTML = `<br><p style="color:red;">Waiting for a valid response from the server... (this is normal with large files, please be patient)</p>`
+							document.getElementById('visibleToggle').style = "display: none;";
+							console.log(`err: ${data.code}`);
+						} else {
+							progress.innerHTML = `<br><p style="color:red;">An error occurred while uploading your file. Error: ${data.details} (Code: ${data.code})</p>`
+							document.getElementById('visibleToggle').style = "display: none;";
+							console.log(`err: ${data.code}`);
+							waitingForServer = false;
+						}
 					} else {
 						progress.innerHTML = `<br><p>Finished, please wait...</p>`
 						waitingForServer = false;
