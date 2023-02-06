@@ -24,7 +24,7 @@
     <br>
     <div class="pad upload-pane">
         <h2 class="title">Delete Content</h2>
-        <form class="uploadForm" action="./admin/delFile" method="POST" enctype="multipart/form-data">
+        <form class="uploadForm" action="/api/admin/delFile" method="POST" enctype="multipart/form-data">
             <input type="text" name="username" required placeholder="Username" pattern="[a-zA-Z0-9_-]{3-50}" style="width: 250px; float: right;" />
             <input type="text" name="filename" required placeholder="Filename" pattern="[a-zA-Z0-9_-]{3-50}" style="width: 250px; float: right;" />
             <p style="text-align: center;">File will be deleted forever</p>
@@ -34,7 +34,7 @@
     <br>
     <div class="pad upload-pane">
         <h2 class="title">Restrict User</h2>
-        <form class="uploadForm" action="./admin/resUser" method="POST" enctype="multipart/form-data">
+        <form class="uploadForm" action="/api/admin/resUser" method="POST" enctype="multipart/form-data">
             <input type="text" name="username" required placeholder="Username" pattern="[a-zA-Z0-9_-]{3-50}" style="width: 250px; float: right;" />
             <input type="text" name="reason" required placeholder="Reason" pattern="[a-zA-Z0-9_-]{3-50}" style="width: 250px; float: right;" />
             <p style="text-align: center;">User json will be modified</p>
@@ -44,7 +44,7 @@
     <br>
     <div class="pad upload-pane">
         <h2 class="title">Log in as User (Abuse is not tolerated)</h2><br>
-        <form class="uploadForm" action="./admin/loginAs" method="POST" enctype="multipart/form-data">
+        <form class="uploadForm" action="/api/admin/loginAs" method="POST" enctype="multipart/form-data">
             <div style="text-align:center;">
                 <input type="text" name="user" required placeholder="Username" pattern="[a-zA-Z0-9_-]{3-50}" style="width: 250px;" /><br>
             </div>

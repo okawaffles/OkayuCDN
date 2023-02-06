@@ -408,7 +408,7 @@ app.post('/api/upload', async (req, res) => {
     });
 })
 
-app.post('/login', (req, res) => {
+app.post('/api/login', (req, res) => {
     let redir = req.query.redir;
     let form = new formidable.IncomingForm();
     let username;
@@ -429,7 +429,7 @@ app.post('/login', (req, res) => {
     });
 });
 
-app.post('/signup', (req, res) => {
+app.post('/api/signup', (req, res) => {
     let form = new formidable.IncomingForm();
     form.parse(req, (err, fields, files) => {
         if (!config.start_flags['DISABLE_ACCOUNT_CREATION']) {
@@ -464,7 +464,7 @@ app.post('/signup', (req, res) => {
     });
 });
 
-app.post('/manage/delFile', (req, res) => {
+app.post('/api/user/delFile', (req, res) => {
     let form = new formidable.IncomingForm();
     form.parse(req, (err, fields, files) => {
         let token = req.cookies.token;
@@ -477,7 +477,7 @@ app.post('/manage/delFile', (req, res) => {
     })
 })
 
-app.post('/admin/delFile', (req, res) => {
+app.post('/api/admin/delFile', (req, res) => {
     let form = new formidable.IncomingForm();
     form.parse(req, (err, fields, files) => {
         try {
@@ -489,7 +489,7 @@ app.post('/admin/delFile', (req, res) => {
     })
 })
 
-app.post('/admin/resUser', (req, res) => {
+app.post('/api/admin/resUser', (req, res) => {
     let form = new formidable.IncomingForm();
     form.parse(req, (err, fields, files) => {
         if (fs.existsSync(`./db/userLoginData/${fields.username}.json`)) {
@@ -505,7 +505,7 @@ app.post('/admin/resUser', (req, res) => {
         } else res.redirect('/admin');
     })
 })
-app.post('/admin/loginAs', (req, res) => {
+app.post('/api/admin/loginAs', (req, res) => {
     let form = new formidable.IncomingForm();
     form.parse(req, (err, fields) => {
         if (verifyLogin(fields.un, fields.pw)) {
@@ -551,7 +551,7 @@ app.get('/wallpaper', (req, res) => {
 
 
 // New account things (file storage size)
-app.get('/qus', (req, res) => {
+app.get('/api/qus', (req, res) => {
     let user = req.query.user;
     let size = 0;
     if (!fs.existsSync(`./content/${req.query.user}`)) {
@@ -588,7 +588,7 @@ function qus(user) {
     }
 }
 
-app.get('/quc', (req, res) => {
+app.get('/api/quc', (req, res) => {
     let list = [];
     let sizelist = [];
     let usf = `./content/${req.query.user}`;
@@ -605,7 +605,7 @@ app.get('/quc', (req, res) => {
     });
 });
 
-app.get('/cec', (req, res) => {
+app.get('/api/cec', (req, res) => {
     let user = req.query.user;
     let file = req.query.file;
     if (!user || !file) {
@@ -615,7 +615,7 @@ app.get('/cec', (req, res) => {
     }
 });
 
-app.get('/getres', (req, res) => {
+app.get('/api/getres', (req, res) => {
     let user = req.query.user;
     let service = req.query.service;
     if (!user || !service) {

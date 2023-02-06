@@ -59,7 +59,7 @@ function updateProgress(e) {
 		let success = false;
 
 		setTimeout(() => {
-			$.getJSON(`/getres?user=${endUserName}&service=uus`, function (data) {
+			$.getJSON(`/api/getres?user=${endUserName}&service=uus`, function (data) {
 				success = data.success;
 				if (!success) {
 					progress.innerHTML = `<br><p style="color:red;">Something went wrong when uploading your file.<br>Error Info: ${data.details} (${data.code})</p>`
@@ -114,7 +114,7 @@ function assignUserName(username, bugTester, premium) {
 
 function getStorage() {
 	document.getElementById('visibleToggle').style = "display: inline;";
-	$.getJSON(`/qus?user=${endUserName}`, function (data) {
+	$.getJSON(`/api/qus?user=${endUserName}`, function (data) {
 		document.getElementById('storageAmount').innerHTML = `You have used ${(((data.size / 1024) / 1024) / 1024).toFixed(2)}GB of storage (of your ${((data.userTS / 1024) / 1024) / 1024}GB)`
 		document.getElementById('storageAmount').style = "";
 		document.getElementById('visibleToggle').style = "display: none;";
