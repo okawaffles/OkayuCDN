@@ -20,7 +20,7 @@ function placeUserContent(list, size) {
 function setUser(name) {
     uname = name;
     try {
-        $.getJSON(`/quc?user=${uname}`, function(data) {
+        $.getJSON(`/api/quc?user=${uname}`, function(data) {
             placeUserContent(data.listing, data.sizelist);
         });
     } catch (e) {
