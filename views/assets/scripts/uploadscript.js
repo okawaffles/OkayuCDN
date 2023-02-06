@@ -60,31 +60,29 @@ function updateProgress(e) {
 
 		let waitingForServer = true;
 
-		while (waitingForServer) {
-			setTimeout(() => {
-				$.getJSON(`/api/getres?user=${endUserName}&service=uus`, function (data) {
-					success = data.success;
-					if (!success) {
-						if (data.code == "SCH-RNF") {
-							progress.innerHTML = `<br><p style="color:red;">If you uploaded a large file, this error may appear. Please wait a moment, then check My Box to see if you uploaded it.</p>`
-							document.getElementById('visibleToggle').style = "display: none;";
-							console.log(`err: ${data.code}`);
-							waitingForServer = false;
-						} else {
-							progress.innerHTML = `<br><p style="color:red;">An error occurred while uploading your file. Error: ${data.details} (Code: ${data.code})</p>`
-							document.getElementById('visibleToggle').style = "display: none;";
-							console.log(`err: ${data.code}`);
-							waitingForServer = false;
-						}
-					} else {
-						progress.innerHTML = `<br><p>Finished, please wait...</p>`
+		setTimeout(() => {
+			$.getJSON(`/api/getres?user=${endUserName}&service=uus`, function (data) {
+				success = data.success;
+				if (!success) {
+					if (data.code == "SCH-RNF") {
+						progress.innerHTML = `<br><p style="color:red;">If you uploaded a large file, this error may appear. Please wait a moment, then check My Box to see if you uploaded it.</p>`
+						document.getElementById('visibleToggle').style = "display: none;";
+						console.log(`err: ${data.code}`);
 						waitingForServer = false;
-						console.log(`ok: ${data.toString()}`);
-						document.location = `/success?f=${endFileName}`;
+					} else {
+						progress.innerHTML = `<br><p style="color:red;">An error occurred while uploading your file. Error: ${data.details} (Code: ${data.code})</p>`
+						document.getElementById('visibleToggle').style = "display: none;";
+						console.log(`err: ${data.code}`);
+						waitingForServer = false;
 					}
-				})
-			}, 5000);
-		}
+				} else {
+					progress.innerHTML = `<br><p>Finished, please wait...</p>`
+					waitingForServer = false;
+					console.log(`ok: ${data.toString()}`);
+					document.location = `/success?f=${endFileName}`;
+				}
+			})
+		}, 5000);
 	}
 
 }
