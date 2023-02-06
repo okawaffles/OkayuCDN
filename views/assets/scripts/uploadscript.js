@@ -58,20 +58,25 @@ function updateProgress(e) {
 		progress.innerHTML = `<br><p>Hold on! We're delaying to make sure the server got your file...</p>`
 		let success = false;
 
-		setTimeout(() => {
-			$.getJSON(`/api/getres?user=${endUserName}&service=uus`, function (data) {
-				success = data.success;
-				if (!success) {
-					progress.innerHTML = `<br><p style="color:red;">Something went wrong when uploading your file.<br>Error Info: ${data.details} (${data.code})</p>`
-					document.getElementById('visibleToggle').style = "display: none;";
-					console.log(`err: ${data.code}`);
-				} else {
-					progress.innerHTML = `<br><p>Finished, please wait...</p>`
-					document.location = `/success?f=${endFileName}`;
-					console.log(`ok: ${data.toString()}`);
-				}
-			})
-		}, 5000);
+		let waitingForServer = true;
+
+		while (waitingForServer) {
+			setTimeout(() => {
+				$.getJSON(`/api/getres?user=${endUserName}&service=uus`, function (data) {
+					success = data.success;
+					if (!success) {
+						progress.innerHTML = `<br><p style="color:red;">Waiting for a valid response from the server... (this is normal with large files, please be patient)</p>`
+						document.getElementById('visibleToggle').style = "display: none;";
+						console.log(`err: ${data.code}`);
+					} else {
+						progress.innerHTML = `<br><p>Finished, please wait...</p>`
+						waitingForServer = false;
+						console.log(`ok: ${data.toString()}`);
+						document.location = `/success?f=${endFileName}`;
+					}
+				})
+			}, 5000);
+		}
 	}
 
 }
