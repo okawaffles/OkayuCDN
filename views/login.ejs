@@ -21,6 +21,19 @@
         </nav>
     </header>
 
+    <!-- gdpr consent -->
+    <script src="/assets/scripts/gdpr.js"></script>
+
+    <div id="gdpr" class="gdpr_regulation_cookie_banner" style="display: none">
+        <p>We only store preferences and login information in your cookies. If you do not approve of this, please do not use OkayuCDN.</p>
+        <button onclick="setGDPRConsent()" class="gdpr_button">Okay</button>
+    </div>
+
+    <script>
+        if (!checkGDPRConsent())
+            document.getElementById("gdpr").style.display = "flex";
+    </script>
+
     <div class="upload-pane">
         <h2 class="login_title">Welcome to OkayuCDN!</h2>
         <h4 class="login_subtitle">Let's get you logged in and ready to go!</h4>

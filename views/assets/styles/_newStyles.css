@@ -620,3 +620,15 @@ button:hover {
 .red {
     background-color: red;
 }
+
+.gdpr_regulation_cookie_banner {
+    background-color: #0087a9;
+    padding: 10px 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.gdpr_regulation_cookie_banner p {
+    color: white;
+    text-align: center;
+}

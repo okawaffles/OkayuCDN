@@ -15,7 +15,8 @@
   },
   "name": "okayucdn",
   "description": "A File Upload Server based around Nekomata Okayu",
-  "version": "5.1.0",
+  "version": "5.1.1",
+  "datecode":"CDN:E:G:06022023",
   "main": "index.js",
   "devDependencies": {},
   "repository": {
