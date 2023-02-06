@@ -1,7 +1,8 @@
 let uname;
 
 function deleteItemRequest(item) {
-    window.location = `/deleteItem?itemName=${item}`;
+    if (confirm(`Are you sure you want to delete ${item}? This cannot be undone!`))
+        window.location = `/deleteItem?itemName=${item}`;
 }
 
 function placeUserContent(list, size) {

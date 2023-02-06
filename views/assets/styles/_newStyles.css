@@ -356,6 +356,7 @@ button:hover {
     border-radius: 12px;
     flex-direction: row;
     margin-left: 25%;
+    margin-bottom: 7px;
 }
 .delete {
     margin-left: auto;
