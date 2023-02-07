@@ -207,7 +207,7 @@ app.get('/content/:user/:item', (req, res) => {
                 {
                     'response': '500',
                     'error': 'CDS-FF (DELIVERY_SERVICE_CANNOT_READ)',
-                    'description': 'Content found but was unable to be read. Contact support@okawaffles.com if you encounter this error.'
+                    'description': 'Content found but was unable to be read.'
                 }
             )
         }
@@ -262,7 +262,7 @@ app.get('/manage/upload', (req, res) => {
         } catch (err) {
             isBT = false;
         }
-        res.render('upload.ejs', { USERNAME: getUsername(token), isBT: isBT, premium: getPremiumStat(token) });
+        res.render('upload.ejs', { USERNAME: getUsername(token), isBT: isBT, premium: getPremiumStat(token),datecode: pjson.datecode });
     } else {
         res.redirect('/login?redir=/manage/upload');
     }
