@@ -17,25 +17,30 @@
 
 <body>
     <script>
+        let fs = 120;
         let mX = 0;
         let mY = 0;
         let swid = screen.width;
         let shei = screen.height;
+        if (swid < 1280) {
+            fs = 60; 
+            okayuScale = 1.3;
+        }
         let app = new PIXI.Application({ width: swid, height: shei });
         app.stage.interactive = true;
         document.body.appendChild(app.view);
-        let bgi = PIXI.Sprite.from('/assets/images/landing/bgi.png');
-        let mira = PIXI.Sprite.from('/assets/images/landing/mira.png');
+        let bgi = PIXI.Sprite.from('https://okayu.okawaffles.com/assets/images/landing/bgi.png');
+        let mira = PIXI.Sprite.from('https://okayu.okawaffles.com/assets/images/landing/mira_new.png');
         bgi.scale.set(1.1, 1.1);
         bgi.anchor.set(0.5);
         app.stage.addChild(bgi);
         miraScale = 1.5 * (shei/1080);
-        mira.x = (swid / 2) - ((529 * miraScale) / 2);
+        mira.x = (swid / 2) - ((853 * miraScale) / 2);
         mira.y = shei - (450 * miraScale);
         mira.scale.set(miraScale, miraScale);
         app.stage.addChild(mira);
 
-        let title = new PIXI.Text(`goldenmira`, { fontFamily: "Courier New", fontSize: 120, align: 'center', fill: "#87d1ff" });
+        let title = new PIXI.Text(`goldenmira`, { fontFamily: "Courier New", fontSize: fs, align: 'center', fill: "#222742", stroke: "#222742", strokeThickness:"10" });
         title.x = swid / 2 - (title.width / 2);
         title.y = 200;
         app.stage.addChild(title);
@@ -44,7 +49,9 @@
         app.ticker.add((delta) => {
             elapsed += delta;
             mira.y = (shei - (440 * miraScale)) + Math.cos(elapsed / 50.0) * 10.0;
+            mira.x = (swid / 2) - ((853 * miraScale) / 2) - (mX / 165) + swid / 125;
             title.y = 200 + -Math.cos(elapsed / 50.0) * 10.0;
+            title.x = swid / 2 - (title.width / 2) - (mX / 125) + swid / 125;
 
             bgi.x = swid / 2 - (mX / 75) + swid / 125;
             bgi.y = shei / 2 - (mY / 75) + shei / 125;

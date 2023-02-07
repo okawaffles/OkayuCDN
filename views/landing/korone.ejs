@@ -17,7 +17,7 @@
 
 <body>
     <script>
-
+        let fs = 120;
         let mX = 0;
         let mY = 0;
         let swid = screen.width;
@@ -25,8 +25,8 @@
         let app = new PIXI.Application({ width: swid, height: shei });
         app.stage.interactive = true;
         document.body.appendChild(app.view);
-        let bgi = PIXI.Sprite.from('/assets/images/landing/bgi.png');
-        let korone = PIXI.Sprite.from('/assets/images/landing/korone.png');
+        let bgi = PIXI.Sprite.from('https://okayu.okawaffles.com/assets/images/landing/bgi.png');
+        let korone = PIXI.Sprite.from('https://okayu.okawaffles.com/assets/images/landing/korone.png');
         bgi.scale.set(1.1, 1.1);
         bgi.anchor.set(0.5);
         app.stage.addChild(bgi);
@@ -36,7 +36,7 @@
         korone.scale.set(koroneScale, koroneScale);
         app.stage.addChild(korone);
 
-        let title = new PIXI.Text(`korone`, { fontFamily: "Courier New", fontSize: 120, align: 'center', fill: "#87d1ff" });
+        let title = new PIXI.Text(`korone`, { fontFamily: "Courier New", fontSize: fs, align: 'center', fill: "#222742", stroke: "#222742", strokeThickness:"10" });
         title.x = swid / 2 - (title.width / 2);
         title.y = 200;
         app.stage.addChild(title);
@@ -46,6 +46,8 @@
             elapsed += delta;
             korone.y = (shei - (440 * koroneScale)) + Math.cos(elapsed / 50.0) * 10.0;
             title.y = 200 + -Math.cos(elapsed / 50.0) * 10.0;
+            korone.x = (swid / 2) - ((470 * koroneScale) / 2) - (mX / 165) + swid / 125;
+            title.x = swid / 2 - (title.width / 2) - (mX / 125) + swid / 125;
 
             bgi.x = swid / 2 - (mX / 75) + swid / 125;
             bgi.y = shei / 2 - (mY / 75) + shei / 125;

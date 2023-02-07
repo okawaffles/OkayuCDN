@@ -39,8 +39,8 @@
         let app = new PIXI.Application({ width: swid, height: shei });
         app.stage.interactive = true;
         document.body.appendChild(app.view);
-        let bgi = PIXI.Sprite.from('/assets/images/landing/bgi.png');
-        let okayu = PIXI.Sprite.from('/assets/images/landing/okayu.png');
+        let bgi = PIXI.Sprite.from('https://okayu.okawaffles.com/assets/images/landing/bgi.png');
+        let okayu = PIXI.Sprite.from('https://okayu.okawaffles.com/assets/images/landing/okayu.png');
         bgi.scale.set(1.1, 1.1);
         bgi.anchor.set(0.5);
         app.stage.addChild(bgi);
@@ -68,6 +68,8 @@
             elapsed += delta;
             okayu.y = (shei - (440 * okayuScale)) + Math.cos(elapsed / 50.0) * 10.0;
             title.y = 200 + -Math.cos(elapsed / 50.0) * 10.0;
+            okayu.x = (swid / 2) - ((360 * okayuScale) / 2) - (mX / 165) + swid / 125;
+            title.x = swid / 2 - (title.width / 2) - (mX / 125) + swid / 125;
 
             bgi.x = swid / 2 - (mX / 75) + swid / 125;
             bgi.y = shei / 2 - (mY / 75) + shei / 125;
