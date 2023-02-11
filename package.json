@@ -11,7 +11,8 @@
     "ytdl-core": "^4.11.0"
   },
   "scripts": {
-    "test": "npm ci && npm install && node index.js GITHUB_ACTIONS_TEST"
+    "test": "npm ci && npm install && node index.js GITHUB_ACTIONS_TEST",
+    "start": "node index.js"
   },
   "name": "okayucdn",
   "description": "A File Upload Server based around Nekomata Okayu",
