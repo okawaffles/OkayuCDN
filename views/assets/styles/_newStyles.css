@@ -285,6 +285,22 @@ button:hover {
     text-align: center;
 }
 
+.login_error {
+    color: red;
+    display: none;
+    font-size: medium;
+    margin-bottom: 10px;
+}
+.error_2fa {
+    color: red;
+    display: none;
+    font-size: medium;
+    margin-bottom: 10px;
+}
+.tfa {
+    display: none;
+}
+
 /* signup */
 
 .input_text {
@@ -635,4 +651,15 @@ button:hover {
 .gdpr_regulation_cookie_banner p {
     color: white;
     text-align: center;
+}
+.gdpr_button {
+    border-radius: 10px;
+    border: 2px solid white;
+    padding: 4px 10px;
+    margin-left: 15px;
+}
+.gdpr_button:hover {
+    background-color: white;
+    transition: 50ms ease;
+    color: grey;
 }

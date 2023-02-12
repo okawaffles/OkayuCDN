@@ -7,5 +7,6 @@
     "tags": {
         "bugtester":true,
         "okasoft":true
-    }
+    },
+    "uses2FA":true
 }

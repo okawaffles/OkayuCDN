@@ -7,7 +7,7 @@ const fs = require('fs');
 const cache = require('./cs-modules/cacheHelper');
 
 // Check+Load dependencies
-let express, cookieParser, formidable, cryplib, ytdl, chalk, path;
+let express, cookieParser, formidable, cryplib, chalk, path, urlencodedparser, speakeasy, qrcode;
 const { info, warn, error } = require('okayulogger');
 try {
     require('okayulogger');
@@ -17,9 +17,15 @@ try {
     if (parseInt(process.version.split('v')[1].split('.')[0]) < 15)
         error('boot', 'Your node version does not support crypto!');
     cryplib = require('crypto'); // switched away from npm crypto to built-in crypto
-    ytdl = require('ytdl-core');
     chalk = require('chalk');
     path = require('path');
+    urlencodedparser = require('body-parser').urlencoded({extended:false})
+
+    // 2fa setup
+    speakeasy = require('speakeasy');
+    qrcode = require('qrcode')
+
+    console.log(speakeasy.generateSecret());
 
     require('ejs'); // do not assign ejs to a variable as we don't need to
 } catch (e) {
@@ -135,6 +141,12 @@ function verifyLogin(username, password) {
 
         // Compare encryption (Unencrypted password is never stored in database) do they match?
         if (encryptedPasswd === userData.password) return true; else return false;
+    } else return false;
+}
+function check2FAStatus(username) {
+    if (fs.existsSync(`./db/userLoginData/${username}.json`)) {
+        var userData = JSON.parse(fs.readFileSync(`./db/userLoginData/${username}.json`));
+        return userData.uses2FA;
     } else return false;
 }
 
@@ -408,7 +420,53 @@ app.post('/api/upload', async (req, res) => {
     });
 })
 
-app.post('/api/login', (req, res) => {
+app.post('/api/login', urlencodedparser, (req, res) => {
+    let username = req.body.username;
+    let password = req.body.password;
+
+    if (verifyLogin(username, password)) {
+        let token = genNewToken(32);
+        let session = {
+            user: username
+        };
+
+        if (!checkRestriction(username)) {
+            if (!check2FAStatus(username))
+                res.json({result:200,uses2FA:false,token:token})
+            else
+                res.json({result:200,uses2FA:true})
+
+            res.end();
+            fs.writeFileSync(`./db/sessionStorage/${token}.json`, JSON.stringify(session));
+        } else res.render('forbidden.ejs', { reason: checkRestriction(username) });
+    } else res.json({result:401})
+});
+
+app.get('/api/2fa/setupUser', urlencodedparser, (req, res) => {
+    if (!verifyToken(req.cookies.token)) { res.status(403); return; }
+
+    let secret = req.body.secret;
+    let b32 = secret.base32;
+    let userdata = JSON.parse(fs.readFileSync(`./db/userLoginData/${getUsername(req.cookies.token)}`));
+    let newUserdata = {
+        "password": userdata.password,"email": userdata.email,"name": userdata.name,"storage": userdata.storage,"premium": userdata.premium,"tags": { "bugtester":userdata.tags.bugtester, "okasoft":userdata.tags.okasoft },
+
+        "uses2FA":true,
+        "2fa_config": {
+            b32: b32
+        }
+    }
+
+    fs.writeFileSync(`./db/userLoginData/${getUsername(req.cookies.token)}`, JSON.stringify(newUserdata));
+
+    qrcode.toDataURL(secret.otpauth_url, function(err, data_url) {
+        res.send('<img src="' + data_url + '">');
+    });
+})
+
+// old login post
+
+/*app.post('/api/login', (req, res) => {
     let redir = req.query.redir;
     let form = new formidable.IncomingForm();
     let username;
@@ -427,7 +485,7 @@ app.post('/api/login', (req, res) => {
             } else res.render('forbidden.ejs', { reason: checkRestriction(username) });
         } else res.render('error_general', { error: 'Username or password incorrect!' });
     });
-});
+});*/
 
 app.post('/api/signup', (req, res) => {
     let form = new formidable.IncomingForm();

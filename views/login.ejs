@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Log in | OkayuCDN!</title>
+    <title>Log in | OkayuCDN</title>
     <link rel="stylesheet" href="/assets/styles/_newStyles.css">
     <script src="https://kit.fontawesome.com/dc1b60441b.js" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script src="/assets/scripts/login.js"></script>
 </head>
 <body>
     <header>
@@ -37,13 +39,24 @@
     <div class="upload-pane">
         <h2 class="login_title">Welcome to OkayuCDN!</h2>
         <h4 class="login_subtitle">Let's get you logged in and ready to go!</h4>
-        <form class="login_form" id="form" action="/api/login?redir=<%= redir %>" method="POST">
-            <input type="text" placeholder="Username" class="username" name="un" required /><br>
-            <input type="password" placeholder="Password" class="password" name="pw" required /><br>
+        
+        <div class="login_form" id="form">
+            <input type="text" placeholder="Username" class="username" name="un" id="un" required /><br>
+            <input type="password" placeholder="Password" class="password" name="pw" id="pw" required /><br>
+            <p class="login_error">Please check your username and password.</p>
+
             <div class="wrap">
-                <input type="submit" class="go" id="submit" value="Go" />
+                <button class="go" id="submit" value="Go" onclick="sendLoginPOST('<%=redir%>')">Go</button>
+                <!-- <input type="submit" class="go" id="submit" value="Go" /> -->
             </div>
-        </form>
+        </div>
+
+        <div class="tfa" id="2fa">
+            <h4 class="login_subtitle">Two Factor Authentication</h4>
+            <input type="number" placeholder="2FA Code" class="username" name="un" id="un" required /><br>
+            <p class="error_2fa">Incorrect 2FA code.</p>
+        </div>
+
         <br>
         <div class="wrap">
             <button class="noacc" onclick="location = `../signup`">I don't have an account</button>
