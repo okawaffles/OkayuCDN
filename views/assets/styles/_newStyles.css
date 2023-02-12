@@ -443,6 +443,10 @@ button:hover {
 
 
 /* Info */
+.info_body {
+    overflow: scroll;
+    scroll-behavior: smooth;
+}
 .section_header {
     color: white;
     font-size: 48px;
