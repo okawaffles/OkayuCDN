@@ -296,9 +296,13 @@ button:hover {
     display: none;
     font-size: medium;
     margin-bottom: 10px;
+    text-align: center;
 }
 .tfa {
     display: none;
+}
+.code {
+    width: 100%;
 }
 
 /* signup */
@@ -662,4 +666,17 @@ button:hover {
     background-color: white;
     transition: 50ms ease;
     color: grey;
+}
+
+
+/* 2fa setup */
+.tfa_h1 {
+    color: white;
+    margin-top: 15px;
+}
+.tfa_h3 {
+    color: white;
+}
+.center {
+    text-align: center;
 }

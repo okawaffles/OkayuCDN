@@ -1,3 +1,5 @@
+let username;
+
 function checkLogin(data, redir) {
     if (data.result == 200) {
         if (data.uses2FA) {
@@ -22,8 +24,21 @@ function sendLoginPOST(redir) {
 
     if (un == "" || pw == "") { alert("Please enter your username and password."); return; }
 
+    username = un;
+
     $('button.go').css("display", 'none');
     $('button.noacc').css("display", 'none');
 
     $.post("/api/login", { username: un, password: pw }).done(function (data) { checkLogin(data, redir) });
+}
+
+function send2FAPOST(redir) {
+    $.post("/api/2fa/verify", { userToken:document.getElementById('code').value, username:username }).done(function (data) { 
+        if (data.result == 200) {
+            document.cookie = `token=${data.token}`
+            document.location = `${redir}`
+        } else {
+            $('p.error_2fa').css('display', 'inline');
+        }
+    });
 }

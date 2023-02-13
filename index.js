@@ -25,8 +25,6 @@ try {
     speakeasy = require('speakeasy');
     qrcode = require('qrcode')
 
-    console.log(speakeasy.generateSecret());
-
     require('ejs'); // do not assign ejs to a variable as we don't need to
 } catch (e) {
     console.log('Error: Missing dependencies. Please run "npm ci"!');
@@ -442,50 +440,70 @@ app.post('/api/login', urlencodedparser, (req, res) => {
     } else res.json({result:401})
 });
 
-app.get('/api/2fa/setupUser', urlencodedparser, (req, res) => {
+app.get('/account/2fa/setup', (req, res) => {
+    if (!verifyToken(req.cookies.token)) { res.redirect('/login?redir=/account/2fa/setup'); return; }
+    if (getUserData(req.cookies.token).uses2FA) {
+        res.render('error_general.ejs', {error:"You already have 2FA on your account!"})
+        //res.end();
+        return;
+    }
+
+    let secret = speakeasy.generateSecret({name:`OkayuCDN (${getUsername(req.cookies.token)})`});
+
+    qrcode.toDataURL(secret.otpauth_url, function(err, data_url) {
+        fs.writeFileSync(path.join(__dirname, `/cache/${getUsername(req.cookies.token)}.2fa`), JSON.stringify(secret));
+        res.render('setup2fa.ejs', {qrc: data_url});
+    });
+})
+
+app.post('/api/2fa/setupUser', urlencodedparser, (req, res) => {
     if (!verifyToken(req.cookies.token)) { res.status(403); return; }
 
-    let secret = req.body.secret;
-    let b32 = secret.base32;
-    let userdata = JSON.parse(fs.readFileSync(`./db/userLoginData/${getUsername(req.cookies.token)}`));
+    let secret = JSON.parse(fs.readFileSync(path.join(__dirname, `/cache/${getUsername(req.cookies.token)}.2fa`)));
+
+    // delete the secret cache
+    fs.rmSync(path.join(__dirname, `/cache/${getUsername(req.cookies.token)}.2fa`));
+
+    let userdata = getUserData(req.cookies.token);
     let newUserdata = {
         "password": userdata.password,"email": userdata.email,"name": userdata.name,"storage": userdata.storage,"premium": userdata.premium,"tags": { "bugtester":userdata.tags.bugtester, "okasoft":userdata.tags.okasoft },
 
         "uses2FA":true,
-        "2fa_config": {
-            b32: b32
-        }
+        "2fa_config":secret.base32
     }
 
-    fs.writeFileSync(`./db/userLoginData/${getUsername(req.cookies.token)}`, JSON.stringify(newUserdata));
-
-    qrcode.toDataURL(secret.otpauth_url, function(err, data_url) {
-        res.send('<img src="' + data_url + '">');
-    });
+    fs.writeFileSync(`./db/userLoginData/${getUsername(req.cookies.token)}.json`, JSON.stringify(newUserdata));
 })
 
-// old login post
+app.post('/api/2fa/setup/verify', urlencodedparser, (req, res) => {
+    let secret = JSON.parse(fs.readFileSync(path.join(__dirname, `/cache/${getUsername(req.cookies.token)}`)));
+    let b32 = secret.base32;
 
-/*app.post('/api/login', (req, res) => {
-    let redir = req.query.redir;
-    let form = new formidable.IncomingForm();
-    let username;
-    form.parse(req, (err, fields, files) => {
-        username = fields.un;
-        if (verifyLogin(fields.un, fields.pw)) {
-            let token = genNewToken(32);
-            let session = {
-                user: fields.un
-            };
+    if (speakeasy.totp.verify({secret: b32, encoding: 'base32', token: req.body.userToken})) {
+        res.json({result:200})
+    } else {
+        error('2FA', `${req.body.userToken} != valid`)
+        res.json({result:401})
+    }
+})
+app.post('/api/2fa/verify', urlencodedparser, (req, res) => {
+    // remember: 2fa validators don't have a token.
+    let userdata = JSON.parse(fs.readFileSync(path.join(__dirname, `/db/userLoginData/${req.body.username}.json`)));
 
-            if (checkRestriction(fields.un) == false) {
-                res.cookie(`token`, token, { expires: new Date(Date.now() + 604800000) });
-                res.redirect(redir);
-                fs.writeFileSync(`./db/sessionStorage/${token}.json`, JSON.stringify(session));
-            } else res.render('forbidden.ejs', { reason: checkRestriction(username) });
-        } else res.render('error_general', { error: 'Username or password incorrect!' });
-    });
-});*/
+    let b32 = userdata['2fa_config'];
+    if (speakeasy.totp.verify({secret: b32, encoding: 'base32', token: req.body.userToken})) {
+        // write session
+        let token = genNewToken(32);
+        let session = {
+            user: req.body.username
+        };
+        fs.writeFileSync(`./db/sessionStorage/${token}.json`, JSON.stringify(session));
+
+        res.json({result:200,token})
+    } else {
+        res.json({result:401})
+    }
+})
 
 app.post('/api/signup', (req, res) => {
     let form = new formidable.IncomingForm();

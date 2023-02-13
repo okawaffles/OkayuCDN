@@ -1,12 +1,1 @@
-{
-    "password": "655ce707c0850878231b4d5901bf51c70a24dffe0b7e1002963bb64de98cb1f6",
-    "email": "okawaffles@okawaffles.com",
-    "name": "okawaffles",
-    "storage": 26843545600,
-    "premium": true,
-    "tags": {
-        "bugtester":true,
-        "okasoft":true
-    },
-    "uses2FA":true
-}
+{"password":"655ce707c0850878231b4d5901bf51c70a24dffe0b7e1002963bb64de98cb1f6","email":"okawaffles@okawaffles.com","name":"okawaffles","storage":26843545600,"premium":true,"tags":{"bugtester":true,"okasoft":true},"uses2FA":true,"2fa_config":"KZCE6MJQEVZTA22MIIXHKJCUNZ6VUMCSORLHOXK6KBZGI6BJFYSQ"}

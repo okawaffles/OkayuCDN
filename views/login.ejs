@@ -52,9 +52,15 @@
         </div>
 
         <div class="tfa" id="2fa">
+            <br><br>
             <h4 class="login_subtitle">Two Factor Authentication</h4>
-            <input type="number" placeholder="2FA Code" class="username" name="un" id="un" required /><br>
-            <p class="error_2fa">Incorrect 2FA code.</p>
+            <h4 class="login_subtitle">If you have issues, please contact oka@waffle.moe</h4>
+            <input type="number" placeholder="2FA Code" class="username code" id="code" required /><br>
+            <p class="error_2fa">Incorrect 2FA code (if the code just changed, wait a moment, then try again.)</p>
+
+            <div class="wrap">
+                <button class="go_2fa" id="go_2fa" value="Go" onclick="send2FAPOST('<%=redir%>')">Finish</button>
+            </div>
         </div>
 
         <br>
