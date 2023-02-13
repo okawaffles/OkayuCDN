@@ -1,10 +1,3 @@
 /node_modules
-.replit
-okayuCDN-full.code-workspace
-/db/sessionStorage
-/db/userLoginData
-/db/ip403
+db/
 /content
-
-# this config is for if you would like to use nodemailer
-nodemailer_config.json
