@@ -55,8 +55,11 @@ app.use('*', (req, res, next) => {
     res.setHeader('X-Powered-By', `OkayuCDN ${pjson.version}`);
     var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     let pip = ip;
-    if (fs.existsSync(`./db/ip403/${pip}`)) {
-        res.render('forbidden.ejs', { "reason": fs.readFileSync(`./db/ip403/${pip}`) });
+
+    if (!fs.existsSync(path.join(__dirname, "/db/ip403"))) fs.mkdir(path.join(__dirname, "/db/ip403"));
+
+    if (fs.existsSync(path.join(__dirname, `/db/ip403/${pip}`))) {
+        res.render('forbidden.ejs', { "reason": fs.readFileSync(path.join(__dirname, `/db/ip403/${pip}`)) });
         info('RequestInfo', `[IP-BAN] ${pip} :: ${req.method} ${req.originalUrl}`);
     } else {
         info('RequestInfo', `${chalk.red(pip)} :: ${chalk.green(req.method)} ${chalk.green(req.originalUrl)}`);
