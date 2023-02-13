@@ -563,7 +563,7 @@ button:hover {
 	border-radius: 16px;
 	font-size: 16px;
 	margin: 5px;
-	display: none;
+	display: hidden;
 }
 #bugtest-tag {
 	color: white;
@@ -572,7 +572,7 @@ button:hover {
 	border-radius: 16px;
 	font-size: 16px;
 	margin: 5px;
-	display: none;
+	display: hidden;
 }
 .upload-pane {
 	display: grid;
