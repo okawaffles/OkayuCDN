@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account | OkayuCDN</title>
+    <link rel="stylesheet" href="/assets/styles/_newStyles.css">
+    <script src="https://kit.fontawesome.com/dc1b60441b.js" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script src="/assets/scripts/account.js"></script>
+</head>
+<body>
+    <header>
+        <img class="logo" src="/assets/images/logo.png" width="200"></img>
+        <nav>
+            <ul class="nav_links">
+                <li><a href="/home"><i class="fa-solid fa-house"></i> Home</a></li>
+                <li><a href="/manage/upload"><i class="fa-solid fa-upload"></i> Upload</a></li>
+                <li><a href="/mybox"><i class="fa-solid fa-box"></i> My Box</a></li>
+                <li><a href="/info"><i class="fa-solid fa-circle-info"></i> Info</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="center">
+        <h1 class="tfa_h1">Your Account (<%= username %>)</h1>
+        <br><hr><br>
+        <h1 class="tfa_h1">Update Your Password</h1><br>
+
+        <input type="password" class="password" id="password_current" placeholder="Current Password"><br>
+        <input type="password" class="password" id="password_new" placeholder="New Password"><br>
+        <button class="go" id="submit" onclick="updatePwd()">Change</button>
+
+        <br><br>
+        <h1 class="tfa_h1">Enable Two-Factor Authentication (Beta)</h1><br>
+        <button class="go" id="submit" onclick="document.location = '/account/2fa/setup';">Enable 2FA (Beta)</button>
+    </div>
+</body>
+</html>

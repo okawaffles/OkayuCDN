@@ -251,17 +251,16 @@ app.get('/home', (req, res) => {
 app.get('/info', (req, res) => {
     let values = stats('r');
     res.render('info.ejs', { uploads: values.uploads, accounts: values.accounts });
-    res.end();
 })
 
 app.get('/terms', (req, res) => {
     res.render('terms.ejs');
-    res.end();
 })
 app.get('/account', (req, res) => {
-    res.render('myAccount.ejs');
-    res.end();
-})
+    if (!verifyToken(req.cookies.token)) {res.redirect('/login?redir=/account'); return;}
+
+    res.render('account.ejs', {username:getUsername(req.cookies.token)});
+});
 
 
 app.get('/manage/upload', (req, res) => {
