@@ -545,7 +545,7 @@ app.post('/api/signup', (req, res) => {
 });
 
 app.post('/api/account/changePassword', urlencodedparser, (req, res) => {
-    if (!verifyToken(req.cookies.token) || !verifyLogin(getUsername(req.cookies.token), req.body.currentPassword)) { res.json({result:403}); return; }
+    if (!verifyToken(req.cookies.token) || !verifyLogin(getUsername(req.cookies.token), req.body.currentPassword)) { res.json({result:403}); error("updatePassword", "Password was not valid."); return; }
 
     let udat = getUserData(req.cookies.token);
     if (!check2FAStatus(getUsername(req.cookies.token))) {
