@@ -453,6 +453,8 @@ app.get('/account/2fa/setup', (req, res) => {
     let secret = speakeasy.generateSecret({name:`OkayuCDN (${getUsername(req.cookies.token)})`});
 
     qrcode.toDataURL(secret.otpauth_url, function(err, data_url) {
+        if (err) { res.render('error_general.ejs', {error:`An error occurred while creating the QR code. See here:\n${error}`}); return; }
+
         fs.writeFileSync(path.join(__dirname, `/cache/${getUsername(req.cookies.token)}.2fa`), JSON.stringify(secret));
         res.render('setup2fa.ejs', {qrc: data_url});
     });
@@ -478,7 +480,7 @@ app.post('/api/2fa/setupUser', urlencodedparser, (req, res) => {
 })
 
 app.post('/api/2fa/setup/verify', urlencodedparser, (req, res) => {
-    let secret = JSON.parse(fs.readFileSync(path.join(__dirname, `/cache/${getUsername(req.cookies.token)}`)));
+    let secret = JSON.parse(fs.readFileSync(path.join(__dirname, `/cache/${getUsername(req.cookies.token)}.2fa`)));
     let b32 = secret.base32;
 
     if (speakeasy.totp.verify({secret: b32, encoding: 'base32', token: req.body.userToken})) {
@@ -540,6 +542,30 @@ app.post('/api/signup', (req, res) => {
             res.render(`error_general`, { 'error': "Account registration is currently unavailable." });
         }
     });
+});
+
+app.post('/api/account/changePassword', urlencodedparser, (req, res) => {
+    if (!verifyToken(req.cookies.token) || !verifyLogin(getUsername(req.cookies.token), req.body.currentPassword)) { res.json({result:403}); return; }
+
+    let udat = getUserData(req.cookies.token);
+    if (!check2FAStatus(getUsername(req.cookies.token))) {
+        // without 2fa
+        let newUserData = {
+            password: hash(req.body.newPassword),email: udat.email,name: udat.name,storage: udat.storage,premium: udat.premium,
+            tags: { bugtester: udat.tags.bugtester,okasoft: udat.tags.okasoft }
+        }
+        fs.writeFileSync(`./db/userLoginData/${getUsername(req.cookies.token)}.json`, JSON.stringify(newUserData));
+    } else {
+        // with 2fa
+        let newUserData = {
+            password: hash(req.body.newPassword),email: udat.email,name: udat.name,storage: udat.storage,premium: udat.premium,
+            tags: { bugtester: udat.tags.bugtester,okasoft: udat.tags.okasoft },
+            uses2FA: true,
+            '2fa_config':udat['2fa_config']
+        }
+        fs.writeFileSync(`./db/userLoginData/${getUsername(req.cookies.token)}.json`, JSON.stringify(newUserData));
+    }
+    res.json({result:200});
 });
 
 app.post('/api/user/delFile', (req, res) => {
