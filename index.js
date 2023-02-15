@@ -335,8 +335,8 @@ app.get('/success', (req, res) => {
 });
 
 // this get request is basically a post request
-app.get('/deleteItem', (req, res) => {
-    if (!req.query.itemName) {
+app.post('/api/mybox/deleteItem', urlencodedparser, (req, res) => {
+    if (!req.body.id) {
         res.json({"status":404,"description":"The requested item was not found.","ISE-CODE":"CMS-QNS"});
         res.end(); return;
     }
@@ -345,12 +345,12 @@ app.get('/deleteItem', (req, res) => {
         res.end(); return;
     }
     
-    fs.rm(path.join(__dirname + `/content/${getUsername(req.cookies.token)}/${req.query.itemName}`), (err) => {
+    fs.rm(path.join(__dirname + `/content/${getUsername(req.cookies.token)}/${req.body.id}`), (err) => {
         if (err) {
             res.status(500);
             return;
         } else {
-            res.redirect('/manage/content');
+            res.redirect('/mybox');
             return;
         }
     })
@@ -592,7 +592,6 @@ app.post('/api/admin/delFile', (req, res) => {
         }
     })
 })
-
 app.post('/api/admin/resUser', (req, res) => {
     let form = new formidable.IncomingForm();
     form.parse(req, (err, fields, files) => {

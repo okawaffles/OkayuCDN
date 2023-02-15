@@ -1,8 +1,14 @@
 let uname;
 
 function deleteItemRequest(item) {
-    if (confirm(`Are you sure you want to delete ${item}? This cannot be undone!`))
-        window.location = `/deleteItem?itemName=${item}`;
+    if (confirm(`Are you sure you want to delete ${item}? This cannot be undone!`)) {
+        $.post('/api/mybox/deleteItem', {
+            id:item
+        }).done(() => {
+            // refresh page
+            document.location = "/mybox";
+        })
+    }
 }
 
 function placeUserContent(list, size) {
@@ -10,18 +16,22 @@ function placeUserContent(list, size) {
         //console.log(list);
         list.forEach(item => {
             let i = list.indexOf(item);
-            document.getElementById('content_container').innerHTML += `<div class="content_items"><p style="padding:10px">${item} (${(((size[i] / 1024) / 1024) / 1024).toFixed(2)}GB)</p> <button class="btn-red delete" onclick="deleteItemRequest('${item}');"><i class="fa-solid fa-trash-can"></i><strong>  Delete</strong></button></div>`;
-            document.getElementById('content_container').style = "width: 100%;";
-            document.getElementById('loader').style = "display: none";
+            $('#content_container').html($('#content_container').html() + `<div class="content_items"><p style="padding:10px">${item} (${(((size[i] / 1024) / 1024) / 1024).toFixed(2)}GB)</p> <button class="btn-red delete" onclick="deleteItemRequest('${item}');"><i class="fa-solid fa-trash-can"></i><strong>  Delete</strong></button></div>`);
+            $('#content_container').css('width', '100%');
         });
+
+        $('#loader').css('display', 'none');
+
+        if (list.length == 0) {
+            $('p.mybox_noContent').css('display', 'inline');
+        }
     } catch (e) {
         alert('error in managescript.js : ' + e);
     }
 }
 function setUser(name) {
-    uname = name;
     try {
-        $.getJSON(`/api/quc?user=${uname}`, function(data) {
+        $.getJSON(`/api/quc?user=${name}`, function(data) {
             placeUserContent(data.listing, data.sizelist);
         });
     } catch (e) {

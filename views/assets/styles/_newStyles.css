@@ -362,6 +362,11 @@ button:hover {
     color: white;
 }
 
+.mybox_noContent {
+    display: none;
+    color: white;
+}
+
 .content_container {
     width: 100%;
 }
