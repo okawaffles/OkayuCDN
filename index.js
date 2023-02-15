@@ -207,7 +207,7 @@ app.get('/mira', (req, res) => {
 
 // Main
 
-app.get('/content/:user/:item', (req, res) => {
+app.get('/content/@:user/:item', (req, res) => {
     let user = req.params.user;
     let item = req.params.item;
     let file = "none";
@@ -216,16 +216,18 @@ app.get('/content/:user/:item', (req, res) => {
         if (file != "none") {
             res.send(file);
         } else {
-            res.json(
-                {
-                    'response': '500',
-                    'error': 'CDS-FF (DELIVERY_SERVICE_CANNOT_READ)',
-                    'description': 'Content found but was unable to be read.'
-                }
-            )
+            res.json({'response': '500','error': 'CDS-FF (DELIVERY_SERVICE_CANNOT_READ)','description': 'Content found but was unable to be read.'})
         }
     } catch (err) {
-        res.render('404.ejs');
+        // for private files:
+        // check users private folder
+        if (fs.existsSync(path.join(__dirname, `/content/${user}/private/${item}`))) {
+            // if exists, verify password
+            if (!verifyToken(req.query.token)) res.redirect(`/login?redir=/content/${user}/${item}`)
+            // if ok, show the file.
+        }
+        // if not, return 404
+        else res.render('notfound.ejs');
     }
     res.end();
 });
@@ -330,11 +332,10 @@ app.get('/success', (req, res) => {
         res.end();
         return;
     } else {
-        res.render('upload_finish.ejs', { l: `${config.domain}/content/${getUsername(req.cookies.token)}/${req.query.f}`, vl: `${config.domain}/view/${getUsername(req.cookies.token)}/${req.query.f}` });
+        res.render('upload_finish.ejs', { l: `${config.domain}/content/@${getUsername(req.cookies.token)}/${req.query.f}`, vl: `${config.domain}/view/@${getUsername(req.cookies.token)}/${req.query.f}` });
     }
 });
 
-// this get request is basically a post request
 app.post('/api/mybox/deleteItem', urlencodedparser, (req, res) => {
     if (!req.body.id) {
         res.json({"status":404,"description":"The requested item was not found.","ISE-CODE":"CMS-QNS"});
@@ -359,7 +360,7 @@ app.post('/api/mybox/deleteItem', urlencodedparser, (req, res) => {
 // POST Request handlers
 
 app.post('/api/upload', async (req, res) => {
-    info('UserUploadService', 'Got upload-is-done request!');
+    info('UserUploadService', 'User file upload has completed, POST to finish...');
     const token = req.cookies.token;
     if (!verifyToken(token)) { error('login', 'Token is invalid. Abort.'); return; }
     if (config.start_flags['DISABLE_UPLOADING']) { warn('UserUploadService', 'Uploading is disabled. Abort.'); return; }
