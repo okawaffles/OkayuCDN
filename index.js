@@ -737,9 +737,20 @@ app.get('/api/getres', (req, res) => {
     }
 });
 
-app.get('/devel', (req, res) => {
-    res.render(`new/${req.query.p}.ejs`);
-})
+app.get('/api/health', (req, res) => {
+    res.json({
+        health:"OK",
+        version: pjson.version,
+        datecode: pjson.datecode,
+        config:{
+            start_flags: config.start_flags,
+            port: config.port,
+            domain: config.domain
+        },
+        
+    });
+});
+
 
 // Keep Last !! 404 handler
 app.get('*', (req, res) => {
