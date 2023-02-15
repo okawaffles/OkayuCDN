@@ -551,6 +551,12 @@ button:hover {
     color: white;
 }
 
+.upload_error {
+    color: red;
+    text-align: center;
+    display: none;
+}
+
 .banner-ul {
 	list-style-type: none;
 	margin: 0;

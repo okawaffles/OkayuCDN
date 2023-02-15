@@ -11,6 +11,7 @@
     <title>Upload | OkayuCDN</title>
     <link rel="stylesheet" href="/assets/styles/_newStyles.css">
     <script src="https://kit.fontawesome.com/dc1b60441b.js" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 
     <meta content="Upload | OkayuCDN" property="og:title">
     <meta content="Upload files for free" property="og:description">
@@ -51,6 +52,7 @@
                 <input type="file" class="chooseFiles" id="uploaded" required /><br><br>
                 <input type="text" class="filename input_text" name="filename" required placeholder="Name Your File" pattern="[a-zA-Z0-9_-]{50}"
                     style="width: 250px;" id="filename" /><br>
+                <p class="upload_error">Error Placeholder</p>
                 <div class="wrap up_wrap">
                     <button class="go" id="uploadBtn">Upload</button>
                 </div>
