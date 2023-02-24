@@ -112,17 +112,17 @@ function assignUserName(username, bugTester, premium) {
 		document.getElementById('bugtest-tag').style.display = "inline";
 	}
 
-	let reason;
-	if (navigator.userAgent.includes("iOS") || navigator.userAgent.includes("iPadOS")) reason = "Warning: You appear to be using an i[Pad]OS device. You likely cannot upload due to a WebKit bug.";
+	let reason = "DoNotDisplay";
+	if (navigator.userAgent.includes("iPhone OS") || navigator.userAgent.includes("iPad OS")) reason = "Warning: You appear to be using an Apple device. You likely cannot upload due to a WebKit bug.";
 	if (navigator.userAgent.includes("CrOS")) reason = "Warning: You appear to be using a ChromeOS device. This operating system sometimes doesn't work as expected.";
 	if (navigator.userAgent.includes("Symbian")) reason = "Warning: You appear to be using a Symbian device. This operating system is not supported.";
 	if (navigator.userAgent.includes("Fire OS")) reason = "Warning: You appear to be using a Fire OS device. This device is untested. Please report bugs on the GitHub page.";
 	if (navigator.userAgent.includes("Roku") || navigator.userAgent.includes("SMART-TV") || navigator.userAgent.includes("Web0S")) reason = "Warning: You appear to be using a TV device. This device is not supported.";
 	if (navigator.userAgent.includes("PlayStation") || navigator.userAgent.includes("Xbox") || navigator.userAgent.includes("PLAYSTATION") || navigator.userAgent.includes("Nintendo Wii")) reason = "Warning: You are using a game console. This device is not supported.";
 
-	if (reason) {
-		document.getElementById("banner-ua-notice").style = "display: inherit";
-		document.getElementById("ua-warning-contents").innerHTML = reason;
+	if (reason != "DoNotDisplay") {
+		$("#banner-ua-notice").css("display", "inline");
+		$("#ua-warning-contents").html(reason);
 	}
 }
 
