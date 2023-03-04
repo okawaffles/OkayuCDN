@@ -2,10 +2,11 @@ var browse = document.getElementsByClassName('chooseFiles')[0];
 var selectDialog = document.getElementById('uploaded');
 var progressUpload = document.getElementById("progressUpload");
 var progress;
+
 addProgressBar();
+
 browse.addEventListener("click", function () {
 	selectDialog.click();
-
 });
 
 var endFileName;
@@ -17,7 +18,8 @@ try {
 			sendFiles(selectDialog.files);
 		}
 		else {
-			alert("Filename not valid.");
+			$("p.upload_error").html("Error: File name is not valid.");
+			$("p.upload_error").css("display", "inline");
 		}
 	}
 } catch (e) {
@@ -27,7 +29,7 @@ try {
 
 
 function sendFiles(files) {
-
+	$("p.upload_error").css("display", "none");
 	resetProgressBar();
 	var req = new XMLHttpRequest();
 	req.upload.addEventListener("progress", updateProgress);
@@ -54,35 +56,36 @@ function updateProgress(e) {
 	console.log((((e.loaded / e.total) * 100)) + "%");
 	progress.style.width = (((e.loaded / e.total) * 100)) + "%";
 	if (progress.style.width == "100%") {
-		document.getElementById('visibleToggle').style = "display: inline; margin-top:50px;";
-		progress.innerHTML = `<br><p>Hold on! We're delaying to make sure the server got your file...</p>`
+		$("#visibleToggle").css("display", "inline")
+		$("p.upload_error").html("Please wait a moment...");
+		$("p.upload_error").css("color", "white");
+		$("p.upload_error").css("display", "inline");
 		let success = false;
-
-		let waitingForServer = true;
 
 		setTimeout(() => {
 			$.getJSON(`/api/getres?user=${endUserName}&service=uus`, function (data) {
 				success = data.success;
 				if (!success) {
 					if (data.code == "SCH-RNF") {
-						progress.innerHTML = `<br><p style="color:red;">If you uploaded a large file, this error may appear. Please wait a moment, then check My Box to see if you uploaded it.</p>`
-						document.getElementById('visibleToggle').style = "display: none;";
+						$("p.upload_error").html("Your file has likely uploaded successfully, but is still processing. Check My Box for more info.");
+						$("p.upload_error").css("color", "red");
+						
+						$("#visibleToggle").css("display", "none");
 						console.log(`err: ${data.code}`);
-						waitingForServer = false;
 					} else {
-						progress.innerHTML = `<br><p style="color:red;">An error occurred while uploading your file. Error: ${data.details} (Code: ${data.code})</p>`
-						document.getElementById('visibleToggle').style = "display: none;";
+						$("p.upload_error").html(`An error has occurred while uploading.\nDetails: ${data.details} (${data.code})`);
+						$("p.upload_error").css("color", "red");
+						
+						$("#visibleToggle").css("display", "none")
 						console.log(`err: ${data.code}`);
-						waitingForServer = false;
 					}
 				} else {
 					progress.innerHTML = `<br><p>Finished, please wait...</p>`
-					waitingForServer = false;
 					console.log(`ok: ${data.toString()}`);
 					document.location = `/success?f=${endFileName}`;
 				}
 			})
-		}, 5000);
+		}, 2500);
 	}
 
 }
@@ -102,24 +105,24 @@ function addProgressBar() {
 
 function assignUserName(username, bugTester, premium) {
 	endUserName = username;
-	if (premium) document.getElementById('premium-tag').style.display = "inline";
+	if (premium == "true") document.getElementById('premium-tag').style.display = "inline";
 	if (bugTester == "true") {
 		document.getElementById('banner-hider').style = "";
 		document.getElementById('banner-contents').innerHTML = `Hey ${username}! You seem to be a bug-tester! Thanks for your help! We've upped your storage as a thank-you!`;
 		document.getElementById('bugtest-tag').style.display = "inline";
 	}
 
-	let reason;
-	if (navigator.userAgent.includes("iOS") || navigator.userAgent.includes("iPadOS")) reason = "Warning: You appear to be using an i[Pad]OS device. You likely cannot upload due to a WebKit bug.";
+	let reason = "DoNotDisplay";
+	if (navigator.userAgent.includes("iPhone OS") || navigator.userAgent.includes("iPad OS")) reason = "Warning: You appear to be using an Apple device. You likely cannot upload due to a WebKit bug.";
 	if (navigator.userAgent.includes("CrOS")) reason = "Warning: You appear to be using a ChromeOS device. This operating system sometimes doesn't work as expected.";
 	if (navigator.userAgent.includes("Symbian")) reason = "Warning: You appear to be using a Symbian device. This operating system is not supported.";
 	if (navigator.userAgent.includes("Fire OS")) reason = "Warning: You appear to be using a Fire OS device. This device is untested. Please report bugs on the GitHub page.";
 	if (navigator.userAgent.includes("Roku") || navigator.userAgent.includes("SMART-TV") || navigator.userAgent.includes("Web0S")) reason = "Warning: You appear to be using a TV device. This device is not supported.";
 	if (navigator.userAgent.includes("PlayStation") || navigator.userAgent.includes("Xbox") || navigator.userAgent.includes("PLAYSTATION") || navigator.userAgent.includes("Nintendo Wii")) reason = "Warning: You are using a game console. This device is not supported.";
 
-	if (reason) {
-		document.getElementById("banner-ua-notice").style = "display: inherit";
-		document.getElementById("ua-warning-contents").innerHTML = reason;
+	if (reason != "DoNotDisplay") {
+		$("#banner-ua-notice").css("display", "inline");
+		$("#ua-warning-contents").html(reason);
 	}
 }
 

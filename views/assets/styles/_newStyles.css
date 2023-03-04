@@ -362,6 +362,11 @@ button:hover {
     color: white;
 }
 
+.mybox_noContent {
+    display: none;
+    color: white;
+}
+
 .content_container {
     width: 100%;
 }
@@ -546,6 +551,12 @@ button:hover {
     color: white;
 }
 
+.upload_error {
+    color: red;
+    text-align: center;
+    display: none;
+}
+
 .banner-ul {
 	list-style-type: none;
 	margin: 0;
@@ -563,7 +574,7 @@ button:hover {
 	border-radius: 16px;
 	font-size: 16px;
 	margin: 5px;
-	display: hidden;
+	display: none;
 }
 #bugtest-tag {
 	color: white;
@@ -572,7 +583,7 @@ button:hover {
 	border-radius: 16px;
 	font-size: 16px;
 	margin: 5px;
-	display: hidden;
+	display: none;
 }
 .upload-pane {
 	display: grid;
