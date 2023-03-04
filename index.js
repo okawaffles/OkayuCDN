@@ -8,7 +8,7 @@ const cache = require('./cs-modules/cacheHelper');
 
 // Check+Load dependencies
 let express, cookieParser, formidable, cryplib, chalk, path, urlencodedparser, speakeasy, qrcode;
-const { info, warn, error } = require('okayulogger');
+const { info, warn, error, Logger } = require('okayulogger');
 try {
     require('okayulogger');
     express = require('express');
@@ -208,6 +208,45 @@ app.get('/mira', (req, res) => {
 // Main
 
 app.get('/content/:user/:item', (req, res) => {
+    let file;
+    try { file = fs.readFileSync(`./content/${req.params.user}/${req.params.item}`); } catch (e) {
+        res.render('404.ejs'); return; }
+
+    let fExt = req.params.item.split('.').at('-1');
+
+    if(fExt != "mp4" || req.query.bypass == "true") {
+        // standard file sending
+        res.send(file);
+    } else {
+        res.render('watchpage.ejs', {filename: req.params.item, user: req.params.user});
+    }
+});
+
+app.get('/api/mp4/:user/:item', (req, res) => {
+    let user = req.params.user;
+    let item = req.params.item;
+    let fpath = path.join(__dirname, `/content/${user}/${item}`);
+    let size = fs.statSync(fpath).size;
+
+    // followed a guide on this so idk ???
+    const range = req.headers.range;
+    if (!range) res.status(404).send('Requires Range Header!');
+    const CHUNK_SIZE = 10 ** 6; // 1MB
+    const start = Number(range.replace(/\D/g, ""));
+    const end = Math.min(start + CHUNK_SIZE, size - 1);
+    const contentLength = end - start + 1;
+    const headers = {
+        "Content-Range": `bytes ${start}-${end}/${size}`,
+        "Accept-Ranges": "bytes",
+        "Content-Length": contentLength,
+        "Content-Type": "video/mp4",
+    };
+    res.writeHead(206, headers);
+    const videoStream = fs.createReadStream(fpath, { start, end });
+    videoStream.pipe(res);
+});
+
+/*app.get('/content/:user/:item', (req, res) => {
     let user = req.params.user;
     let item = req.params.item;
     let file = "none";
@@ -228,7 +267,7 @@ app.get('/content/:user/:item', (req, res) => {
         res.render('404.ejs');
     }
     res.end();
-});
+});*/
 app.get('/status', (req, res) => {
     res.json({ 'status': siteStatus });
 })
@@ -418,7 +457,40 @@ app.post('/api/upload', async (req, res) => {
             }
         });
     });
-})
+});
+
+app.get('/quickupload', (req, res) => {
+    res.json({error:403,description:"Not available."})
+    //res.render('quickupload.ejs');
+});
+
+app.post('/api/quickUpload', urlencodedparser, (req, res) => {
+    let L = new Logger('QuickUploadService');
+    L.info("Received anonymous upload.");
+    // get file count in anonymous content folder
+    fs.readdir(path.join(__dirname, '/content/anonymous'), (err, files) => {
+        id = files.length;
+        fs.copyFile(oldName, newPath, fs.constants.COPYFILE_EXCL, (err) => {
+            if (err) {
+                error('fs.copyFile', err);
+                error('QuickUploadService', 'Failed to copy file: ' + err);
+            } else {
+                info('QuickUploadService', 'File upload finished successfully!');
+                stats('w', 'uploads'); // increase upload statistic (write, uploads)
+
+                info('QuickUploadService', 'Cleaning temp file...');
+                fs.rmSync(oldName, {recursive: false}, (err) => {
+                    if (err) {
+                        error('fs.rmSync', err);
+                        error('QuickUploadService', 'Could not delete the temp file.');
+                        return;
+                    }
+                });
+                return;
+            }
+        });
+    });
+});
 
 app.post('/api/login', urlencodedparser, (req, res) => {
     let username = req.body.username;
@@ -746,8 +818,7 @@ app.get('/api/health', (req, res) => {
             start_flags: config.start_flags,
             port: config.port,
             domain: config.domain
-        },
-        
+        }
     });
 });
 

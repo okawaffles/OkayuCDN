@@ -47,6 +47,7 @@ function prepareDirectories() {
     if (!fs.existsSync('./db/sessionStorage')) fs.mkdirSync('./db/sessionStorage');
     if (!fs.existsSync('./db/userLoginData')) fs.mkdirSync('./db/userLoginData');
     if (!fs.existsSync('./content')) fs.mkdirSync('./content');
+    if (!fs.existsSync('./content/anonymous')) fs.mkdirSync('./content/anonymous');
     if (!fs.existsSync('./cache')) fs.mkdirSync('./cache');
 }
 
