@@ -691,3 +691,10 @@ button:hover {
 .center {
     text-align: center;
 }
+
+/* watch mp4 */
+#videoPlayer {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
