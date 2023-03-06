@@ -29,8 +29,8 @@
         let app = new PIXI.Application({ width: swid, height: shei });
         app.stage.interactive = true;
         document.body.appendChild(app.view);
-        let bgi = PIXI.Sprite.from('https://okayu.okawaffles.com/assets/images/landing/bgi.png');
-        let mira = PIXI.Sprite.from('https://okayu.okawaffles.com/assets/images/landing/mira_new.png');
+        let bgi = PIXI.Sprite.from('/images/landing/bgi.png');
+        let mira = PIXI.Sprite.from('/images/landing/mira_new.png');
         bgi.scale.set(1.1, 1.1);
         bgi.anchor.set(0.5);
         app.stage.addChild(bgi);

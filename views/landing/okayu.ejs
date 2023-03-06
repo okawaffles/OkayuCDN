@@ -21,7 +21,7 @@
     <meta content="https://okayu.okawaffles.com/" property="og:url">
     <meta content="#9000e3" data-react-helmet="true" name="theme-color">
 
-    <link rel="stylesheet" href="https://okayu.okawaffles.com/assets/styles/_newStyles.css">
+    <link rel="stylesheet" href="/assets/styles/_newStyles.css">
 </head>
 
 <body>
@@ -66,8 +66,8 @@
         let app = new PIXI.Application({ width: swid, height: shei });
         app.stage.interactive = true;
         document.body.appendChild(app.view);
-        let bgi = PIXI.Sprite.from('https://okayu.okawaffles.com/assets/images/landing/bgi.png');
-        let okayu = PIXI.Sprite.from('https://okayu.okawaffles.com/assets/images/landing/okayu.png');
+        let bgi = PIXI.Sprite.from('/assets/images/landing/bgi.png');
+        let okayu = PIXI.Sprite.from('/assets/images/landing/okayu.png');
         bgi.scale.set(1.1, 1.1);
         bgi.anchor.set(0.5);
         app.stage.addChild(bgi);
