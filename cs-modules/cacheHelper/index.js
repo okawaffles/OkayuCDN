@@ -31,30 +31,32 @@ function cacheRes(process, _code, username, id = 0) {
 
 function cleanCache() {
     info('cacheHelper', 'Cleaning up cache...')
-    fs.readdir('./cache', function (err, files) {
+    fs.readdir(path.join(__dirname, '/cache'), function (err, files) {
         files.forEach(file => {
-            fs.rmSync(`./cache/${file}`);
+            fs.rmSync(path.join(__dirname, `/cache/${file}`));
         });
         info('cacheHelper', 'Finished cleaning cache.');
     });
 }
 function cleanTokens() {
     info('cacheHelper', 'Cleaning up tokens...')
-    fs.readdir('./db/sessionStorage', function (err, files) {
+    fs.readdir(path.join(__dirname, '/db/sessionStorage'), function (err, files) {
         files.forEach(file => {
-            fs.rmSync(`./db/sessionStorage/${file}`);
+            fs.rmSync(path.join(__dirname, `/db/sessionStorage/${file}`));
         });
         info('cacheHelper', 'Finished cleaning tokens.');
     });
 }
 
 function prepareDirectories() {
-    if (!fs.existsSync('./db')) fs.mkdirSync('./db');
-    if (!fs.existsSync('./db/sessionStorage')) fs.mkdirSync('./db/sessionStorage');
-    if (!fs.existsSync('./db/userLoginData')) fs.mkdirSync('./db/userLoginData');
-    if (!fs.existsSync('./content')) fs.mkdirSync('./content');
-    if (!fs.existsSync('./content/anonymous')) fs.mkdirSync('./content/anonymous');
-    if (!fs.existsSync('./cache')) fs.mkdirSync('./cache');
+    if (!fs.existsSync(path.join(__dirname, '/db'))) fs.mkdirSync(path.join(__dirname, '/db'));
+    if (!fs.existsSync(path.join(__dirname, '/db/sessionStorage'))) fs.mkdirSync(path.join(__dirname, '/db/sessionStorage'));
+    if (!fs.existsSync(path.join(__dirname, '/db/userLoginData'))) fs.mkdirSync(path.join(__dirname, '/db/userLoginData'));
+    if (!fs.existsSync(path.join(__dirname, '/content'))) fs.mkdirSync(path.join(__dirname, '/content'));
+    if (!fs.existsSync(path.join(__dirname, '/content/anonymous'))) fs.mkdirSync(path.join(__dirname, '/content/anonymous'));
+    if (!fs.existsSync(path.join(__dirname, '/cache'))) fs.mkdirSync(path.join(__dirname, '/cache'));
+    
+    if (!fs.existsSync(path.join(__dirname, '/db/stats.json'))) fs.writeFileSync(path.join(__dirname, '/db/stats.json'), '{"accounts":0,"uploads":0"}');
 }
 
 module.exports = {cacheRes, cleanCache, cleanTokens, prepareDirectories};
