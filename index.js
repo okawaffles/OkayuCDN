@@ -7,7 +7,7 @@ const fs = require('fs');
 const cache = require('./cs-modules/cacheHelper');
 
 // Check+Load dependencies
-let express, cookieParser, formidable, cryplib, chalk, path, urlencodedparser, speakeasy, qrcode;
+let express, cookieParser, formidable, cryplib, chalk, path, urlencodedparser, speakeasy, qrcode, ffmpeg;
 const { info, warn, error, Logger } = require('okayulogger');
 try {
     require('okayulogger');
@@ -20,6 +20,8 @@ try {
     chalk = require('chalk');
     path = require('path');
     urlencodedparser = require('body-parser').urlencoded({extended:false})
+    ffmpeg = require('fluent-ffmpeg')
+    require('ffmpeg')
 
     // 2fa setup
     speakeasy = require('speakeasy');
@@ -210,7 +212,7 @@ app.get('/mira', (req, res) => {
 app.get('/content/:user/:item', (req, res) => {
     let file;
     try { file = fs.readFileSync(`./content/${req.params.user}/${req.params.item}`); } catch (e) {
-        res.render('404.ejs'); return; }
+        res.render('notfound.ejs'); return; }
 
     let fExt = req.params.item.split('.').at('-1');
 
@@ -218,8 +220,18 @@ app.get('/content/:user/:item', (req, res) => {
         // standard file sending
         res.send(file);
     } else {
-        res.render('watchpage.ejs', {filename: req.params.item, user: req.params.user});
+        res.render('watchpage.ejs', {filename: req.params.item, user: req.params.user, domain:config.domain});
     }
+});
+
+app.get('/content/:user/:item/embed', (req, res) => {
+    try { fs.readFileSync(`./content/${req.params.user}/${req.params.item}`); } catch (e) {
+        res.render('notfound.ejs'); return; }
+
+    let fExt = req.params.item.split('.').at('-1');
+    if (fExt != "mp4") return;
+
+    res.render('embeddedvideo.ejs', {filename: req.params.item, user: req.params.user});
 });
 
 app.get('/api/mp4/:user/:item', (req, res) => {
@@ -230,7 +242,11 @@ app.get('/api/mp4/:user/:item', (req, res) => {
 
     // followed a guide on this so idk ???
     const range = req.headers.range;
-    if (!range) res.status(404).send('Requires Range Header!');
+    if (!range) { 
+        res.status(404).send('Requires Range Header!'); 
+        error('mp4stream', 'Needs range header, rejecting.');
+        return;
+    }
     const CHUNK_SIZE = 10 ** 6; // 1MB
     const start = Number(range.replace(/\D/g, ""));
     const end = Math.min(start + CHUNK_SIZE, size - 1);
@@ -246,32 +262,26 @@ app.get('/api/mp4/:user/:item', (req, res) => {
     videoStream.pipe(res);
 });
 
-/*app.get('/content/:user/:item', (req, res) => {
-    let user = req.params.user;
-    let item = req.params.item;
-    let file = "none";
-    try {
-        file = fs.readFileSync(`./content/${user}/${item}`);
-        if (file != "none") {
-            res.send(file);
-        } else {
-            res.json({'response': '500','error': 'CDS-FF (DELIVERY_SERVICE_CANNOT_READ)','description': 'Content found but was unable to be read.'})
-        }
-    } catch (err) {
-        // for private files:
-        // check users private folder
-        if (fs.existsSync(path.join(__dirname, `/content/${user}/private/${item}`))) {
-            // if exists, verify password
-            if (!verifyToken(req.query.token)) res.redirect(`/login?redir=/content/${user}/${item}`)
-            // if ok, show the file.
-        }
-        // if not, return 404
-        else res.render('notfound.ejs');
-    }
-    res.end();
-});*/
+app.get('/api/thumbnail/:user/:item', (req, res) => {
+    videoPath = path.join(__dirname, `/content/${req.params.user}/${req.params.item}`)
+    if (!fs.existsSync(videoPath)) { res.status(404).send({"error":"File not found."}); return }
+    ffmpeg(videoPath)
+    .takeScreenshots({
+        count: 1,
+        timemarks: ['1'] // number of seconds
+    }, path.join(__dirname, '/cache'))
+    .on('end', () => {
+        const thumbnailPath = path.join(__dirname, '/cache/tn.png')
+        res.send(fs.readFileSync(thumbnailPath));
+    })
+    .on('error', (err) => {
+        error('thumbnail', err);
+    });
+});
+
+
 app.get('/status', (req, res) => {
-    res.json({ 'status': siteStatus });
+    res.redirect('/api/health');
 })
 app.get('/robots.txt', (req, res) => {
     res.send(fs.readFileSync('./views/assets/robots.txt'))
@@ -330,7 +340,7 @@ app.get('/mybox', (req, res) => {
     if (!token) {
         res.redirect('/login?redir=/mybox');
     } else if (verifyToken(token)) {
-        res.render('mybox.ejs', { USERNAME: getUsername(token) });
+        res.render('mybox.ejs', { USERNAME: getUsername(token),domain:config.domain });
     } else {
         res.redirect('/login?redir=/mybox');
     }
@@ -371,7 +381,7 @@ app.get('/success', (req, res) => {
         res.end();
         return;
     } else {
-        res.render('upload_finish.ejs', { l: `${config.domain}/content/@${getUsername(req.cookies.token)}/${req.query.f}`, vl: `${config.domain}/view/@${getUsername(req.cookies.token)}/${req.query.f}` });
+        res.render('upload_finish.ejs', { l: `${config.domain}/content/${getUsername(req.cookies.token)}/${req.query.f}`, vl: `${config.domain}/view/${getUsername(req.cookies.token)}/${req.query.f}` });
     }
 });
 
@@ -461,34 +471,55 @@ app.post('/api/upload', async (req, res) => {
 });
 
 app.get('/quickupload', (req, res) => {
-    res.json({error:403,description:"Not available."})
-    //res.render('quickupload.ejs');
+    if (config.start_flags["DISABLE_ANONYMOUS_UPLOADING"])
+        res.status(403).send({error:403,description:"Not available."})
+    else
+        res.render('quickupload.ejs', {domain:config.domain,datecode:config.datecode});
 });
 
 app.post('/api/quickUpload', urlencodedparser, (req, res) => {
     let L = new Logger('QuickUploadService');
-    L.info("Received anonymous upload.");
-    // get file count in anonymous content folder
-    fs.readdir(path.join(__dirname, '/content/anonymous'), (err, files) => {
-        id = files.length;
-        fs.copyFile(oldName, newPath, fs.constants.COPYFILE_EXCL, (err) => {
-            if (err) {
-                error('fs.copyFile', err);
-                error('QuickUploadService', 'Failed to copy file: ' + err);
-            } else {
-                info('QuickUploadService', 'File upload finished successfully!');
-                stats('w', 'uploads'); // increase upload statistic (write, uploads)
+    L.info("Received anonymous upload POST.");
 
-                info('QuickUploadService', 'Cleaning temp file...');
-                fs.rmSync(oldName, {recursive: false}, (err) => {
-                    if (err) {
-                        error('fs.rmSync', err);
-                        error('QuickUploadService', 'Could not delete the temp file.');
-                        return;
-                    }
-                });
-                return;
-            }
+    if (config.start_flags["DISABLE_ANONYMOUS_UPLOADING"]) {
+        L.warn("Anonymous uploading is disabled in config. Rejecting.")
+        return;
+    }
+
+    let form = new formidable.IncomingForm();
+    form.parse(req, function (err, fields, files) {
+        let extension;
+        try {
+            extension = files.file0.originalFilename.split('.').at(-1);
+        } catch (e) {
+            extension = "FILE";
+        }
+
+        const oldPath = files.file0.filepath;
+        // get file count in anonymous content folder
+        fs.readdir(path.join(__dirname, '/content/anonymous'), (err, files) => {
+            id = files.length;
+            let newPath = path.join(__dirname, `/content/anonymous/${id}.${extension}`);
+            fs.copyFile(oldPath, newPath, fs.constants.COPYFILE_EXCL, (err) => {
+                if (err) {
+                    L.error('[at fs.copyFile] ' + err);
+                    L.error('Failed to copy file: ' + err);
+                } else {
+                    L.info('File upload finished successfully!');
+                    stats('w', 'uploads'); // increase upload statistic (write, uploads)
+                    cache.cacheRes('uus', 'aok', 'anonymous');
+
+                    L.info('Cleaning temp file...');
+                    fs.rmSync(oldPath, { recursive: false }, (err) => {
+                        if (err) {
+                            L.error('[at fs.rmSync] ' + err);
+                            L.error('Could not delete the temp file.');
+                            return;
+                        }
+                    });
+                    return;
+                }
+            });
         });
     });
 });
@@ -587,7 +618,7 @@ app.post('/api/signup', (req, res) => {
     form.parse(req, (err, fields, files) => {
         if (!config.start_flags['DISABLE_ACCOUNT_CREATION']) {
             if (!fs.existsSync(`./db/userLoginData/${fields.un}.json`)) {
-                if (!(fields.un === "2.otf")) {
+                if (!(fields.un === "2.otf") && !(fields.un.toLowerCase() === "anonymous")) {
                     // Encrypt password with SHA-256 hash
                     let encryptedPasswd = hash(fields.pw);
 

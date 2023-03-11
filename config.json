@@ -2,6 +2,7 @@
     "start_flags_available": [
         "DISABLE_ACCOUNT_CREATION",
         "DISABLE_UPLOADING",
+        "DISABLE_ANONYMOUS_UPLOADING",
         "DEV_MODE",
         "DISABLE_ASCII_ART",
         "DISABLE_CACHE_CLEAN",

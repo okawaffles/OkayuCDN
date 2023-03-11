@@ -57,25 +57,27 @@ function updateProgress(e) {
 	progress.style.width = (((e.loaded / e.total) * 100)) + "%";
 	if (progress.style.width == "100%") {
 		$("#visibleToggle").css("display", "inline")
-		$("p.upload_error").html("Please wait a moment...");
+		$("p.upload_error").html("Processing your file, please wait a moment...");
 		$("p.upload_error").css("color", "white");
 		$("p.upload_error").css("display", "inline");
+		let finished = false;
 		let success = false;
 
 		setTimeout(() => {
+			console.log('(debug) getres...')
 			$.getJSON(`/api/getres?user=${endUserName}&service=uus`, function (data) {
 				success = data.success;
 				if (!success) {
 					if (data.code == "SCH-RNF") {
 						$("p.upload_error").html("Your file has likely uploaded successfully, but is still processing. Check My Box for more info.");
 						$("p.upload_error").css("color", "red");
-						
+
 						$("#visibleToggle").css("display", "none");
 						console.log(`err: ${data.code}`);
 					} else {
 						$("p.upload_error").html(`An error has occurred while uploading.\nDetails: ${data.details} (${data.code})`);
 						$("p.upload_error").css("color", "red");
-						
+
 						$("#visibleToggle").css("display", "none")
 						console.log(`err: ${data.code}`);
 					}
@@ -84,10 +86,9 @@ function updateProgress(e) {
 					console.log(`ok: ${data.toString()}`);
 					document.location = `/success?f=${endFileName}`;
 				}
-			})
-		}, 2500);
+			});
+		}, 10000);
 	}
-
 }
 function resetProgressBar() {
 	progress.innerHTML = ``

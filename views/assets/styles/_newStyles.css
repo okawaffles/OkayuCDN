@@ -373,7 +373,7 @@ button:hover {
 
 .content_items {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     color: white;
     font-size: 18px;
     width: 50%;

@@ -3,7 +3,7 @@ const {info, error, warn} = require('okayulogger');
 const fs = require('fs');
 const path = require('path');
 
-function cacheRes(process, _code, username) {
+function cacheRes(process, _code, username, id = 0) {
     let code = _code.toLowerCase();
     let object;
     switch (process.toLowerCase()) {
@@ -14,6 +14,12 @@ function cacheRes(process, _code, username) {
             if (code == "ise") object = {success:false,details:"Internal Server Error.",code:"UUS-ISE"};
 
             if (code == "aok") object = {success:true,details:"File upload succeeded.",code:"UUS-AOK"};
+            break;
+
+        case "qus":
+            if (code == "ise") object = {success:false,details:"Internal Server Error.",code:"UUS-ISE"};
+            // we need to also pass the ID to the anonymous user since they aren't naming their file.
+            if (code == "aok") object = {success:true,details:"File upload succeeded.",code:"UUS-AOK",id:id};
             break;
     
         default:

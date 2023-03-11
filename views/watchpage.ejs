@@ -8,9 +8,15 @@
     <link rel="stylesheet" href="/assets/styles/_newStyles.css">
     <script src="https://kit.fontawesome.com/dc1b60441b.js" crossorigin="anonymous"></script>
 
-    <meta content="<%= filename %>" property="og:title">
-    <meta content="<%= user %>" property="og:description">
-    <meta content="https://okayu.okawaffles.com/content/<%= user %>/<%= filename %>" property="og:url">
+    <meta content="OkayuCDN" property="og:site_name">
+    <meta property="og:title" content="<%=filename%>">
+    <meta property="og:description" content="Video by <%=user%>">
+    <meta content="<%=domain%>/content/<%= user %>/<%= filename %>" property="og:url">
+    <meta property="og:image" content="<%=domain%>/api/thumbnail/<%=user%>/<%=filename%>">
+    <meta property="og:image:height" content="720">
+    <meta property="og:image:width" content="1280">
+    <meta property="og:type" content="video.other">
+
     <meta content="#9000e3" data-react-helmet="true" name="theme-color">
 </head>
 <body>
@@ -26,7 +32,7 @@
         </nav>
     </header>
 
-    <video id="videoPlayer" width="50%" controls autoplay>
+    <video id="videoPlayer" width="80%" controls autoplay>
         <source src="/api/mp4/<%=user%>/<%=filename%>" type="video/mp4" />
     </video>
 </body>

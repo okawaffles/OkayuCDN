@@ -1,4 +1,4 @@
-let uname;
+let user, domain;
 
 function deleteItemRequest(item) {
     if (confirm(`Are you sure you want to delete ${item}? This cannot be undone!`)) {
@@ -11,12 +11,26 @@ function deleteItemRequest(item) {
     }
 }
 
+function share(item) {
+    try { navigator.share({
+        title:'OkayuCDN',
+        text:'View my file on OkayuCDN!',
+        url:`${domain}/content/${user}/${item}`
+    }) } catch(e) { 
+        navigator.clipboard.writeText(`${domain}/content/${user}/${item}`);
+        document.getElementById('share').innerHTML = '<i class="fa-solid fa-arrow-up-right-from-square"></i></i><strong>  Copied link!</strong>';
+        setTimeout(() => {
+            document.getElementById('share').innerHTML = '<i class="fa-solid fa-arrow-up-right-from-square"></i></i><strong>  Share</strong>';
+        }, 1500);
+     }
+}
+
 function placeUserContent(list, size) {
     try {
         //console.log(list);
         list.forEach(item => {
             let i = list.indexOf(item);
-            $('#content_container').html($('#content_container').html() + `<div class="content_items"><p style="padding:10px">${item} (${(((size[i] / 1024) / 1024) / 1024).toFixed(2)}GB)</p> <button class="btn-red delete" onclick="deleteItemRequest('${item}');"><i class="fa-solid fa-trash-can"></i><strong>  Delete</strong></button></div>`);
+            $('#content_container').html($('#content_container').html() + `<div class="content_items"><div class="mb-item-left"><p style="padding:10px">${item} (${(((size[i] / 1024) / 1024) / 1024).toFixed(2)}GB)</p></div> <div class="mb-item-right"><button id="share" class="delete" onclick="share('${item}');"><i class="fa-solid fa-arrow-up-right-from-square"></i></i><strong>  Share</strong></button> <button class="btn-red delete" onclick="deleteItemRequest('${item}');"><i class="fa-solid fa-trash-can"></i><strong>  Delete</strong></button></div></div>`);
             $('#content_container').css('width', '100%');
         });
 
@@ -29,7 +43,9 @@ function placeUserContent(list, size) {
         alert('error in managescript.js : ' + e);
     }
 }
-function setUser(name) {
+function setUser(name, this_domain) {
+    domain = this_domain;
+    user = name;
     try {
         $.getJSON(`/api/quc?user=${name}`, function(data) {
             placeUserContent(data.listing, data.sizelist);
