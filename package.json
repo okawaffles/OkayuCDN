@@ -2,19 +2,16 @@
   "dependencies": {
     "body-parser": "^1.20.1",
     "cookie-parser": "^1.4.6",
-    "cors": "^2.8.5",
     "ejs": "^3.1.7",
     "express.js": "^1.0.0",
     "ffmpeg": "^0.0.4",
     "fluent-ffmpeg": "^2.1.2",
     "formidable": "^2.0.1",
     "nodemailer": "^6.7.8",
-    "nodemon": "^2.0.21",
     "okayulogger": "^1.2.0",
     "qrcode": "^1.5.1",
     "qs": "^6.11.0",
-    "speakeasy": "^2.0.0",
-    "ytdl-core": "^4.11.0"
+    "speakeasy": "^2.0.0"
   },
   "scripts": {
     "test": "npm ci && npm install && node index.js GITHUB_ACTIONS_TEST",
@@ -23,7 +20,7 @@
   "name": "okayucdn",
   "description": "A File Upload Server based around Nekomata Okayu",
   "version": "5.3.0",
-  "datecode": "CDN:E:G:210220231329",
+  "datecode": "CDN:E:G:110320231449",
   "main": "index.js",
   "repository": {
     "type": "git",

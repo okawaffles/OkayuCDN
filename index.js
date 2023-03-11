@@ -381,7 +381,10 @@ app.get('/success', (req, res) => {
         res.end();
         return;
     } else {
-        res.render('upload_finish.ejs', { l: `${config.domain}/content/${getUsername(req.cookies.token)}/${req.query.f}`, vl: `${config.domain}/view/${getUsername(req.cookies.token)}/${req.query.f}` });
+        res.render('upload_finish.ejs', {
+            l: `${config.domain}/content/${req.query.anon ? "anonymous" : getUsername(req.cookies.token)}/${req.query.f}`, 
+            vl: `${config.domain}/view/${req.query.anon ? "anonymous" : getUsername(req.cookies.token)}/${req.query.f}`
+        });
     }
 });
 
@@ -507,7 +510,7 @@ app.post('/api/quickUpload', urlencodedparser, (req, res) => {
                 } else {
                     L.info('File upload finished successfully!');
                     stats('w', 'uploads'); // increase upload statistic (write, uploads)
-                    cache.cacheRes('uus', 'aok', 'anonymous');
+                    cache.cacheRes('qus', 'aok', 'anonymous', `${id}.${extension}`);
 
                     L.info('Cleaning temp file...');
                     fs.rmSync(oldPath, { recursive: false }, (err) => {
@@ -744,6 +747,7 @@ app.get('/view/:user/:item', (req, res) => {
             filetype: req.params.item.split('.')[req.params.item.split('.').length - 1]
         });
     } catch (err) {
+        error('view', err)
         res.render('notfound.ejs', {version:pjson.version});
         //res.end();
         return;

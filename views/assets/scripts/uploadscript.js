@@ -52,6 +52,30 @@ function sendFiles(files) {
 	req.send(form);
 }
 
+function checkResult() {
+	$.getJSON(`/api/getres?user=${endUserName}&service=uus`, function (data) {
+		console.log("data: " + JSON.stringify(data));
+		let success = data.success;
+		if (!success) {
+			if (data.code != "SCH-RNF") {
+				$("p.upload_error").html(`An error has occurred while uploading.\nDetails: ${data.details} (${data.code})`);
+				$("p.upload_error").css("color", "red");
+				
+				$("#visibleToggle").css("display", "none")
+				console.log(`error: ${data.code}`);
+			} else {
+				setTimeout(() => {
+					checkResult();
+				}, 2500);
+			}
+		} else {
+			progress.innerHTML = `<br><p>Finished, please wait...</p>`
+			console.log(`ok: ${data.toString()}`);
+			document.location = `/success?f=${endFileName}`;
+		}
+	})
+}
+
 function updateProgress(e) {
 	console.log((((e.loaded / e.total) * 100)) + "%");
 	progress.style.width = (((e.loaded / e.total) * 100)) + "%";
@@ -61,33 +85,10 @@ function updateProgress(e) {
 		$("p.upload_error").css("color", "white");
 		$("p.upload_error").css("display", "inline");
 		let finished = false;
-		let success = false;
 
 		setTimeout(() => {
-			console.log('(debug) getres...')
-			$.getJSON(`/api/getres?user=${endUserName}&service=uus`, function (data) {
-				success = data.success;
-				if (!success) {
-					if (data.code == "SCH-RNF") {
-						$("p.upload_error").html("Your file has likely uploaded successfully, but is still processing. Check My Box for more info.");
-						$("p.upload_error").css("color", "red");
-
-						$("#visibleToggle").css("display", "none");
-						console.log(`err: ${data.code}`);
-					} else {
-						$("p.upload_error").html(`An error has occurred while uploading.\nDetails: ${data.details} (${data.code})`);
-						$("p.upload_error").css("color", "red");
-
-						$("#visibleToggle").css("display", "none")
-						console.log(`err: ${data.code}`);
-					}
-				} else {
-					progress.innerHTML = `<br><p>Finished, please wait...</p>`
-					console.log(`ok: ${data.toString()}`);
-					document.location = `/success?f=${endFileName}`;
-				}
-			});
-		}, 10000);
+			checkResult();
+		}, 2500);
 	}
 }
 function resetProgressBar() {

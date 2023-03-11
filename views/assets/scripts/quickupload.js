@@ -13,13 +13,7 @@ var endFileName;
 
 try {
 	document.getElementById("uploadBtn").onclick = function () {
-		if (/^([a-zA-Z0-9_-]{1,50})$/.test(document.getElementById('filename').value)) {
-			sendFiles(selectDialog.files);
-		}
-		else {
-			$("p.upload_error").html("Error: File name is not valid.");
-			$("p.upload_error").css("display", "inline");
-		}
+		sendFiles(selectDialog.files);
 	}
 } catch (e) {
 	alert('Error in quickupload.js')
@@ -39,16 +33,40 @@ function sendFiles(files) {
 			let arr = files[file].name.split('.');
 			let arr_last = arr.length - 1;
 
-			form.append("file" + file, files[file], document.getElementById("filename").value + "." + arr[arr_last]);
-			endFileName = document.getElementById("filename").value + "." + arr[arr_last]
+			form.append("file" + file, files[file], files[file].name);
+			endFileName = files[file].name
 		} else {
-			form.append("file" + file, files[file], document.getElementById("filename").value + "." + files[file].name.split('.').at(-1));
-			endFileName = document.getElementById("filename").value + "." + files[file].name.split('.').at(-1)
+			form.append("file" + file, files[file], files[file].name);
+			endFileName = files[file].name
 		}
 
 	}
 
 	req.send(form);
+}
+
+function checkResult() {
+	$.getJSON(`/api/getres?user=anonymous&service=qus`, function (data) {
+		let success = data.success;
+		if (!success) {
+			if (data.code != "SCH-RNF") {
+				$("p.upload_error").html(`An error has occurred while uploading.\nDetails: ${data.details} (${data.code})`);
+				$("p.upload_error").css("color", "red");
+				
+				$("#visibleToggle").css("display", "none")
+				console.log(`error: ${data.code}`);
+			} else {
+				setTimeout(() => {
+					checkResult();
+				}, 2500);
+			}
+		} else {
+			progress.innerHTML = `<br><p>Finished, please wait...</p>`
+			console.log(`ok: ${data.toString()}`);
+			endFileName = data.id;
+			document.location = `/success?f=${endFileName}&anon=true`;
+		}
+	})
 }
 
 function updateProgress(e) {
@@ -62,28 +80,7 @@ function updateProgress(e) {
 		let success = false;
 
 		setTimeout(() => {
-			$.getJSON(`/api/getres?user=anonymous&service=uus`, function (data) {
-				success = data.success;
-				if (!success) {
-					if (data.code == "SCH-RNF") {
-						$("p.upload_error").html(`Your file has likely uploaded successfully, but is still processing. Wait a few moments.`);
-						$("p.upload_error").css("color", "red");
-						
-						$("#visibleToggle").css("display", "none");
-						console.log(`err: ${data.code}`);
-					} else {
-						$("p.upload_error").html(`An error has occurred while uploading.\nDetails: ${data.details} (${data.code})`);
-						$("p.upload_error").css("color", "red");
-						
-						$("#visibleToggle").css("display", "none")
-						console.log(`err: ${data.code}`);
-					}
-				} else {
-					progress.innerHTML = `<br><p>Finished, please wait...</p>`
-					console.log(`ok: ${data.toString()}`);
-					document.location = `/success?f=${endFileName}&anon=true`;
-				}
-			})
+			checkResult();
 		}, 2500);
 	}
 
