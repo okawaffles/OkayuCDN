@@ -49,6 +49,7 @@ function cleanTokens() {
 }
 
 function prepareDirectories() {
+    info('cacheHelper', 'Looking for missing files/directories...');
     if (!fs.existsSync(path.join(__dirname, '../../db'))) fs.mkdirSync(path.join(__dirname, '../../db'));
     if (!fs.existsSync(path.join(__dirname, '../../db/sessionStorage'))) fs.mkdirSync(path.join(__dirname, '../../db/sessionStorage'));
     if (!fs.existsSync(path.join(__dirname, '../../db/userLoginData'))) fs.mkdirSync(path.join(__dirname, '../../db/userLoginData'));
@@ -56,7 +57,8 @@ function prepareDirectories() {
     if (!fs.existsSync(path.join(__dirname, '../../content/anonymous'))) fs.mkdirSync(path.join(__dirname, '../../content/anonymous'));
     if (!fs.existsSync(path.join(__dirname, '../../cache'))) fs.mkdirSync(path.join(__dirname, '../../cache'));
     
-    if (!fs.existsSync(path.join(__dirname, '../../db/stats.json'))) fs.writeFileSync(path.join(__dirname, '../../db/stats.json'), '{"accounts":0,"uploads":0"}');
+    if (!fs.existsSync(path.join(__dirname, '../../db/stats.json'))) fs.writeFileSync(path.join(__dirname, '../../db/stats.json'), '{"accounts":0,"uploads":0}');
+    info('cacheHelper', 'Done! If missing files and directories were found, they have been replaced/created!');
 }
 
 module.exports = {cacheRes, cleanCache, cleanTokens, prepareDirectories};
