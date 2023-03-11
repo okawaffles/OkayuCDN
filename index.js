@@ -841,6 +841,7 @@ app.get('/api/getres', (req, res) => {
             return;
         }
         res.json(JSON.parse(fs.readFileSync(`./cache/${user}.${service}.json`, 'utf-8')));
+        fs.rmSync(path.join(__dirname, `/cache/${user}.${service}.json`));
     }
 });
 
