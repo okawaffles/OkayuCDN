@@ -367,9 +367,9 @@ app.get('/admin', (req, res) => {
     if (!token) {
         res.redirect('/login?redir=/admin');
     } else if (verifyToken(token)) {
-        if (getUsername(token) === "okawaffles" || getUsername(token) === "shears") {
+        if (getUserData(token)['tags']['admin']) {
             res.render('admin.ejs');
-        } else res.render('forbidden.ejs', { "reason": "No access." });
+        } else res.render('forbidden.ejs', { "reason": "No access. If you need help getting access, please follow these instructions:" });
     } else {
         res.redirect('/login?redir=/admin');
     }
