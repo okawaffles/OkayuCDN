@@ -1,11 +1,13 @@
 {
-    "parts":{
-        "menubar":{
-            "landing":"着陸なページを見っている",
-            "home":"ホーム",
-            "upload":"アップロード",
-            "mybox":"ダンボール",
-            "info":"インフォ"
+    "parts": {
+        "menubar": {
+            "landing":"<i class=\"fa-solid fa-plane-arrival\"></i> 着陸なページを見っている",
+            "home":"<i class=\"fa-solid fa-house\"></i> ホーム",
+            "upload":"<i class=\"fa-solid fa-upload\"></i> アップロード",
+            "mybox":"<i class=\"fa-solid fa-circle-info\"></i> ダンボール",
+            "info":"<i class=\"fa-solid fa-circle-info\"></i> インフォ",
+            "login":"ログイン",
+            "logout":"ログアウト"
         },
         "home": [
             "OkayuCDNへようこそ！",
