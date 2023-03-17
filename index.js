@@ -4,7 +4,7 @@
 
 
 const fs = require('fs');
-const cache = require('./cs-modules/cacheHelper');
+let cache;
 
 // Check+Load dependencies
 let express, cookieParser, formidable, cryplib, chalk, path, urlencodedparser, speakeasy, qrcode, ffmpeg;
@@ -19,6 +19,8 @@ try {
     cryplib = require('crypto'); // switched away from npm crypto to built-in crypto
     chalk = require('chalk');
     path = require('path');
+    cache = require(path.join(__dirname, '/parts/cacheHelper'));
+
     urlencodedparser = require('body-parser').urlencoded({extended:false})
     ffmpeg = require('fluent-ffmpeg')
     require('ffmpeg')

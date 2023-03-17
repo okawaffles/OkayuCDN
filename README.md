@@ -14,7 +14,7 @@ Sure, go ahead. It's not intended to be used as a major server and it is quite u
 1. Download the latest release (recommended) or clone the repository (for bugtesting/development)
 2. Navigate to the folder. **IMPORTANT**: The server will not run properly if you are not in the correct folder upon starting. (this is actively being worked on)
 3. Edit `config.json` to suit your needs. You should change the domain property to fit your domain/IP address.
-4. Run `npm ci`
+4. Run `npm i`
 5. Run `node .` OR `pm2 start index.js`
 6. Optionally, use nginx, etc. to make a reverse proxy.
 
