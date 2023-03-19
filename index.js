@@ -861,6 +861,12 @@ app.get('/api/health', (req, res) => {
 });
 
 
+// for testing
+app.get('/test', (req, res) => {
+    res.render('test.ejs');
+})
+
+
 // Keep Last !! 404 handler
 app.get('*', (req, res) => {
     res.render("notfound.ejs", {'version': pjson.version});

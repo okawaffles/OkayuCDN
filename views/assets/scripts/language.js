@@ -11,7 +11,7 @@ let jajp = {
         },
         "banner": {
             "gdpr":"我々は、ログインクッキーためたった。心得ないなら、お願いOkayuCDNを使うません。",
-            "okay":"はい",
+            "okay":"OK",
             "tfa":"今は、OkayuCDNの二要素認証はベータ版です！",
             "tfa_try":"それ試す！"
         },
@@ -25,13 +25,13 @@ let jajp = {
             "ログインして準備をしましょう！",
             "ユーザーネーム",
             "パスワード",
-            "行くよう！",
+            "行くよ！",
             "アカウントが有しません",
             "二要素認証",
             "誤りがありますなら、oka@waffle.moeをコンタクトください。",
             "二要素認証コード",
             "不正解の二要素認証コード",
-            "行くよう"
+            "行くよ"
         ]
     }
 }
@@ -87,6 +87,7 @@ function checkLanguage(page) {
 
             case 'upload':
                 doMenubar(jajp, 'home');
+                
                 break;
         
             default:
