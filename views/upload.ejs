@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="/assets/styles/_newStyles.css">
     <script src="https://kit.fontawesome.com/dc1b60441b.js" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script src="/assets/scripts/language.js"></script>
 
     <meta content="Upload | OkayuCDN" property="og:title">
     <meta content="Upload files for free" property="og:description">
@@ -46,7 +47,7 @@
 
     <div class="pad upload-pane">
         <div class="uploader">
-            <h1>Upload to OkayuCDN</h1>
+            <h1 id="title">Upload to OkayuCDN</h1>
             <h3 id="storageAmount" style="display: none;"></h3>
             <div id="hider" style="display: none">
                 <input type="file" class="chooseFiles" id="uploaded" required /><br><br>
@@ -68,7 +69,7 @@
     <h3 class="version"><label id="premium-tag">Premium</label><label id="bugtest-tag">Bugtester</label><%=datecode%></h3><br>
 
     <script src="/assets/scripts/uploadscript.js"></script>
-    <script>assignUserName("<%= USERNAME %>", "<%= isBT %>", "<%= premium %>"); getStorage()</script>
+    <script>assignUserName("<%= USERNAME %>", "<%= isBT %>", "<%= premium %>"); getStorage(); langSetUsername("<%=USERNAME%>"); checkLanguage('upload');</script>
 
     <style>
         /**

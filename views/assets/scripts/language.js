@@ -7,13 +7,15 @@ let jajp = {
             "mybox":'<i class="fa-solid fa-circle-info"></i> ダンボール',
             "info":'<i class="fa-solid fa-circle-info"></i> インフォ',
             "login":'ログイン',
-            "logout":'ログアウト'
+            "logout":'<i class="fa-solid fa-right-from-bracket"></i> ログアウト'
         },
         "banner": {
             "gdpr":"我々は、ログインクッキーためたった。心得ないなら、お願いOkayuCDNを使うません。",
             "okay":"OK",
             "tfa":"今は、OkayuCDNの二要素認証はベータ版です！",
-            "tfa_try":"それ試す！"
+            "tfa_try":"それ試す！",
+            "bugtest_hey":"ねぇ、",
+            "bugtest_bnr":"あなたはバグテスターです！僕たちは、あなたの保存を増えりました！ありがとうございます！"
         },
         "home": [
             "OkayuCDNへようこそ！",
@@ -32,9 +34,21 @@ let jajp = {
             "二要素認証コード",
             "不正解の二要素認証コード",
             "行くよ"
+        ],
+        "upload": [
+            "OkayuCDNへアップロードします",
+            "保存：ロードします",
+            "ファイルを名付ける",
+            "アップロードする",
+            "プレミアム",
+            "バグテスター",
+
         ]
     }
 }
+
+un = "ユーザ";
+function langSetUsername(name) { un = name };
 
 function doMenubar(lang, page) {
     let menubar = document.getElementsByClassName('nav_links')[0].children;
@@ -48,6 +62,13 @@ function doMenubar(lang, page) {
             menubar[1].children[0].innerHTML = lang.parts.menubar.upload;
             menubar[2].children[0].innerHTML = lang.parts.menubar.mybox;
             menubar[3].children[0].innerHTML = lang.parts.menubar.info;
+            break;
+        case 'upload':
+            menubar[0].children[0].innerHTML = lang.parts.menubar.home;
+            menubar[1].children[0].innerHTML = lang.parts.menubar.upload;
+            menubar[2].children[0].innerHTML = lang.parts.menubar.mybox;
+            menubar[3].children[0].innerHTML = lang.parts.menubar.info;
+            menubar[4].children[0].innerHTML = lang.parts.menubar.logout;
             break;
     }
 }
@@ -86,8 +107,13 @@ function checkLanguage(page) {
                 break;
 
             case 'upload':
-                doMenubar(jajp, 'home');
-                
+                doMenubar(jajp, 'upload');
+                $("#title").html(jajp.parts.upload[0]);
+                $("#filename")[0].placeholder = (jajp.parts.upload[2]);
+                $("#uploadBtn")[0].innerText = jajp.parts.upload[3];
+                $("#banner-contents")[0].innerText = jajp.parts.banner.bugtest_hey + un + "！" + jajp.parts.banner.bugtest_bnr;
+                $("#premium-tag")[0].innerText = jajp.parts.upload[4];
+                $("#bugtest-tag")[0].innerText = jajp.parts.upload[5];
                 break;
         
             default:

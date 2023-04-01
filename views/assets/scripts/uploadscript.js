@@ -131,7 +131,9 @@ function assignUserName(username, bugTester, premium) {
 function getStorage() {
 	document.getElementById('visibleToggle').style = "display: inline;";
 	$.getJSON(`/api/qus?user=${endUserName}`, function (data) {
-		document.getElementById('storageAmount').innerHTML = `You have used ${(((data.size / 1024) / 1024) / 1024).toFixed(2)}GB of storage (of your ${((data.userTS / 1024) / 1024) / 1024}GB)`
+		document.getElementById('storageAmount').innerHTML =
+			document.cookie.includes("language=ja-jp") ? `保存：${(((data.size / 1024) / 1024) / 1024).toFixed(2)}GBのうちの${((data.userTS / 1024) / 1024) / 1024}GB` : `You have used ${(((data.size / 1024) / 1024) / 1024).toFixed(2)}GB of storage (of your ${((data.userTS / 1024) / 1024) / 1024}GB)`;
+		
 		document.getElementById('storageAmount').style = "";
 		document.getElementById('visibleToggle').style = "display: none;";
 
