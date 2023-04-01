@@ -6,6 +6,7 @@ let process = require('process');
 let fs = require('node:fs')
 
 let con = mysql.createConnection({
+    host:config.mysql.host,
     user:config.mysql.username,
     password:config.mysql.password,
     database:config.mysql.database
@@ -58,6 +59,14 @@ setTimeout(async () => {
         }
     });
     await con.query(`CREATE TABLE stats(accounts int, uploads int);`, (err, result) => {
+        if (err) {
+            L.error(err);
+            process.exit();
+        } else {
+            L.info(`Result: OK`)
+        }
+    });
+    await con.query(`CREATE TABLE tokens(token char(255), username char(255));`, (err, result) => {
         if (err) {
             L.error(err);
             process.exit();

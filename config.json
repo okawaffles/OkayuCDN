@@ -16,6 +16,10 @@
     "dev_port":2773,
     "domain":"https://okayu.okawaffles.com",
     "mysql":{
+
+        "WARNING":"MySQL support is NOT IMPLEMENTED!",
+
+        "host":"localhost",
         "username":"root",
         "password":"YourMySQLPasswordHere!",
         "database":"Fraise"
