@@ -1,7 +1,7 @@
 let user, domain;
 
 function deleteItemRequest(item) {
-    if (confirm(`Are you sure you want to delete ${item}? This cannot be undone!`)) {
+    if (confirm((document.cookie.includes("language=ja-jp"))? `${item}をデリートしますか？これがアンドゥしないだろう！` : `Are you sure you want to delete ${item}? This cannot be undone!` )) {
         $.post('/api/mybox/deleteItem', {
             id:item
         }).done(() => {
@@ -18,9 +18,9 @@ function share(item) {
         url:`${domain}/content/${user}/${item}`
     }) } catch(e) { 
         navigator.clipboard.writeText(`${domain}/content/${user}/${item}`);
-        document.getElementById('share').innerHTML = '<i class="fa-solid fa-arrow-up-right-from-square"></i></i><strong>  Copied link!</strong>';
+        document.getElementById('share').innerHTML = `<i class="fa-solid fa-arrow-up-right-from-square"></i></i><strong>  ${(document.cookie.includes("language=ja-jp"))? "リンクがコピーしました" : "Copied link!" }</strong>`;
         setTimeout(() => {
-            document.getElementById('share').innerHTML = '<i class="fa-solid fa-arrow-up-right-from-square"></i></i><strong>  Share</strong>';
+            document.getElementById('share').innerHTML = `<i class="fa-solid fa-arrow-up-right-from-square"></i></i><strong>  ${(document.cookie.includes("language=ja-jp"))? "シェア" : "Share" }</strong>`;
         }, 1500);
      }
 }
@@ -30,7 +30,7 @@ function placeUserContent(list, size) {
         //console.log(list);
         list.forEach(item => {
             let i = list.indexOf(item);
-            $('#content_container').html($('#content_container').html() + `<div class="content_items"><div class="mb-item-left"><p style="padding:10px">${item} (${(((size[i] / 1024) / 1024) / 1024).toFixed(2)}GB)</p></div> <div class="mb-item-right"><button id="share" class="delete" onclick="share('${item}');"><i class="fa-solid fa-arrow-up-right-from-square"></i></i><strong>  Share</strong></button> <button class="btn-red delete" onclick="deleteItemRequest('${item}');"><i class="fa-solid fa-trash-can"></i><strong>  Delete</strong></button></div></div>`);
+            $('#content_container').html($('#content_container').html() + `<div class="content_items"><div class="mb-item-left"><p style="padding:10px">${item} (${(((size[i] / 1024) / 1024) / 1024).toFixed(2)}GB)</p></div> <div class="mb-item-right"><button id="share" class="delete" onclick="share('${item}');"><i class="fa-solid fa-arrow-up-right-from-square"></i></i><strong>  ${(document.cookie.includes("language=ja-jp"))? "シェア" : "Share" }</strong></button> <button class="btn-red delete" onclick="deleteItemRequest('${item}');"><i class="fa-solid fa-trash-can"></i><strong>  ${(document.cookie.includes("language=ja-jp"))? "デリート" : "Delete" }</strong></button></div></div>`);
             $('#content_container').css('width', '100%');
         });
 

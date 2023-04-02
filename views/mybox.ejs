@@ -9,6 +9,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://kit.fontawesome.com/dc1b60441b.js" crossorigin="anonymous"></script>
+    <script src="/assets/scripts/language.js"></script>
 </head>
 <body class="mybox_body">
     <header>
@@ -37,7 +38,7 @@
 
     <script src="/assets/scripts/managescript.js"></script>
     <script>
-    setUser("<%= USERNAME %>", "<%=domain%>");
+    setUser("<%= USERNAME %>", "<%=domain%>"); checkLanguage("manage")
     </script>
 </body>
 </html>

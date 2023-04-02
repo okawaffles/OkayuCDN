@@ -741,7 +741,7 @@ app.post('/api/admin/loginAs', (req, res) => {
 app.get('/view/:user/:item', (req, res) => {
     let data;
     try {
-        data = fs.statSync(`./content/${req.params.user}/${req.params.item}`);
+        data = fs.statSync(path.join(__dirname, `content/${req.params.user}/${req.params.item}`));
         res.render('view_info.ejs', {
             username: req.params.user,
             filename: req.params.item,

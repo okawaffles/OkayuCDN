@@ -21,7 +21,8 @@ body {
 }
 .view_body,
 .mybox_body {
-    overflow: scroll;
+    /* chromium is very picky about this: */
+    overflow: auto;
 }
 
 /* navbar desktop */
@@ -468,10 +469,6 @@ button:hover {
 
 
 /* Info */
-.info_body {
-    overflow: scroll;
-    scroll-behavior: smooth;
-}
 .section_header {
     color: white;
     font-size: 48px;

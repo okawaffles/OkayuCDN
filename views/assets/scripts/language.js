@@ -54,11 +54,21 @@ let jajp = {
             "サインアップなので<a style=\"color:cornflowerblue;\" href=\"../terms\">利用規約（英語のみ）</a>を受け入れます",
             "行くよ！",
             "アカウントを有します"
-        ]
+        ],
+        "manage":[
+            "ダンボール",
+            "ダンボール内のファイルを取り締まる",
+            "あなたのファイル",
+            "あなたはなんでもファイルを有しません。アップロードを試みますか？",
+            "シェア",
+            "リンクがコピーしました！",
+            "デリート"
+        ],
+
     }
 }
 
-un = "ユーザ";
+un = "ユーザー";
 function langSetUsername(name) { un = name };
 
 function doMenubar(lang, page) {
@@ -125,6 +135,8 @@ function checkLanguage(page) {
                 $("#banner-contents")[0].innerText = jajp.parts.banner.bugtest_hey + un + "！" + jajp.parts.banner.bugtest_bnr;
                 $("#premium-tag")[0].innerText = jajp.parts.upload[4];
                 $("#bugtest-tag")[0].innerText = jajp.parts.upload[5];
+                let origdc = $("#datecode")[0].innerText; // original datecode
+                $("#datecode")[0].innerText = "CDN:J:G:" + origdc.split(':')[3];
                 break;
 
             case 'signup':
@@ -139,6 +151,14 @@ function checkLanguage(page) {
                 $(".p")[1].innerHTML = jajp.parts.signup[7];
                 $(".go")[0].value = jajp.parts.signup[8];
                 $(".go")[1].innerText = jajp.parts.signup[9];
+                break;
+
+            case 'manage':
+                doMenubar(jajp, 'upload');
+                $(".mybox_title")[0].innerText = jajp.parts.manage[0];
+                $(".mybox_subtitle")[0].innerText = jajp.parts.manage[1];
+                $(".mybox_contentH2")[0].innerText = jajp.parts.manage[2];
+                $(".mybox_noContent")[0].innerText = jajp.parts.manage[3];
         
             default:
                 break;

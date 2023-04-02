@@ -115,6 +115,7 @@ function assignUserName(username, bugTester, premium) {
 	}
 
 	let reason = "DoNotDisplay";
+	if (!navigator.userAgent.includes("Firefox")) reason = "Warning: Your browser doesn't seem to be Firefox-based. Please note that this site is maintained based off of Firefox. Please report any bugs on the GitHub (okawaffles/OkayuCDN)!";
 	if (navigator.userAgent.includes("iPhone OS") || navigator.userAgent.includes("iPad OS")) reason = "Warning: You appear to be using an Apple device. You likely cannot upload due to a WebKit bug.";
 	if (navigator.userAgent.includes("CrOS")) reason = "Warning: You appear to be using a ChromeOS device. This operating system sometimes doesn't work as expected.";
 	if (navigator.userAgent.includes("Symbian")) reason = "Warning: You appear to be using a Symbian device. This operating system is not supported.";
@@ -132,7 +133,7 @@ function getStorage() {
 	document.getElementById('visibleToggle').style = "display: inline;";
 	$.getJSON(`/api/qus?user=${endUserName}`, function (data) {
 		document.getElementById('storageAmount').innerHTML =
-			document.cookie.includes("language=ja-jp") ? `保存：${(((data.size / 1024) / 1024) / 1024).toFixed(2)}GBのうちの${((data.userTS / 1024) / 1024) / 1024}GB` : `You have used ${(((data.size / 1024) / 1024) / 1024).toFixed(2)}GB of storage (of your ${((data.userTS / 1024) / 1024) / 1024}GB)`;
+			document.cookie.includes("language=ja-jp") ? `保存：${((data.userTS / 1024) / 1024) / 1024}GBのうちの${(((data.size / 1024) / 1024) / 1024).toFixed(2)}GB` : `You have used ${(((data.size / 1024) / 1024) / 1024).toFixed(2)}GB of storage (of your ${((data.userTS / 1024) / 1024) / 1024}GB)`;
 		
 		document.getElementById('storageAmount').style = "";
 		document.getElementById('visibleToggle').style = "display: none;";
@@ -140,7 +141,7 @@ function getStorage() {
 		if (data.size < data.userTS) {
 			document.getElementById('hider').style = "";
 		} else {
-			alert('You seem to have run out of storage! Please use the manage page to remove content before continuing.')
+			alert(document.cookie.includes("language=ja-jp") ? 'あなたは保存を有しません。' : 'You seem to have run out of storage! Please use the My Box page to remove content before continuing.')
 		}
 	})
 }
