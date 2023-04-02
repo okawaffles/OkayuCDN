@@ -4,7 +4,7 @@ let jajp = {
             "landing":'<i class="fa-solid fa-plane-arrival"></i> 着陸なページを見っている',
             "home":'<i class="fa-solid fa-house"></i> ホーム',
             "upload":'<i class="fa-solid fa-upload"></i> アップロード',
-            "mybox":'<i class="fa-solid fa-circle-info"></i> ダンボール',
+            "mybox":'<i class="fa-solid fa-box"></i> ダンボール',
             "info":'<i class="fa-solid fa-circle-info"></i> インフォ',
             "login":'ログイン',
             "logout":'<i class="fa-solid fa-right-from-bracket"></i> ログアウト'
@@ -41,8 +41,19 @@ let jajp = {
             "ファイルを名付ける",
             "アップロードする",
             "プレミアム",
-            "バグテスター",
-
+            "バグテスター"
+        ],
+        "signup":[
+            "OkayuCDNへようこそ！",
+            "我々はうれしいで新しいユーザよります！",
+            "6-25英語の文字と番号のみ",
+            "ユーザーネーム",
+            "パスワード",
+            "本名",
+            "メイルアドレス",
+            "サインアップなので<a style=\"color:cornflowerblue;\" href=\"../terms\">利用規約（英語のみ）</a>を受け入れます",
+            "行くよ！",
+            "アカウントを有します"
         ]
     }
 }
@@ -115,6 +126,19 @@ function checkLanguage(page) {
                 $("#premium-tag")[0].innerText = jajp.parts.upload[4];
                 $("#bugtest-tag")[0].innerText = jajp.parts.upload[5];
                 break;
+
+            case 'signup':
+                doMenubar(jajp, 'home');
+                $(".login_title")[0].innerText = jajp.parts.signup[0];
+                $(".login_subtitle")[0].innerText = jajp.parts.signup[1];
+                $(".p")[0].innerText = jajp.parts.signup[2];
+                $(".input_text")[0].placeholder = jajp.parts.signup[3];
+                $(".input_text")[1].placeholder = jajp.parts.signup[4];
+                $(".input_text")[2].placeholder = jajp.parts.signup[5];
+                $(".input_text")[3].placeholder = jajp.parts.signup[6];
+                $(".p")[1].innerHTML = jajp.parts.signup[7];
+                $(".go")[0].value = jajp.parts.signup[8];
+                $(".go")[1].innerText = jajp.parts.signup[9];
         
             default:
                 break;
