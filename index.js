@@ -876,17 +876,11 @@ app.get('*', (req, res) => {
 
 // Listen on port (use nginx to reverse proxy)
 if (process.argv[2] != "GITHUB_ACTIONS_TEST") {
-    if (!config.start_flags.includes("DEV_MODE")) {
-        app.listen(config.port).on('error', function (err) {
-            error('express', `Failed to listen on port ${config.port}! Is it already in use?`);
-            process.exit(1);
-        });
-    } else {
-        app.listen(config.dev_port).on('error', function (err) {
-            error('express', `Failed to listen on port ${config.dev_port}! Is it already in use?`);
-            process.exit(1);
-        });
-    }
+    app.listen(config.start_flags.includes("DEV_MODE") ? config.dev_port : config.port).on('error', (err) => {
+        error('boot', `Failed to listen on ${config.start_flags.includes("DEV_MODE") ? config.dev_port : config.port}! Is it already in use?`);
+        error('express', err);
+        process.exit(1);
+    });
 }
 
 setTimeout(() => {

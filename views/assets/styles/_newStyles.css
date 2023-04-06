@@ -695,3 +695,19 @@ button:hover {
     left: 50%;
     transform: translateX(-50%);
 }
+
+/* admin */
+.admin-whole {
+    display: flex;
+	flex-direction: column;
+    justify-content: center;
+    width: 50%;
+	transform: translateX(50%);
+}
+.admin-pane {
+    color: white;
+    margin-bottom: 25px;
+}
+.admin-pane-inputs {
+    transform:translateX(90%);
+}
