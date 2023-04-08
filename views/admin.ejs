@@ -29,48 +29,45 @@
         </nav>
     </header>
 
-    <div class="admin-whole">
-        <div class="admin-pane">
-            <h2 id="title">Delete Content</h2>
-            <form class="admin-form" action="/api/admin/delFile" method="POST" enctype="multipart/form-data">
-                <input class="admin-pane-inputs" type="text" name="username" required placeholder="Username" pattern="[a-zA-Z0-9_-]{3-50}" style="width: 250px;" />
-                <input class="admin-pane-inputs" type="text" name="filename" required placeholder="Filename" pattern="[a-zA-Z0-9_-]{3-50}" style="width: 250px;" /><br>
-                <input type="submit" style="position: absolute; left: 50%; transform: translateX(-50%)"/>
-            </form><br>
-            <p style="text-align: center;">File will be deleted forever</p>
-        </div>
+    <br><br>
 
-        <br>
+    <div class="admin-pane">
+        <h2 id="title">Delete Content</h2>
+        <div class="flexbreak"></div>
+        <form action="/api/admin/delFile" method="post" class="admin-form">
+            <input type="text" name="username" class="admin-pane-input" placeholder="Username">
+            <input type="text" name="filename" class="admin-pane-input" placeholder="File name">
+            <div class="flexbreak"></div>
+            <input type="submit" value="Delete" class="admin-pane-button">
+        </form>
+    </div>
 
-        <div class="admin-pane">
-            <h2 id="title">Restrict User</h2>
-            <form class="admin-form" action="/api/admin/resUser" method="POST" enctype="multipart/form-data">
-                <input class="admin-pane-inputs" type="text" name="username" required placeholder="Username" pattern="[a-zA-Z0-9_-]{3-50}" style="width: 250px;" />
-                <input class="admin-pane-inputs" type="text" name="reason" required placeholder="Reason" pattern="[a-zA-Z0-9_-]{3-50}" style="width: 250px;" /><br>
-                <input type="submit" style="position: absolute; left: 50%; transform: translateX(-50%)"/>
-            </form><br>
-            <p style="text-align: center;">User data will be modified</p>
-        </div>
+    <br><br>
 
-        <br>
+    <div class="admin-pane">
+        <h2 id="title">Restrict User</h2>
+        <div class="flexbreak"></div>
+        <form action="/api/admin/resUser" method="post" class="admin-form">
+            <input type="text" name="username" class="admin-pane-input" placeholder="Username">
+            <input type="text" name="filename" class="admin-pane-input" placeholder="Reason">
+            <div class="flexbreak"></div>
+            <input type="submit" value="Restrict" class="admin-pane-button">
+        </form>
+    </div>
 
-        <div class="admin-pane">
-            <h2 id="title">Log in as User</h2><br>
-            <form class="admin-form" action="/api/admin/loginAs" method="POST" enctype="multipart/form-data">
-                <div style="text-align:center;">
-                    <input type="text" name="user" required placeholder="Username" pattern="[a-zA-Z0-9_-]{3-50}" style="width: 250px;" /><br>
-                </div>
+    <br><br>
 
-                <div style="text-align:center">
-                    <p>Enter YOUR Username and Password to continue</p>
-                    <input type="text" placeholder="Username" name="un" required />
-                    <input type="password" placeholder="Password" name="pw" required /><br>
-                </div>
-
-                <p style="text-align: center;">By clicking Submit, you agree that you are held accountable for any misuse of this function.</p>
-                <input type="submit" style="position: absolute; left: 50%; transform: translateX(-50%)"/>
-            </form>
-        </div>
+    <div class="admin-pane">
+        <h2 id="title">Log in as another user</h2>
+        <div class="flexbreak"></div>
+        <form action="/api/admin/loginAs" method="post" class="admin-form">
+            <input type="text" name="username" class="admin-pane-input-large" placeholder="Their username">
+            <div class="flexbreak"></div>
+            <input type="text" name="filename" class="admin-pane-input" placeholder="Your username">
+            <input type="text" name="filename" class="admin-pane-input" placeholder="Your password">
+            <div class="flexbreak"></div>
+            <input type="submit" value="Log in" class="admin-pane-button">
+        </form>
     </div>
 
     <h3 class="version">OkayuCDN Admin Panel</h3>

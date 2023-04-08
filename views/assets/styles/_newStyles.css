@@ -697,17 +697,22 @@ button:hover {
 }
 
 /* admin */
-.admin-whole {
-    display: flex;
-	flex-direction: column;
-    justify-content: center;
-    width: 50%;
-	transform: translateX(50%);
-}
 .admin-pane {
     color: white;
-    margin-bottom: 25px;
+    display: flex;
+    flex-wrap: wrap;
+    place-content: center;
 }
-.admin-pane-inputs {
-    transform:translateX(90%);
+.admin-pane-input {
+    width: 200px;
+}
+.admin-pane-input-large {
+    width: 404px;
+}
+.admin-pane-button {
+    width: 404px;
+}
+.flexbreak {
+    flex-basis: 100%;
+    height: 0;
 }
