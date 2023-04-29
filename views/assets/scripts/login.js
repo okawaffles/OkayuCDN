@@ -1,4 +1,9 @@
 let username;
+let redir;
+
+function setRedir(aRedir) {
+    redir = aRedir; 
+}
 
 function checkLogin(data, redir) {
     if (data.result == 200) {
@@ -42,3 +47,9 @@ function send2FAPOST(redir) {
         }
     });
 }
+
+addEventListener('keydown', (ev) => {
+    if (ev.key == "Enter") {
+        sendLoginPOST(redir);
+    }
+})
