@@ -54,6 +54,7 @@ app.set('view engine', 'ejs');
 app.use(express.static('/views'));
 app.use('/assets', express.static(__dirname + '/views/assets'));
 app.use(cookieParser());
+
 // this function shows the IP of every request:
 app.use('*', (req, res, next) => {
     res.setHeader('X-Powered-By', `OkayuCDN ${pjson.version}`);
@@ -67,16 +68,15 @@ app.use('*', (req, res, next) => {
         info('RequestInfo', `[IP-BAN] ${pip} :: ${req.method} ${req.originalUrl}`);
     } else {
         info('RequestInfo', `${chalk.red(pip)} :: ${chalk.green(req.method)} ${chalk.green(req.originalUrl)}`);
-        if (!config.dev_mode)
+        if (!config.start_flags.includes("DEV_MODE"))
             next();
-        else if (pip == "::1" || pip == "192.168.1.1" || pip == "127.0.0.1")
-            next();
+        else if (pip == "::1" || pip == "192.168.1.1" || pip == "127.0.0.1") {
+            info('RequestInfoDev', `UA: ${req.headers['user-agent']}`);
+            info('RequestInfoDev', `LOC: ${req.headers['accept-language']}`);
+        }
         else res.render('forbidden.ejs', { 'reason': 'Server is in development mode.' });
     }
 })
-
-// Global variables for something I honestly don't know (likely status, etc?)
-let siteStatus = 200;
 
 // Ascii art is no longer required to boot
 let asciiart = fs.readFileSync('./asciiart.txt', 'utf-8');
@@ -188,7 +188,9 @@ function stats(mode, stat) {
     }
 }
 
-const genNewToken = size => [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+function genNewToken() {
+    return cryplib.randomBytes(16).toString('hex');
+}
 
 
 
