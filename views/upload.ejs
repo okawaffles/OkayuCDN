@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico">
     <title>Upload | OkayuCDN</title>
-    <link rel="stylesheet" href="/assets/styles/_newStyles.css">
+    <link rel="stylesheet" href="/assets/styles/min/_newStyles.min.css">
     <script src="https://kit.fontawesome.com/dc1b60441b.js" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <script src="/assets/scripts/language.js"></script>
@@ -68,48 +68,8 @@
 
     <h3 class="version"><label id="premium-tag">Premium</label><label id="bugtest-tag">Bugtester</label><span id="datecode"><%=datecode%></span></h3><br>
 
-    <script src="/assets/scripts/uploadscript.js"></script>
+    <script src="/assets/scripts/min/upload.min.js"></script>
     <script>assignUserName("<%= USERNAME %>", "<%= isBT %>", "<%= premium %>"); getStorage(); langSetUsername("<%=USERNAME%>"); checkLanguage('upload');</script>
-
-    <style>
-        /**
-          * Line
-          *
-          * @author jh3y - jheytompkins.com
-        */
-        @-webkit-keyframes line {
-            from {
-                background-position: -60px 0;
-            }
-
-            to {
-                background-position: 60px 0;
-            }
-        }
-
-        @keyframes line {
-            from {
-                background-position: -60px 0;
-            }
-
-            to {
-                background-position: 60px 0;
-            }
-        }
-
-        .line:before {
-            -webkit-animation: line .75s infinite alternate ease-in-out;
-            animation: line .75s infinite alternate ease-in-out;
-            background: -webkit-gradient(linear, left top, right top, from(var(--primary)), to(var(--primary)));
-            background: linear-gradient(90deg, var(--primary), var(--primary));
-            background-repeat: no-repeat;
-            background-size: 60px 20px;
-            content: '';
-            display: block;
-            height: 20px;
-            width: 60px;
-        }
-    </style>
 </body>
 
 </html>
