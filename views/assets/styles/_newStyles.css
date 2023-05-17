@@ -529,6 +529,11 @@ button:hover {
 
 /* upload page */
 /* i rlly dont wanna redo this so im just reusing old styles */
+.upload_page {
+    @media screen and (max-width: 600px) {
+        overflow: scroll;
+    }
+}
 .up_progressupload {
 	height: 20px;
 	margin-top: 25px;
