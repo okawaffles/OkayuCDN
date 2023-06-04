@@ -21,6 +21,13 @@ Sure, go ahead. It's not intended to be used as a major server and it is quite u
 ### To-do
 - Add private file uploads
 
+### Cool! I want to contribute!
+Here's some things you could help me with:
+- Testing on devices other than Desktop (or large aspect ratio screens)
+- Styling for devices other than Desktop (or large aspect ratio screens)
+- Code cleanup/documentation
+- Fixing one of the open [issues](https://github.com/okawaffles/OkayuCDN/issues).
+
 ### Notes
 - Please do not use OkayuCDN in a commercial environment. It is not intended to be used in commercial environments and I *do not* own the rights to Nekomata Okayu. You are putting yourself at risk if you use this in a commercial environment.
 - READ THE LICENSE, PLEASE
