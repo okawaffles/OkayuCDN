@@ -22,9 +22,9 @@ function share(item, id) {
         url:`${domain}/content/${user}/${item}`
     }) } catch(e) { 
         navigator.clipboard.writeText(`${domain}/content/${user}/${item}`);
-        document.getElementById(`item-${id}`).innerHTML = tl_copied;
+        document.getElementById(`${id}`).innerHTML = tl_copied;
         setTimeout(() => {
-            document.getElementById(`item-${id}`).innerHTML = tl_share;
+            document.getElementById(`${id}`).innerHTML = tl_share;
         }, 1500);
      }
 }
