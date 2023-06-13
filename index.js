@@ -7,7 +7,7 @@ const fs = require('fs');
 let cache;
 
 // Check+Load dependencies
-let express, cookieParser, formidable, cryplib, chalk, path, urlencodedparser, speakeasy, qrcode, ffmpeg;
+let express, cookieParser, formidable, crypto, chalk, path, urlencodedparser, speakeasy, qrcode, ffmpeg;
 const { info, warn, error, Logger } = require('okayulogger');
 try {
     require('okayulogger');
@@ -16,7 +16,7 @@ try {
     formidable = require('formidable');
     if (parseInt(process.version.split('v')[1].split('.')[0]) < 15)
         error('boot', 'Your node version does not support crypto!');
-    cryplib = require('crypto'); // switched away from npm crypto to built-in crypto
+    crypto = require('node:crypto'); // switched away from npm crypto to built-in crypto
     chalk = require('chalk');
     path = require('path');
     cache = require(path.join(__dirname, '/parts/cacheHelper'));
@@ -102,7 +102,7 @@ if (!config.start_flags.includes("DISABLE_TOKEN_CLEAN") && !config.start_flags.i
 // Additional Functions
 
 function hash(string) {
-    return cryplib.createHash('sha256').update(string).digest('hex');
+    return crypto.createHash('sha256').update(string).digest('hex');
 }
 
 function getUsername(token) {
@@ -189,7 +189,7 @@ function stats(mode, stat) {
 }
 
 function genNewToken() {
-    return cryplib.randomBytes(16).toString('hex');
+    return crypto.randomBytes(16).toString('hex');
 }
 
 
