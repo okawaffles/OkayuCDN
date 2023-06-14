@@ -237,7 +237,7 @@ app.get('/mira', (req, res) => {
 app.get('/content/:user/:item', (req, res) => {
     let file;
     try { file = fs.readFileSync(path.join(__dirname, `/content/${req.params.user}/${req.params.item}`)); } catch (e) {
-        res.render('notfound.ejs', {}); return; }
+        res.render('notfound.ejs', {version:pjson.version}); return; }
 
     let fExt = req.params.item.split('.').at('-1');
 
