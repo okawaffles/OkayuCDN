@@ -11,18 +11,35 @@ let express, cookieParser, formidable, crypto, chalk, path, urlencodedparser, sp
 const { info, warn, error, Logger } = require('okayulogger');
 try {
     require('okayulogger');
+    
+    // TODO: change all relative paths to use path.join(__dirname, 'etc/etc')
+    path = require('path');
+
+    // load env variables
+    require('dotenv').config({path:path.join(__dirname, ".ENV")});
+
+    // don't default to debug mode!
+    if (!process.env.NODE_ENV) process.env.NODE_ENV = "production";
     express = require('express');
+
+    // for parsing incoming forms and cookies
     cookieParser = require('cookie-parser');
     formidable = require('formidable');
-    if (parseInt(process.version.split('v')[1].split('.')[0]) < 15)
-        error('boot', 'Your node version does not support crypto!');
+
+    // used for encrypting passwords
+    if (parseInt(process.version.split('v')[1].split('.')[0]) < 15) {
+        error('boot', 'Unsupported node version. Please use Node.JS>=v15');
+        process.exit();
+    }
     crypto = require('node:crypto'); // switched away from npm crypto to built-in crypto
+
+    // terminal styling
     chalk = require('chalk');
-    path = require('path');
+
+    // built in cache manager and file-checker
     cache = require(path.join(__dirname, '/parts/cacheHelper'));
 
-    require('dotenv').config({path:path.join(__dirname, ".ENV")}); // load env variables
-
+    // other random things we need
     urlencodedparser = require('body-parser').urlencoded({extended:false})
     ffmpeg = require('fluent-ffmpeg')
     require('ffmpeg')
@@ -33,7 +50,8 @@ try {
 
     require('ejs'); // do not assign ejs to a variable as we don't need to
 } catch (e) {
-    console.log('Error: Missing dependencies. Please run "npm ci"!');
+    // only should trigger if a dependency fails to require
+    console.log('Error: Missing dependencies. Please run "npm ci"!\n');
     console.log(e);
     process.exit(1);
 }
@@ -44,7 +62,8 @@ try {
     config = require('./config.json');
     pjson = require('./package.json');
 } catch (e) {
-    error('boot', 'Could not load server config (config.json)');
+    // self-explanatory
+    error('boot', 'Could not load server config (config.json)\n');
     error('boot', e);
     // write new config later
     process.exit(1);
@@ -60,19 +79,19 @@ app.use(cookieParser());
 // this function shows the IP of every request:
 app.use('*', (req, res, next) => {
     res.setHeader('X-Powered-By', `OkayuCDN ${pjson.version}`);
-    var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-    let pip = ip;
+    // get the IP
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
     if (!fs.existsSync(path.join(__dirname, "/db/ip403"))) fs.mkdir(path.join(__dirname, "/db/ip403"), () => {});
 
-    if (fs.existsSync(path.join(__dirname, `/db/ip403/${pip}`))) {
-        res.render('forbidden.ejs', { "reason": fs.readFileSync(path.join(__dirname, `/db/ip403/${pip}`)) });
-        info('RequestInfo', `[IP-BAN] ${pip} :: ${req.method} ${req.originalUrl}`);
+    if (fs.existsSync(path.join(__dirname, `/db/ip403/${ip}`))) {
+        res.render('forbidden.ejs', { "reason": fs.readFileSync(path.join(__dirname, `/db/ip403/${ip}`)) });
+        info('RequestInfo', `[IP-BAN] ${ip} :: ${req.method} ${req.originalUrl}`);
     } else {
-        info('RequestInfo', `${chalk.red(pip)} :: ${chalk.green(req.method)} ${chalk.green(req.originalUrl)}`);
+        info('RequestInfo', `${chalk.red(ip)} :: ${chalk.green(req.method)} ${chalk.green(req.originalUrl)}`);
         if (!config.start_flags.includes("DEV_MODE"))
             next();
-        else if (pip == "::1" || pip == "192.168.1.1" || pip == "127.0.0.1") {
+        else if (ip == "::1" || ip == "192.168.1.1" || ip == "127.0.0.1") {
             info('RequestInfoDev', `UA: ${req.headers['user-agent']}`);
             info('RequestInfoDev', `LOC: ${req.headers['accept-language']}`);
         }
@@ -99,7 +118,7 @@ if (fs.existsSync(`./db/sessionStorage/template.json`) || fs.existsSync(`./db/us
 cache.prepareDirectories();
 if (!config.start_flags.includes("DISABLE_CACHE_CLEAN")) cache.cleanCache();
 if (!config.start_flags.includes("DISABLE_TOKEN_CLEAN") && !config.start_flags.includes("DEV_MODE")) cache.cleanTokens(); // dont clean tokens on devmode boot
-if (!process.env.NODE_ENV) warn('dotenv', 'Failed to load .ENV file. Please create one with the contents "NODE_ENV=production" !'); // check for dotenv success
+if (!process.env.NODE_ENV) warn('dotenv', 'Failed to load .ENV file. Please create one with the contents "NODE_ENV=production"! Automatically defaulting to production environment!'); // check for dotenv success
 
 // Additional Functions
 
@@ -217,8 +236,8 @@ app.get('/mira', (req, res) => {
 
 app.get('/content/:user/:item', (req, res) => {
     let file;
-    try { file = fs.readFileSync(`./content/${req.params.user}/${req.params.item}`); } catch (e) {
-        res.render('notfound.ejs'); return; }
+    try { file = fs.readFileSync(path.join(__dirname, `/content/${req.params.user}/${req.params.item}`)); } catch (e) {
+        res.render('notfound.ejs', {}); return; }
 
     let fExt = req.params.item.split('.').at('-1');
 
@@ -232,7 +251,7 @@ app.get('/content/:user/:item', (req, res) => {
 
 app.get('/content/:user/:item/embed', (req, res) => {
     try { fs.readFileSync(`./content/${req.params.user}/${req.params.item}`); } catch (e) {
-        res.render('notfound.ejs'); return; }
+        res.render('notfound.ejs', {version:pjson.version}); return; }
 
     let fExt = req.params.item.split('.').at('-1');
     if (fExt != "mp4") return;
@@ -870,6 +889,11 @@ app.get('/test', (req, res) => {
     res.render('test.ejs');
 })
 
+
+app.use((err, req, res, next) => { // 500 error handler
+    error('express', err.stack);
+    res.status(500).render('err500.ejs');
+})
 
 // Keep Last !! 404 handler
 app.get('*', (req, res) => {
