@@ -19,9 +19,9 @@ function share(item, id) {
     try { navigator.share({
         title:'OkayuCDN',
         text:tl_nvgt_text,
-        url:`${domain}/content/${user}/${item}`
+        url:`${domain}/view/${user}/${item}`
     }) } catch(e) { 
-        navigator.clipboard.writeText(`${domain}/content/${user}/${item}`);
+        navigator.clipboard.writeText(`${domain}/view/${user}/${item}`);
         document.getElementById(`${id}`).innerHTML = tl_copied;
         setTimeout(() => {
             document.getElementById(`${id}`).innerHTML = tl_share;
@@ -34,7 +34,13 @@ function placeUserContent(list, size) {
         //console.log(list);
         list.forEach(item => {
             let i = list.indexOf(item);
-            $('#content_container').html($('#content_container').html() + `<div class="content_items"><div class="mb-item-left"><p style="padding:10px">${item} (${(((size[i] / 1024) / 1024) / 1024).toFixed(2)}GB)</p></div> <div class="mb-item-right"><button id="item-${i}" class="delete" onclick="share('${item}', 'item-${i}');"><i class="fa-solid fa-arrow-up-right-from-square"></i></i><strong>  ${(document.cookie.includes("language=ja-jp"))? "シェア" : "Share" }</strong></button> <button class="btn-red delete" onclick="deleteItemRequest('${item}');"><i class="fa-solid fa-trash-can"></i><strong>  ${(document.cookie.includes("language=ja-jp"))? "デリート" : "Delete" }</strong></button></div></div>`);
+            // TODO: Clean this up. use multiple functions maybe?
+            // TODO: Don't show text on mobile, only icons.
+            $('#content_container').html($('#content_container').html() + `<div class="content_items"><div class="mb-item-left"><p style="padding:10px">${item} (${(((size[i] / 1024) / 1024) / 1024).toFixed(2)}GB)</p></div> <div class="mb-item-right">` +
+            `<button id="item-${i}" class="delete" onclick="share('${item}', 'item-${i}');"><i class="fa-solid fa-arrow-up-right-from-square"></i><strong>  ${(document.cookie.includes("language=ja-jp"))? "シェア" : "Share" }</strong></button>` +
+            `<button class="delete" onclick="document.location = '${domain}/content/${user}/${item}'"><i class="fa-solid fa-download"></i><strong>  ${(document.cookie.includes("language=ja-jp"))? "ダウンロード" : "Download" }</strong></button>` +
+            `<button class="btn-red delete" onclick="deleteItemRequest('${item}');"><i class="fa-solid fa-trash-can"></i><strong>  ${(document.cookie.includes("language=ja-jp"))? "デリート" : "Delete" }</strong></button></div></div>`);
+            
             $('#content_container').css('width', '100%');
         });
 

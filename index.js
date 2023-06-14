@@ -21,6 +21,8 @@ try {
     path = require('path');
     cache = require(path.join(__dirname, '/parts/cacheHelper'));
 
+    require('dotenv').config({path:path.join(__dirname, ".ENV")}); // load env variables
+
     urlencodedparser = require('body-parser').urlencoded({extended:false})
     ffmpeg = require('fluent-ffmpeg')
     require('ffmpeg')
@@ -97,7 +99,7 @@ if (fs.existsSync(`./db/sessionStorage/template.json`) || fs.existsSync(`./db/us
 cache.prepareDirectories();
 if (!config.start_flags.includes("DISABLE_CACHE_CLEAN")) cache.cleanCache();
 if (!config.start_flags.includes("DISABLE_TOKEN_CLEAN") && !config.start_flags.includes("DEV_MODE")) cache.cleanTokens(); // dont clean tokens on devmode boot
-
+if (!process.env.NODE_ENV) warn('dotenv', 'Failed to load .ENV file. Please create one with the contents "NODE_ENV=production" !'); // check for dotenv success
 
 // Additional Functions
 

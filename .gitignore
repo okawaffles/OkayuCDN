@@ -3,3 +3,4 @@ db/
 content/
 cache/
 db/stats.json
+.ENV
