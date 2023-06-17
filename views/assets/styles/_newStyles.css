@@ -762,3 +762,21 @@ button:hover {
     height: 20px;
     width: 60px;
 }
+
+/* terms page */
+.terms-body {
+    overflow: scroll;
+}
+.terms-title, .terms-subtitle, .terms-subtitle-smaller, .terms-footer {
+    padding-left: 2.5%;
+    padding-top: 12px;
+}
+.terms-container h1, h2, h3 {
+    color: white;
+}
+.terms-terms {
+    padding: 0 2.5%;
+}
+.terms-footer {
+    padding-bottom: 2.5%;
+}

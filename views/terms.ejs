@@ -7,27 +7,36 @@
     <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico">
     <title>Terms of Service | OkayuCDN</title>
 
+    <link rel="stylesheet" href="/assets/styles/_newStyles.css">
+    <script src="https://kit.fontawesome.com/dc1b60441b.js" crossorigin="anonymous"></script>
+
     <meta content="Terms of Service | OkayuCDN" property="og:title">
     <meta content="Upload files for free" property="og:description">
     <meta content="https://okayu.okawaffles.com/terms" property="og:url">
     <meta content="#9000e3" data-react-helmet="true" name="theme-color">
 </head>
-<body>
-    <ul class="navi-ul">
-        <li class="navi-li-left navi-li"><a href="../home" class="navi-a">Home</a></li>
-        <li class="navi-li-left navi-li"><a href="../manage/upload" class="navi-a">Upload</a></li>
-        <li class="navi-li-left navi-li"><a href="../manage/content" class="navi-a">Manage</a></li>
-        <li class="navi-li-right navi-li"><a href="../info" class="navi-a">Info</a></li>
-    </ul>
+<body class="terms-body">
+    <header>
+        <img class="logo" src="/assets/images/logo.png" width="200"></img>
+        <nav>
+            <ul class="nav_links">
+                <li><a href="/home"><i class="fa-solid fa-house"></i> Home</a></li>
+                <li><a href="/manage/upload"><i class="fa-solid fa-upload"></i> Upload</a></li>
+                <li><a href="/mybox"><i class="fa-solid fa-box"></i> My Box</a></li>
+                <li><a href="/info"><i class="fa-solid fa-circle-info"></i> Info</a></li>
+                <li><a href="/account"><i class="fa-solid fa-user"></i> My Account</a></li>
+            </ul>
+        </nav>
+    </header>
 
-    <div class="container">
-        <h1 class="title">Terms of Service</h1>
-        <h2 class="subtitle sa">This page defines what you can and cannot do with our services.</h2>
-        <h3 class="sb">Last updated December 10th, 2022 by okawaffles</h3>
+    <div class="terms-container">
+        <h1 class="terms-title">Terms of Service</h1>
+        <h2 class="terms-subtitle">This page defines what you can and cannot do with our services.</h2>
+        <h3 class="terms-subtitle-smaller">Last updated December 10th, 2022 by okawaffles</h3>
 
         <br><hr class="hrFlyUp"><br>
 
-        <h3 class="nofont terms">
+        <h3 class="terms-terms">
             &emsp;&emsp;When we speak of "we," "us," "our," we are referring to OkayuCDN's development team as a whole, including all services and child products. When speaking of "OkayuCDN" or "the site," we are referring to OkayuCDN as a whole.
             <br><br>&emsp;&emsp;When using our services, you must abide to this set of rules/regulations outlined here. If you do not, your account is subject to punishment ranging from a temporary ban from our site to a permanent deletion of your account and content, along with an IP-wide ban.
             <br><br><br>- Rules and regulations -
@@ -47,86 +56,7 @@
             <br><br><br>
         </h3>
 
-        <h2>Thank you for reading the Terms of Service.</h2>
+        <h2 class="terms-footer">Thank you for reading the Terms of Service.</h2>
     </div>
-
-    
-
-
-
-    <style>
-        @font-face {
-            font-family: KFhimajiMOCO;
-            src: url("/assets/fonts/GenJyuuGothic.ttf");
-        }
-
-        body {
-            background-color: #1c273b;
-            font-family: KFhimajiMOCO;
-            margin: 0;
-        }
-
-        .nofont {
-            font-family: 'Courier New', Courier, monospace;
-        }
-
-        .navi-ul {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background-color: #141924;
-            position: fixed;
-            top: 0;
-            width: 100%;
-        }
-
-        .navi-li-left {
-            float: left;
-        }
-        .navi-li-right {
-            float: right;
-        }
-
-        .navi-li-left a {
-            display: block;
-            color: white;
-            text-align: center;
-            padding: 20px 20px;
-            text-decoration: none;
-        }
-        .navi-li-right a {
-            display: block;
-            color: white;
-            text-align: center;
-            padding: 20px 20px;
-            text-decoration: none;
-        }
-
-        /* Change the link color to #111 (black) on hover */
-        .navi-li a:hover {
-            background-color: #111;
-        }
-
-
-        .container {
-            padding: 2.5%;
-            color: white;
-        }
-
-        .title {
-            font-size: 86px;
-            margin-bottom:auto;
-        }
-        .subtitle {
-            font-size: 48px;
-            margin-top: auto;
-        }
-        @media screen and (max-width: 600px) {
-            .navi-a {
-                font-size: 12px;
-            }
-        }
-    </style>
 </body>
 </html>
