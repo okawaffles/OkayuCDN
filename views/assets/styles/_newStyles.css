@@ -423,6 +423,10 @@ button:hover {
         width: 100%;
         margin-left: auto;
     }
+    .delete {
+        font-size: small;
+        padding: 10px 15px;
+    }
 }
 
 .loader_container {

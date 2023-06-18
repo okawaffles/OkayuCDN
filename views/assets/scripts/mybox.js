@@ -33,13 +33,15 @@ function placeUserContent(list, size) {
     try {
         //console.log(list);
         list.forEach(item => {
-            let i = list.indexOf(item);
-            // TODO: Clean this up. use multiple functions maybe?
-            // TODO: Don't show text on mobile, only icons.
-            $('#content_container').html($('#content_container').html() + `<div class="content_items"><div class="mb-item-left"><p style="padding:10px">${item} (${(((size[i] / 1024) / 1024) / 1024).toFixed(2)}GB)</p></div> <div class="mb-item-right">` +
-            `<button id="item-${i}" class="delete" onclick="share('${item}', 'item-${i}');"><i class="fa-solid fa-arrow-up-right-from-square"></i><strong>  ${(document.cookie.includes("language=ja-jp"))? "シェア" : "Share" }</strong></button>` +
-            `<button class="delete" onclick="document.location = '${domain}/content/${user}/${item}'"><i class="fa-solid fa-download"></i><strong>  ${(document.cookie.includes("language=ja-jp"))? "ダウンロード" : "Download" }</strong></button>` +
-            `<button class="btn-red delete" onclick="deleteItemRequest('${item}');"><i class="fa-solid fa-trash-can"></i><strong>  ${(document.cookie.includes("language=ja-jp"))? "デリート" : "Delete" }</strong></button></div></div>`);
+            const i = list.indexOf(item);
+            // The amount of ternary operators here is painful. I apologize.
+            
+            const mobile = (navigator.userAgent.includes('Android') || navigator.userAgent.includes('iPhone'));
+            const opt_share = `<button id="item-${i}" class="delete" onclick="share('${item}', 'item-${i}');"><i class="fa-solid fa-arrow-up-right-from-square"></i><strong>  ${mobile?'':(document.cookie.includes("language=ja-jp"))? "シェア" : "Share" }</strong></button>`;
+            const opt_dl = `<button class="delete" onclick="document.location = '${domain}/content/${user}/${item}'"><i class="fa-solid fa-download"></i><strong>  ${mobile?'':(document.cookie.includes("language=ja-jp"))? "ダウンロード" : "Download" }</strong></button>`;
+            const opt_del = `<button class="btn-red delete" onclick="deleteItemRequest('${item}');"><i class="fa-solid fa-trash-can"></i><strong>  ${mobile?'':(document.cookie.includes("language=ja-jp"))? "デリート" : "Delete" }</strong></button></div></div>`;
+
+            $('#content_container').html($('#content_container').html() + `<div class="content_items"><div class="mb-item-left"><p style="padding:10px">${item} (${(((size[i] / 1024) / 1024) / 1024).toFixed(2)}GB)</p></div> <div class="mb-item-right">` + opt_share + opt_dl + opt_del);
             
             $('#content_container').css('width', '100%');
         });
