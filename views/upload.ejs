@@ -13,7 +13,6 @@
     <script src="https://kit.fontawesome.com/dc1b60441b.js" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <script src="/assets/scripts/language.js"></script>
-    <script src="/assets/scripts/mobile.js"></script>
 
     <meta content="Upload | OkayuCDN" property="og:title">
     <meta content="Upload files for free" property="og:description">
@@ -59,7 +58,7 @@
     <h3 class="version"><label id="premium-tag">Premium</label><label id="bugtest-tag">Bugtester</label><span id="datecode"><%=datecode%></span></h3><br>
 
     <script src="/assets/scripts/upload.js"></script>
-    <script>assignUserName("<%= USERNAME %>", "<%= isBT %>", "<%= premium %>"); getStorage(); langSetUsername("<%=USERNAME%>"); checkLanguage('upload'); mobileCompatibility();</script>
+    <script>assignUserName("<%= USERNAME %>", "<%= isBT %>", "<%= premium %>"); getStorage(); langSetUsername("<%=USERNAME%>"); checkLanguage('upload');</script>
 </body>
 
 </html>
