@@ -9,18 +9,7 @@
     <script src="https://kit.fontawesome.com/dc1b60441b.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <header>
-        <img class="logo" src="/assets/images/logo.png" width="200"></img>
-        <nav>
-            <ul class="nav_links">
-                <li><a href="#"><i class="fa-solid fa-house"></i> Home</a></li>
-                <li><a href="/manage/upload"><i class="fa-solid fa-upload"></i> Upload</a></li>
-                <li><a href="/mybox"><i class="fa-solid fa-box"></i> My Box</a></li>
-                <li><a href="/info"><i class="fa-solid fa-circle-info"></i> Info</a></li>
-                <li><a href="/account"><i class="fa-solid fa-user"></i> My Account</a></li>
-            </ul>
-        </nav>
-    </header>
+    <%- include('parts/navbar', {active:'none'}) %>
 
     <div class="container">
         <h1 class="title" id="t_title">Oh Nyao!</h1>

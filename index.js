@@ -320,7 +320,7 @@ app.get('/favicon.ico', (req, res) => {
 
 // User Viewable Pages
 app.get('/home', (req, res) => {
-    res.render('home.ejs', { 'version': pjson.version });
+    res.render(req.query.useBetaSite?'home_navis_beta.ejs':'home.ejs', { 'version': pjson.version });
     res.end();
 });
 

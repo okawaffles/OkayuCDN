@@ -11,17 +11,7 @@
     <script src="/assets/scripts/language.js"></script>
 </head>
 <body>
-    <header>
-        <img class="logo" src="/assets/images/logo.png" width="200"></img>
-        <nav>
-            <ul class="nav_links">
-                <li><a href="/home"><i class="fa-solid fa-house"></i> Home</a></li>
-                <li><a href="/manage/upload"><i class="fa-solid fa-upload"></i> Upload</a></li>
-                <li><a href="/mybox"><i class="fa-solid fa-box"></i> My Box</a></li>
-                <li><a href="/info"><i class="fa-solid fa-circle-info"></i> Info</a></li>
-            </ul>
-        </nav>
-    </header>
+    <%- include('parts/navbar', {active:'none'}) %>
 
     <div class="upload-pane">
         <h2 class="login_title">Welcome to OkayuCDN!</h2>

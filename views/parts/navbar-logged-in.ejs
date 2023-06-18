@@ -1,0 +1,33 @@
+<header>
+    <img class="logo" src="/assets/images/logo.png" width="200"></img>
+    <nav>
+        <ul class="nav_links">
+            <li class="mobile-menu" id="mc"><a id="mca"><i class="fa-solid fa-bars"></i> Menu</a></li>
+            <li><a id="home" href="/home"><i class="fa-solid fa-house"></i> Home</a></li>
+            <li><a id="upload" href="/manage/upload"><i class="fa-solid fa-upload"></i> Upload</a></li>
+            <li><a id="mybox" href="/mybox"><i class="fa-solid fa-box"></i> My Box</a></li>
+            <li><a id="info" href="/info"><i class="fa-solid fa-circle-info"></i> Info</a></li>
+            <li><a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Log Out</a></li>
+        </ul>
+    </nav>
+</header>
+<ul class="mobile-nav-links" id="mm">
+    <li id="home-m"><a href="/home"><i class="fa-solid fa-house"></i> Home</a></li>
+    <li id="upload-m"><a href="/manage/upload"><i class="fa-solid fa-upload"></i> Upload</a></li>
+    <li id="mybox-m"><a href="/mybox"><i class="fa-solid fa-box"></i> My Box</a></li>
+    <li id="info-m"><a href="/info"><i class="fa-solid fa-circle-info"></i> Info</a></li>
+    <li><a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Log Out</a></li>
+</ul>
+
+<script>
+    document.getElementById('mc').onclick = function() {
+        let d = document.getElementById('mm').style.display;
+        document.getElementById('mm').style.display = (d=='inline-block')?'none':'inline-block';
+        //document.getElementById('mca').className = (d=='inline-block')?'mobile-menu':'mobile-menu active'; // this causes a bug on firefox and i cant figure it out
+    }
+
+    try {
+        document.getElementById("<%=active%>").className = 'active';    // desktop
+        document.getElementById("<%=active%>-m").className = 'active';  // mobile
+    } catch (e) { console.log('failed to set active navitem; assuming this is a page without one.'); };
+</script>

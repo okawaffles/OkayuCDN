@@ -20,18 +20,8 @@
     <meta content="#9000e3" data-react-helmet="true" name="theme-color">
 </head>
 <body>
-    <header>
-        <img class="logo" src="/assets/images/logo.png" width="200"></img>
-        <nav>
-            <ul class="nav_links">
-                <li><a href="/home"><i class="fa-solid fa-house"></i> Home</a></li>
-                <li><a href="/manage/upload"><i class="fa-solid fa-upload"></i> Upload</a></li>
-                <li><a href="/mybox"><i class="fa-solid fa-box"></i> My Box</a></li>
-                <li><a href="/info"><i class="fa-solid fa-circle-info"></i> Info</a></li>
-                <li><a href="/account"><i class="fa-solid fa-user"></i> My Account</a></li>
-            </ul>
-        </nav>
-    </header>
+    <%- include('parts/navbar', {active:'none'}) %>
+
     <h3 class="center">If the video does not load, please reload the page.</h1>
     <video id="videoPlayer" width="80%" controls autoplay>
         <source src="/api/mp4/<%=user%>/<%=filename%>" type="video/mp4" />

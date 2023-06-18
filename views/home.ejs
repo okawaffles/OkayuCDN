@@ -11,23 +11,7 @@
     <script src="/assets/scripts/language.js"></script>
 </head>
 <body>
-    <header>
-        <img class="logo" src="/assets/images/logo.png" width="200"></img>
-        <nav>
-            <ul class="nav_links">
-                <li><a href="#" class="active"><i class="fa-solid fa-house"></i> Home</a></li>
-                <li><a href="/manage/upload"><i class="fa-solid fa-upload"></i> Upload</a></li>
-                <li><a href="/mybox"><i class="fa-solid fa-box"></i> My Box</a></li>
-                <li><a href="/info"><i class="fa-solid fa-circle-info"></i> Info</a></li>
-                <li><a href="/account"><i class="fa-solid fa-user"></i> My Account</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <div id="gdpr" class="gdpr_regulation_cookie_banner">
-        <p>OkayuCDN Two-Factor Authentication is now in open beta!</p>
-        <button onclick="document.location = '/account/2fa/setup'" class="gdpr_button">Try it out!</button>
-    </div>
+    <%- include('parts/navbar', {active:'home'}) %>
 
     <div class="container">
         <h1 class="title" id="t_title">Welcome to OkayuCDN!</h1>
