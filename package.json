@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "body-parser": "^1.20.1",
+    "connect-busboy": "^1.0.0",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.1.4",
     "ejs": "^3.1.7",
@@ -21,8 +22,8 @@
   },
   "name": "okayucdn",
   "description": "A File Upload Server based around Nekomata Okayu",
-  "version": "5.6.0",
-  "datecode": "CDN:E:G:110320231449",
+  "version": "5.7.0",
+  "datecode": "CDN:E:G:041020231710",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -34,5 +35,8 @@
   "bugs": {
     "url": "https://github.com/okawaffles/OkayuCDN/issues"
   },
-  "homepage": "https://github.com/okawaffles/OkayuCDN#readme"
+  "homepage": "https://github.com/okawaffles/OkayuCDN#readme",
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
 }

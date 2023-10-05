@@ -7,7 +7,7 @@ const fs = require('fs');
 let cache;
 
 // Check+Load dependencies
-let express, cookieParser, formidable, crypto, chalk, path, urlencodedparser, speakeasy, qrcode, ffmpeg;
+let express, cookieParser, formidable, crypto, chalk, path, urlencodedparser, speakeasy, qrcode, ffmpeg, busboy;
 const { info, warn, error, Logger } = require('okayulogger');
 try {
     require('okayulogger');
@@ -46,7 +46,9 @@ try {
 
     // 2fa setup
     speakeasy = require('speakeasy');
-    qrcode = require('qrcode')
+    qrcode = require('qrcode');
+
+    busboy = require("connect-busboy");
 
     require('ejs'); // do not assign ejs to a variable as we don't need to
 } catch (e) {
@@ -436,45 +438,36 @@ app.post('/api/mybox/deleteItem', urlencodedparser, (req, res) => {
 
 // POST Request handlers
 
-app.post('/api/upload', async (req, res) => {
+// use busboy 5mb buffer
+app.post('/api/upload', busboy({highWaterMark: 5 * 1024 * 1024}), async (req, res) => {
     info('UserUploadService', 'User file upload has completed, POST to finish...');
     const token = req.cookies.token;
     if (!verifyToken(token)) { error('login', 'Token is invalid. Abort.'); return; }
     if (config.start_flags['DISABLE_UPLOADING']) { warn('UserUploadService', 'Uploading is disabled. Abort.'); return; }
 
+    req.pipe(req.busboy);
+
     const username = getUsername(token);
 
-    const form = new formidable.IncomingForm();
-    form.parse(req, function (err, fields, files) {
+    /*
+    const form = new formidable.IncomingForm({maxFileSize: 25 * 1024 * 1024 * 1024});
+    await form.parse(req, function (err, fields, files) {
         if (err) { error('formidable', err); return; }
         if (!fs.existsSync(`./content/${username}`))
             fs.mkdirSync(`./content/${username}`);
 
-        const newName = files.file0.originalFilename;
-        const newPath = path.join(__dirname, `/content/${username}/${newName}`);
+        newName = files.file0.originalFilename;
+        newPath = path.join(__dirname, `/content/${username}/${newName}`);
         const oldName = files.file0.filepath;
         // If the user has already uploaded with this filename.
-        if (fs.existsSync(`./content/${username}/${newName}`)) {
-            error('UserUploadService', 'File already exists, abort.');
-            cache.cacheRes('uus', 'nau', username);
-            return;
-        }
-        if (files.file0.size == 0 || !newName || newName.includes(" ")) {
-            error('UserUploadService', 'File is either empty or has a non-valid name, abort.');
-            cache.cacheRes('uus', 'bsn', username);
-            return;
-        }
-        qus(username, (data) => {
-            if (files.file0.size > (data.userTS - data.size)) {
-                error('UserUploadService', 'File is too large for user\'s upload limit, abort.');
-                cache.cacheRes('uus', 'nes', username);
-                return;
-            }
-        });
+        
+    });
         // User passed all checks so far...
-        info('UserUploadService', 'User has passed all checks, finish upload.');
+        info('UserUploadService', 'User has passed all checks, upload.');
+
+        /* OLD UPLOAD CODE */
         // fs.copyFileSync is a little bitch
-        fs.copyFile(oldName, newPath, fs.constants.COPYFILE_EXCL, (err) => {
+        /*fs.copyFile(oldName, newPath, fs.constants.COPYFILE_EXCL, (err) => {
             if (err) {
                 error('fs.copyFile', err);
                 error('UserUploadService', 'Failed to copy file. Caching UUS-ISE for the user.');
@@ -495,6 +488,39 @@ app.post('/api/upload', async (req, res) => {
                 return;
             }
         });
+    });*/
+
+    /* NEW UPLOAD CODE */
+
+    req.busboy.on('file', (fieldname, file, filename) => {
+        if (fs.existsSync(path.join(__dirname, 'content', username, filename.filename))) {
+            error('UserUploadService', 'File already exists, abort.');
+            cache.cacheRes('uus', 'nau', username);
+            return;
+        }
+
+        const filestream = fs.createWriteStream(path.join(__dirname, 'content', username, filename.filename));
+        file.pipe(filestream);
+
+        file.on('close', () => {
+            info('busboy', 'Upload successful.');
+
+            let filestats = fs.statSync(path.join(__dirname, 'content', username, filename.filename));
+            if (filestats.size == 0 || !filename.filename || filename.filename.includes(" ")) {
+                error('UserUploadService', 'File is either empty or has a non-valid name, abort.');
+                cache.cacheRes('uus', 'bsn', username);
+                return;
+            }
+            qus(username, (data) => {
+                if (filestats.size > (data.userTS - data.size)) {
+                    error('UserUploadService', 'File is too large for user\'s upload limit, abort.');
+                    cache.cacheRes('uus', 'nes', username);
+                    return;
+                }
+            });
+
+            cache.cacheRes('uus', 'aok', username);
+        })
     });
 });
 
