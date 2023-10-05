@@ -754,6 +754,15 @@ button:hover {
     flex-basis: 100%;
     height: 0;
 }
+.server-stats {
+    text-align: center;
+}
+.stat-title {
+    color: white;
+}
+#memory-usage {
+    color: #0087a9;
+}
 
 /* Extra, loader animations */
 

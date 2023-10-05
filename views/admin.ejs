@@ -14,10 +14,26 @@
     <meta content="You're most likely gonna get a 403 error." property="og:description">
     <meta content="https://okayu.okawaffles.com/login?redir=/admin" property="og:url">
     <meta content="#9000e3" data-react-helmet="true" name="theme-color">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 </head>
 
 <body>
     <%- include('parts/navbar-logged-in', {active:'none'}) %>
+
+    <br><br>
+
+    <div class="server-stats">
+        <div class="stat">
+            <h1 class="stat-title">
+                Memory Usage
+            </h1>
+            <h2 id="memory-usage">
+                0.00MB
+            </h2>
+        </div>
+    </div>
 
     <br><br>
 
@@ -62,5 +78,19 @@
 
     <h3 class="version">OkayuCDN Admin Panel</h3>
 </body>
+
+<script>
+function get() {
+    $.getJSON('/api/health', (data) => {
+        $('#memory-usage').text(data.system.mem.used + ' / ' + data.system.mem.malloc + ' / ' + data.system.mem.systotal);
+    });
+
+    setTimeout(() => {
+        get();
+    }, 5000);
+}
+
+get();
+</script>
 
 </html>

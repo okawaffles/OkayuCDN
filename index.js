@@ -905,6 +905,15 @@ app.get('/api/health', (req, res) => {
             start_flags: config.start_flags,
             port: config.port,
             domain: config.domain
+        },
+        system:{
+            platform:process.platform,
+            cpu:"NOINFO",
+            mem:{
+                systotal:Math.ceil((require('os').totalmem() / 1000000)*100)/100+'MB',
+                malloc:Math.ceil((process.memoryUsage().rss / 1000000)*100)/100+'MB',
+                used:Math.ceil((process.memoryUsage().heapUsed / 1000000)*100)/100+'MB',
+            }
         }
     });
 });
