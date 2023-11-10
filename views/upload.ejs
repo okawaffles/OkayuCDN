@@ -39,7 +39,12 @@
             <h1 id="title">Upload to OkayuCDN</h1>
             <h3 id="storageAmount" style="display: none;"></h3>
             <div id="hider" style="display: none">
-                <input type="file" class="chooseFiles" id="uploaded" required /><br><br>
+                <div class="uploadfile" ondragover="drag(event);" ondrop="drop(event);">
+                    <input type="file" class="chooseFiles" id="uploaded" required />
+                    <i class="fa-solid fa-arrow-up-from-bracket"></i><br>
+                    <p id="shownfilename">Click or drag and drop to upload</p>
+                </div><br>
+
                 <input type="text" class="filename input_text" name="filename" required placeholder="Name Your File" pattern="[a-zA-Z0-9_-]{50}"
                     style="width: 250px;" id="filename" /><br>
                 <p class="upload_error">Error Placeholder</p>

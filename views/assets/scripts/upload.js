@@ -1,4 +1,4 @@
-var browse = document.getElementsByClassName('chooseFiles')[0];
+var browse = document.getElementsByClassName('uploadfile')[0];
 var selectDialog = document.getElementById('uploaded');
 var progressUpload = document.getElementById("progressUpload");
 var progress;
@@ -8,6 +8,10 @@ addProgressBar();
 browse.addEventListener("click", function () {
 	selectDialog.click();
 });
+
+selectDialog.onchange = function () {
+	$("#shownfilename").text(selectDialog.files[0].name);
+}
 
 var endFileName;
 var endUserName;
@@ -35,18 +39,17 @@ function sendFiles(files) {
 	req.upload.addEventListener("progress", updateProgress);
 	req.open("POST", "/api/upload");
 	var form = new FormData();
-	for (var file = 0; file < files.length; file++) {
-		if (navigator.userAgent.includes("Android")) {
-			let arr = files[file].name.split('.');
-			let arr_last = arr.length - 1;
 
-			form.append("file" + file, files[file], document.getElementById("filename").value + "." + arr[arr_last]);
-			endFileName = document.getElementById("filename").value + "." + arr[arr_last]
-		} else {
-			form.append("file" + file, files[file], document.getElementById("filename").value + "." + files[file].name.split('.').at(-1));
-			endFileName = document.getElementById("filename").value + "." + files[file].name.split('.').at(-1)
-		}
+	// only upload one file at a time
+	if (navigator.userAgent.includes("Android")) {
+		let arr = files[0].name.split('.');
+		let arr_last = arr.length - 1;
 
+		form.append("file" + files[0], ss[0], document.getElementById("filename").value + "." + arr[arr_last]);
+		endFileName = document.getElementById("filename").value + "." + arr[arr_last]
+	} else {
+		form.append("file" + files[0], files[0], document.getElementById("filename").value + "." + files[0].name.split('.').at(-1));
+		endFileName = document.getElementById("filename").value + "." + files[0].name.split('.').at(-1)
 	}
 
 	req.send(form);
@@ -60,7 +63,7 @@ function checkResult() {
 			if (data.code != "SCH-RNF") {
 				$("p.upload_error").html(`An error has occurred while uploading.\nDetails: ${data.details} (${data.code})`);
 				$("p.upload_error").css("color", "red");
-				
+
 				$("#visibleToggle").css("display", "none")
 				console.log(`error: ${data.code}`);
 			} else {
@@ -134,7 +137,7 @@ function getStorage() {
 	$.getJSON(`/api/qus?user=${endUserName}`, function (data) {
 		document.getElementById('storageAmount').innerHTML =
 			document.cookie.includes("language=ja-jp") ? `保存：${((data.userTS / 1024) / 1024) / 1024}GBのうちの${(((data.size / 1024) / 1024) / 1024).toFixed(2)}GB` : `You have used ${(((data.size / 1024) / 1024) / 1024).toFixed(2)}GB of storage (of your ${((data.userTS / 1024) / 1024) / 1024}GB)`;
-		
+
 		document.getElementById('storageAmount').style = "";
 		document.getElementById('visibleToggle').style = "display: none;";
 
@@ -146,5 +149,21 @@ function getStorage() {
 	})
 }
 
+function drag(ev) {
+	console.log("File(s) in drop zone");
+
+	// Prevent default behavior (Prevent file from being opened)
+	ev.preventDefault();
+}
+
+function drop(ev) {
+	console.log("File was dropped in drop zone")
+	ev.preventDefault();
+
+	const dt = new DataTransfer();
+	dt.items.add(ev.dataTransfer.files[0]);
+	selectDialog.files = dt.files;
+}
+
 //debug
-console.log('loaded uploadscript.js');
+console.log('loaded upload.js');

@@ -1,8 +1,3 @@
-/*
-    do not support mobile devices at the moment.
-    tbd if I will bother doing mobile device support.
-*/
-
 @font-face {
     font-family: GenJyuuGothic;
     src: url("/assets/fonts/GenJyuuGothic.ttf");
@@ -243,17 +238,24 @@ button:hover {
 
 /* login */
 
+.login-pane {
+    border-radius: 20px;
+	padding: 1% 3%;
+	color: white;
+	width: 100%;
+}
+
 .login_title {
     padding: 25px 0 15px;
     color: white;
-    font-size: 30pt;
+    font-size: 3em;
     margin: auto;
     text-align: center;
 }
 
 .login_subtitle {
     color: white;
-    font-size: 15pt;
+    font-size: 1.5em;
     text-align: center;
 }
 
@@ -286,7 +288,7 @@ button:hover {
 }
 
 .noacc {
-    margin-top:15px;
+    margin-top:0px;
     background-color: rgba(150, 0, 0, 1);
 }
 
@@ -574,7 +576,7 @@ button:hover {
 .up_progress {
 	background-color: #45ffbb;
 	width: 0%;
-	height: 20px;
+	height: 5px;
 	border-radius: 4px;
 }
 .progressupload {
@@ -584,6 +586,36 @@ button:hover {
 .uploader {
 	text-align: center;
     color: white;
+}
+.uploader #title {
+    font-size: 3em;
+}
+#storageAmount {
+    color: #0087a9;
+    font-weight: 200;
+    margin-bottom: 35px;
+}
+.chooseFiles {
+    display: none;
+}
+
+.uploadfile {
+    color: white;
+    background-color: #0087a9;
+    cursor: pointer;
+    padding: 50px 100px;
+    border-radius: 12px;
+    border: 5px white dashed;
+}
+#shownfilename {
+    margin-top: 10px;
+    margin-bottom: 0px;
+    z-index: -1;
+}
+
+.uploadfile i {
+    font-size: 3em;
+    margin: 0px;
 }
 
 .upload_error {
@@ -597,7 +629,7 @@ button:hover {
 	margin: 0;
 	padding: 0;
 	overflow: hidden;
-	background-color: teal;
+	background-color: #0087a9;
 	color: white;
 	text-align: center;
 }
@@ -613,7 +645,7 @@ button:hover {
 }
 #bugtest-tag {
 	color: white;
-	background-color: teal;
+	background-color: #0087a9;
 	padding: 5px 10px;
 	border-radius: 16px;
 	font-size: 16px;
@@ -621,16 +653,13 @@ button:hover {
 	display: none;
 }
 .upload-pane {
-	display: grid;
-	place-items: center;
 	/* background-color: #141924; */
 	border-radius: 20px;
-	padding: 3% 3%;
+	padding: 1% 3%;
 	color: white;
-	width: fit-content;
-	position: absolute;
-	left: 50%;
-	transform: translateX(-50%);
+	width: 100%;
+	display: flex;
+    justify-content: center;
 }
 .version {
 	position: fixed;
@@ -641,6 +670,7 @@ button:hover {
 .up_wrap {
     margin: 10px;
 }
+
 
 /* Success page */
 .sc {
