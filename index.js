@@ -222,6 +222,7 @@ function genNewToken() {
 // Web pages //
 // Landing
 app.get('/', (req, res) => {
+    if (req.headers && req.headers['user-agent'] && (req.headers['user-agent'].includes('Android') || req.headers['user-agent'].includes('iOS'))) res.redirect('/home');
     res.render('landing/okayu.ejs');
     res.end();
 });
@@ -322,7 +323,7 @@ app.get('/favicon.ico', (req, res) => {
 
 // User Viewable Pages
 app.get('/home', (req, res) => {
-    res.render(req.query.useBetaSite?'home_navis_beta.ejs':'home.ejs', { 'version': pjson.version });
+    res.render(req.query.useBetaSite?'home_beta.ejs':'home.ejs', { 'version': pjson.version });
     res.end();
 });
 
