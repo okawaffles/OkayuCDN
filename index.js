@@ -688,7 +688,8 @@ app.post('/api/signup', (req, res) => {
                             okasoft: false
                         }
                     };
-                    fs.writeFileSync(`./db/userLoginData/${fields.un}.json`, JSON.stringify(data));
+                    fs.writeFileSync(path.join(__dirname, `/db/userLoginData/${fields.un}.json`), JSON.stringify(data));
+                    fs.mkdirSync(path.join(__dirname, `/content/${fields.un}`));
                     stats('w', 'accounts'); // increase acc statistic (write, accounts)
                     res.redirect(`/login?redir=/home`);
                 } else {

@@ -64,7 +64,7 @@ function checkResult() {
 				$("p.upload_error").html(`An error has occurred while uploading.\nDetails: ${data.details} (${data.code})`);
 				$("p.upload_error").css("color", "red");
 
-				$("#visibleToggle").css("display", "none")
+				// $("#visibleToggle").css("display", "none")
 				console.log(`error: ${data.code}`);
 			} else {
 				setTimeout(() => {
@@ -83,7 +83,7 @@ function updateProgress(e) {
 	console.log((((e.loaded / e.total) * 100)) + "%");
 	progress.style.width = (((e.loaded / e.total) * 100)) + "%";
 	if (progress.style.width == "100%") {
-		$("#visibleToggle").css("display", "inline")
+		//$("#visibleToggle").css("display", "inline")
 		$("p.upload_error").html("Processing your file, please wait a moment...");
 		$("p.upload_error").css("color", "white");
 		$("p.upload_error").css("display", "inline");
@@ -118,7 +118,7 @@ function assignUserName(username, bugTester, premium) {
 	}
 
 	let reason = "DoNotDisplay";
-	if (!navigator.userAgent.includes("Firefox")) reason = "Warning: Your browser doesn't seem to be Firefox-based. Please note that this site is maintained based off of Firefox. Please report any bugs on the GitHub (okawaffles/OkayuCDN)!";
+	//if (!navigator.userAgent.includes("Firefox")) reason = "Warning: Your browser doesn't seem to be Firefox-based. Please note that this site is maintained based off of Firefox. Please report any bugs on the GitHub (okawaffles/OkayuCDN)!";
 	if (navigator.userAgent.includes("iPhone OS") || navigator.userAgent.includes("iPad OS")) reason = "Warning: You appear to be using an Apple device. You likely cannot upload due to a WebKit bug.";
 	if (navigator.userAgent.includes("CrOS")) reason = "Warning: You appear to be using a ChromeOS device. This operating system sometimes doesn't work as expected.";
 	if (navigator.userAgent.includes("Symbian")) reason = "Warning: You appear to be using a Symbian device. This operating system is not supported.";
@@ -130,16 +130,21 @@ function assignUserName(username, bugTester, premium) {
 		$("#banner-ua-notice").css("display", "inline");
 		$("#ua-warning-contents").html(reason);
 	}
+
+	if (navigator.userAgent.includes("iPhone OS") || navigator.userAgent.includes("iPad OS") || navigator.userAgent.includes("Android")) {
+		$('#datecode').css('display', 'none');
+		$('#shownfilename').text('Tap to upload');
+	}
 }
 
 function getStorage() {
-	document.getElementById('visibleToggle').style = "display: inline;";
+	// document.getElementById('visibleToggle').style = "display: inline;";
 	$.getJSON(`/api/qus?user=${endUserName}`, function (data) {
 		document.getElementById('storageAmount').innerHTML =
 			document.cookie.includes("language=ja-jp") ? `保存：${((data.userTS / 1024) / 1024) / 1024}GBのうちの${(((data.size / 1024) / 1024) / 1024).toFixed(2)}GB` : `You have used ${(((data.size / 1024) / 1024) / 1024).toFixed(2)}GB of storage (of your ${((data.userTS / 1024) / 1024) / 1024}GB)`;
 
 		document.getElementById('storageAmount').style = "";
-		document.getElementById('visibleToggle').style = "display: none;";
+		// document.getElementById('visibleToggle').style = "display: none;";
 
 		if (data.size < data.userTS) {
 			document.getElementById('hider').style = "";

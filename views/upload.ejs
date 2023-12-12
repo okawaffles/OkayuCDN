@@ -20,7 +20,7 @@
     <meta content="#9000e3" data-react-helmet="true" name="theme-color">
 </head>
 
-<body>
+<body class="scrollable">
     <%- include('parts/navbar-logged-in', {active:'upload'}) %>
    
     <div id="banner-hider" style="display: none;">
@@ -33,6 +33,11 @@
             <p id="ua-warning-contents">Warning: useragent</p>
         </ul>
     </div>
+
+    <p style="color: red; text-align: center;">Due to a critical bugfix put into place, this page is unfinished, and drag-and-drop does not work at the moment.</p>
+    <!-- <div id="visibleToggle">
+        <div class="cascade" style="--primary: white; display: flex; align-items: center;"><div>a</div><div>a</div><div>a</div><div>a</div><div>a</div></div>
+    </div> -->
 
     <div class="pad upload-pane">
         <div class="uploader">
@@ -54,9 +59,6 @@
             </div>
             <br>
             <div class="up_progressupload" id="progressUpload"></div><br>
-        </div>
-        <div id="visibleToggle">
-            <div class="line" style="--primary: white; display: flex; align-items: center;"></div>
         </div>
     </div>
 
