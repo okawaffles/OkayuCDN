@@ -118,7 +118,7 @@ function assignUserName(username, bugTester, premium) {
 	}
 
 	let reason = "DoNotDisplay";
-	if (!navigator.userAgent.includes("Firefox")) reason = "Warning: Your browser doesn't seem to be Firefox-based. Please note that this site is maintained based off of Firefox. Please report any bugs on the GitHub (okawaffles/OkayuCDN)!";
+	//if (!navigator.userAgent.includes("Firefox")) reason = "Warning: Your browser doesn't seem to be Firefox-based. Please note that this site is maintained based off of Firefox. Please report any bugs on the GitHub (okawaffles/OkayuCDN)!";
 	if (navigator.userAgent.includes("iPhone OS") || navigator.userAgent.includes("iPad OS")) reason = "Warning: You appear to be using an Apple device. You likely cannot upload due to a WebKit bug.";
 	if (navigator.userAgent.includes("CrOS")) reason = "Warning: You appear to be using a ChromeOS device. This operating system sometimes doesn't work as expected.";
 	if (navigator.userAgent.includes("Symbian")) reason = "Warning: You appear to be using a Symbian device. This operating system is not supported.";
@@ -129,6 +129,11 @@ function assignUserName(username, bugTester, premium) {
 	if (reason != "DoNotDisplay") {
 		$("#banner-ua-notice").css("display", "inline");
 		$("#ua-warning-contents").html(reason);
+	}
+
+	if (navigator.userAgent.includes("iPhone OS") || navigator.userAgent.includes("iPad OS") || navigator.userAgent.includes("Android")) {
+		$('#datecode').css('display', 'none');
+		$('#shownfilename').text('Tap to upload');
 	}
 }
 
