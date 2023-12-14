@@ -155,19 +155,22 @@ function getStorage() {
 }
 
 function drag(ev) {
-	console.log("File(s) in drop zone");
+	//console.log("File(s) in drop zone");
 
 	// Prevent default behavior (Prevent file from being opened)
 	ev.preventDefault();
 }
 
 function drop(ev) {
-	console.log("File was dropped in drop zone")
+	//console.log("File was dropped in drop zone")
 	ev.preventDefault();
 
 	const dt = new DataTransfer();
 	dt.items.add(ev.dataTransfer.files[0]);
 	selectDialog.files = dt.files;
+
+	console.log(selectDialog.files[0].name);
+	$('#shownfilename').text(selectDialog.files[0].name);
 }
 
 //debug
