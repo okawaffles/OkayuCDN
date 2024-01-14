@@ -222,7 +222,7 @@ function genNewToken() {
 // Web pages //
 // Landing
 app.get('/', (req, res) => {
-    if (req.headers && req.headers['user-agent'] && (req.headers['user-agent'].includes('Android') || req.headers['user-agent'].includes('iOS'))) res.redirect('/home');
+    if (req.headers && req.headers['user-agent'] && (req.headers['user-agent'].includes('Android') || req.headers['user-agent'].includes('iPhone'))) res.redirect('/home');
     res.render('landing/okayu.ejs');
     res.end();
 });
@@ -450,47 +450,6 @@ app.post('/api/upload', busboy({highWaterMark: 5 * 1024 * 1024}), async (req, re
 
     const username = getUsername(token);
 
-    /*
-    const form = new formidable.IncomingForm({maxFileSize: 25 * 1024 * 1024 * 1024});
-    await form.parse(req, function (err, fields, files) {
-        if (err) { error('formidable', err); return; }
-        if (!fs.existsSync(`./content/${username}`))
-            fs.mkdirSync(`./content/${username}`);
-
-        newName = files.file0.originalFilename;
-        newPath = path.join(__dirname, `/content/${username}/${newName}`);
-        const oldName = files.file0.filepath;
-        // If the user has already uploaded with this filename.
-        
-    });
-        // User passed all checks so far...
-        info('UserUploadService', 'User has passed all checks, upload.');
-
-        /* OLD UPLOAD CODE */
-        // fs.copyFileSync is a little bitch
-        /*fs.copyFile(oldName, newPath, fs.constants.COPYFILE_EXCL, (err) => {
-            if (err) {
-                error('fs.copyFile', err);
-                error('UserUploadService', 'Failed to copy file. Caching UUS-ISE for the user.');
-                cache.cacheRes('uus', 'ise', username);
-            } else {
-                info('UserUploadService', 'File upload finished successfully!');
-                cache.cacheRes('uus', 'aok', username);
-                stats('w', 'uploads'); // increase upload statistic (write, uploads)
-
-                info('UserUploadService', 'Cleaning temp file...');
-                fs.rmSync(oldName, {recursive: false}, (err) => {
-                    if (err) {
-                        error('fs.rmSync', err);
-                        error('UserUploadService', 'Could not delete the temp file.');
-                        return;
-                    }
-                });
-                return;
-            }
-        });
-    });*/
-
     /* NEW UPLOAD CODE */
 
     req.busboy.on('file', (fieldname, file, filename) => {
@@ -504,21 +463,25 @@ app.post('/api/upload', busboy({highWaterMark: 5 * 1024 * 1024}), async (req, re
         file.pipe(filestream);
 
         file.on('close', () => {
+            filestream.close();
             info('busboy', 'Upload successful.');
-
-            let filestats = fs.statSync(path.join(__dirname, 'content', username, filename.filename));
-            if (filestats.size == 0 || !filename.filename || filename.filename.includes(" ")) {
-                error('UserUploadService', 'File is either empty or has a non-valid name, abort.');
-                cache.cacheRes('uus', 'bsn', username);
-                return;
-            }
-            qus(username, (data) => {
-                if (filestats.size > (data.userTS - data.size)) {
-                    error('UserUploadService', 'File is too large for user\'s upload limit, abort.');
-                    cache.cacheRes('uus', 'nes', username);
+            
+            setTimeout(() => {
+                let filestats = fs.statSync(path.join(__dirname, 'content', username, filename.filename));
+                if (filestats.size == 0 || !filename.filename || filename.filename.includes(" ")) {
+                    error('UserUploadService', 'File is either empty or has a non-valid name, abort.');
+                    error('UUS Debug', `size: ${filestats.size} | name: ${filename.filename} | filename includes space: ${filename.filename.includes(" ")}`);
+                    cache.cacheRes('uus', 'bsn', username);
                     return;
                 }
-            });
+                qus(username, (data) => {
+                    if (filestats.size > (data.userTS - data.size)) {
+                        error('UserUploadService', 'File is too large for user\'s upload limit, abort.');
+                        cache.cacheRes('uus', 'nes', username);
+                        return;
+                    }
+                });
+            }, 500);
 
             cache.cacheRes('uus', 'aok', username);
         })
@@ -888,7 +851,7 @@ app.get('/api/getres', (req, res) => {
         if (!fs.existsSync(`./cache/${user}.${service}.json`)) {
             res.json({
                 code:"SCH-RNF",
-                details:"No upload verification cache was found. Try refreshing and trying again."
+                details:"Upload verification failed. Try refreshing and trying again."
             });
             res.end();
             return;

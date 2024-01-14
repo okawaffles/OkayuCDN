@@ -1,3 +1,9 @@
+let browser = false;
+// if (navigator.language == 'ja') {
+//     browser = true;
+// }
+
+
 let jajp = {
     "parts":{
         "menubar":{
@@ -95,7 +101,7 @@ function doMenubar(lang, page) {
 }
 
 function checkLanguage(page) {
-    if (document.cookie.includes('language=ja-jp')) {
+    if (document.cookie.includes('language=ja-jp') || browser) {
         switch (page) {
             case 'landing':
                 doMenubar(jajp, 'landing');

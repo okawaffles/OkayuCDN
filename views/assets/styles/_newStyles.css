@@ -160,6 +160,7 @@ button:hover {
     color: white;
 }
 
+
 .subtitle {
     margin: 20px 50px;
     font-size: 48px;
@@ -410,23 +411,42 @@ button:hover {
     font-size: 18px;
     width: 50%;
     padding: 0px;
-    border-radius: 12px;
+    border-radius: 16px;
     flex-direction: row;
     margin-left: 25%;
     margin-bottom: 7px;
+    background-color: #1a1f25;
+    padding: 6px;
 }
+.item_alternate_true {
+    background-color: #121518;
+}
+
 .delete {
+    transition: all ease-in-out;
     margin-left: auto;
     order: 2;
 }
 
+.size {
+    background-color: #0087a9;
+    padding: 2px 4px;
+    border-radius: 8px;
+}
+
 @media screen and (max-width: 600px) {
+    .content_items button:not(.btn-red) {
+        display: none;
+    }
     .content_items {
         width: 100%;
         margin-left: auto;
     }
+    .content_items p {
+        font-size: 1.2em;
+    }
     .delete {
-        font-size: small;
+        font-size: 1em;
         padding: 10px 15px;
     }
 }
@@ -541,6 +561,7 @@ button:hover {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
+    padding-bottom: 25px;
 }
 .view_preview {
     display: flex;
@@ -669,6 +690,12 @@ button:hover {
 }
 .up_wrap {
     margin: 10px;
+}
+
+@media screen and (max-width: 600px) {
+    .uploader #title {
+        font-size: 2em;
+    }
 }
 
 

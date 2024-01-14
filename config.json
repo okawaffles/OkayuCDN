@@ -10,7 +10,8 @@
     ],
     "start_flags":[
         "PLACE_FLAGS_HERE",
-        "LIKE_THIS"
+        "LIKE_THIS",
+        "DISABLE_TOKEN_CLEAN"
     ],
     "port":2773,
     "dev_port":2773,

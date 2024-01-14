@@ -56,12 +56,12 @@ function sendFiles(files) {
 }
 
 function checkResult() {
-	$.getJSON(`/api/getres?user=${endUserName}&service=uus`, function (data) {
+	const check = $.getJSON(`/api/getres?user=${endUserName}&service=uus`, function (data) {
 		console.log("data: " + JSON.stringify(data));
 		let success = data.success;
 		if (!success) {
 			if (data.code != "SCH-RNF") {
-				$("p.upload_error").html(`An error has occurred while uploading.\nDetails: ${data.details} (${data.code})`);
+				$("p.upload_error").html(`An error has occurred while uploading.<br>Details: ${data.details} (${data.code})`);
 				$("p.upload_error").css("color", "red");
 
 				// $("#visibleToggle").css("display", "none")
@@ -77,6 +77,12 @@ function checkResult() {
 			document.location = `/success?f=${endFileName}`;
 		}
 	})
+
+	setTimeout(() => {
+		check.abort();
+		$("p.upload_error").html(`The server did not respond in 25 seconds. It may be under high load, or you might be located too far away.<br>Details: client checkResult() request timeout (CCR-RTO)`);
+		$("p.upload_error").css("color", "red");
+	}, 25000);
 }
 
 function updateProgress(e) {
@@ -119,12 +125,12 @@ function assignUserName(username, bugTester, premium) {
 
 	let reason = "DoNotDisplay";
 	//if (!navigator.userAgent.includes("Firefox")) reason = "Warning: Your browser doesn't seem to be Firefox-based. Please note that this site is maintained based off of Firefox. Please report any bugs on the GitHub (okawaffles/OkayuCDN)!";
-	if (navigator.userAgent.includes("iPhone OS") || navigator.userAgent.includes("iPad OS")) reason = "Warning: You appear to be using an Apple device. You likely cannot upload due to a WebKit bug.";
-	if (navigator.userAgent.includes("CrOS")) reason = "Warning: You appear to be using a ChromeOS device. This operating system sometimes doesn't work as expected.";
+	//if (navigator.userAgent.includes("iPhone OS") || navigator.userAgent.includes("iPad OS")) reason = "Warning: You appear to be using an Apple device. You likely cannot upload due to a WebKit bug.";
+	//if (navigator.userAgent.includes("CrOS")) reason = "Warning: You appear to be using a ChromeOS device. This operating system sometimes doesn't work as expected.";
 	if (navigator.userAgent.includes("Symbian")) reason = "Warning: You appear to be using a Symbian device. This operating system is not supported.";
-	if (navigator.userAgent.includes("Fire OS")) reason = "Warning: You appear to be using a Fire OS device. This device is untested. Please report bugs on the GitHub page.";
-	if (navigator.userAgent.includes("Roku") || navigator.userAgent.includes("SMART-TV") || navigator.userAgent.includes("Web0S")) reason = "Warning: You appear to be using a TV device. This device is not supported.";
-	if (navigator.userAgent.includes("PlayStation") || navigator.userAgent.includes("Xbox") || navigator.userAgent.includes("PLAYSTATION") || navigator.userAgent.includes("Nintendo Wii")) reason = "Warning: You are using a game console. This device is not supported.";
+	if (navigator.userAgent.includes("Fire OS")) reason = "Warning: You appear to be using a Fire OS device. This device is unsupported.";
+	if (navigator.userAgent.includes("Roku") || navigator.userAgent.includes("SMART-TV") || navigator.userAgent.includes("Web0S")) reason = "Warning: You appear to be using a TV device. Why are you even trying this?";
+	if (navigator.userAgent.includes("PlayStation") || navigator.userAgent.includes("Xbox") || navigator.userAgent.includes("PLAYSTATION") || navigator.userAgent.includes("Nintendo Wii")) reason = "Warning: You are using a game console. Why are you even trying this?";
 
 	if (reason != "DoNotDisplay") {
 		$("#banner-ua-notice").css("display", "inline");

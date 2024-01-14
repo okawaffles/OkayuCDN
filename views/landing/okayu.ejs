@@ -8,6 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OkayuCDN Landing</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/5.1.3/pixi.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://kit.fontawesome.com/dc1b60441b.js" crossorigin="anonymous"></script>
     <script src="/assets/scripts/language.js"></script>
     <style type="text/css">
@@ -41,6 +43,8 @@
         </nav>
     </header>
 
+    <body id="b"></body>
+
     <style>
         @media screen and (max-width: 600px) {
             .navi-a {
@@ -51,6 +55,25 @@
 
 
     <script>
+        let zoom = (( window.outerWidth - 10 ) / window.innerWidth).toFixed(2);
+        let runPixi = true;
+        console.log(zoom);
+
+        // make the experience for edge users as bad as possible
+        // jk, chromium/pixi is weird and renders over the edge on chromium based browsers that aren't at 100%
+        if ((zoom > 1.01 || zoom < 0.99) && navigator.userAgent.includes("Chrome")) {
+            document.getElementById('b').innerHTML += "<h3 style='padding: 10px; text-align:center;'>Sketch cannot be displayed due to zoom level. Please either use Firefox or set your zoom level to 100% to render the sketch.</h3>";
+            document.getElementById('b').style.width = '100%';
+            runPixi = false;
+        }
+
+        // prevent tacobelle03 from getting around my check by 100%ing, then zooming after load >:3
+        // jk, reloads the sketch so it looks normal after zooming on respectable browsers such as firefox
+        $(window).resize(function() { 
+            document.location = '/';
+        });
+        
+
         let hr, mn, se;
         function getTime() {
             let d = new Date();
@@ -64,7 +87,11 @@
         let mY = 0;
         let swid = screen.width;
         let shei = screen.height;
-        let app = new PIXI.Application({ width: swid, height: shei });
+        let app;
+        if (runPixi)
+            app = new PIXI.Application({ width: swid, height: shei });
+        else
+            app = new PIXI.Application({ width: 0, height: 0 });
         app.stage.interactive = true;
         document.body.appendChild(app.view);
         let bgi = PIXI.Sprite.from('/assets/images/landing/bgi.png');
