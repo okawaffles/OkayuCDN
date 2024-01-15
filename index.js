@@ -226,10 +226,6 @@ app.get('/', (req, res) => {
     res.render('landing/okayu.ejs');
     res.end();
 });
-app.get('/korone', (req, res) => {
-    res.render('landing/korone.ejs');
-    res.end();
-});
 app.get('/mira', (req, res) => {
     res.render('landing/mira.ejs');
     res.end();

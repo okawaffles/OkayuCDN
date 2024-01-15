@@ -918,26 +918,40 @@ button:hover {
       -webkit-transform: translateY(250%);
               transform: translateY(250%); } }
   
-  .cascade {
+.cascade {
     height: 20px;
     position: relative;
     display: grid;
     grid-template-columns: repeat(5, 20px);
     grid-gap: 5px; }
-    .cascade div {
-      background: var(--primary); }
-      .cascade div:nth-child(1) {
-        -webkit-animation: cascade 1.5s 0.15s ease infinite backwards;
-                animation: cascade 1.5s 0.15s ease infinite backwards; }
-      .cascade div:nth-child(2) {
-        -webkit-animation: cascade 1.5s 0.3s ease infinite backwards;
-                animation: cascade 1.5s 0.3s ease infinite backwards; }
-      .cascade div:nth-child(3) {
-        -webkit-animation: cascade 1.5s 0.45s ease infinite backwards;
-                animation: cascade 1.5s 0.45s ease infinite backwards; }
-      .cascade div:nth-child(4) {
-        -webkit-animation: cascade 1.5s 0.6s ease infinite backwards;
-                animation: cascade 1.5s 0.6s ease infinite backwards; }
-      .cascade div:nth-child(5) {
-        -webkit-animation: cascade 1.5s 0.75s ease infinite backwards;
-                animation: cascade 1.5s 0.75s ease infinite backwards; }
+.cascade div {
+  background: var(--primary); }
+.cascade div:nth-child(1) {
+    -webkit-animation: cascade 1.5s 0.15s ease infinite backwards;
+            animation: cascade 1.5s 0.15s ease infinite backwards; }
+.cascade div:nth-child(2) {
+    -webkit-animation: cascade 1.5s 0.3s ease infinite backwards;
+            animation: cascade 1.5s 0.3s ease infinite backwards; }
+.cascade div:nth-child(3) {
+    -webkit-animation: cascade 1.5s 0.45s ease infinite backwards;
+            animation: cascade 1.5s 0.45s ease infinite backwards; }
+.cascade div:nth-child(4) {
+    -webkit-animation: cascade 1.5s 0.6s ease infinite backwards;
+            animation: cascade 1.5s 0.6s ease infinite backwards; }
+.cascade div:nth-child(5) {
+    -webkit-animation: cascade 1.5s 0.75s ease infinite backwards;
+            animation: cascade 1.5s 0.75s ease infinite backwards; }
+
+
+/* landing page */
+/** Chrominum */
+@media screen and (-webkit-min-device-pixel-ratio: 0) and (min-resolution: 0.001dpcm) {
+    #body_landing {
+        width: 100%;
+    }
+}
+@-moz-document {
+    /* header {
+        width: fit-content;
+    } */
+}
