@@ -223,7 +223,7 @@ function genNewToken() {
 // Landing
 app.get('/', (req, res) => {
     if (req.headers && req.headers['user-agent'] && (req.headers['user-agent'].includes('Android') || req.headers['user-agent'].includes('iPhone'))) res.redirect('/home');
-    res.render('landing/okayu.ejs');
+    else res.render('landing/okayu.ejs');
     res.end();
 });
 app.get('/mira', (req, res) => {

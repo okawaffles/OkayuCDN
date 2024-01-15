@@ -41,16 +41,8 @@ function sendFiles(files) {
 	var form = new FormData();
 
 	// only upload one file at a time
-	if (navigator.userAgent.includes("Android")) {
-		let arr = files[0].name.split('.');
-		let arr_last = arr.length - 1;
-
-		form.append("file" + files[0], ss[0], document.getElementById("filename").value + "." + arr[arr_last]);
-		endFileName = document.getElementById("filename").value + "." + arr[arr_last]
-	} else {
-		form.append("file" + files[0], files[0], document.getElementById("filename").value + "." + files[0].name.split('.').at(-1));
-		endFileName = document.getElementById("filename").value + "." + files[0].name.split('.').at(-1)
-	}
+	form.append("file" + files[0], files[0], document.getElementById("filename").value + "." + files[0].name.split('.').at(-1));
+	endFileName = document.getElementById("filename").value + "." + files[0].name.split('.').at(-1)
 
 	req.send(form);
 }
