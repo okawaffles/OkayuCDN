@@ -1,5 +1,5 @@
 // By okawaffles
-// v5 - 2022-2023
+// v5 - 2022-2024
 // I'm so proud of how far I've come.
 
 
@@ -7,7 +7,7 @@ const fs = require('fs');
 let cache;
 
 // Check+Load dependencies
-let express, cookieParser, formidable, crypto, chalk, path, urlencodedparser, speakeasy, qrcode, ffmpeg, busboy;
+let express, cookieParser, formidable, crypto, chalk, path, urlencodedparser, speakeasy, qrcode, ffmpeg, busboy, validator;
 const { info, warn, error, Logger } = require('okayulogger');
 try {
     require('okayulogger');
@@ -49,6 +49,8 @@ try {
     qrcode = require('qrcode');
 
     busboy = require("connect-busboy");
+
+    validator = require("express-validator");
 
     require('ejs'); // do not assign ejs to a variable as we don't need to
 } catch (e) {
@@ -748,7 +750,7 @@ app.post('/api/admin/loginAs', (req, res) => {
     });
 });
 
-app.get('/view/:user/:item', (req, res) => {
+app.get('/view/:user/:item', [validator.sanitizeParam('user').toString(), validator.sanitizeParam('item').toString()], (req, res) => {
     let data;
     try {
         data = fs.statSync(path.join(__dirname, `content/${req.params.user}/${req.params.item}`));
