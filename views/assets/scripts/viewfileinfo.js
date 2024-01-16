@@ -98,7 +98,10 @@ function getFileTypeDesc(_ft) {
 function processPreview(_ft, _li) {
     let previewArea = document.getElementById('previewArea');
     switch (_ft.toUpperCase()) {
-        case "MP4": case "MOV": case "MKV": case "WEBM":
+        case "MP4":
+            previewArea.innerHTML = `<video src="${_li}?bypass=true"></video>`
+            break;
+        case "MOV": case "MKV": case "WEBM":
             previewArea.innerHTML = `<video src="${_li}"></video>`;
             break;
         case "PNG": case "JPG": case "JPEG": case "WEBP": case "BMP": case "ICO": case "GIF": case "HEIC":
