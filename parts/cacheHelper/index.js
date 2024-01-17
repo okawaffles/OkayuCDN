@@ -53,6 +53,7 @@ function prepareDirectories() {
     if (!fs.existsSync(path.join(__dirname, '../../db'))) fs.mkdirSync(path.join(__dirname, '../../db'));
     if (!fs.existsSync(path.join(__dirname, '../../db/sessionStorage'))) fs.mkdirSync(path.join(__dirname, '../../db/sessionStorage'));
     if (!fs.existsSync(path.join(__dirname, '../../db/userLoginData'))) fs.mkdirSync(path.join(__dirname, '../../db/userLoginData'));
+    if (!fs.existsSync(path.join(__dirname, '../../db/loginCallbackTokens'))) fs.mkdirSync(path.join(__dirname, '../../db/loginCallbackTokens'));
     if (!fs.existsSync(path.join(__dirname, '../../content'))) fs.mkdirSync(path.join(__dirname, '../../content'));
     if (!fs.existsSync(path.join(__dirname, '../../content/anonymous'))) fs.mkdirSync(path.join(__dirname, '../../content/anonymous'));
     if (!fs.existsSync(path.join(__dirname, '../../cache'))) fs.mkdirSync(path.join(__dirname, '../../cache'));
