@@ -9,17 +9,9 @@ let cache;
 // Check+Load dependencies
 let express, cookieParser, formidable, crypto, chalk, path, urlencodedparser, speakeasy, qrcode, ffmpeg, busboy;
 const { info, warn, error, Logger } = require('okayulogger');
-const { validationResult, query } = require('express-validator');
-try {
-    require('okayulogger');
-    
-    // TODO: change all relative paths to use path.join(__dirname, 'etc/etc')
-    path = require('path');
-
-let express, cookieParser, formidable, crypto, chalk, path, urlencodedparser, speakeasy, qrcode, ffmpeg, busboy;
+const { validationResult, query } = require('express-validator');    
 // TODO: change all relative paths to use path.join(__dirname, 'etc/etc')
 path = require('path');
-const { info, warn, error, Logger } = require('okayulogger');
 const { ServeContent, GenerateSafeViewPage } = require(path.join(__dirname, 'modules', 'contentServing.js'));
 try {
     // load env variables
@@ -399,7 +391,7 @@ app.get('/admin', (req, res) => {
     } else {
         res.redirect('/login?redir=/admin');
     }
-})
+});
 
 app.get('/success', (req, res) => {
     if (!req.query.f) {

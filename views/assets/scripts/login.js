@@ -1,18 +1,19 @@
 let username;
-let redir;
 
-function setRedir(aRedir) {
-    redir = aRedir; 
-}
-
-function checkLogin(data, redir) {
+function checkLogin(data) {
     if (data.result == 200) {
         if (data.uses2FA) {
-            $('div.login_form').css('display', 'none')
-            $('div.tfa').css('display', 'inline')
+            $('div.login_form').css('display', 'none');
+            $('div.tfa').css('display', 'inline');
         } else {
-            document.cookie = `token=${data.token}`
-            document.location = `${redir}`
+            document.cookie = `token=${data.token}`;
+
+            let redir = '/home';
+
+            if (window.location.toString().includes('?redir=')) {
+                redir = window.location.toString().split('?redir=').at(-1);
+            }
+            document.location = `${redir}`;
         }
     }
 
@@ -23,7 +24,7 @@ function checkLogin(data, redir) {
     }
 }
 
-function sendLoginPOST(redir) {
+function sendLoginPOST() {
     let un = document.getElementById('un').value;
     let pw = document.getElementById('pw').value;
 
@@ -34,14 +35,20 @@ function sendLoginPOST(redir) {
     $('button.go').css("display", 'none');
     $('button.noacc').css("display", 'none');
 
-    $.post("/api/login", { username: un, password: pw }).done(function (data) { checkLogin(data, redir) });
+    $.post("/api/login", { username: un, password: pw }).done(function (data) { checkLogin(data) });
 }
 
-function send2FAPOST(redir) {
+function send2FAPOST() {
     $.post("/api/2fa/verify", { userToken:document.getElementById('code').value, username:username }).done(function (data) { 
         if (data.result == 200) {
-            document.cookie = `token=${data.token}`
-            document.location = `${redir}`
+            document.cookie = `token=${data.token}`;
+
+            let redir = '/home';
+
+            if (window.location.toString().includes('?redir=')) {
+                redir = window.location.toString().split('?redir=').at(-1);
+            }
+            document.location = `${redir}`;
         } else {
             $('p.error_2fa').css('display', 'inline');
         }

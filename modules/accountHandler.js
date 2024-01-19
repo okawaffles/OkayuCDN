@@ -16,7 +16,7 @@ function LoginVerify(username, password) {
         var userData = JSON.parse(fs.readFileSync(`./db/userLoginData/${username}.json`));
 
         // Encrypt field password (sha256)
-        let encryptedPasswd = hash(password);
+        let encryptedPasswd = UtilHash(password);
 
         // Compare encryption (Unencrypted password is never stored in database) do they match?
         if (encryptedPasswd === userData.password) return true; else return false;
