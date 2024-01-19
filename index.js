@@ -8,6 +8,15 @@ let cache;
 
 // Check+Load dependencies
 let express, cookieParser, formidable, crypto, chalk, path, urlencodedparser, speakeasy, qrcode, ffmpeg, busboy;
+const { info, warn, error, Logger } = require('okayulogger');
+const { validationResult, query } = require('express-validator');
+try {
+    require('okayulogger');
+    
+    // TODO: change all relative paths to use path.join(__dirname, 'etc/etc')
+    path = require('path');
+
+let express, cookieParser, formidable, crypto, chalk, path, urlencodedparser, speakeasy, qrcode, ffmpeg, busboy;
 // TODO: change all relative paths to use path.join(__dirname, 'etc/etc')
 path = require('path');
 const { info, warn, error, Logger } = require('okayulogger');
@@ -68,6 +77,9 @@ try {
     // write new config later
     process.exit(1);
 }
+
+// routes in separate files
+const { LoginGETHandler, LoginPOSTHandler, LogoutHandler } = require(path.join(__dirname, 'modules', 'accountHandler.js'))
 
 // Prepare express
 let app = express();
@@ -368,17 +380,9 @@ app.get('/mybox', (req, res) => {
     }
 });
 
-app.get('/login', (req, res) => {
-    if (!req.query.redir)
-        res.redirect('/login?redir=/home');
-    else
-        res.render('login.ejs', { redir: req.query.redir });
-});
-app.get('/logout', (req, res) => {
-    if (fs.existsSync(`./db/sessionStorage/${req.cookies.token}.json`)) fs.rmSync(`./db/sessionStorage/${req.cookies.token}.json`);
-    res.cookie("token", "logout", { expires: new Date(Date.now() + 604800000) });
-    res.redirect('/home');
-})
+app.get('/login', LoginGETHandler);
+
+app.get('/logout', LogoutHandler);
 
 app.get('/signup', (req, res) => {
     res.render('signup.ejs');
@@ -536,27 +540,7 @@ app.post('/api/quickUpload', urlencodedparser, (req, res) => {
     });
 });
 
-app.post('/api/login', urlencodedparser, (req, res) => {
-    let username = req.body.username;
-    let password = req.body.password;
-
-    if (verifyLogin(username, password)) {
-        let token = genNewToken(32);
-        let session = {
-            user: username
-        };
-
-        if (!checkRestriction(username)) {
-            if (!check2FAStatus(username))
-                res.json({result:200,uses2FA:false,token:token})
-            else
-                res.json({result:200,uses2FA:true})
-
-            res.end();
-            fs.writeFileSync(`./db/sessionStorage/${token}.json`, JSON.stringify(session));
-        } else res.render('forbidden.ejs', { reason: checkRestriction(username) });
-    } else res.json({result:401})
-});
+app.post('/api/login', urlencodedparser, query('redir').notEmpty().escape(), LoginPOSTHandler);
 
 app.get('/account/2fa/setup', (req, res) => {
     if (!verifyToken(req.cookies.token)) { res.redirect('/login?redir=/account/2fa/setup'); return; }
