@@ -7,14 +7,12 @@ const fs = require('fs');
 let cache;
 
 // Check+Load dependencies
-let express, cookieParser, formidable, crypto, chalk, path, urlencodedparser, speakeasy, qrcode, ffmpeg, busboy, validator;
+let express, cookieParser, formidable, crypto, chalk, path, urlencodedparser, speakeasy, qrcode, ffmpeg, busboy;
+// TODO: change all relative paths to use path.join(__dirname, 'etc/etc')
+path = require('path');
 const { info, warn, error, Logger } = require('okayulogger');
+const { ServeContent, GenerateSafeViewPage } = require(path.join(__dirname, 'modules', 'contentServing.js'));
 try {
-    require('okayulogger');
-    
-    // TODO: change all relative paths to use path.join(__dirname, 'etc/etc')
-    path = require('path');
-
     // load env variables
     require('dotenv').config({path:path.join(__dirname, ".ENV")});
 
@@ -49,8 +47,6 @@ try {
     qrcode = require('qrcode');
 
     busboy = require("connect-busboy");
-
-    validator = require("express-validator");
 
     require('ejs'); // do not assign ejs to a variable as we don't need to
 } catch (e) {
@@ -750,7 +746,7 @@ app.post('/api/admin/loginAs', (req, res) => {
     });
 });
 
-app.get('/view/:user/:item', [validator.sanitizeParam('user').toString(), validator.sanitizeParam('item').toString()], (req, res) => {
+app.get('/view/:user/:item', (req, res) => {
     let data;
     try {
         data = fs.statSync(path.join(__dirname, `content/${req.params.user}/${req.params.item}`));
