@@ -18,6 +18,7 @@
         <h4 class="login_subtitle">We're happy to see new users!</h4>
         <form class="login_form" action="/api/signup" method="POST">
             <p style="text-align: center;" class="p">6-25 characters, letters and numbers only.</p>
+            <p style="text-align: center; font-style: italic;" class="p">New: Password must be at least 8 characters, with at<br>least 2 numbers, 2 symbols, and 2 uppercase letters.</p>
             <input type="text" placeholder="Username" class="input_text" pattern="[a-zA-Z0-9]{6,25}" name="un" required /><br>
             <input type="password" placeholder="Password" name="pw" class="input_text" required /><br>
             <input type="text" placeholder="Real Name" name="nm" class="input_text" required /><br>

@@ -9,7 +9,8 @@ let cache;
 // Check+Load dependencies
 let express, cookieParser, formidable, crypto, chalk, path, urlencodedparser, speakeasy, qrcode, ffmpeg, busboy;
 const { info, warn, error, Logger } = require('okayulogger');
-const { validationResult, query } = require('express-validator');    
+const { validationResult, query, param, body } = require('express-validator');    
+const { SignupPOSTHandler, POSTDesktopVerifyToken, POSTDesktopAuth } = require('./modules/accountHandler');
 // TODO: change all relative paths to use path.join(__dirname, 'etc/etc')
 path = require('path');
 const { ServeContent, GenerateSafeViewPage } = require(path.join(__dirname, 'modules', 'contentServing.js'));
@@ -95,9 +96,10 @@ app.use('*', (req, res, next) => {
         info('RequestInfo', `${chalk.red(ip)} :: ${chalk.green(req.method)} ${chalk.green(req.originalUrl)}`);
         if (!config.start_flags.includes("DEV_MODE"))
             next();
-        else if (ip == "::1" || ip == "192.168.1.1" || ip == "127.0.0.1") {
+        else if (ip == "::1" || ip == "192.168.1.1" || ip == "::ffff:127.0.0.1") {
             info('RequestInfoDev', `UA: ${req.headers['user-agent']}`);
             info('RequestInfoDev', `LOC: ${req.headers['accept-language']}`);
+            next();
         }
         else res.render('forbidden.ejs', { 'reason': 'Server is in development mode.' });
     }
@@ -478,6 +480,57 @@ app.post('/api/upload', busboy({highWaterMark: 5 * 1024 * 1024}), async (req, re
     });
 });
 
+// same as above, just uses authorization header instead of cookies for token
+// pray it works ?
+app.post('/api/desktop/upload', busboy({highWaterMark: 5 * 1024 * 1024}), async (req, res) => {
+    info('UserUploadService', 'User file upload has completed, POST to finish...');
+    const token = req.headers['authorization'];
+    info('debug', token);
+    if (!verifyToken(token)) { error('login', 'Token is invalid. Abort.'); return; }
+    if (config.start_flags['DISABLE_UPLOADING']) { warn('UserUploadService', 'Uploading is disabled. Abort.'); return; }
+
+    req.pipe(req.busboy);
+
+    const username = getUsername(token);
+
+    /* NEW UPLOAD CODE */
+
+    req.busboy.on('file', (fieldname, file, filename) => {
+        if (fs.existsSync(path.join(__dirname, 'content', username, filename.filename))) {
+            error('UserUploadService', 'File already exists, abort.');
+            cache.cacheRes('uus', 'nau', username);
+            return;
+        }
+
+        const filestream = fs.createWriteStream(path.join(__dirname, 'content', username, filename.filename));
+        file.pipe(filestream);
+
+        file.on('close', () => {
+            filestream.close();
+            info('busboy', 'Upload successful.');
+            
+            setTimeout(() => {
+                let filestats = fs.statSync(path.join(__dirname, 'content', username, filename.filename));
+                if (filestats.size == 0 || !filename.filename || filename.filename.includes(" ")) {
+                    error('UserUploadService', 'File is either empty or has a non-valid name, abort.');
+                    error('UUS Debug', `size: ${filestats.size} | name: ${filename.filename} | filename includes space: ${filename.filename.includes(" ")}`);
+                    cache.cacheRes('uus', 'bsn', username);
+                    return;
+                }
+                qus(username, (data) => {
+                    if (filestats.size > (data.userTS - data.size)) {
+                        error('UserUploadService', 'File is too large for user\'s upload limit, abort.');
+                        cache.cacheRes('uus', 'nes', username);
+                        return;
+                    }
+                });
+            }, 500);
+
+            cache.cacheRes('uus', 'aok', username);
+        })
+    });
+});
+
 app.get('/quickupload', (req, res) => {
     if (config.start_flags["DISABLE_ANONYMOUS_UPLOADING"])
         res.status(403).send({error:403,description:"Not available."})
@@ -532,7 +585,14 @@ app.post('/api/quickUpload', urlencodedparser, (req, res) => {
     });
 });
 
-app.post('/api/login', urlencodedparser, query('redir').notEmpty().escape(), LoginPOSTHandler);
+app.post('/api/login', urlencodedparser, [
+    query('redir').notEmpty().escape(),
+    body('username').notEmpty().escape(),
+    body('password').notEmpty().escape()
+], LoginPOSTHandler);
+
+app.post('/api/desktop/authenticate', [query('username').notEmpty().escape(), query('password').notEmpty().escape()], POSTDesktopAuth);
+app.post('/api/desktop/token', [query('token').notEmpty().escape()], POSTDesktopVerifyToken);
 
 app.get('/account/2fa/setup', (req, res) => {
     if (!verifyToken(req.cookies.token)) { res.redirect('/login?redir=/account/2fa/setup'); return; }
@@ -569,6 +629,8 @@ app.post('/api/2fa/setupUser', urlencodedparser, (req, res) => {
     }
 
     fs.writeFileSync(`./db/userLoginData/${getUsername(req.cookies.token)}.json`, JSON.stringify(newUserdata));
+
+    res.json({success:true});
 })
 
 app.post('/api/2fa/setup/verify', urlencodedparser, (req, res) => {
@@ -601,41 +663,13 @@ app.post('/api/2fa/verify', urlencodedparser, (req, res) => {
     }
 })
 
-app.post('/api/signup', (req, res) => {
-    let form = new formidable.IncomingForm();
-    form.parse(req, (err, fields, files) => {
-        if (!config.start_flags['DISABLE_ACCOUNT_CREATION']) {
-            if (!fs.existsSync(`./db/userLoginData/${fields.un}.json`)) {
-                if (!(fields.un === "2.otf") && !(fields.un.toLowerCase() === "anonymous")) {
-                    // Encrypt password with SHA-256 hash
-                    let encryptedPasswd = hash(fields.pw);
-
-                    let data = {
-                        password: encryptedPasswd,
-                        email: fields.em,
-                        name: fields.nm,
-                        storage: 26843545600,
-                        premium: false,
-                        tags: {
-                            bugtester: false,
-                            okasoft: false
-                        }
-                    };
-                    fs.writeFileSync(path.join(__dirname, `/db/userLoginData/${fields.un}.json`), JSON.stringify(data));
-                    fs.mkdirSync(path.join(__dirname, `/content/${fields.un}`));
-                    stats('w', 'accounts'); // increase acc statistic (write, accounts)
-                    res.redirect(`/login?redir=/home`);
-                } else {
-                    res.render(`error_general`, { 'error': "This name cannot be used." });
-                }
-            } else {
-                res.render(`error_general`, { 'error': "Username already exists!" });
-            }
-        } else {
-            res.render(`error_general`, { 'error': "Account registration is currently unavailable." });
-        }
-    });
-});
+app.post('/api/signup', [
+    // critical vulnerability before this!!
+    body('un').isLength({min:6,max:25}).isAlphanumeric('en-US').notEmpty().escape().not().contains('anonymous'),
+    body('pw').isStrongPassword({minLength:8,minNumbers:2,minSymbols:2,minUppercase:2}).notEmpty().escape(),
+    body('em').notEmpty().isEmail().escape(),
+    body('nm').notEmpty().escape(),
+], SignupPOSTHandler);
 
 app.post('/api/account/changePassword', urlencodedparser, (req, res) => {
     if (!verifyToken(req.cookies.token) || !verifyLogin(getUsername(req.cookies.token), req.body.currentPassword)) { res.json({result:403}); error("updatePassword", "Password was not valid."); return; }
@@ -722,23 +756,10 @@ app.post('/api/admin/loginAs', (req, res) => {
     });
 });
 
-app.get('/view/:user/:item', (req, res) => {
-    let data;
-    try {
-        data = fs.statSync(path.join(__dirname, `content/${req.params.user}/${req.params.item}`));
-        res.render('view_info.ejs', {
-            username: req.params.user,
-            filename: req.params.item,
-            filesize: data.size / 1024 / 1024,
-            filetype: req.params.item.split('.')[req.params.item.split('.').length - 1]
-        });
-    } catch (err) {
-        error('view', err)
-        res.render('notfound.ejs', {version:pjson.version});
-        //res.end();
-        return;
-    }
-});
+app.get('/view/:user/:item', [
+    param('user').notEmpty().escape(),
+    param('item').notEmpty().escape(),
+], GenerateSafeViewPage);
 
 app.get('/wallpaper', (req, res) => {
     if (req.query.moe == "true") {

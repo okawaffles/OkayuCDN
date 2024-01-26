@@ -14,3 +14,7 @@ let validate = function() {
         }
     })
 };
+
+let remove_validate = function() {
+
+};

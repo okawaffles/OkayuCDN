@@ -11,3 +11,11 @@ function updatePwd() {
         }
     })
 }
+
+function loadAccountData() {
+    $.get('/api/myAccountData').done((data) => {
+        if (data.twoFactor) {
+            
+        }
+    });
+}

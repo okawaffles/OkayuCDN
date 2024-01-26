@@ -16,12 +16,6 @@ function checkLogin(data) {
             document.location = `${redir}`;
         }
     }
-
-    if (data.result == 401) {
-        $('button.go').css("display", 'inline');
-        $('button.noacc').css("display", 'inline');
-        $('p.login_error').css("display", 'inline');
-    }
 }
 
 function sendLoginPOST() {
@@ -35,7 +29,15 @@ function sendLoginPOST() {
     $('button.go').css("display", 'none');
     $('button.noacc').css("display", 'none');
 
-    $.post("/api/login", { username: un, password: pw }).done(function (data) { checkLogin(data) });
+    $.post("/api/login", { username: un, password: pw })
+        .done(function (data) { checkLogin(data) })
+        .fail((data) => {
+            let reason = JSON.parse(data.responseText)['reason'];
+            $('button.go').css("display", 'inline');
+            $('button.noacc').css("display", 'inline');
+            $('p.login_error').css("display", 'inline');
+            $('p.login_error').text(reason);
+        });
 }
 
 function send2FAPOST() {
@@ -57,6 +59,6 @@ function send2FAPOST() {
 
 addEventListener('keydown', (ev) => {
     if (ev.key == "Enter") {
-        sendLoginPOST(redir);
+        sendLoginPOST();
     }
 })
