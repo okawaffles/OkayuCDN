@@ -485,7 +485,6 @@ app.post('/api/upload', busboy({highWaterMark: 5 * 1024 * 1024}), async (req, re
 app.post('/api/desktop/upload', busboy({highWaterMark: 5 * 1024 * 1024}), async (req, res) => {
     info('UserUploadService', 'User file upload has completed, POST to finish...');
     const token = req.headers['authorization'];
-    info('debug', token);
     if (!verifyToken(token)) { error('login', 'Token is invalid. Abort.'); return; }
     if (config.start_flags['DISABLE_UPLOADING']) { warn('UserUploadService', 'Uploading is disabled. Abort.'); return; }
 
