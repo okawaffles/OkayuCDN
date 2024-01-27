@@ -588,7 +588,6 @@ app.post('/api/quickUpload', urlencodedparser, (req, res) => {
 });
 
 app.post('/api/login', urlencodedparser, [
-    query('redir').notEmpty().escape(),
     body('username').notEmpty().escape(),
     body('password').notEmpty().escape()
 ], LoginPOSTHandler);
