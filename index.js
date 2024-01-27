@@ -513,12 +513,14 @@ app.post('/api/desktop/upload', busboy({highWaterMark: 5 * 1024 * 1024}), async 
                 if (filestats.size == 0 || !filename.filename || filename.filename.includes(" ")) {
                     error('UserUploadService', 'File is either empty or has a non-valid name, abort.');
                     error('UUS Debug', `size: ${filestats.size} | name: ${filename.filename} | filename includes space: ${filename.filename.includes(" ")}`);
+                    res.status(400).json({success:false,code:'INVALID_FILENAME',reason:'The filename is invalid.'});
                     cache.cacheRes('uus', 'bsn', username);
                     return;
                 }
                 qus(username, (data) => {
                     if (filestats.size > (data.userTS - data.size)) {
                         error('UserUploadService', 'File is too large for user\'s upload limit, abort.');
+                        res.status(507).json({success:false,code:'NOT_ENOUGH_STORAGE',reason:'The file is too large for your storage limit.'});
                         cache.cacheRes('uus', 'nes', username);
                         return;
                     }
@@ -526,6 +528,7 @@ app.post('/api/desktop/upload', busboy({highWaterMark: 5 * 1024 * 1024}), async 
             }, 500);
 
             cache.cacheRes('uus', 'aok', username);
+            res.status(200).json({success:true,code:'UPLOAD_OK',reason:'Upload finished successfully.'});
         })
     });
 });
@@ -869,7 +872,9 @@ app.get('/api/health', (req, res) => {
                 malloc:Math.ceil((process.memoryUsage().rss / 1000000)*100)/100+'MB',
                 used:Math.ceil((process.memoryUsage().heapUsed / 1000000)*100)/100+'MB',
             }
-        }
+        },
+        desktop_supported:true,
+        desktop_min_version:'1.0.0'
     });
 });
 
