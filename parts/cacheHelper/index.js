@@ -12,6 +12,7 @@ function cacheRes(process, _code, username, id = 0) {
             if (code == "nes") object = {success:false,details:"You do not have enough storage for this file to be uploaded.",code:"UUS-NES"};
             if (code == "bsn") object = {success:false,details:"File is either empty or has a non-valid name.",code:"UUS-BSN"};
             if (code == "ise") object = {success:false,details:"Internal Server Error.",code:"UUS-ISE"};
+            if (code == "srr") object = {success:false,details:"Sanitizer rejected request.",code:"UUS-SRR"};
 
             if (code == "aok") object = {success:true,details:"File upload succeeded.",code:"UUS-AOK"};
             break;
@@ -20,6 +21,7 @@ function cacheRes(process, _code, username, id = 0) {
             if (code == "ise") object = {success:false,details:"Internal Server Error.",code:"UUS-ISE"};
             // we need to also pass the ID to the anonymous user since they aren't naming their file.
             if (code == "aok") object = {success:true,details:"File upload succeeded.",code:"UUS-AOK",id:id};
+            if (code == "srr") object = {success:false,details:"Sanitizer rejected request.",code:"QUS-SRR"};
             break;
     
         default:
@@ -57,6 +59,7 @@ function prepareDirectories() {
     if (!fs.existsSync(path.join(__dirname, '../../content'))) fs.mkdirSync(path.join(__dirname, '../../content'));
     if (!fs.existsSync(path.join(__dirname, '../../content/anonymous'))) fs.mkdirSync(path.join(__dirname, '../../content/anonymous'));
     if (!fs.existsSync(path.join(__dirname, '../../cache'))) fs.mkdirSync(path.join(__dirname, '../../cache'));
+    if (!fs.existsSync(path.join(__dirname, '../../cache/uploads_temp'))) fs.mkdirSync(path.join(__dirname, '../../cache/uploads_temp'));
     
     if (!fs.existsSync(path.join(__dirname, '../../db/stats.json'))) fs.writeFileSync(path.join(__dirname, '../../db/stats.json'), '{"accounts":0,"uploads":0}');
     info('cacheHelper', 'Done! If missing files and directories were found, they have been replaced/created!');

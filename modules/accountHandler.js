@@ -176,4 +176,12 @@ function NekoPasskiHandler(req, res) {
     // later :3
 }
 
-module.exports = { LoginGETHandler, LoginPOSTHandler, LogoutHandler, SignupPOSTHandler, POSTDesktopAuth, POSTDesktopVerifyToken }
+module.exports = { 
+    LoginGETHandler, 
+    LoginPOSTHandler, 
+    LogoutHandler, 
+    SignupPOSTHandler, 
+    POSTDesktopAuth, 
+    POSTDesktopVerifyToken,
+    VerifyToken
+}
