@@ -1,7 +1,7 @@
 // this file handles routes for logging in/out, signing up, and account management
 
 const fs = require('node:fs');
-const { UtilHash, UtilNewToken } = require('./util.js');
+const { UtilHash, UtilNewToken, UtilHashSecure } = require('./util.js');
 const { info, warn, error, Logger } = require('okayulogger');
 const { validationResult, matchedData } = require('express-validator');
 const { join } = require('node:path');
@@ -32,12 +32,18 @@ async function LoginVerifySecure(username, raw_password) {
 
         if (!userData.hashMethod == "argon2") {   
             // this might be able to be simplified but im not taking chances yet
-            if (await verify(userData.password, raw_password)) {
+            if (await verify(userData.password, raw_password+userData.password_salt)) {
                 return true;
             } else return false;
         } else {
             if (LoginVerify(username, password)) {
                 // rewrite the hash
+                userData.password_salt = UtilNewToken();
+                userData.password = await UtilHashSecureSalted(password + userData.password_salt);
+                userData.hashMethod = "argon2";
+
+                // write out
+                fs.writeFileSync(path, JSON.stringify(userData));
             }
         }
     } else return false;

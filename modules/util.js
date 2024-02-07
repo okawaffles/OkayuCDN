@@ -15,6 +15,7 @@ async function UtilHashSecureSaltless(string) {
     return await hash(string);
 }
 async function UtilHashSecureSalted(string, salt) {
+
     return await hash(string+salt);
 }
 
@@ -26,4 +27,9 @@ function UtilNewToken() {
     return require('node:crypto').randomBytes(16).toString('hex');
 }
 
-module.exports = { UtilHash, UtilNewToken };
+module.exports = { 
+    UtilHash,
+    UtilHashSecureSalted,
+    UtilHashSecureSaltless,
+    UtilNewToken,
+};
