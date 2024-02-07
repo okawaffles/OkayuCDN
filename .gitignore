@@ -5,3 +5,4 @@ cache/
 db/stats.json
 .ENV
 nodemon.json
+package-lock.json

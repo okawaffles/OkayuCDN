@@ -14,7 +14,8 @@
     "okayulogger": "^1.2.0",
     "qrcode": "^1.5.1",
     "qs": "^6.11.0",
-    "speakeasy": "^2.0.0"
+    "speakeasy": "^2.0.0",
+    "argon2":"^0.31.2"
   },
   "scripts": {
     "test": "npm ci && npm install && node index.js GITHUB_ACTIONS_TEST",
@@ -22,7 +23,7 @@
   },
   "name": "okayucdn",
   "description": "A File Upload Server based around Nekomata Okayu",
-  "version": "5.10.0-dev",
+  "version": "6.0.0-dev",
   "datecode": "CDN:E:G:20240114-00",
   "main": "index.js",
   "repository": {
