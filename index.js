@@ -9,8 +9,9 @@ let cache;
 // Check+Load dependencies
 let express, cookieParser, formidable, crypto, chalk, path, urlencodedparser, speakeasy, qrcode, ffmpeg, busboy;
 const { info, warn, error, Logger } = require('okayulogger');
-const { validationResult, query, param, body } = require('express-validator');    
+const { validationResult, query, param, body, cookie } = require('express-validator');    
 const { SignupPOSTHandler, POSTDesktopVerifyToken, POSTDesktopAuth } = require('./modules/accountHandler');
+const { POSTUpload } = require('./modules/userUploadService');
 // TODO: change all relative paths to use path.join(__dirname, 'etc/etc')
 path = require('path');
 const { ServeContent, GenerateSafeViewPage } = require(path.join(__dirname, 'modules', 'contentServing.js'));
@@ -432,53 +433,15 @@ app.post('/api/mybox/deleteItem', urlencodedparser, (req, res) => {
 // POST Request handlers
 
 // use busboy 5mb buffer
-app.post('/api/upload', busboy({highWaterMark: 5 * 1024 * 1024}), async (req, res) => {
-    info('UserUploadService', 'User file upload has completed, POST to finish...');
-    const token = req.cookies.token;
-    if (!verifyToken(token)) { error('login', 'Token is invalid. Abort.'); return; }
-    if (config.start_flags['DISABLE_UPLOADING']) { warn('UserUploadService', 'Uploading is disabled. Abort.'); return; }
-
-    req.pipe(req.busboy);
-
-    const username = getUsername(token);
-
-    /* NEW UPLOAD CODE */
-
-    req.busboy.on('file', (fieldname, file, filename) => {
-        if (fs.existsSync(path.join(__dirname, 'content', username, filename.filename))) {
-            error('UserUploadService', 'File already exists, abort.');
-            cache.cacheRes('uus', 'nau', username);
-            return;
-        }
-
-        const filestream = fs.createWriteStream(path.join(__dirname, 'content', username, filename.filename));
-        file.pipe(filestream);
-
-        file.on('close', () => {
-            filestream.close();
-            info('busboy', 'Upload successful.');
-            
-            setTimeout(() => {
-                let filestats = fs.statSync(path.join(__dirname, 'content', username, filename.filename));
-                if (filestats.size == 0 || !filename.filename || filename.filename.includes(" ")) {
-                    error('UserUploadService', 'File is either empty or has a non-valid name, abort.');
-                    error('UUS Debug', `size: ${filestats.size} | name: ${filename.filename} | filename includes space: ${filename.filename.includes(" ")}`);
-                    cache.cacheRes('uus', 'bsn', username);
-                    return;
-                }
-                qus(username, (data) => {
-                    if (filestats.size > (data.userTS - data.size)) {
-                        error('UserUploadService', 'File is too large for user\'s upload limit, abort.');
-                        cache.cacheRes('uus', 'nes', username);
-                        return;
-                    }
-                });
-            }, 500);
-
-            cache.cacheRes('uus', 'aok', username);
-        })
-    });
-});
+// new handler :3
+app.post('/api/upload', 
+[
+    // sanitizations
+    body('filename'),
+    cookie('token'),
+],
+busboy({highWaterMark: 5*1024*1024}),
+(req, res)=>POSTUpload(req, res, config, __dirname)); // we have to do (req,res) cuz it has more than just the req res args
 
 // same as above, just uses authorization header instead of cookies for token
 // pray it works ?

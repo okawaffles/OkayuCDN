@@ -1,10 +1,10 @@
 // this file handles routes for logging in/out, signing up, and account management
 
 const fs = require('node:fs');
-
 const { UtilHash, UtilNewToken } = require('./util.js');
 const { info, warn, error, Logger } = require('okayulogger');
 const { validationResult, matchedData } = require('express-validator');
+const { join } = require('node:path');
 
 // want connection with neko-passki, better security + passkeys
 // newer preferred way to log in. eventually migrate all accounts? 
@@ -39,9 +39,40 @@ function AccountCheckRestriction(username) {
 }
 
 function VerifyToken(token) {
-    if (fs.existsSync(`./db/sessionStorage/${token}.json`)) {
+    if (fs.existsSync(join(__dirname, `../db/sessionStorage/${token}.json`))) {
         return true;
     } else return false;
+}
+function GetUsernameFromToken(token) {
+    const path = join(__dirname, '..', 'db', 'sessionStorage', `${token}.json`);
+    if (fs.existsSync(path)) {
+        try {
+            var userData = JSON.parse(fs.readFileSync(path));
+            return userData.user;
+        } catch (e) {
+            error('Accounts', 'Failed to read token data: '+ e);
+            return 'anonymous';
+        }
+    }
+}
+function QueryUserStorage(user) {
+    try {
+        let udat = JSON.parse(fs.readFileSync(`../db/userLoginData/${user}.json`, 'utf-8'));
+        let totalUserStorage = udat.storage;
+        let size = 0;
+        fs.readdirSync(`./content/${user}`, (err, files) => {
+            if (err) {
+                return { size: 26843545600, userTS: 26843545600 };
+            }
+            files.forEach(file => {
+                size += fs.statSync(`./content/${user}/${file}`).size;
+            });
+            if (!udat.premium) return { size: size, userTS: totalUserStorage }; else return { size: size, userTS: 1099511627776 };
+        })
+    }
+    catch (e) {
+        return { size: 0, userTS: 26843545600 };
+    }
 }
 
 // exported functions:
@@ -183,5 +214,7 @@ module.exports = {
     SignupPOSTHandler, 
     POSTDesktopAuth, 
     POSTDesktopVerifyToken,
-    VerifyToken
+    VerifyToken,
+    GetUsernameFromToken,
+    QueryUserStorage
 }

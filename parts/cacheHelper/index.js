@@ -13,6 +13,8 @@ function cacheRes(process, _code, username, id = 0) {
             if (code == "bsn") object = {success:false,details:"File is either empty or has a non-valid name.",code:"UUS-BSN"};
             if (code == "ise") object = {success:false,details:"Internal Server Error.",code:"UUS-ISE"};
             if (code == "srr") object = {success:false,details:"Sanitizer rejected request.",code:"UUS-SRR"};
+            if (code == "uaf") object = {success:false,details:"Upload authentication failed.",code:"UUS-UAF"};
+            if (code == "une") object = {success:false,details:"Uploading is disabled.",code:"UUS-UNE"};
 
             if (code == "aok") object = {success:true,details:"File upload succeeded.",code:"UUS-AOK"};
             break;
@@ -35,7 +37,9 @@ function cleanCache() {
     info('cacheHelper', 'Cleaning up cache...')
     fs.readdir(path.join(__dirname, '../../cache'), function (err, files) {
         files.forEach(file => {
-            fs.rmSync(path.join(__dirname, `../../cache/${file}`));
+            if (file != "uploads_temp") {
+                fs.rmSync(path.join(__dirname, `../../cache/${file}`));
+            }
         });
         info('cacheHelper', 'Finished cleaning cache.');
     });
