@@ -26,6 +26,21 @@ function LoginVerify(username, password) {
 
 async function LoginVerifySecure(username, raw_password) {
     // todo
+    let path = join(__dirname, '..', 'db', 'userLoginData', `${username}.json`);
+    if (fs.existsSync(path)) {
+        let userData = JSON.parse(fs.readFileSync(path));
+
+        if (!userData.hashMethod == "argon2") {   
+            // this might be able to be simplified but im not taking chances yet
+            if (await verify(userData.password, raw_password)) {
+                return true;
+            } else return false;
+        } else {
+            if (LoginVerify(username, password)) {
+                // rewrite the hash
+            }
+        }
+    } else return false;
 }
 
 function LoginCheck2FAStatus(username) {
@@ -99,7 +114,8 @@ function LoginPOSTHandler(req, res) {
     let username = data.username;
     let password = data.password;
 
-    if (LoginVerify(username, password)) {
+    // new function will also handle algorithm changing
+    if (LoginVerifySecure(username, password)) {
         let token = UtilNewToken(32);
         let session = {
             user: username
