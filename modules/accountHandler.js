@@ -5,6 +5,7 @@ const { UtilHash, UtilNewToken } = require('./util.js');
 const { info, warn, error, Logger } = require('okayulogger');
 const { validationResult, matchedData } = require('express-validator');
 const { join } = require('node:path');
+const { verify } = require('argon2');
 
 // want connection with neko-passki, better security + passkeys
 // newer preferred way to log in. eventually migrate all accounts? 
@@ -21,6 +22,10 @@ function LoginVerify(username, password) {
         // Compare encryption (Unencrypted password is never stored in database) do they match?
         if (encryptedPasswd === userData.password) return true; else return false;
     } else return false;
+}
+
+async function LoginVerifySecure(username, raw_password) {
+    // todo
 }
 
 function LoginCheck2FAStatus(username) {
