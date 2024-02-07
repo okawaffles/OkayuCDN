@@ -396,15 +396,27 @@ app.get('/admin', (req, res) => {
     }
 });
 
-app.get('/success', (req, res) => {
-    if (!req.query.f) {
+app.get('/success', [
+    query('f'),
+    query('anon'),
+    cookie('token')
+], (req, res) => {
+    let result = validationResult(req);
+    if (!result.isEmpty()) {
+        res.status(400).send('400 Bad Request');
+        return;
+    }
+
+    let data = matchedData(req);
+
+    if (!data.f) {
         res.status(404);
         res.end();
         return;
     } else {
         res.render('upload_finish.ejs', {
-            l: `${config.domain}/content/${req.query.anon ? "anonymous" : getUsername(req.cookies.token)}/${req.query.f}`, 
-            vl: `${config.domain}/view/${req.query.anon ? "anonymous" : getUsername(req.cookies.token)}/${req.query.f}`
+            l: `${config.domain}/content/${data.anon ? "anonymous" : getUsername(data.token)}/${data.f}`, 
+            vl: `${config.domain}/view/${data.anon ? "anonymous" : getUsername(data.token)}/${data.f}`
         });
     }
 });
