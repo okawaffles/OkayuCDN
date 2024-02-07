@@ -9,7 +9,7 @@ let cache;
 // Check+Load dependencies
 let express, cookieParser, formidable, crypto, chalk, path, urlencodedparser, speakeasy, qrcode, ffmpeg, busboy;
 const { info, warn, error, Logger } = require('okayulogger');
-const { validationResult, query, param, body, cookie } = require('express-validator');    
+const { validationResult, query, param, body, cookie, header } = require('express-validator');    
 const { SignupPOSTHandler, POSTDesktopVerifyToken, POSTDesktopAuth } = require('./modules/accountHandler');
 const { POSTUpload } = require('./modules/userUploadService');
 // TODO: change all relative paths to use path.join(__dirname, 'etc/etc')
@@ -238,39 +238,70 @@ app.get('/mira', (req, res) => {
 
 // Main
 
-app.get('/content/:user/:item', (req, res) => {
+app.get('/content/:user/:item', [
+    param('user').notEmpty().escape(),
+    param('item').notEmpty().escape()
+], (req, res) => {
+    if (!validationResult(req).isEmpty()) {
+        res.status(400).render('error_general.ejs', {error: 'Bad Content Request'});
+        return;
+    }
+
+    const data = matchedData(req);
+
     let file;
-    try { file = fs.readFileSync(path.join(__dirname, `/content/${req.params.user}/${req.params.item}`)); } catch (e) {
+    try { file = fs.readFileSync(path.join(__dirname, `/content/${data.user}/${data.item}`)); } catch (e) {
         res.render('notfound.ejs', {version:pjson.version}); return; }
 
-    let fExt = req.params.item.split('.').at('-1');
+    let fExt = data.item.split('.').at('-1');
 
     if(fExt != "mp4" || req.query.bypass == "true") {
         // standard file sending
         res.send(file);
     } else {
-        res.render('watchpage.ejs', {filename: req.params.item, user: req.params.user, domain:config.domain});
+        res.render('watchpage.ejs', {filename: data.item, user: data.user, domain:config.domain});
     }
 });
 
-app.get('/content/:user/:item/embed', (req, res) => {
-    try { fs.readFileSync(`./content/${req.params.user}/${req.params.item}`); } catch (e) {
+app.get('/content/:user/:item/embed', [
+    param('user').notEmpty().escape(),
+    param('item').notEmpty().escape()
+], (req, res) => {
+    if (!validationResult(req).isEmpty()) {
+        res.status(400).end();
+        return;
+    }
+
+    const data = matchedData(req);
+
+    try { fs.readFileSync(`./content/${data.user}/${data.item}`); } catch (e) {
         res.render('notfound.ejs', {version:pjson.version}); return; }
 
-    let fExt = req.params.item.split('.').at('-1');
+    let fExt = data.item.split('.').at('-1');
     if (fExt != "mp4") return;
 
-    res.render('embeddedvideo.ejs', {filename: req.params.item, user: req.params.user});
+    res.render('embeddedvideo.ejs', {filename: data.item, user: data.user});
 });
 
-app.get('/api/mp4/:user/:item', (req, res) => {
-    let user = req.params.user;
-    let item = req.params.item;
+app.get('/api/mp4/:user/:item', [
+    param('user').notEmpty().escape(),
+    param('item').notEmpty().escape(),
+    header('range').notEmpty().escape()
+], (req, res) => {
+    if (!validationResult(req).isEmpty()) {
+        res.status(400).end();
+        return;
+    }
+
+    const data = matchedData(req);
+
+    let user = data.user;
+    let item = data.item;
     let fpath = path.join(__dirname, `/content/${user}/${item}`);
     let size = fs.statSync(fpath).size;
 
     // followed a guide on this so idk ???
-    const range = req.headers.range;
+    const range = data.range;
     if (!range) { 
         res.status(404).send('Requires Range Header!'); 
         error('mp4stream', 'Needs range header, rejecting.');
@@ -291,8 +322,18 @@ app.get('/api/mp4/:user/:item', (req, res) => {
     videoStream.pipe(res);
 });
 
-app.get('/api/thumbnail/:user/:item', (req, res) => {
-    videoPath = path.join(__dirname, `/content/${req.params.user}/${req.params.item}`)
+app.get('/api/thumbnail/:user/:item', [
+    param('user').notEmpty().escape(),
+    param('item').notEmpty().escape(),
+], (req, res) => {
+    if (!validationResult(req).isEmpty()) {
+        res.status(400).send('bad request');
+        return;
+    }
+
+    const data = matchedData(req);
+
+    videoPath = path.join(__dirname, `/content/${data.user}/${data.item}`)
     if (!fs.existsSync(videoPath)) { res.status(404).send({"error":"File not found."}); return }
     ffmpeg(videoPath)
     .takeScreenshots({
@@ -336,15 +377,30 @@ app.get('/info', (req, res) => {
 app.get('/terms', (req, res) => {
     res.render('terms.ejs');
 })
-app.get('/account', (req, res) => {
-    if (!verifyToken(req.cookies.token)) {res.redirect('/login?redir=/account'); return;}
+app.get('/account', [
+    cookie('token').notEmpty().escape().isLength({min:16,max:16})
+], (req, res) => {
+    if (!validationResult(req).isEmpty()) {
+        res.status(400).send('bad request');
+        return;
+    }
 
-    res.render('account.ejs', {username:getUsername(req.cookies.token)});
+    const token = matchedData(req).token;
+    if (!verifyToken(token)) {res.redirect('/login?redir=/account'); return;}
+
+    res.render('account.ejs', {username:getUsername(token)});
 });
 
 
-app.get('/manage/upload', (req, res) => {
-    let token = req.cookies.token;
+app.get('/manage/upload', [
+    cookie('token').notEmpty().escape().isLength({min:16,max:16})
+], (req, res) => {
+    if (!validationResult(req).isEmpty()) {
+        res.status(400).send('bad request');
+        return;
+    }
+
+    let token = matchedData(req).token;
     if (!token) {
         res.redirect('/login?redir=/manage/upload');
     } else if (verifyToken(token)) {
@@ -397,9 +453,9 @@ app.get('/admin', (req, res) => {
 });
 
 app.get('/success', [
-    query('f'),
-    query('anon'),
-    cookie('token')
+    query('f').notEmpty().escape(),
+    query('anon').notEmpty().escape(),
+    cookie('token').notEmpty().escape().isLength({min:16,max:16})
 ], (req, res) => {
     let result = validationResult(req);
     if (!result.isEmpty()) {
@@ -449,8 +505,8 @@ app.post('/api/mybox/deleteItem', urlencodedparser, (req, res) => {
 app.post('/api/upload', 
 [
     // sanitizations
-    body('filename'),
-    cookie('token'),
+    body('filename').notEmpty().escape().isAlphanumeric().isLength({min:1,max:50}),
+    cookie('token').notEmpty().escape().isLength({min:16,max:16}),
 ],
 busboy({highWaterMark: 5*1024*1024}),
 (req, res)=>POSTUpload(req, res, config, __dirname)); // we have to do (req,res) cuz it has more than just the req res args
