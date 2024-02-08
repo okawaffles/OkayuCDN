@@ -6,3 +6,4 @@ db/stats.json
 .ENV
 nodemon.json
 package-lock.json
+blocked_ips.json

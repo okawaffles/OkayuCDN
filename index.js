@@ -9,9 +9,10 @@ let cache;
 // Check+Load dependencies
 let express, cookieParser, formidable, crypto, chalk, path, urlencodedparser, speakeasy, qrcode, ffmpeg, busboy;
 const { info, warn, error, Logger } = require('okayulogger');
-// routes in separate files
-const { LoginGETHandler, LoginPOSTHandler, LogoutHandler } = require(path.join(__dirname, 'modules', 'accountHandler.js'))
+// for sanitization:
 const { validationResult, query, param, body, cookie, header } = require('express-validator');    
+// routes in separate files:
+const { LoginGETHandler, LoginPOSTHandler, LogoutHandler, POSTPasswordChange } = require(path.join(__dirname, 'modules', 'accountHandler.js'))
 const { SignupPOSTHandler, POSTDesktopVerifyToken, POSTDesktopAuth } = require('./modules/accountHandler');
 const { POSTUpload } = require('./modules/userUploadService');
 const { UtilLogRequest } = require('./modules/util.js');
@@ -94,11 +95,6 @@ console.log(asciiart);
 
 info("boot", `Starting OkayuCDN Server ${pjson.version}`);
 info("boot", `Thanks for using OkayuCDN! Report bugs at ${pjson.bugs.url}`);
-
-// Check to be sure that template.json has been removed
-// from /db/sessionStorage and /db/userLoginData
-if (fs.existsSync(`./db/sessionStorage/template.json`) || fs.existsSync(`./db/userLoginData/template.json`))
-    warn('auth', "template.json is present in either/both /db/sessionStorage or /db/userLoginData. Please remove it.");
 
 // Clean cache and tokens
 cache.prepareDirectories();
@@ -682,29 +678,11 @@ app.post('/api/signup', [
     body('nm').notEmpty().escape(),
 ], SignupPOSTHandler);
 
-app.post('/api/account/changePassword', urlencodedparser, (req, res) => {
-    if (!verifyToken(req.cookies.token) || !verifyLogin(getUsername(req.cookies.token), req.body.currentPassword)) { res.json({result:403}); error("updatePassword", "Password was not valid."); return; }
-
-    let udat = getUserData(req.cookies.token);
-    if (!check2FAStatus(getUsername(req.cookies.token))) {
-        // without 2fa
-        let newUserData = {
-            password: hash(req.body.newPassword),email: udat.email,name: udat.name,storage: udat.storage,premium: udat.premium,
-            tags: { bugtester: udat.tags.bugtester,okasoft: udat.tags.okasoft }
-        }
-        fs.writeFileSync(`./db/userLoginData/${getUsername(req.cookies.token)}.json`, JSON.stringify(newUserData));
-    } else {
-        // with 2fa
-        let newUserData = {
-            password: hash(req.body.newPassword),email: udat.email,name: udat.name,storage: udat.storage,premium: udat.premium,
-            tags: { bugtester: udat.tags.bugtester,okasoft: udat.tags.okasoft },
-            uses2FA: true,
-            '2fa_config':udat['2fa_config']
-        }
-        fs.writeFileSync(`./db/userLoginData/${getUsername(req.cookies.token)}.json`, JSON.stringify(newUserData));
-    }
-    res.json({result:200});
-});
+app.post('/api/account/changePassword', urlencodedparser, [
+    cookie('token').notEmpty().escape(),
+    body('currentPassword').notEmpty().escape(),
+    body('newPassword').isStrongPassword({minLength:8,minNumbers:2,minSymbols:2,minUppercase:2}).notEmpty().escape()
+], POSTPasswordChange);
 
 app.post('/api/user/delFile', (req, res) => {
     let form = new formidable.IncomingForm();

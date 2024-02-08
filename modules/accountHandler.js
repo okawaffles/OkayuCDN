@@ -1,7 +1,7 @@
 // this file handles routes for logging in/out, signing up, and account management
 
 const fs = require('node:fs');
-const { UtilHash, UtilNewToken, UtilHashSecure } = require('./util.js');
+const { UtilHash, UtilNewToken, UtilHashSecureSalted } = require('./util.js');
 const { info, warn, error, Logger } = require('okayulogger');
 const { validationResult, matchedData } = require('express-validator');
 const { join } = require('node:path');
@@ -36,6 +36,7 @@ async function LoginVerifySecure(username, raw_password) {
                 return true;
             } else return false;
         } else {
+            // use legacy password method temporarily
             if (LoginVerify(username, password)) {
                 // rewrite the hash
                 userData.password_salt = UtilNewToken();
@@ -179,6 +180,34 @@ function SignupPOSTHandler(req, res) {
     }
 }
 
+async function POSTPasswordChange(req, res) {
+    if (!validationResult(req).isEmpty()) {
+        res.status(400).json({result:400});
+        return;
+    }
+    const data = matchedData(req);
+    const username = GetUsernameFromToken(data.token);
+
+    if (!(VerifyToken(data.token) || await LoginVerifySecure(username, data.currentPassword))) {
+        res.status(403).json({result:403});
+        return;
+    }
+
+    const userdata_path = join(__dirname, '..', 'db', 'userLoginData', `${username}.json`);
+    let userdata = JSON.parse(fs.readFileSync(userdata_path));
+
+    const salt = UtilNewToken();
+    const hash = await UtilHashSecureSalted(data.newPassword, salt);
+
+    userdata.hashMethod = "argon2";
+    userdata.password = hash;
+    userdata.password_salt = salt;
+
+    res.json({result:200});
+}
+
+// -- Desktop App Handlers --
+
 function POSTDesktopAuth(req, res) {
     let result = validationResult(req);
     if (!result.isEmpty()) {
@@ -227,7 +256,6 @@ function POSTDesktopVerifyToken(req, res) {
         res.status(401).json({success:false,code:'TOKEN_VERIFY_FAIL',reason:'Token is expired/invalid'});
     }
 }
-
 // --
 
 function NekoPasskiHandler(req, res) {
