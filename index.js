@@ -12,8 +12,8 @@ const { info, warn, error, Logger } = require('okayulogger');
 // for sanitization:
 const { validationResult, query, param, body, cookie, header } = require('express-validator');    
 // routes in separate files:
-const { LoginGETHandler, LoginPOSTHandler, LogoutHandler, POSTPasswordChange } = require(path.join(__dirname, 'modules', 'accountHandler.js'))
-const { SignupPOSTHandler, POSTDesktopVerifyToken, POSTDesktopAuth } = require('./modules/accountHandler');
+const { LoginGETHandler, LoginPOSTHandler, LogoutHandler, POSTPasswordChange, SignupPOSTHandler, POSTDesktopVerifyToken, POSTDesktopAuth } = require(path.join(__dirname, 'modules', 'accountHandler.js'))
+const { ServeContent, ServeEmbeddedContent } = require('./modules/contentServing.js');
 const { POSTUpload } = require('./modules/userUploadService');
 const { UtilLogRequest } = require('./modules/util.js');
 const LuscaCSRF = require('lusca').csrf;
@@ -101,7 +101,7 @@ info("boot", `Thanks for using OkayuCDN! Report bugs at ${pjson.bugs.url}`);
 // Clean cache and tokens
 cache.prepareDirectories();
 if (!config.start_flags.includes("DISABLE_CACHE_CLEAN")) cache.cleanCache();
-if (!config.start_flags.includes("DISABLE_TOKEN_CLEAN") && !config.start_flags.includes("DEV_MODE")) cache.cleanTokens(); // dont clean tokens on devmode boot
+if (!config.start_flags.includes("DISABLE_TOKEN_CLEAN")) cache.cleanTokens(); // dont clean tokens on devmode boot
 if (!process.env.NODE_ENV) warn('dotenv', 'Failed to load .ENV file. Please create one with the contents "NODE_ENV=production"! Automatically defaulting to production environment!'); // check for dotenv success
 
 // Additional Functions
@@ -204,13 +204,13 @@ function genNewToken() {
 // Web pages //
 // Landing
 app.get('/', (req, res) => {
+    // skip the PIXI.js landing page as it doesnt appear correctly on mobile devices
+    // plus its just a hassle for mobile users tbh
     if (req.headers && req.headers['user-agent'] && (req.headers['user-agent'].includes('Android') || req.headers['user-agent'].includes('iPhone'))) res.redirect('/home');
     else res.render('landing/okayu.ejs');
-    res.end();
 });
 app.get('/mira', (req, res) => {
     res.render('landing/mira.ejs');
-    res.end();
 });
 
 // Main
@@ -218,47 +218,12 @@ app.get('/mira', (req, res) => {
 app.get('/content/:user/:item', [
     param('user').notEmpty().escape(),
     param('item').notEmpty().escape()
-], (req, res) => {
-    if (!validationResult(req).isEmpty()) {
-        res.status(400).render('error_general.ejs', {error: 'Bad Content Request'});
-        return;
-    }
-
-    const data = matchedData(req);
-
-    let file;
-    try { file = fs.readFileSync(path.join(__dirname, `/content/${data.user}/${data.item}`)); } catch (e) {
-        res.render('notfound.ejs', {version:pjson.version}); return; }
-
-    let fExt = data.item.split('.').at('-1');
-
-    if(fExt != "mp4" || req.query.bypass == "true") {
-        // standard file sending
-        res.send(file);
-    } else {
-        res.render('watchpage.ejs', {filename: data.item, user: data.user, domain:config.domain});
-    }
-});
+], (req,res)=>ServeContent(req, res, config.domain));
 
 app.get('/content/:user/:item/embed', [
     param('user').notEmpty().escape(),
     param('item').notEmpty().escape()
-], (req, res) => {
-    if (!validationResult(req).isEmpty()) {
-        res.status(400).end();
-        return;
-    }
-
-    const data = matchedData(req);
-
-    try { fs.readFileSync(`./content/${data.user}/${data.item}`); } catch (e) {
-        res.render('notfound.ejs', {version:pjson.version}); return; }
-
-    let fExt = data.item.split('.').at('-1');
-    if (fExt != "mp4") return;
-
-    res.render('embeddedvideo.ejs', {filename: data.item, user: data.user});
-});
+], ServeEmbeddedContent());
 
 app.get('/api/mp4/:user/:item', [
     param('user').notEmpty().escape(),
@@ -882,20 +847,16 @@ app.use((err, req, res, next) => { // 500 error handler
 // Keep Last !! 404 handler
 app.get('*', (req, res) => {
     res.render("notfound.ejs", {'version': pjson.version});
-    res.end();
 })
 
 
 // Listen on port (use nginx to reverse proxy)
-if (process.argv[2] != "GITHUB_ACTIONS_TEST") {
-    app.listen(config.start_flags.includes("DEV_MODE") ? config.dev_port : config.port).on('error', (err) => {
-        error('boot', `Failed to listen on ${config.start_flags.includes("DEV_MODE") ? config.dev_port : config.port}! Is it already in use?`);
+app.listen(config.port)
+    .on('error', (err) => {
+        error('boot', `Failed to listen on ${config.port}! Is it already in use?`);
         error('express', err);
         process.exit(1);
+    })
+    .on('listening', () => {
+        info('express', `Listening on port ${config.port}`);
     });
-}
-
-setTimeout(() => {
-    info('express', `Listening on port ${config.start_flags.includes("DEV_MODE") ? config.dev_port : config.port}`);
-    if (config.start_flags.includes("DEV_MODE")) warn('dev_mode', 'Server is in development mode. Some security features are disabled and non local users cannot access the website.');
-}, 1000);

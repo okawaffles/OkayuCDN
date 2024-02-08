@@ -13,6 +13,5 @@
         "DISABLE_TOKEN_CLEAN"
     ],
     "port":2773,
-    "dev_port":2773,
     "domain":"https://okayu.okawaffles.com"
 }

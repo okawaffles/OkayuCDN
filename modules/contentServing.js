@@ -1,17 +1,90 @@
 const { info, warn, error, Logger } = require('okayulogger');
 const { existsSync, readFileSync, statSync } = require('node:fs');
 const { param, validationResult, matchedData } = require('express-validator');
-const path = require('node:path');
+const path, { join } = require('node:path');
 const pjson = JSON.parse(readFileSync(path.join(__dirname, '..', 'package.json')));
 
-function ServeContent(req, res) {
+/**
+ * Handle a content request
+ * @param {Request} req Express Request
+ * @param {Response} res Express Response
+ * @param {string} domain The domain that the server should be hosted on
+ */
+function ServeContent(req, res, domain) {
+    if (!validationResult(req).isEmpty()) {
+        res.status(400).render('error_general.ejs', {error: 'Bad Content Request'});
+        return;
+    }
 
+    const data = matchedData(req);
+    const file_path = join(__dirname, `../content/${data.user}/${data.item}`);
+
+    
+    if (!existsSync(file_path)) {
+        res.render('notfound.ejs', {version:6});
+        return; 
+    }
+    
+    let file;
+    try {
+        file = readFileSync(file_path); 
+    } catch (e) {
+        res.render('error_general.ejs', {error:'An error occurred while retrieving the file.'});
+        return;
+    }
+
+    let file_extension = data.item.split('.').at('-1');
+
+    if(file_extension != "mp4" || req.query.bypass == "true") {
+        // standard file sending
+        res.send(file);
+    } else {
+        res.render('watchpage.ejs', {filename: data.item, user: data.user, domain:domain});
+    }
+}
+
+/**
+ * Handle an embedded content request
+ * @param {Request} req Express Request
+ * @param {Response} res Express Response
+ * @param {string} domain The domain that the server should be hosted on
+ */
+function ServeEmbeddedContent(req, res) {
+    if (!validationResult(req).isEmpty()) {
+        res.status(400).render('error_general.ejs', {error: 'Bad Content Request'});
+        return;
+    }
+
+    const data = matchedData(req);
+    const file_path = join(__dirname, `../content/${data.user}/${data.item}`);
+
+    
+    if (!existsSync(file_path)) {
+        res.render('notfound.ejs', {version:6});
+        return; 
+    }
+    
+    let file;
+    try {
+        file = readFileSync(file_path); 
+    } catch (e) {
+        res.status(500).render('error_general.ejs', {error:'An error occurred while retrieving the file.'});
+        return;
+    }
+
+    let file_extension = data.item.split('.').at('-1');
+
+    if(file_extension != "mp4") {
+        // we only embed mp4 files right now
+    } else {
+        res.render('embeddedvideo.ejs', {filename: data.item, user: data.user});
+    }
 }
 
 function GenerateSafeViewPage(req, res) {
     const result = validationResult(req);
     if (!result.isEmpty()) {
-        res.send('<h3>error: bad request</h3>');
+        res.status(400).send('Bad Request');
         return;
     }
 
