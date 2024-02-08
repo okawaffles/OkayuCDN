@@ -3,7 +3,6 @@
         "DISABLE_ACCOUNT_CREATION",
         "DISABLE_UPLOADING",
         "DISABLE_ANONYMOUS_UPLOADING",
-        "DEV_MODE",
         "DISABLE_ASCII_ART",
         "DISABLE_CACHE_CLEAN",
         "DISABLE_TOKEN_CLEAN"
@@ -15,14 +14,5 @@
     ],
     "port":2773,
     "dev_port":2773,
-    "domain":"https://okayu.okawaffles.com",
-    "mysql":{
-
-        "WARNING":"MySQL support is NOT IMPLEMENTED!",
-
-        "host":"localhost",
-        "username":"root",
-        "password":"YourMySQLPasswordHere!",
-        "database":"Fraise"
-    }
+    "domain":"https://okayu.okawaffles.com"
 }

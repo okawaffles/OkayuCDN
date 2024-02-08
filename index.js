@@ -9,9 +9,12 @@ let cache;
 // Check+Load dependencies
 let express, cookieParser, formidable, crypto, chalk, path, urlencodedparser, speakeasy, qrcode, ffmpeg, busboy;
 const { info, warn, error, Logger } = require('okayulogger');
+// routes in separate files
+const { LoginGETHandler, LoginPOSTHandler, LogoutHandler } = require(path.join(__dirname, 'modules', 'accountHandler.js'))
 const { validationResult, query, param, body, cookie, header } = require('express-validator');    
 const { SignupPOSTHandler, POSTDesktopVerifyToken, POSTDesktopAuth } = require('./modules/accountHandler');
 const { POSTUpload } = require('./modules/userUploadService');
+const { UtilLogRequest } = require('./modules/util.js');
 // TODO: change all relative paths to use path.join(__dirname, 'etc/etc')
 path = require('path');
 const { ServeContent, GenerateSafeViewPage } = require(path.join(__dirname, 'modules', 'contentServing.js'));
@@ -72,9 +75,6 @@ try {
     process.exit(1);
 }
 
-// routes in separate files
-const { LoginGETHandler, LoginPOSTHandler, LogoutHandler } = require(path.join(__dirname, 'modules', 'accountHandler.js'))
-
 // Prepare express
 let app = express();
 app.set('view engine', 'ejs');
@@ -82,29 +82,8 @@ app.use(express.static('/views'));
 app.use('/assets', express.static(__dirname + '/views/assets'));
 app.use(cookieParser());
 
-// this function shows the IP of every request:
-app.use('*', (req, res, next) => {
-    res.setHeader('X-Powered-By', `OkayuCDN ${pjson.version}`);
-    // get the IP
-    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-
-    if (!fs.existsSync(path.join(__dirname, "/db/ip403"))) fs.mkdir(path.join(__dirname, "/db/ip403"), () => {});
-
-    if (fs.existsSync(path.join(__dirname, `/db/ip403/${ip}`))) {
-        res.render('forbidden.ejs', { "reason": fs.readFileSync(path.join(__dirname, `/db/ip403/${ip}`)) });
-        info('RequestInfo', `[IP-BAN] ${ip} :: ${req.method} ${req.originalUrl}`);
-    } else {
-        info('RequestInfo', `${chalk.red(ip)} :: ${chalk.green(req.method)} ${chalk.green(req.originalUrl)}`);
-        if (!config.start_flags.includes("DEV_MODE"))
-            next();
-        else if (ip == "::1" || ip == "192.168.1.1" || ip == "::ffff:127.0.0.1") {
-            info('RequestInfoDev', `UA: ${req.headers['user-agent']}`);
-            info('RequestInfoDev', `LOC: ${req.headers['accept-language']}`);
-            next();
-        }
-        else res.render('forbidden.ejs', { 'reason': 'Server is in development mode.' });
-    }
-})
+// this function shows the IP of every request as well as blocking reqs from banned IPs:
+app.use('*', UtilLogRequest);
 
 // Ascii art is no longer required to boot
 let asciiart = fs.readFileSync('./asciiart.txt', 'utf-8');

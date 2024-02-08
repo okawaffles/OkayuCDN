@@ -1,0 +1,7 @@
+{
+    "__NOTE0__": "This is an example of how to declare an IP as blocked:",
+
+    "blocked_ips":[
+        "266.266.266.266"
+    ]
+}
