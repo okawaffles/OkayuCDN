@@ -16,6 +16,7 @@ const { LoginGETHandler, LoginPOSTHandler, LogoutHandler, POSTPasswordChange } =
 const { SignupPOSTHandler, POSTDesktopVerifyToken, POSTDesktopAuth } = require('./modules/accountHandler');
 const { POSTUpload } = require('./modules/userUploadService');
 const { UtilLogRequest } = require('./modules/util.js');
+const LuscaCSRF = require('lusca').csrf;
 // TODO: change all relative paths to use path.join(__dirname, 'etc/etc')
 path = require('path');
 const { ServeContent, GenerateSafeViewPage } = require(path.join(__dirname, 'modules', 'contentServing.js'));
@@ -82,6 +83,7 @@ app.set('view engine', 'ejs');
 app.use(express.static('/views'));
 app.use('/assets', express.static(__dirname + '/views/assets'));
 app.use(cookieParser());
+app.use(csrf()); // protect against cross-site request forgery :3
 
 // this function shows the IP of every request as well as blocking reqs from banned IPs:
 app.use('*', UtilLogRequest);
