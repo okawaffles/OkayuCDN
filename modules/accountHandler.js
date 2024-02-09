@@ -153,10 +153,13 @@ function SignupPOSTHandler(req, res) {
             if (!config.start_flags['DISABLE_ACCOUNT_CREATION']) {
                 if (!fs.existsSync(`./db/userLoginData/${fields.un}.json`)) {
                     // Encrypt password with SHA-256 hash
-                    let encryptedPasswd = UtilHash(fields.pw);
+                    let salt = UtilNewToken();
+                    let encryptedPasswd = UtilHashSecureSalted(fields.pw, salt);
 
                     let data = {
+                        hashMethod:"argon2",
                         password: encryptedPasswd,
+                        password_salt: salt,
                         email: fields.em,
                         name: fields.nm,
                         storage: 26843545600,
