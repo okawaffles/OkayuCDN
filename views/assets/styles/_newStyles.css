@@ -97,7 +97,7 @@ header {
         width: 100%;
     }
     .mobile-nav-links .active {
-        background-color: #0087a9;
+        background-color: #0088a983;
     }
 }
 
@@ -266,7 +266,6 @@ button:hover {
 }
 
 .wrap {
-    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -642,6 +641,9 @@ button:hover {
         overflow: scroll;
     }
 }
+.upload_page .title {
+    width: 100%;
+}
 .up_progressupload {
 	height: 20px;
 	margin-top: 25px;
@@ -659,6 +661,10 @@ button:hover {
 .uploader {
 	text-align: center;
     color: white;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 50%;
 }
 .upload-pane {
     text-align: center;
@@ -678,15 +684,16 @@ button:hover {
     margin-bottom: 1em;
     border-radius: 16px;
     z-index: 0;
-    height: 1.5em;
+    height: 2em;
     width: 20em;
+    text-align: center;
 }
 #newStorageAmount #fill {
     position: absolute;
     background-color: #0087a9;
     border-radius: 16px;
-    width: 12.5em;
-    height: 1.5em;
+    width: 0.0em;
+    height: 2em;
     z-index: 2;
 }
 #newStorageAmount .texts {
@@ -721,10 +728,6 @@ button:hover {
 #shownfilename {
     margin-top: 10px;
     margin-bottom: 0px;
-}
-#hider {
-    text-align: center;
-    width: 100%;
 }
 
 .uploadfile i {
@@ -789,6 +792,12 @@ button:hover {
 @media screen and (max-width: 600px) {
     .uploader #title {
         font-size: 2em;
+    }
+    .uploadfile {
+        width: fit-content;
+    }
+    .uploader { 
+        width: 100%;
     }
 }
 

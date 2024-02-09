@@ -436,7 +436,7 @@ app.post('/api/mybox/deleteItem', urlencodedparser, [
 app.post('/api/upload', 
 [
     // sanitizations
-    body('filename').notEmpty().escape().isAlphanumeric().isLength({min:1,max:50}),
+    body('filename').notEmpty().escape().isLength({min:1,max:50}),
     cookie('token').notEmpty().escape().isLength({min:32,max:32}),
 ],
 busboy({highWaterMark: 5*1024*1024}),

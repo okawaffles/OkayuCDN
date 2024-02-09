@@ -39,10 +39,9 @@
         <div class="cascade" style="--primary: white; display: flex; align-items: center;"><div>a</div><div>a</div><div>a</div><div>a</div><div>a</div></div>
     </div> -->
 
-    <div class="pad upload-pane">
+    <div class="upload-pane">
         <div class="uploader">
             <h1 id="title">Upload to OkayuCDN</h1>
-            <h3 id="storageAmount" style="display: none;"></h3>
             <div id="newStorageAmount">
                 <div id="fill"></div>
                 <div class="texts">
@@ -50,6 +49,7 @@
                     <p class="right" id="total">1024GB</p>
                 </div>
             </div>
+                
             <div id="hider" style="display: none">
                 <div class="uploadfile" ondragover="drag(event);" ondrop="drop(event);">
                     <input type="file" class="chooseFiles" id="uploaded" required />

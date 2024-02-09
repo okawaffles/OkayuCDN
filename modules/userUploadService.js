@@ -17,7 +17,7 @@ function POSTUpload(req, res, serverConfig, dirname) {
     const result = validationResult(req);
     if (!result.isEmpty()) {
         error('UUS', 'Upload failed due to sanitizier rejection');
-        res.json({success:false,reason:"Sanitizer rejected request."});
+        res.status(400).json({success:false,reason:"Sanitizer rejected request.",reason:result.array()});
         return;
     }
 
@@ -25,7 +25,7 @@ function POSTUpload(req, res, serverConfig, dirname) {
         error('UUS', 'Uploading is disabled, rejecting');
         const username = GetUsernameFromToken(data.token);
         cacheRes('uus', 'une', username);
-        res.json({success:false,reason:"Uploading is disabled."});
+        res.status(401).json({success:false,reason:"Uploading is disabled."});
         return;
     }
 

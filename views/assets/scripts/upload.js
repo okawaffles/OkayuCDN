@@ -149,11 +149,20 @@ function getStorage() {
 			storage = data.size + "B"
 		}
 
-		document.getElementById('storageAmount').innerHTML =
-			document.cookie.includes("language=ja-jp") ? `保存：${((data.userTS / 1024) / 1024) / 1024}GBのうちの${(((data.size / 1024) / 1024) / 1024).toFixed(2)}GB` : `You have used ${storage} of storage (of your ${((data.userTS / 1024) / 1024) / 1024}GB)`;
+		let total;
+		if (data.userTS > 750 * 1024 * 1024) {
+			total = (((data.userTS / 1024) / 1024) / 1024).toFixed(2) + "GB";
+		} else if (data.userTS < 750 * 1024 * 1024) {
+			total = ((data.userTS / 1024) / 1024).toFixed(2) + "MB";
+		} else if (data.userTS < 750 * 1024) {
+			total = (data.userTS / 1024).toFixed(2) + "KB";
+		} else {
+			total = data.userTS + "B"
+		}
 
-		document.getElementById('storageAmount').style = "";
-		// document.getElementById('visibleToggle').style = "display: none;";
+		$('#used').html(storage);
+		$('#total').html(total);
+		$('#fill').css('width', (data.size/data.userTS)*20+'em');
 
 		if (data.size < data.userTS) {
 			document.getElementById('hider').style = "";
