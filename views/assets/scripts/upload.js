@@ -138,8 +138,19 @@ function assignUserName(username, bugTester, premium) {
 function getStorage() {
 	// document.getElementById('visibleToggle').style = "display: inline;";
 	$.getJSON(`/api/qus?user=${endUserName}`, function (data) {
+		let storage;
+		if (data.size > 750 * 1024 * 1024) {
+			storage = (((data.size / 1024) / 1024) / 1024).toFixed(2) + "GB";
+		} else if (data.size < 750 * 1024 * 1024) {
+			storage = ((data.size / 1024) / 1024).toFixed(2) + "MB";
+		} else if (data.size < 750 * 1024) {
+			storage = (data.size / 1024).toFixed(2) + "KB";
+		} else {
+			storage = data.size + "B"
+		}
+
 		document.getElementById('storageAmount').innerHTML =
-			document.cookie.includes("language=ja-jp") ? `保存：${((data.userTS / 1024) / 1024) / 1024}GBのうちの${(((data.size / 1024) / 1024) / 1024).toFixed(2)}GB` : `You have used ${(((data.size / 1024) / 1024) / 1024).toFixed(2)}GB of storage (of your ${((data.userTS / 1024) / 1024) / 1024}GB)`;
+			document.cookie.includes("language=ja-jp") ? `保存：${((data.userTS / 1024) / 1024) / 1024}GBのうちの${(((data.size / 1024) / 1024) / 1024).toFixed(2)}GB` : `You have used ${storage} of storage (of your ${((data.userTS / 1024) / 1024) / 1024}GB)`;
 
 		document.getElementById('storageAmount').style = "";
 		// document.getElementById('visibleToggle').style = "display: none;";

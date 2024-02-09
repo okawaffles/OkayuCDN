@@ -660,6 +660,9 @@ button:hover {
 	text-align: center;
     color: white;
 }
+.upload-pane {
+    text-align: center;
+}
 .uploader #title {
     font-size: 3em;
 }
@@ -668,6 +671,35 @@ button:hover {
     font-weight: 200;
     margin-bottom: 35px;
 }
+#newStorageAmount {
+    color: white;
+    font-size: 1.5em;
+    background-color: #121518;
+    margin-bottom: 1em;
+    border-radius: 16px;
+    z-index: 0;
+    height: 1.5em;
+    width: 20em;
+}
+#newStorageAmount #fill {
+    position: absolute;
+    background-color: #0087a9;
+    border-radius: 16px;
+    width: 12.5em;
+    height: 1.5em;
+    z-index: 2;
+}
+#newStorageAmount .texts {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+}
+#newStorageAmount .texts p {
+    margin: 5px 10px;
+    z-index: inherit;
+}
+
 .chooseFiles {
     display: none;
 }
@@ -676,19 +708,29 @@ button:hover {
     color: white;
     background-color: #0087a9;
     cursor: pointer;
-    padding: 50px 100px;
+    padding: 60px 100px 50px;
     border-radius: 12px;
     border: 5px white dashed;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    width: 35em;
+    height: 15em;
 }
 #shownfilename {
     margin-top: 10px;
     margin-bottom: 0px;
-    z-index: -1;
+}
+#hider {
+    text-align: center;
+    width: 100%;
 }
 
 .uploadfile i {
     font-size: 3em;
     margin: 0px;
+    width: 100%;
 }
 
 .upload_error {
