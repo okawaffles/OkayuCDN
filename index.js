@@ -374,11 +374,6 @@ app.get('/manage/content', (req, res) => {
     res.end();
 });
 app.get('/mybox', (req, res) => {
-    if (req.query.bypassLogin == 'true' && req.query.emulateUser && process.env['NODE_ENV'] != "production") {
-        res.render('mybox.ejs', { USERNAME: req.query.emulateUser,domain:config.domain });
-        return;
-    }
-
     let token = req.cookies.token;
     if (!token) {
         res.redirect('/login?redir=/mybox');
