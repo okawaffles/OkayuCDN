@@ -15,7 +15,7 @@ const { validationResult, matchedData, query, param, body, cookie, header } = re
 // routes in separate files:
 const { LoginGETHandler, LoginPOSTHandler, LogoutHandler, POSTPasswordChange, SignupPOSTHandler, POSTDesktopVerifyToken, POSTDesktopAuth } = require('./modules/accountHandler.js')
 const { ServeContent, ServeEmbeddedContent, GenerateSafeViewPage } = require('./modules/contentServing.js');
-const { POSTUpload } = require('./modules/userUploadService');
+const { POSTUpload, POSTRemoveMyBoxContent } = require('./modules/userUploadService');
 const { UtilLogRequest } = require('./modules/util.js');
 const lusca = require('lusca');
 const session = require('express-session');
@@ -427,26 +427,7 @@ app.get('/success', [
 app.post('/api/mybox/deleteItem', urlencodedparser, [
     cookie('token').isLength({min:32,max:32}).notEmpty().escape(),
     body('id').notEmpty().isAlphanumeric().escape()
-], (req, res) => {
-    if (!req.body.id) {
-        res.json({"status":404,"description":"The requested item was not found.","ISE-CODE":"CMS-QNS"});
-        res.end(); return;
-    }
-    if (!verifyToken(req.cookies.token)) {
-        res.json({"status":403,"description":"The user does not have permission to delete this file.","ISE-CODE":"CMS-CFV"});
-        res.end(); return;
-    }
-    
-    fs.rm(path.join(__dirname + `/content/${getUsername(req.cookies.token)}/${req.body.id}`), (err) => {
-        if (err) {
-            res.status(500);
-            return;
-        } else {
-            res.redirect('/mybox');
-            return;
-        }
-    })
-})
+], POSTRemoveMyBoxContent)
 
 // POST Request handlers
 
@@ -699,7 +680,11 @@ app.post('/api/admin/resUser', (req, res) => {
         } else res.redirect('/admin');
     })
 })
-app.post('/api/admin/loginAs', (req, res) => {
+app.post('/api/admin/loginAs', urlencodedparser, [
+    body('admin_un').notEmpty().isAlphanumeric().escape(),
+    body('admin_pw').notEmpty().isAlphanumeric().escape(),
+    body('user_un').notEmpty().isAlphanumeric().escape(),
+], (req, res) => {
     let form = new formidable.IncomingForm();
     form.parse(req, (err, fields) => {
         if (verifyLogin(fields.un, fields.pw)) {

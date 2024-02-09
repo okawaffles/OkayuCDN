@@ -1,5 +1,5 @@
 const { validationResult, matchedData } = require("express-validator");
-const { createWriteStream, statSync, rmSync, copyFileSync, copyFile } = require("node:fs");
+const { createWriteStream, statSync, rmSync, copyFileSync, copyFile, existsSync } = require("node:fs");
 const { join } = require('node:path');
 const { info, error } = require("okayulogger");
 const { QueryUserStorage } = require("./accountHandler");
@@ -86,15 +86,35 @@ function POSTUpload(req, res, serverConfig, dirname) {
  * @param {Request} req Express request object
  * @param {Response} res Express response object
  */
-function RemoveMyBoxContent(req, res) {
+function POSTRemoveMyBoxContent(req, res) {
     if (!validationResult(req).isEmpty()) {
         res.status(400).send('Bad request');
         return;
     }
 
-    
+    const data = matchedData(req);
+    if (!VerifyToken(data.token)) {
+        res.status(403).send({status:403,error:'Unauthorized.'});
+        return;
+    }
+
+    const file_path = join(__dirname, '..', 'content', GetUsernameFromToken(data.token), data.id);
+
+    if (!existsSync(file_path)) {
+        res.status(404).json({status:404,error:'File not found.'});
+        return;
+    }
+
+    try {
+        rmSync(file_path);
+    } catch (err) {
+        error('UUS', 'Error deleting content: ' + err);
+        res.status(500).json({status:500,error:'Internal Server Error.'});
+        return;
+    }
 }
 
 module.exports = {
-    POSTUpload
+    POSTUpload,
+    POSTRemoveMyBoxContent
 }

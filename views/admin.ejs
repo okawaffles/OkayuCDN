@@ -66,13 +66,13 @@
     <div class="admin-pane">
         <h2 id="title">Log in as another user</h2>
         <div class="flexbreak"></div>
-        <form action="/api/admin/loginAs" method="post" class="admin-form">
-            <input type="text" name="username" class="admin-pane-input-large" placeholder="Their username">
+        <form class="admin-form">
+            <input type="text" id="their_username" class="admin-pane-input-large" placeholder="Their username">
             <div class="flexbreak"></div>
-            <input type="text" name="filename" class="admin-pane-input" placeholder="Your username">
-            <input type="text" name="filename" class="admin-pane-input" placeholder="Your password">
+            <input type="text" name="your_username" class="admin-pane-input" placeholder="Your username">
+            <input type="password" name="your_password" class="admin-pane-input" placeholder="Your password">
             <div class="flexbreak"></div>
-            <input type="submit" value="Log in" class="admin-pane-button">
+            <button class="admin-pane-button" onclick="loginAs()">Log in</button>
         </form>
     </div>
 
@@ -88,6 +88,22 @@ function get() {
     setTimeout(() => {
         get();
     }, 5000);
+}
+
+function loginAs() {
+    $.post('/api/admin/loginAs', {
+        admin_un:document.getElementById('your_username').value,
+        admin_pw:document.getElementById('your_password').value,
+        user_un:document.getElementById('their_username').value,
+    }).done((data) => {
+        if (data.status == 204) {
+            document.location = '/account';
+        } else {
+            alert('Failed to log in as another user. Check your username and password');
+        }
+    }).fail(() => {
+        alert('Failed to log in as another user. Check your username and password.');
+    });
 }
 
 get();
