@@ -81,6 +81,20 @@ function POSTUpload(req, res, serverConfig, dirname) {
     });
 }
 
+/**
+ * Remove an item from a user's content
+ * @param {Request} req Express request object
+ * @param {Response} res Express response object
+ */
+function RemoveMyBoxContent(req, res) {
+    if (!validationResult(req).isEmpty()) {
+        res.status(400).send('Bad request');
+        return;
+    }
+
+    
+}
+
 module.exports = {
     POSTUpload
 }

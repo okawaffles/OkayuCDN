@@ -344,19 +344,12 @@ app.get('/manage/upload', [
     if (!validationResult(req).isEmpty()) {
         // this is important, because we will always get a 'bad request' error if we don't have a token
         // instead of being redirected to login as we expect
-        if (!req.cookies.token) {
-            res.redirect('/login');
-            return;
-        } else {
-            res.status(400).send('Bad request');
-            return;
-        }
+        res.redirect('/login?redir=/manage/upload');
+        return;
     }
 
     let token = matchedData(req).token;
-    if (!token) {
-        res.redirect('/login?redir=/manage/upload');
-    } else if (verifyToken(token)) {
+    if (verifyToken(token)) {
         let isBT = false;
         try {
             isBT = getUserData(token).tags.bugtester;
@@ -369,19 +362,20 @@ app.get('/manage/upload', [
     }
 });
 
-app.get('/manage/content', (req, res) => {
-    res.redirect('/mybox');
-    res.end();
-});
-app.get('/mybox', (req, res) => {
-    let token = req.cookies.token;
-    if (!token) {
+app.get('/mybox', [
+    cookie('token').isLength({min:32,max:32}).notEmpty().escape()
+], (req, res) => {
+    if (!validationResult(req).isEmpty()) {
+        // just redirect to login if its a bad token,
+        // no reason to show a bad request error
         res.redirect('/login?redir=/mybox');
-    } else if (verifyToken(token)) {
-        res.render('mybox.ejs', { USERNAME: getUsername(token),domain:config.domain });
-    } else {
-        res.redirect('/login?redir=/mybox');
+        return;
     }
+
+    let token = matchedData(req).token;
+
+    if (verifyToken(token)) res.render('mybox.ejs', { USERNAME: getUsername(token),domain:config.domain });
+    else res.redirect('/login?redir=/mybox');
 });
 
 app.get('/login', LoginGETHandler);
@@ -430,7 +424,10 @@ app.get('/success', [
     }
 });
 
-app.post('/api/mybox/deleteItem', urlencodedparser, (req, res) => {
+app.post('/api/mybox/deleteItem', urlencodedparser, [
+    cookie('token').isLength({min:32,max:32}).notEmpty().escape(),
+    body('id').notEmpty().isAlphanumeric().escape()
+], (req, res) => {
     if (!req.body.id) {
         res.json({"status":404,"description":"The requested item was not found.","ISE-CODE":"CMS-QNS"});
         res.end(); return;
