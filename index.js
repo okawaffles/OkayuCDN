@@ -15,7 +15,7 @@ const { validationResult, matchedData, query, param, body, cookie, header } = re
 // routes in separate files:
 const { LoginGETHandler, LoginPOSTHandler, LogoutHandler, POSTPasswordChange, SignupPOSTHandler, POSTDesktopVerifyToken, POSTDesktopAuth } = require('./modules/accountHandler.js')
 const { ServeContent, ServeEmbeddedContent, GenerateSafeViewPage } = require('./modules/contentServing.js');
-const { POSTUpload, POSTRemoveMyBoxContent } = require('./modules/userUploadService');
+const { POSTUpload, POSTAnonymousUpload, POSTDesktopUpload, POSTRemoveMyBoxContent } = require('./modules/userUploadService');
 const { UtilLogRequest } = require('./modules/util.js');
 const lusca = require('lusca');
 const session = require('express-session');
@@ -444,110 +444,23 @@ busboy({highWaterMark: 5*1024*1024}),
 
 // same as above, just uses authorization header instead of cookies for token
 // pray it works ?
-app.post('/api/desktop/upload', busboy({highWaterMark: 5 * 1024 * 1024}), async (req, res) => {
-    info('UserUploadService', 'User file upload has completed, POST to finish...');
-    const token = req.headers['authorization'];
-    if (!verifyToken(token)) { error('login', 'Token is invalid. Abort.'); return; }
-    if (config.start_flags['DISABLE_UPLOADING']) { warn('UserUploadService', 'Uploading is disabled. Abort.'); return; }
-
-    req.pipe(req.busboy);
-
-    const username = getUsername(token);
-
-    /* NEW UPLOAD CODE */
-
-    req.busboy.on('file', (fieldname, file, filename) => {
-        if (fs.existsSync(path.join(__dirname, 'content', username, filename.filename))) {
-            error('UserUploadService', 'File already exists, abort.');
-            cache.cacheRes('uus', 'nau', username);
-            return;
-        }
-
-        const filestream = fs.createWriteStream(path.join(__dirname, 'content', username, filename.filename));
-        file.pipe(filestream);
-
-        file.on('close', () => {
-            filestream.close();
-            info('busboy', 'Upload successful.');
-            
-            setTimeout(() => {
-                let filestats = fs.statSync(path.join(__dirname, 'content', username, filename.filename));
-                if (filestats.size == 0 || !filename.filename || filename.filename.includes(" ")) {
-                    error('UserUploadService', 'File is either empty or has a non-valid name, abort.');
-                    error('UUS Debug', `size: ${filestats.size} | name: ${filename.filename} | filename includes space: ${filename.filename.includes(" ")}`);
-                    res.status(400).json({success:false,code:'INVALID_FILENAME',reason:'The filename is invalid.'});
-                    cache.cacheRes('uus', 'bsn', username);
-                    return;
-                }
-                qus(username, (data) => {
-                    if (filestats.size > (data.userTS - data.size)) {
-                        error('UserUploadService', 'File is too large for user\'s upload limit, abort.');
-                        res.status(507).json({success:false,code:'NOT_ENOUGH_STORAGE',reason:'The file is too large for your storage limit.'});
-                        cache.cacheRes('uus', 'nes', username);
-                        return;
-                    }
-                });
-            }, 500);
-
-            cache.cacheRes('uus', 'aok', username);
-            res.status(200).json({success:true,code:'UPLOAD_OK',reason:'Upload finished successfully.'});
-        })
-    });
-});
+app.post('/api/desktop/upload', 
+[
+    // sanitizations
+    body('filename').notEmpty().escape().isLength({min:1,max:50}),
+    header('authorization').notEmpty().escape().isLength({min:32,max:32}),
+], busboy({highWaterMark: 5 * 1024 * 1024}), POSTDesktopUpload);
 
 app.get('/quickupload', (req, res) => {
     if (config.start_flags["DISABLE_ANONYMOUS_UPLOADING"])
-        res.status(403).send({error:403,description:"Not available."})
+        res.status(403).render('error_general.ejs', {error:'Anonymous uploading is disabled'});
     else
         res.render('quickupload.ejs', {domain:config.domain,datecode:config.datecode});
 });
 
-app.post('/api/quickUpload', urlencodedparser, (req, res) => {
-    let L = new Logger('QuickUploadService');
-    L.info("Received anonymous upload POST.");
-
-    if (config.start_flags["DISABLE_ANONYMOUS_UPLOADING"]) {
-        L.warn("Anonymous uploading is disabled in config. Rejecting.")
-        return;
-    }
-
-    let form = new formidable.IncomingForm();
-    form.parse(req, function (err, fields, files) {
-        let extension;
-        try {
-            extension = files.file0.originalFilename.split('.').at(-1);
-        } catch (e) {
-            extension = "FILE";
-        }
-
-        const oldPath = files.file0.filepath;
-        // get file count in anonymous content folder
-        fs.readdir(path.join(__dirname, '/content/anonymous'), (err, files) => {
-            id = files.length;
-            let newPath = path.join(__dirname, `/content/anonymous/${id}.${extension}`);
-            fs.copyFile(oldPath, newPath, fs.constants.COPYFILE_EXCL, (err) => {
-                if (err) {
-                    L.error('[at fs.copyFile] ' + err);
-                    L.error('Failed to copy file: ' + err);
-                } else {
-                    L.info('File upload finished successfully!');
-                    stats('w', 'uploads'); // increase upload statistic (write, uploads)
-                    cache.cacheRes('qus', 'aok', 'anonymous', `${id}.${extension}`);
-
-                    L.info('Cleaning temp file...');
-                    fs.rmSync(oldPath, { recursive: false }, (err) => {
-                        if (err) {
-                            L.error('[at fs.rmSync] ' + err);
-                            L.error('Could not delete the temp file.');
-                            return;
-                        }
-                    });
-                    return;
-                }
-            });
-        });
-    });
-});
+app.post('/api/quickUpload', [
+    body('filename').notEmpty().escape().isAlphanumeric().isLength({min:1,max:50})
+], urlencodedparser, POSTAnonymousUpload);
 
 app.post('/api/login', urlencodedparser, [
     body('username').notEmpty().escape(),
@@ -847,6 +760,11 @@ app.get('*', (req, res) => {
     res.render("notfound.ejs", {'version': pjson.version});
 })
 
+
+// warning as anonymous uploading is unsafe unless youre using a private server
+if (!config.start_flags['DISABLE_ANONYMOUS_UPLOADING']) {
+    warn('OkayuCDN', 'You have anonymous uploading enabled. It is not recommended to use anonymous uploading unless you are running a private server. You can disable anonymous uploading by adding "DISABLE_ANONYMOUS_UPLOADING" in the "start_flags" section of your config.json')
+}
 
 // Listen on port (use nginx to reverse proxy)
 app.listen(config.port)

@@ -11,38 +11,46 @@ const { cacheRes } = require(join(__dirname, '..', 'parts', 'cacheHelper', 'inde
  * @param {Request} req Express Request object
  * @param {Response} res Express Response object
  * @param {Object} serverConfig the config loaded on boot
- * @param {string} dirname the dirname of the idnex file
+ * @param {string} dirname the dirname of the index file
  */
-function POSTUpload(req, res, serverConfig, dirname) {
+function POSTUpload(req, res, serverConfig, dirname, use_header = false, is_anonymous = false) {
     const result = validationResult(req);
     if (!result.isEmpty()) {
-        error('UUS', 'Upload failed due to sanitizier rejection');
-        res.status(400).json({success:false,reason:"Sanitizer rejected request.",reason:result.array()});
-        return;
+        if (use_header || is_anonymous) {
+            error('UUS', 'Upload failed due to sanitizier rejection');
+            res.status(400).json({success:false,reason:"Sanitizer rejected request.",reason:result.array()});
+            return;
+        }
+
+        // if the user doesnt provide a cookie auth token
+        // but there is an authorization override, we can
+        // assume that they are POSTing via the desktop app.
     }
+
+    const data = matchedData(req);
 
     if (serverConfig.start_flags['DISABLE_UPLOADING']) {
         error('UUS', 'Uploading is disabled, rejecting');
-        const username = GetUsernameFromToken(data.token);
+        const username = is_anonymous ? 'anonymous' : GetUsernameFromToken(use_header ? data.authorization : data.token);
         cacheRes('uus', 'une', username);
         res.status(401).json({success:false,reason:"Uploading is disabled."});
         return;
     }
 
-    const data = matchedData(req);
-
     // validate token
-    if (!VerifyToken(data.token)) {
-        console.log(data);
-        error('UUS', 'Bad token, rejecting upload');
-        res.json({success:false,reason:"Authentication failure."});
-        return;
+    if (!VerifyToken(use_header ? data.authorization : data.token)) {
+        if (!is_anonymous) {
+            error('UUS', 'Bad token, rejecting upload');
+            res.json({success:false,reason:"Authentication failure."});
+            return;
+        }
     }
 
     // TODO: Check filesize after upload to ensure its ok
+    // ^ i think this is done but i'm sleepy rn so im not going to delete this
 
     // get username...
-    const username = GetUsernameFromToken(data.token);
+    const username = is_anonymous ? 'anonymous' : GetUsernameFromToken(use_header ? data.authorization : data.token);
 
     req.pipe(req.busboy);
 
@@ -62,8 +70,8 @@ function POSTUpload(req, res, serverConfig, dirname) {
                 rmSync(temp_path);
                 return;
             }
-            // check size limits
-            let userStorage = QueryUserStorage(username);
+            // check size limits (anonymous is max size 1/2 gb)
+            let userStorage = is_anonymous ? {size:0,userTS:512*1024*1024} : QueryUserStorage(username);
             if (userStorage.size + stats.size > userStorage.userTS) {
                 cacheRes('UUS', 'NES', username);
                 rmSync(temp_path);
@@ -114,7 +122,44 @@ function POSTRemoveMyBoxContent(req, res) {
     }
 }
 
+/**
+ * Alias of POSTUpload that uses `req.headers['authorization']`
+ * as the authoriation override for POSTUpload 
+ * @param {Request} req Express Request object
+ * @param {Response} res Express Response object
+ * @param {Object} serverConfig the config loaded on boot
+ * @param {string} dirname the dirname of the index file
+ */
+function POSTDesktopUpload(req, res, serverConfig, dirname) {
+    if (!validationResult(req).isEmpty()) {
+        res.status(400).json({success:false,error:'Sanitizer rejection.'});
+        return;
+    }
+
+    const data = matchedData(req);
+    POSTUpload(req, res, serverConfig, dirname, true);
+}
+
+/**
+ * Alias of POSTUpload that disables authorization
+ * and instead uses the anonymous user
+ * @param {Request} req Express Request object
+ * @param {Response} res Express Response object
+ * @param {Object} serverConfig the config loaded on boot
+ * @param {string} dirname the dirname of the index file
+ */
+function POSTAnonymousUpload(req, res, serverConfig, dirname) {
+    if (!validationResult(req).isEmpty()) {
+        res.status(400).send('Bad request');
+        return;
+    }
+
+    POSTUpload(req, res, serverConfig, dirname, 'anonymousdoesnthaveatoken', true);
+}
+
 module.exports = {
     POSTUpload,
+    POSTDesktopUpload,
+    POSTAnonymousUpload,
     POSTRemoveMyBoxContent
 }

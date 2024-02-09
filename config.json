@@ -10,6 +10,9 @@
     "start_flags":[
         "PLACE_FLAGS_HERE",
         "LIKE_THIS",
+        
+
+        "DISABLE_ANONYMOUS_UPLOADING",
         "DISABLE_TOKEN_CLEAN"
     ],
     "port":2773,
