@@ -1,7 +1,7 @@
 const { info, warn, error, Logger } = require('okayulogger');
 const { existsSync, readFileSync, statSync } = require('node:fs');
 const { param, validationResult, matchedData } = require('express-validator');
-const path, { join } = require('node:path');
+const path = require('node:path'), { join } = require('node:path');
 const pjson = JSON.parse(readFileSync(path.join(__dirname, '..', 'package.json')));
 
 /**
@@ -47,7 +47,6 @@ function ServeContent(req, res, domain) {
  * Handle an embedded content request
  * @param {Request} req Express Request
  * @param {Response} res Express Response
- * @param {string} domain The domain that the server should be hosted on
  */
 function ServeEmbeddedContent(req, res) {
     if (!validationResult(req).isEmpty()) {
@@ -110,4 +109,8 @@ function GenerateSafeViewPage(req, res) {
     }
 }
 
-module.exports = { ServeContent, GenerateSafeViewPage };
+module.exports = { 
+    ServeContent,
+    ServeEmbeddedContent, 
+    GenerateSafeViewPage 
+};

@@ -4,22 +4,22 @@
 
 
 const fs = require('fs');
+const path = require('node:path');
 let cache;
 
 // Check+Load dependencies
-let express, cookieParser, formidable, crypto, chalk, path, urlencodedparser, speakeasy, qrcode, ffmpeg, busboy;
+let express, cookieParser, formidable, crypto, chalk, urlencodedparser, speakeasy, qrcode, ffmpeg, busboy;
 const { info, warn, error, Logger } = require('okayulogger');
 // for sanitization:
 const { validationResult, query, param, body, cookie, header } = require('express-validator');    
 // routes in separate files:
-const { LoginGETHandler, LoginPOSTHandler, LogoutHandler, POSTPasswordChange, SignupPOSTHandler, POSTDesktopVerifyToken, POSTDesktopAuth } = require(path.join(__dirname, 'modules', 'accountHandler.js'))
-const { ServeContent, ServeEmbeddedContent } = require('./modules/contentServing.js');
+const { LoginGETHandler, LoginPOSTHandler, LogoutHandler, POSTPasswordChange, SignupPOSTHandler, POSTDesktopVerifyToken, POSTDesktopAuth } = require('./modules/accountHandler.js')
+const { ServeContent, ServeEmbeddedContent, GenerateSafeViewPage } = require('./modules/contentServing.js');
 const { POSTUpload } = require('./modules/userUploadService');
 const { UtilLogRequest } = require('./modules/util.js');
-const LuscaCSRF = require('lusca').csrf;
+const lusca = require('lusca');
+const session = require('express-session');
 // TODO: change all relative paths to use path.join(__dirname, 'etc/etc')
-path = require('path');
-const { ServeContent, GenerateSafeViewPage } = require(path.join(__dirname, 'modules', 'contentServing.js'));
 try {
     // load env variables
     require('dotenv').config({path:path.join(__dirname, ".ENV")});
@@ -80,10 +80,14 @@ try {
 // Prepare express
 let app = express();
 app.set('view engine', 'ejs');
-app.use(express.static('/views'));
+//app.use(express.static('/views'));
 app.use('/assets', express.static(__dirname + '/views/assets'));
 app.use(cookieParser());
-app.use(csrf()); // protect against cross-site request forgery :3
+app.use(session({secret: process.env['SESSION_SECRET'],resave:true,saveUninitialized:true}));
+/*app.use(lusca.csrf({
+    cookie:'.okayu_csrf',
+    secret:process.env['SESSION_SECRET']
+}));*/
 
 // this function shows the IP of every request as well as blocking reqs from banned IPs:
 app.use('*', UtilLogRequest);
@@ -223,7 +227,7 @@ app.get('/content/:user/:item', [
 app.get('/content/:user/:item/embed', [
     param('user').notEmpty().escape(),
     param('item').notEmpty().escape()
-], ServeEmbeddedContent());
+], ServeEmbeddedContent);
 
 app.get('/api/mp4/:user/:item', [
     param('user').notEmpty().escape(),
@@ -338,8 +342,15 @@ app.get('/manage/upload', [
     cookie('token').notEmpty().escape().isLength({min:16,max:16})
 ], (req, res) => {
     if (!validationResult(req).isEmpty()) {
-        res.status(400).send('bad request');
-        return;
+        // this is important, because we will always get a 'bad request' error if we don't have a token
+        // instead of being redirected to login as we expect
+        if (!req.cookies.token) {
+            res.redirect('/login');
+            return;
+        } else {
+            res.status(400).send('Bad request');
+            return;
+        }
     }
 
     let token = matchedData(req).token;
@@ -840,8 +851,13 @@ app.get('/test', (req, res) => {
 
 
 app.use((err, req, res, next) => { // 500 error handler
+    error('500 Request', `${req.method} ${req.originalUrl}`);
     error('express', err.stack);
-    res.status(500).render('err500.ejs');
+    if (req.method == 'GET') {
+        res.status(500).render('err500.ejs');
+    } else {
+        res.status(500).json({status:500,error:'Internal Server Error'});
+    }
 })
 
 // Keep Last !! 404 handler

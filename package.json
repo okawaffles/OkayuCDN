@@ -1,21 +1,23 @@
 {
   "dependencies": {
+    "argon2": "^0.31.2",
     "body-parser": "^1.20.1",
     "connect-busboy": "^1.0.0",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.1.4",
     "ejs": "^3.1.7",
+    "express-session": "^1.18.0",
     "express-validator": "^7.0.1",
     "express.js": "^1.0.0",
     "ffmpeg": "^0.0.4",
     "fluent-ffmpeg": "^2.1.2",
     "formidable": "^2.0.1",
+    "lusca": "^1.7.0",
     "mysql": "^2.18.1",
     "okayulogger": "^1.2.0",
     "qrcode": "^1.5.1",
     "qs": "^6.11.0",
-    "speakeasy": "^2.0.0",
-    "argon2":"^0.31.2"
+    "speakeasy": "^2.0.0"
   },
   "scripts": {
     "test": "npm ci && npm install && node index.js GITHUB_ACTIONS_TEST",

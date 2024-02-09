@@ -32,7 +32,7 @@ function sendLoginPOST() {
     $.post("/api/login", { username: un, password: pw })
         .done(function (data) { checkLogin(data) })
         .fail((data) => {
-            let reason = JSON.parse(data.responseText)['reason'];
+            let reason = data.responseJSON['reason'] || data.responseJSON['error'];
             $('button.go').css("display", 'inline');
             $('button.noacc').css("display", 'inline');
             $('p.login_error').css("display", 'inline');

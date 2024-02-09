@@ -36,6 +36,7 @@ function ReloadBlockedIPs() { BLOCKED_IPS = JSON.parse(readFileSync(join(__dirna
 
 function UtilLogRequest(req, res, next) {
     res.setHeader('X-Powered-By', 'OkayuCDN 6');
+    res.header('Access-Control-Allow-Credentials', 'true');
 
     // get IP address
     let ip_addr;

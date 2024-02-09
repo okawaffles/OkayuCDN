@@ -37,10 +37,10 @@ async function LoginVerifySecure(username, raw_password) {
             } else return false;
         } else {
             // use legacy password method temporarily
-            if (LoginVerify(username, password)) {
+            if (LoginVerify(username, raw_password)) {
                 // rewrite the hash
                 userData.password_salt = UtilNewToken();
-                userData.password = await UtilHashSecureSalted(password + userData.password_salt);
+                userData.password = await UtilHashSecureSalted(raw_password + userData.password_salt);
                 userData.hashMethod = "argon2";
 
                 // write out
@@ -269,6 +269,7 @@ module.exports = {
     SignupPOSTHandler, 
     POSTDesktopAuth, 
     POSTDesktopVerifyToken,
+    POSTPasswordChange,
     VerifyToken,
     GetUsernameFromToken,
     QueryUserStorage
