@@ -1,11 +1,25 @@
 let user, domain;
 let alternate = false;
 
-function startDeleteSequence(item, id) {
-    if ($(`#${id}`).html() == '<i class="fa-solid fa-trash-can" aria-hidden="true"></i>') {
-        $(`#${id}`).html(`${document.cookie.includes('language=ja-jp')?'デリートしますか？':'Are you sure?'}`);
+function startDeleteSequence(item, id, mobile) {
+    if (mobile) {
+        if ($(`#m-delete-item-${id}`).html() == '<i class="fa-solid fa-trash-can" aria-hidden="true"></i>') {
+            $(`#${id}`).html(`${document.cookie.includes('language=ja-jp')?'<i class="fa-solid fa-check"></i> デリートしますか？':'<i class="fa-solid fa-check"> Are you sure?</i>?'}`);
+            setTimeout(() => {
+                $(`#${id}`).html('<i class="fa-solid fa-trash-can" aria-hidden="true"> Delete</i>');
+            }, 3000);
+        } else {
+            deleteItemRequest(item);
+        }
+
+        return;
+    }
+
+
+    if ($(`#delete-item-${id}`).html() == '<i class="fa-solid fa-trash-can" aria-hidden="true"> Delete</i>') {
+        $(`#delete-item-${id}`).html(`${document.cookie.includes('language=ja-jp')?'<i class="fa-solid fa-check"></i> デリートしますか？':'<i class="fa-solid fa-check"> Are you sure?</i>?'}`);
         setTimeout(() => {
-            $(`#${id}`).html('<i class="fa-solid fa-trash-can" aria-hidden="true"></i>');
+            $(`#delete-item-${id}`).html('<i class="fa-solid fa-trash-can" aria-hidden="true"> Delete</i>');
         }, 3000);
     } else {
         deleteItemRequest(item);
@@ -20,22 +34,50 @@ function deleteItemRequest(item) {
     });
 }
 
-function share(item, id) {
-    const tl_share = `<i class="fa-solid fa-arrow-up-right-from-square"></i>`;
+function share(item, id, mobile) {
+    const tl_share = `<i class="fa-solid fa-arrow-up-right-from-square"> Share</i>`;
+    const tl_share_mobile = `<i class="fa-solid fa-arrow-up-right-from-square"></i>`;
     const tl_copied = `<i class="fa-solid fa-arrow-up-right-from-square"></i></i><strong>  ${(document.cookie.includes("language=ja-jp"))? "リンクがコピーしました" : "Copied link!" }</strong>`;
     const tl_nvgt_text = document.cookie.includes("language=ja-jp")?"OkayuCDNで僕のファイルを見ます！":"View my file on OkayuCDN!";
 
     try { navigator.share({
         title:'OkayuCDN',
         text:tl_nvgt_text,
-        url:`${domain}/view/${user}/${item}`
+        url:`${domain}/content/${user}/${item}`
     }) } catch(e) { 
         navigator.clipboard.writeText(`${domain}/view/${user}/${item}`);
-        document.getElementById(`${id}`).innerHTML = tl_copied;
+        document.getElementById(`share-content-${id}`).innerHTML = tl_copied;
         setTimeout(() => {
-            document.getElementById(`${id}`).innerHTML = tl_share;
+            document.getElementById(`share-content-${id}`).innerHTML = mobile?tl_share_mobile : tl_share;
         }, 1500);
      }
+}
+
+function generateItem(id, item, fsize, alternate) {
+    return `<div class="content_items ${alternate?'alternate':''}">
+    <div class="top">
+        <div class="left">
+            <span class="size">${fsize}</span>
+            <p class="name">${item}</p>
+        </div>
+        <div class="right">
+            <button class="dropdown okayu-green" id="showhide-button-${id}" onclick="dropdown(${id})">
+                <i class="fa-solid fa-caret-down"></i>
+            </button>
+        </div>
+    </div>
+    <div class="bottom" id="showhide-id-${id}">
+        <button class="share desktop" id="share-content-${id}" onclick="share('${item}', ${id}, false)"><i class="fa-solid fa-arrow-up-right-from-square"></i> Share</button>
+        <button class="view desktop"><i class="fa-solid fa-eye"></i> View</button>
+        <button class="dl desktop"><i class="fa-solid fa-download"></i> Download</button>
+        <button class="btn-red delete desktop" id="delete-item-${id}" onclick="startDeleteSequence('${item}', ${id}, false)"><i class="fa-solid fa-trash-can"></i> Delete</button>
+
+        <button class="share mobile" id="share-content-${id}" onclick="share('${item}', ${id}, true)"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+        <button class="view mobile"><i class="fa-solid fa-eye"></i></button>
+        <button class="dl mobile"><i class="fa-solid fa-download"></i></button>
+        <button class="btn-red delete mobile" id="m-delete-item-${id}" onclick="startDeleteSequence('${item}', ${id}, false)"><i class="fa-solid fa-trash-can"></i></button>
+    </div>
+</div>`
 }
 
 function placeUserContent(list, size) {
@@ -43,14 +85,6 @@ function placeUserContent(list, size) {
         //console.log(list);
         list.forEach(item => {
             const i = list.indexOf(item);
-            // The amount of ternary operators here is painful. I apologize.
-            
-            const mobile = (navigator.userAgent.includes('Android') || navigator.userAgent.includes('iPhone'));
-            const opt_share = `<button id="item-${i}" class="delete" onclick="share('${item}', 'item-${i}');"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>`;
-            const opt_dl = `<button class="delete" onclick="document.location = '${domain}/content/${user}/${item}'"><i class="fa-solid fa-download"></i></button>`;
-            const opt_del = `<button id="item-del-${i}" class="btn-red delete" onclick="startDeleteSequence('${item}', 'item-del-${i}');"><i class="fa-solid fa-trash-can"></i></button></div></div>`;
-
-            alternate = !alternate;
 
             let fsize = "";
             if (size[i] > 750*1024*1024)
@@ -62,10 +96,7 @@ function placeUserContent(list, size) {
             else
                 fsize = `${size[i]}B`;
 
-            $('#content_container').html($('#content_container').html() + 
-            `<div class="content_items ${alternate?"item_alternate_true":""}"><div class="mb-item-left"><p style="padding:10px"><span class='size'>${fsize}</span> ${item}` + 
-            `</p></div> <div class="mb-item-right">` + 
-            opt_share + opt_dl + opt_del);
+            $('#content_container').html($('#content_container').html() + generateItem(i, item, fsize, !(i % 2)));
             
             $('#content_container').css('width', '100%');
         });
@@ -88,5 +119,17 @@ function setUser(name, this_domain) {
         });
     } catch (e) {
         alert('Error in mybox script : ' + e);
+    }
+}
+
+function dropdown(id) {
+    const item = id.toString();
+
+    if ($(`#showhide-id-${item}`).css('display') == 'none') {
+        $(`#showhide-id-${item}`).css('display', 'flex');
+        $(`#showhide-button-${item}`).html('<i class="fa-solid fa-caret-up"></i>');
+    } else {
+        $(`#showhide-id-${item}`).css('display', 'none');
+        $(`#showhide-button-${item}`).html('<i class="fa-solid fa-caret-down"></i>');
     }
 }

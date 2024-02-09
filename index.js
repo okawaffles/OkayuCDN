@@ -11,7 +11,7 @@ let cache;
 let express, cookieParser, formidable, crypto, chalk, urlencodedparser, speakeasy, qrcode, ffmpeg, busboy;
 const { info, warn, error, Logger } = require('okayulogger');
 // for sanitization:
-const { validationResult, query, param, body, cookie, header } = require('express-validator');    
+const { validationResult, matchedData, query, param, body, cookie, header } = require('express-validator');    
 // routes in separate files:
 const { LoginGETHandler, LoginPOSTHandler, LogoutHandler, POSTPasswordChange, SignupPOSTHandler, POSTDesktopVerifyToken, POSTDesktopAuth } = require('./modules/accountHandler.js')
 const { ServeContent, ServeEmbeddedContent, GenerateSafeViewPage } = require('./modules/contentServing.js');
@@ -324,7 +324,7 @@ app.get('/terms', (req, res) => {
     res.render('terms.ejs');
 })
 app.get('/account', [
-    cookie('token').notEmpty().escape().isLength({min:16,max:16})
+    cookie('token').notEmpty().escape().isLength({min:32,max:32})
 ], (req, res) => {
     if (!validationResult(req).isEmpty()) {
         res.status(400).send('bad request');
@@ -339,7 +339,7 @@ app.get('/account', [
 
 
 app.get('/manage/upload', [
-    cookie('token').notEmpty().escape().isLength({min:16,max:16})
+    cookie('token').notEmpty().escape().isLength({min:32,max:32})
 ], (req, res) => {
     if (!validationResult(req).isEmpty()) {
         // this is important, because we will always get a 'bad request' error if we don't have a token
@@ -374,6 +374,11 @@ app.get('/manage/content', (req, res) => {
     res.end();
 });
 app.get('/mybox', (req, res) => {
+    if (req.query.bypassLogin == 'true' && req.query.emulateUser && process.env['NODE_ENV'] != "production") {
+        res.render('mybox.ejs', { USERNAME: req.query.emulateUser,domain:config.domain });
+        return;
+    }
+
     let token = req.cookies.token;
     if (!token) {
         res.redirect('/login?redir=/mybox');
@@ -408,7 +413,7 @@ app.get('/admin', (req, res) => {
 app.get('/success', [
     query('f').notEmpty().escape(),
     query('anon').notEmpty().escape(),
-    cookie('token').notEmpty().escape().isLength({min:16,max:16})
+    cookie('token').notEmpty().escape().isLength({min:32,max:32})
 ], (req, res) => {
     let result = validationResult(req);
     if (!result.isEmpty()) {
@@ -459,7 +464,7 @@ app.post('/api/upload',
 [
     // sanitizations
     body('filename').notEmpty().escape().isAlphanumeric().isLength({min:1,max:50}),
-    cookie('token').notEmpty().escape().isLength({min:16,max:16}),
+    cookie('token').notEmpty().escape().isLength({min:32,max:32}),
 ],
 busboy({highWaterMark: 5*1024*1024}),
 (req, res)=>POSTUpload(req, res, config, __dirname)); // we have to do (req,res) cuz it has more than just the req res args
