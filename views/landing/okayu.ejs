@@ -25,6 +25,7 @@
     <meta content="#9000e3" data-react-helmet="true" name="theme-color">
 
     <link rel="stylesheet" href="/assets/styles/_newStyles.css">
+    <link rel="preload" href="/assets/fonts/GenJyuuGothic.ttf" as="font" type="font/ttf">
 </head>
 
 <body>
@@ -49,6 +50,8 @@
 
 
     <script>
+        window.onload = () => {
+
         let zoom = (( window.outerWidth - 10 ) / window.innerWidth).toFixed(2);
         let runPixi = true;
         console.log(zoom);
@@ -144,6 +147,8 @@
         }
 
         app.stage.on("pointermove", updMXY);
+
+    }
     </script>
 </body>
 

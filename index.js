@@ -762,7 +762,7 @@ app.get('*', (req, res) => {
 
 
 // warning as anonymous uploading is unsafe unless youre using a private server
-if (!config.start_flags['DISABLE_ANONYMOUS_UPLOADING']) {
+if (config.start_flags.indexOf('DISABLE_ANONYMOUS_UPLOADING') == -1) {
     warn('OkayuCDN', 'You have anonymous uploading enabled. It is not recommended to use anonymous uploading unless you are running a private server. You can disable anonymous uploading by adding "DISABLE_ANONYMOUS_UPLOADING" in the "start_flags" section of your config.json')
 }
 

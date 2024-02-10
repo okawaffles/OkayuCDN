@@ -9,18 +9,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://pixijs.download/v7.3.3/pixi.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
-    <style type="text/css">
-        body {
-            margin: 0;
-            overflow: hidden;
-        }
-
-        @font-face {
-            font-family: "Clap Hand";
-            src: url("/assets/fonts/claphand.otf");
-        }
-    </style>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script> -->
 
     <meta content="⁉️" property="og:title">
     <meta content="we love goldenmira" property="og:description">
@@ -29,7 +18,23 @@
 </head>
 
 <body>
+    <style type="text/css">
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Clap Hand'
+        }
+
+        @font-face {
+            font-family: "Clap Hand";
+            src: url("/assets/fonts/claphand.otf");
+        }
+    </style>
+
     <script>
+        "use strict";
+    document.fonts.ready.then(() => {
+
         const MIRA_RANDOM_CHOOSE_CREME = (Math.random()>=0.5);
 
         let zoom = (( window.outerWidth - 10 ) / window.innerWidth).toFixed(2);
@@ -58,7 +63,7 @@
         bgi.scale.set(1.05, 1.05);
         bgi.anchor.set(0.5);
         app.stage.addChild(bgi);
-        miraScale = 1.2 * (shei/1080);
+        let miraScale = 1.2 * (shei/1080);
         const MIRA_PNG_WIDTH = 1920;
         const MIRA_PNG_HEIGHT = 1017;
         const MIRA_POSITIONER_OFFSET = -425;
@@ -69,17 +74,15 @@
 
         const MIRA_COLOR = MIRA_RANDOM_CHOOSE_CREME?'#c58d66':'#3a200b';
         const MIRA_COLOR_OPPOSITE = MIRA_RANDOM_CHOOSE_CREME?'#3a200b':'#c58d66';
-
+        
+        let copyright = new PIXI.Text('PNG Copyright owned by Goldenmira. All Rights Reserved.', {fontFamily: "Clap Hand", fontSize: 16, fill: "#ffffff"});
         let title = new PIXI.Text(`goldenmira`, { fontFamily: "Clap Hand", fontSize: fs, align: 'center', fill: MIRA_COLOR, stroke: MIRA_COLOR_OPPOSITE, strokeThickness:5 });
         title.x = swid / 2 - (title.width / 2);
         title.y = 200;
-        app.stage.addChild(title);
         
         // add copyright notice to bottom left
-        let copyright = new PIXI.Text('PNG Copyright owned by Goldenmira. All Rights Reserved.', {fontFamily: "Clap Hand", fontSize: 16, fill: "#ffffff"});
         copyright.x = 5;
         copyright.y = visualViewport.height - 28;
-        app.stage.addChild(copyright);
 
         let elapsed = 0.0;
         app.ticker.add((delta) => {
@@ -99,7 +102,12 @@
             mY = pos.y;
         }
 
+        
+        app.stage.addChild(title);
+        app.stage.addChild(copyright);
+
         app.stage.on("pointermove", updMXY);
+    })
     </script>
 </body>
 
