@@ -68,13 +68,13 @@ function generateItem(id, item, fsize, alternate) {
     </div>
     <div class="bottom" id="showhide-id-${id}">
         <button class="share desktop" id="share-content-${id}" onclick="share('${item}', ${id}, false)"><i class="fa-solid fa-arrow-up-right-from-square"></i> Share</button>
-        <button class="view desktop"><i class="fa-solid fa-eye"></i> View</button>
-        <button class="dl desktop"><i class="fa-solid fa-download"></i> Download</button>
+        <button class="view desktop" onclick="view('${item}')"><i class="fa-solid fa-eye"></i> View</button>
+        <button class="dl desktop" onclick="download('${item}')"><i class="fa-solid fa-download"></i> Download</button>
         <button class="btn-red delete desktop" id="delete-item-${id}" onclick="startDeleteSequence('${item}', ${id}, false)"><i class="fa-solid fa-trash-can"></i> Delete</button>
 
         <button class="share mobile" id="share-content-${id}" onclick="share('${item}', ${id}, true)"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
-        <button class="view mobile"><i class="fa-solid fa-eye"></i></button>
-        <button class="dl mobile"><i class="fa-solid fa-download"></i></button>
+        <button class="view mobile" onclick="view('${item}')"><i class="fa-solid fa-eye"></i></button>
+        <button class="dl mobile" onclick="download('${item}')"><i class="fa-solid fa-download"></i></button>
         <button class="btn-red delete mobile" id="m-delete-item-${id}" onclick="startDeleteSequence('${item}', ${id}, false)"><i class="fa-solid fa-trash-can"></i></button>
     </div>
 </div>`
@@ -132,4 +132,12 @@ function dropdown(id) {
         $(`#showhide-id-${item}`).css('display', 'none');
         $(`#showhide-button-${item}`).html('<i class="fa-solid fa-caret-down"></i>');
     }
+}
+
+function view(item) {
+    document.location = `${domain}/view/${user}/${item}`;
+}
+
+function download(item) {
+    document.location = `${domain}/content/${user}/${item}?bypass=true`; // must use bypass or else videos would render the watchpage
 }
