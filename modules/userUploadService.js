@@ -48,7 +48,7 @@ function POSTUpload(req, res, serverConfig, dirname, use_header = false, is_anon
     }
 
     // TODO: Check filesize after upload to ensure its ok
-    // ^ i think this is done but i'm sleepy rn so im not going to delete this
+    // ^ i think this is done but i'm sleepy rn so im not going to delete this << NO ITS NOT!!!
 
     // get username...
     const username = is_anonymous ? 'anonymous' : GetUsernameFromToken(use_header ? data.authorization : data.token);
@@ -75,16 +75,16 @@ function POSTUpload(req, res, serverConfig, dirname, use_header = false, is_anon
                 return;
             }
             // check size limits (anonymous is max size 1/2 gb)
-            let userStorage = is_anonymous ? {size:0,userTS:512*1024*1024} : await QueryUserStorage(username);
-            console.log('got user storage!');
+            //let userStorage = is_anonymous ? {size:0,userTS:512*1024*1024} : await QueryUserStorage(username);
+            //console.log('got user storage!');
             //console.log(`${userStorage.size} + ${stats.size} (is_anonymous? ${is_anonymous}) of ${userStorage.userTS}`);
-            if (userStorage.size + stats.size > userStorage.userTS) {
-                // if its too big for the user to upload
-                error('UUS', `File is too big for user's storage, abort!`);
-                cacheRes('UUS', 'NES', username);
-                rmSync(temp_path);
-                return;
-            }
+            // if (userStorage.size + stats.size > userStorage.userTS) {
+            //     // if its too big for the user to upload
+            //     error('UUS', `File is too big for user's storage, abort!`);
+            //     cacheRes('UUS', 'NES', username);
+            //     rmSync(temp_path);
+            //     return;
+            // }
 
             // otherwise, success!
             // copy the file to their directory
