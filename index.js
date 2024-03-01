@@ -545,7 +545,7 @@ app.post('/api/signup', [
     body('pw').isStrongPassword({minLength:8,minNumbers:2,minSymbols:2,minUppercase:2}).notEmpty().escape(),
     body('em').notEmpty().isEmail().escape(),
     body('nm').notEmpty().escape(),
-], SignupPOSTHandler);
+], (req,res)=>SignupPOSTHandler(req, res, config));
 
 app.post('/api/account/changePassword', urlencodedparser, [
     cookie('token').notEmpty().escape(),

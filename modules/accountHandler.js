@@ -8,6 +8,7 @@ const { info, warn, error, Logger } = require('okayulogger');
 const { validationResult, matchedData } = require('express-validator');
 const { join } = require('node:path');
 const { verify } = require('argon2');
+const { IncomingForm } = require('formidable');
 
 // want connection with neko-passki, better security + passkeys
 // newer preferred way to log in. eventually migrate all accounts? 
@@ -119,7 +120,7 @@ function LoginGETHandler(req, res) {
     res.render('login.ejs');
 }
 
-function LoginPOSTHandler(req, res) {
+async function LoginPOSTHandler(req, res) {
     const result = validationResult(req);
     if (!result.isEmpty()) {
         res.status(401).json({success:false,reason:"Sanitizer rejected request. Please try again.", errors:result.array()});
@@ -156,12 +157,12 @@ function LogoutHandler(req, res) {
     res.redirect('/home');
 }
 
-function SignupPOSTHandler(req, res) {
-    (req, res) => {
-        let form = new formidable.IncomingForm();
+function SignupPOSTHandler(req, res, config) {
+    try {
+        let form = new IncomingForm();
         form.parse(req, (err, fields, files) => {
             if (!config.start_flags['DISABLE_ACCOUNT_CREATION']) {
-                if (!fs.existsSync(`./db/userLoginData/${fields.un}.json`)) {
+                if (!fs.existsSync(`../db/userLoginData/${fields.un}.json`)) {
                     // Encrypt password with SHA-256 hash
                     let salt = UtilNewToken();
                     let encryptedPasswd = UtilHashSecureSalted(fields.pw, salt);
@@ -179,9 +180,16 @@ function SignupPOSTHandler(req, res) {
                             okasoft: false
                         }
                     };
-                    fs.writeFileSync(path.join(__dirname, `/db/userLoginData/${fields.un}.json`), JSON.stringify(data));
-                    fs.mkdirSync(path.join(__dirname, `/content/${fields.un}`));
-                    stats('w', 'accounts'); // increase acc statistic (write, accounts)
+
+                    if (fs.existsSync(join(__dirname, `../db/userLoginData/${fields.un}.json`))) {
+                        res.status(500).send('Username already exists. Please choose a different one.');
+                        error('Signup', 'Username already exists.');
+                        return;
+                    }
+
+                    fs.writeFileSync(join(__dirname, `../db/userLoginData/${fields.un}.json`), JSON.stringify(data));
+                    fs.mkdirSync(join(__dirname, `../content/${fields.un}`));
+                    //stats('w', 'accounts'); // increase acc statistic (write, accounts)
                     res.redirect(`/login?redir=/home`);
                 } else {
                     res.render(`error_general`, { 'error': "Username already exists!" });
@@ -190,6 +198,9 @@ function SignupPOSTHandler(req, res) {
                 res.render(`error_general`, { 'error': "Account registration is currently unavailable." });
             }
         });
+    } catch (e) {
+        res.status(500).send('Internal Server Error');
+        error('Signup', e);
     }
 }
 

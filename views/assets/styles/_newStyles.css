@@ -151,6 +151,14 @@ button:hover {
     }
 }
 
+.announcement {
+    width: 100%;
+    text-align: center;
+    color: white;
+    background-color: #0087a9;
+    font-size: 1.3em;
+}
+
 .title {
     margin: 20px 50px;
     font-size: 86px;

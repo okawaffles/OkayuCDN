@@ -58,6 +58,14 @@ function UtilLogRequest(req, res, next) {
     next();
 }
 
+async function UtilSleep(delay) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve();
+        }, delay);
+    })
+}
+
 
 module.exports = { 
     UtilHash,
@@ -65,4 +73,5 @@ module.exports = {
     UtilHashSecureSaltless,
     UtilNewToken,
     UtilLogRequest,
+    UtilSleep,
 };

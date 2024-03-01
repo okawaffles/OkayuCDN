@@ -3,6 +3,7 @@ const { createWriteStream, statSync, rmSync, copyFileSync, copyFile, existsSync 
 const { join } = require('node:path');
 const { info, error } = require("okayulogger");
 const { QueryUserStorage } = require("./accountHandler");
+const { UtilSleep } = require("./util");
 const { VerifyToken, GetUsernameFromToken } = require(join(__dirname, 'accountHandler.js'));
 const { cacheRes } = require(join(__dirname, '..', 'parts', 'cacheHelper', 'index.js'));
 
@@ -64,14 +65,18 @@ function POSTUpload(req, res, serverConfig, dirname, use_header = false, is_anon
             stream.close();
             info('UUS', 'Temp. upload success.');
 
+            await UtilSleep(500);
+
             const stats = statSync(temp_path);
             if (stats.size == 0 || !filename.filename || filename.filename.includes(' ')) {
                 cacheRes('UUS', 'BSN', username); // client-side handles cached results
+                error('UUS', 'Bad size/name, rejecting!');
                 rmSync(temp_path);
                 return;
             }
             // check size limits (anonymous is max size 1/2 gb)
             let userStorage = is_anonymous ? {size:0,userTS:512*1024*1024} : await QueryUserStorage(username);
+            console.log('got user storage!');
             //console.log(`${userStorage.size} + ${stats.size} (is_anonymous? ${is_anonymous}) of ${userStorage.userTS}`);
             if (userStorage.size + stats.size > userStorage.userTS) {
                 // if its too big for the user to upload
