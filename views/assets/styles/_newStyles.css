@@ -893,6 +893,12 @@ button:hover {
     left: 50%;
     transform: translateX(-50%);
 }
+.container_video {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
 
 /* admin */
 .admin-pane {

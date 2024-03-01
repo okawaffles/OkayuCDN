@@ -191,5 +191,18 @@ function drop(ev) {
 	$('#shownfilename').text(selectDialog.files[0].name);
 }
 
-//debug
-console.log('loaded upload.js');
+// Chunking system
+
+var chunkCounter = 0;
+// 5mb chunks
+const chunk_size = 5242880;
+
+function CreateChunk(start, end) {
+	chunkCounter++;
+}
+
+function UploadFile() {
+	const file = selectDialog.files[0];
+	const post_url = '/api/upload';
+	const chunk_count = Math.ceil(file.size/chunk_size);
+}

@@ -16,5 +16,5 @@
         "DISABLE_TOKEN_CLEAN"
     ],
     "port":2773,
-    "domain":"https://okayu.okawaffles.com"
+    "domain":"http://localhost:2773"
 }

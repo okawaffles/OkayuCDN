@@ -1,3 +1,5 @@
+"use strict";
+
 // this file handles routes for logging in/out, signing up, and account management
 
 const fs = require('node:fs');
@@ -82,24 +84,32 @@ function GetUsernameFromToken(token) {
         }
     }
 }
-function QueryUserStorage(user) {
-    try {
-        let udat = JSON.parse(fs.readFileSync(`../db/userLoginData/${user}.json`, 'utf-8'));
-        let totalUserStorage = udat.storage;
-        let size = 0;
-        fs.readdirSync(`./content/${user}`, (err, files) => {
-            if (err) {
-                return { size: 26843545600, userTS: 26843545600 };
-            }
-            files.forEach(file => {
-                size += fs.statSync(`./content/${user}/${file}`).size;
-            });
-            if (!udat.premium) return { size: size, userTS: totalUserStorage }; else return { size: size, userTS: 1099511627776 };
-        })
-    }
-    catch (e) {
-        return { size: 0, userTS: 26843545600 };
-    }
+async function QueryUserStorage(user) {
+    return new Promise((resolve) => {
+        try {
+            let udat = JSON.parse(fs.readFileSync(`./db/userLoginData/${user}.json`, 'utf-8'));
+            let totalUserStorage = udat.storage;
+            let size = 0;
+            fs.readdirSync(`./content/${user}`, (err, files) => {
+                if (err) {
+                    error('QueryUserStorage', err);
+                    resolve({ size: 26843545600, userTS: 26843545600 });
+                }
+                files.forEach(file => {
+                    size += fs.statSync(`./content/${user}/${file}`).size;
+                    //info('QUS', `Queried ${file}`);
+                });
+                //info('QueryUserStorage', `got all files correctly, user size: ${size}, userTS: ${totalUserStorage}`);
+                if (!udat.premium) 
+                    resolve({ size: size, userTS: totalUserStorage }); 
+                else 
+                    resolve({ size: size, userTS: 1099511627776 }); //1tb
+            })
+        } catch (e) {
+            error('QueryUserStorage', e);
+            resolve({ size: 0, userTS: 0 });
+        }
+    })
 }
 
 // exported functions:

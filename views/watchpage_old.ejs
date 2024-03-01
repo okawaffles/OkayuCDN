@@ -18,32 +18,14 @@
     <meta property="og:type" content="video.other">
 
     <meta content="#9000e3" data-react-helmet="true" name="theme-color">
-    <script src=" https://cdn.jsdelivr.net/npm/xgplayer@2.31.2/dist/index.min.js "></script>
 </head>
 <body>
     <%- include('parts/navbar', {active:'none'}) %>
 
-    <h3 class="center">This page is an experimental frontend for playing videos using ByteDance's xgplayer. Please report bugs.</h3>
-    <h3 class="center">You might need to reload once or wait a moment for the video to load.</h3>
-    <!-- <video id="videoPlayer" width="80%" controls autoplay>
-        <source src="" type="video/mp4" />
-    </video> -->
-    <div class="container_video">
-        <div id="vp"></div>
-    </div>
+    <h3 class="center">If the video does not load, please reload the page.</h1>
+    <video id="videoPlayer" width="80%" controls autoplay>
+        <source src="/api/mp4/<%=user%>/<%=filename%>" type="video/mp4" />
+    </video>
 </body>
-
-<script>
-    const player = new xgplayer({
-        el:document.querySelector('#vp'),
-        url:'/api/mp4/<%=user%>/<%=filename%>',
-        width: window.innerWidth * 0.85,
-        height: window.innerHeight * 0.85,
-        style: {
-            color: '#9000e3',
-            fontSize: '16px'
-        }
-    });
-</script>
 
 </html>

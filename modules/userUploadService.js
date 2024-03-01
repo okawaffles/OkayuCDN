@@ -54,15 +54,15 @@ function POSTUpload(req, res, serverConfig, dirname, use_header = false, is_anon
 
     req.pipe(req.busboy);
 
-    req.busboy.on('file', (_fieldname, file, filename) => {
+    req.busboy.on('file', async (_fieldname, file, filename) => {
         const temp_path = join(dirname, 'cache', 'uploads_temp', filename.filename);
         const stream = createWriteStream(temp_path);
         file.pipe(stream);
 
         // check if its finished...
-        file.on('close', () => {
+        file.on('close', async () => {
             stream.close();
-            info('UUS', 'Upload success.');
+            info('UUS', 'Temp. upload success.');
 
             const stats = statSync(temp_path);
             if (stats.size == 0 || !filename.filename || filename.filename.includes(' ')) {
@@ -71,8 +71,11 @@ function POSTUpload(req, res, serverConfig, dirname, use_header = false, is_anon
                 return;
             }
             // check size limits (anonymous is max size 1/2 gb)
-            let userStorage = is_anonymous ? {size:0,userTS:512*1024*1024} : QueryUserStorage(username);
+            let userStorage = is_anonymous ? {size:0,userTS:512*1024*1024} : await QueryUserStorage(username);
+            //console.log(`${userStorage.size} + ${stats.size} (is_anonymous? ${is_anonymous}) of ${userStorage.userTS}`);
             if (userStorage.size + stats.size > userStorage.userTS) {
+                // if its too big for the user to upload
+                error('UUS', `File is too big for user's storage, abort!`);
                 cacheRes('UUS', 'NES', username);
                 rmSync(temp_path);
                 return;
@@ -82,6 +85,7 @@ function POSTUpload(req, res, serverConfig, dirname, use_header = false, is_anon
             // copy the file to their directory
             copyFile(temp_path, join(dirname, 'content', username, filename.filename), () => {
                 // wait for copy to finish
+                info('UUS', 'File upload is complete!');
                 cacheRes('UUS', 'AOK', username);
                 rmSync(temp_path);
             });

@@ -3,6 +3,7 @@
 // I'm so proud of how far I've come.
 
 
+
 const fs = require('fs');
 const path = require('node:path');
 let cache;
@@ -401,7 +402,6 @@ app.get('/admin', (req, res) => {
 
 app.get('/success', [
     query('f').notEmpty().escape(),
-    query('anon').notEmpty().escape(),
     cookie('token').notEmpty().escape().isLength({min:32,max:32})
 ], (req, res) => {
     let result = validationResult(req);
@@ -642,12 +642,19 @@ app.get('/api/qus', (req, res) => {
         let udat = JSON.parse(fs.readFileSync(`./db/userLoginData/${user}.json`, 'utf-8'));
         let totalUserStorage = udat.storage;
         fs.readdir(`./content/${user}`, (err, files) => {
+            if (err) {
+                error('QueryUserStorage (index)', err);
+                res.json({size:0,userTS:0});
+                return;
+            }
             files.forEach(file => {
+                //info('QUS', `Queried ${file}`);
                 size += fs.statSync(`./content/${user}/${file}`).size;
             });
             if (!udat.premium) res.json({ size: size, userTS: totalUserStorage }); else res.json({ size: size, userTS: 1099511627776 });
         });
     } catch (err) {
+        error('QueryUserStorage (index)', err);
         res.json({ size: 0, userTS: 26843545600 });
     }
 })
@@ -657,6 +664,10 @@ function qus(user) {
         let totalUserStorage = udat.storage;
         let size = 0;
         fs.readdirSync(`./content/${user}`, (err, files) => {
+            if (err) {
+                error('QueryUserStorage (index)', err);
+                return {size:0,userTS:0};
+            }
             files.forEach(file => {
                 size += fs.statSync(`./content/${user}/${file}`).size;
             });
@@ -664,6 +675,7 @@ function qus(user) {
         })
     }
     catch (e) {
+        error('QueryUserStorage (index)', e);
         return { size: 0, userTS: 26843545600 };
     }
 }
