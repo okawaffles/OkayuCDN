@@ -70,6 +70,11 @@ let config, pjson;
 try {
     config = require('./config.json');
     pjson = require('./package.json');
+
+    if (config.version_include_git_commit) {
+        const git_commit = require('node:child_process').execSync('git rev-parse HEAD').toString().trim().slice(0,7);
+        pjson.version = `${pjson.version} (commit ${git_commit})`;
+    }
 } catch (e) {
     // self-explanatory
     error('boot', 'Could not load server config (config.json)\n');
@@ -224,6 +229,11 @@ app.get('/content/:user/:item', [
     param('user').notEmpty().escape(),
     param('item').notEmpty().escape()
 ], (req,res)=>ServeContent(req, res, config.domain));
+
+app.get('/@:user/:item', [
+    param('user').notEmpty().escape(),
+    param('item').notEmpty().escape()
+], (req, res)=>ServeContent(req, res, config.domain));
 
 app.get('/content/:user/:item/embed', [
     param('user').notEmpty().escape(),
@@ -734,7 +744,11 @@ app.get('/api/health', (req, res) => {
         config:{
             start_flags: config.start_flags,
             port: config.port,
-            domain: config.domain
+            domain: config.domain,
+            announcement: {
+                active: config.announcement.active,
+                content: config.announcement.active?config.announcement.content:'No announcement at this time.'
+            }
         },
         system:{
             platform:process.platform,

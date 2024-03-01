@@ -16,5 +16,10 @@
         "DISABLE_TOKEN_CLEAN"
     ],
     "port":2773,
-    "domain":"http://localhost:2773"
+    "domain":"http://localhost:2773",
+    "version_include_git_commit":true,
+    "announcement":{
+        "active":true,
+        "content":"This site is for live-testing development builds of OkayuCDN. Please use <a href='https://okayu.okawaffles.com'>the stable website</a> if you're not a tester."
+    }
 }

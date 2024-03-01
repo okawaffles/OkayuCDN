@@ -151,12 +151,17 @@ button:hover {
     }
 }
 
-.announcement {
+#announcement {
+    display: none;
     width: 100%;
     text-align: center;
     color: white;
     background-color: #0087a9;
     font-size: 1.3em;
+}
+#announcement a {
+    font-size: 1em;
+    text-decoration: underline;
 }
 
 .title {

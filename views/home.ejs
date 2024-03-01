@@ -14,8 +14,8 @@
     <%- include('parts/navbar', {active:'home'}) %>
 
     <!-- this will be removed, currently for okayu-nightly.catgirls.space -->
-    <div class="announcement">
-        <p>This site is for live-testing development builds of OkayuCDN. Please use https://okayu.okawaffles.com if you want a stable website.</p>
+    <div id="announcement">
+        <p id="announcement-content">This site is for live-testing development builds of OkayuCDN. Please use https://okayu.okawaffles.com if you want a stable website.</p>
     </div>
 
     <div class="container">
@@ -34,6 +34,14 @@
 
 <script>
     checkLanguage('home');
+
+    $.getJSON('/api/health', (data) => {
+        const announcement = data.config.announcement;
+        if (announcement.active) {
+            $('#announcement').css('display', 'inherit');
+            $('#announcement-content').html(announcement.content);
+        }
+    });
 </script>
 
 </html>
