@@ -1,5 +1,5 @@
 <header>
-    <img class="logo" src="/assets/images/logo.png" width="200"></img>
+    <img class="logo" id="logo" src="/assets/images/logo.png" width="200"></img>
     <nav>
         <ul class="nav_links">
             <li class="mobile-menu" id="mc"><a id="mca"><i class="fa-solid fa-bars"></i> Menu</a></li>
@@ -20,6 +20,15 @@
 </ul>
 
 <script>
+    const d = new Date();
+    if (d.getMonth()+1 == 6) {
+        document.querySelector('#logo').src = `/assets/images/logo_pride.png`;
+    } else {
+        const CHOOSE_RANDOM_LOGO = Math.random() < 0.1;
+        const PICK_PRIDE_OR_TRANS = Math.random() < 0.5;
+        if (CHOOSE_RANDOM_LOGO) document.querySelector('#logo').src = `/assets/images/${PICK_PRIDE_OR_TRANS?'logo_pride_trans':'logo_pride'}.png`;
+    }
+
     document.getElementById('mc').onclick = function() {
         let d = document.getElementById('mm').style.display;
         document.getElementById('mm').style.display = (d=='inline-block')?'none':'inline-block';
