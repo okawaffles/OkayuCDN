@@ -401,6 +401,10 @@ button:hover {
 .mybox_all p {
     margin-bottom: 15px;
 }
+.mybox_form_pane select {
+    width: 200px;
+    text-align: center;
+}
 
 .mybox_contentH2 {
     margin: 10px;
