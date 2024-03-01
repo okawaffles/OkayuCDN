@@ -236,8 +236,8 @@ app.get('/api/mp4/:user/:item', [
     header('range').notEmpty().escape()
 ], (req, res) => {
     if (!validationResult(req).isEmpty()) {
-        res.status(400).end();
-        return;
+        //res.status(400).end();
+        //return;
     }
 
     const data = matchedData(req);
