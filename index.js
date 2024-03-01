@@ -436,7 +436,7 @@ app.get('/success', [
 
 app.post('/api/mybox/deleteItem', urlencodedparser, [
     cookie('token').isLength({min:32,max:32}).notEmpty().escape(),
-    body('id').notEmpty().isAlphanumeric().escape()
+    body('id').notEmpty().isString().escape()
 ], POSTRemoveMyBoxContent)
 
 // POST Request handlers

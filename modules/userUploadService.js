@@ -105,7 +105,7 @@ function POSTUpload(req, res, serverConfig, dirname, use_header = false, is_anon
  */
 function POSTRemoveMyBoxContent(req, res) {
     if (!validationResult(req).isEmpty()) {
-        res.status(400).send('Bad request');
+        res.status(400).send(validationResult(req));
         return;
     }
 
@@ -124,6 +124,7 @@ function POSTRemoveMyBoxContent(req, res) {
 
     try {
         rmSync(file_path);
+        res.status(200).json({status:200})
     } catch (err) {
         error('UUS', 'Error deleting content: ' + err);
         res.status(500).json({status:500,error:'Internal Server Error.'});
