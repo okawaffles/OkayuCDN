@@ -3,9 +3,12 @@ var selectDialog = document.getElementById('uploaded');
 var progressUpload = document.getElementById("progressUpload");
 var progress;
 
+let allowDropping = true;
+
 addProgressBar();
 
 browse.addEventListener("click", function () {
+	if (!allowDropping) return;
 	selectDialog.click();
 });
 
@@ -27,13 +30,15 @@ try {
 		}
 	}
 } catch (e) {
-	alert('Error in uploadscript.js')
-	console.log(e);
+	alert('Error in upload.js. If you are on desktop, please open the developer console, take note of the error, and report it at https://github.com/okawaffles/OkayuCDN');
+	console.error('HELLO BUG REPORTER! YOU WANT THIS -> ' + e);
 }
 
 
 function sendFiles(files) {
 	$("p.upload_error").css("display", "none");
+	$("#container-upload-first").css('display', 'none');
+	$("#container-upload-second").css('display', 'inherit');
 	resetProgressBar();
 	var req = new XMLHttpRequest();
 	req.upload.addEventListener("progress", updateProgress);
@@ -55,6 +60,8 @@ function checkResult() {
 			if (data.code != "SCH-RNF") {
 				$("p.upload_error").html(`An error has occurred while uploading.<br>Details: ${data.details} (${data.code})`);
 				$("p.upload_error").css("color", "red");
+				$("#container-upload-first").css('display', 'inherit');
+				$("#container-upload-second").css('display', 'none');
 
 				// $("#visibleToggle").css("display", "none")
 				console.log(`error: ${data.code}`);
@@ -182,6 +189,7 @@ function drag(ev) {
 function drop(ev) {
 	//console.log("File was dropped in drop zone")
 	ev.preventDefault();
+	if (!allowDropping) return;
 
 	const dt = new DataTransfer();
 	dt.items.add(ev.dataTransfer.files[0]);
