@@ -338,7 +338,7 @@ app.get('/account', [
     cookie('token').notEmpty().escape().isLength({min:32,max:32})
 ], (req, res) => {
     if (!validationResult(req).isEmpty()) {
-        res.status(400).send('bad request');
+        res.redirect('/login?redir=/account');
         return;
     }
 
