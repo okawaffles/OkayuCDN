@@ -25,6 +25,18 @@
     --default-button-red: rgba(150, 0, 0, 1);
     --default-button-red-hover: rgba(150, 0, 0, 0.8);
 
+    --light-background: #ececec;
+    --light-primary: var(--okayucdn-blue);
+    --light-primary-hover: var(--okayucdn-blue-hover);
+    --light-navbar: #edf0f1;
+    --light-navbar-hover: #edf0f193;
+    --light-text: #000;
+    --light-text-opposite: #FFF;
+    --light-button: var(--okayucdn-blue);
+    --light-button-hover: var(--okayucdn-blue-hover);
+    --light-button-red: rgba(150, 0, 0, 1);
+    --light-button-red-hover: rgba(150, 0, 0, 0.8);
+
     --highcontrast-background: #000;
     --highcontrast-primary: #00F;
     --highcontrast-primary-hover: #FF0;
@@ -41,11 +53,27 @@
     --active-primary-hover: var(--default-primary-hover);
     --active-navbar: var(--default-navbar);
     --active-navbar-hover: var(--default-navbar-hover);
-    --active-text-light: var(--default-text-light);
+    --active-text: var(--default-text);
     --active-button: var(--default-button);
     --active-button-hover:var(--default-button-hover);
     --active-button-red: var(--default-button-red);
     --active-button-red-hover: var(--default-button-red-hover);
+}
+
+@media (prefers-color-scheme: light) {
+    /* This is NOT ready for production! */
+    /* * {
+        --active-background: var(--light-background);
+        --active-primary: var(--light-primary);
+        --active-primary-hover: var(--light-primary-hover);
+        --active-navbar: var(--light-navbar);
+        --active-navbar-hover: var(--light-navbar-hover);
+        --active-text: var(--light-text-light);
+        --active-button: var(--light-button);
+        --active-button-hover:var(--light-button-hover);
+        --active-button-red: var(--light-button-red);
+        --active-button-red-hover: var(--light-button-red-hover);
+    } */
 }
 
 @media (prefers-contrast: more) {
@@ -55,7 +83,7 @@
         --active-primary-hover: var(--highcontrast-primary-hover);
         --active-navbar: var(--highcontrast-navbar);
         --active-navbar-hover: var(--highcontrast-navbar-hover);
-        --active-text-light: var(--highcontrast-text-light);
+        --active-text: var(--highcontrast-text-light);
         --active-button: var(--highcontrast-button);
         --active-button-hover:var(--highcontrast-button-hover);
         --active-button-red: var(--highcontrast-button-red);
@@ -80,7 +108,7 @@ li,
 a,
 button {
     font-size: 18px;
-    color: #edf0f1;
+    color: var(--active-text);
     text-decoration: none;
 }
 
@@ -171,10 +199,11 @@ button:hover {
 }
 
 .btn-red {
-    background-color: rgba(150, 0, 0, 1);
+    background-color: var(--active-button-red);
+    color: white;
 }
 .btn-red:hover {
-    background-color: rgba(150, 0, 0, 0.8);
+    background-color: var(--active-button-red-hover);
 }
 
 /* home */
@@ -222,14 +251,14 @@ button:hover {
     transform: translateY(2400%);
     animation: titleToTop 1.5s ease;
     animation-fill-mode: forwards;
-    color: white;
+    color: var(--active-text);
 }
 
 
 .subtitle {
     margin: 20px 50px;
     font-size: 48px;
-    color: white;
+    color: var(--active-text);
 }
 
 .sa {
@@ -307,20 +336,20 @@ button:hover {
 .login-pane {
     border-radius: 20px;
 	padding: 1% 3%;
-	color: white;
+	color: var(--active-text);
 	width: 100%;
 }
 
 .login_title {
     padding: 25px 0 15px;
-    color: white;
+    color: var(--active-text);
     font-size: 3em;
     margin: auto;
     text-align: center;
 }
 
 .login_subtitle {
-    color: white;
+    color: var(--active-text);
     font-size: 1.5em;
     text-align: center;
 }
