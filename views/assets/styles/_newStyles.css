@@ -15,6 +15,7 @@
     --okayucdn-blue-hover: #0088a983;
     
     --default-background: #24252A;
+    --default-background-compliment: #111214;
     --default-primary: var(--okayucdn-blue);
     --default-primary-hover: var(--okayucdn-blue-hover);
     --default-navbar: #1d1e22;
@@ -26,6 +27,7 @@
     --default-button-red-hover: rgba(150, 0, 0, 0.8);
 
     --light-background: #ececec;
+    --light-background-compliment: #d3d3d3;
     --light-primary: var(--okayucdn-blue);
     --light-primary-hover: var(--okayucdn-blue-hover);
     --light-navbar: #edf0f1;
@@ -49,6 +51,7 @@
     --highcontrast-button-red-hover: #F00;
 
     --active-background: var(--default-background);
+    --active-background-compliment: var(--default-background-compliment);
     --active-primary: var(--default-primary);
     --active-primary-hover: var(--default-primary-hover);
     --active-navbar: var(--default-navbar);
@@ -64,6 +67,7 @@
     /* This is NOT ready for production! */
     /* * {
         --active-background: var(--light-background);
+        --active-background-compliment: var(--light-background-compliment);
         --active-primary: var(--light-primary);
         --active-primary-hover: var(--light-primary-hover);
         --active-navbar: var(--light-navbar);
@@ -333,6 +337,116 @@ button:hover {
 
 /* login */
 
+/* new login page! */
+.okayu-login {
+    margin-top: 2.5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.okayu-login .panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    background-color: var(--active-navbar);
+    width: 25%;
+    height: 35rem;
+    border-radius: 3em;
+    border: 2px solid var(--active-primary-hover);
+}
+
+.okayu-login .panel .top {
+    width: 100%;
+    height: 75%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1em;
+    flex-wrap: wrap;
+    color: var(--active-text);
+    text-align: center;
+}
+.okayu-login .panel .top h1 {
+    font-size: 2.5em;
+}
+.okayu-login .panel .top .twofactor-inputs {
+    width: 100%;
+    display: none;
+}
+.okayu-login .panel .top .inputs input, .okayu-login .panel .top .twofactor-inputs input {
+    width: 90%;
+    text-align: center;
+    font-size: 24px;
+    border-radius: 1em;
+    padding: .5em;
+    border: 1px solid var(--active-text);
+    margin: .5em;
+    color: var(--active-text);
+    background-color: var(--active-background-compliment);
+}
+.okayu-login .panel .bottom {
+    width: 100%;
+    height: 25%;
+    display: flex;
+    justify-content: center;
+    align-items: bottom;
+    flex-wrap: wrap;
+    padding: 1em;
+}
+
+.okayu-login .panel .bottom .error {
+    visibility: hidden;
+}
+
+.okayu-login .panel .go {
+    margin-bottom: 2em;
+}
+
+.okayu-login .separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    width: 30%;
+    margin-left: 30%;
+    margin-right: 30%;
+    color: var(--active-primary-hover);
+    font-size: 1.5em;
+    margin-top: .5em;
+    margin-bottom: .5em;
+}
+
+@media screen and (max-width: 600px) {
+    .okayu-login .separator {
+        width: 90%;
+        margin: .5em 0;
+    }
+}
+
+.okayu-login .separator::before, .okayu-login .separator::after {
+    content: '';
+    flex: 1;
+    border-bottom: 2px solid var(--active-primary-hover);
+}
+.okayu-login .separator:not(:empty)::before {
+    margin-right: .25em;
+}
+.okayu-login .separator:not(:empty)::after {
+    margin-left: .25em;
+}
+
+@media screen and (max-width: 600px) {
+    .okayu-login .panel {
+        width: 90%;
+        padding-bottom: 1em;
+    }
+    .okayu-login .panel .bottom .error {
+        font-size: 1.25em;
+    }
+}
+
+/* older page */
 .login-pane {
     border-radius: 20px;
 	padding: 1% 3%;
@@ -373,8 +487,9 @@ button:hover {
     cursor: pointer;
     transition: all 0.3s ease 0s;
     color: white;
-    font-size: 18px;
-    width: 250px;
+    font-size: 20px;
+    width: 15em;
+    height: 3em;
 }
 
 .go:hover {
@@ -412,13 +527,13 @@ button:hover {
 }
 
 .login_error {
-    color: red;
+    color: var(--default-button-red);
     display: none;
     font-size: medium;
     margin-bottom: 10px;
 }
 .error_2fa {
-    color: red;
+    color: var(--default-button-red);
     display: none;
     font-size: medium;
     margin-bottom: 10px;
@@ -723,12 +838,12 @@ button:hover {
 .error_header {
     padding-top: 2em;
     text-align: center;
-    color: red;
+    color: var(--active-button-red);
     font-size: 2em;
 }
 .error {
     text-align: center;
-    color: red;
+    color: var(--active-button-red);
     font-size: 1.5em;
 }
 
@@ -984,6 +1099,14 @@ button:hover {
     color: grey;
 }
 
+@media screen and (max-width: 600px) {
+    .gdpr_regulation_cookie_banner p {
+        font-size: 1em;
+    }
+    .gdpr_button {
+        display: none;
+    }
+}
 
 /* 2fa setup */
 .tfa_h1 {

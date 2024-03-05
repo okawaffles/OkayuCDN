@@ -2,68 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Log in | OkayuCDN</title>
     <link rel="stylesheet" href="/assets/styles/_newStyles.css">
     <script src="https://kit.fontawesome.com/dc1b60441b.js" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <script src="/assets/scripts/login.js"></script>
-    <script src="/assets/scripts/language.js"></script>
+    <script src="/assets/scripts/gdpr.js"></script>
 </head>
 <body>
     <%- include('parts/navbar', {active:'login'}) %>
-
-    <!-- gdpr consent -->
-    <script src="/assets/scripts/gdpr.js"></script>
 
     <div id="gdpr" class="gdpr_regulation_cookie_banner" style="display: none">
         <p>We only store preferences and login information in your cookies. If you do not approve of this, please do not use OkayuCDN.</p>
         <button onclick="setGDPRConsent()" class="gdpr_button">Okay</button>
     </div>
 
-    <script>
-        if (!checkGDPRConsent())
-            document.getElementById("gdpr").style.display = "flex";
-    </script>
-
-    <div class="login-pane">
-        <h2 class="login_title">Welcome to OkayuCDN!</h2>
-        <h4 class="login_subtitle">Let's get you logged in and ready to go!</h4>
-        
-        <div class="login_form" id="form">
-            <input type="text" placeholder="Username" class="username" name="un" id="un" required /><br>
-            <input type="password" placeholder="Password" class="password" name="pw" id="pw" required /><br>
-            <p class="login_error">Please check your username and password.</p>
-
-            <div class="wrap">
-                <button class="go" id="submit" value="Go" onclick="sendLoginPOST()">Go</button>
-                <!-- <input type="submit" class="go" id="submit" value="Go" /> -->
+    <div class="okayu-login">
+        <div class="panel">
+            <div class="top">
+                <h1>Welcome to OkayuCDN!</h1>
+                <div class="inputs">
+                    <input type="text" placeholder="Username" id="username" />
+                    <input type="password" placeholder="Password" id="password" />
+                </div>
+                <div class="twofactor-inputs">
+                    <input type="text" placeholder="2FA Code" id="twofactor-code">
+                </div>
+            </div>
+            <div class="bottom">
+                <p class="error" id="login_error">Error: please do this and that.</p>
+                <button class="go" id="login">Let's go!</button>
             </div>
         </div>
-
-        <div class="tfa" id="2fa">
-            <br><br>
-            <h4 class="login_subtitle">Two Factor Authentication</h4>
-            <h4 class="login_subtitle">If you have issues, please contact oka@waffle.moe</h4>
-            <input type="number" placeholder="2FA Code" class="username code" id="code" required /><br>
-            <p class="error_2fa">Incorrect 2FA code (if the code just changed, wait a moment, then try again.)</p>
-
-            <div class="wrap">
-                <button class="go_2fa" id="go_2fa" value="Go" onclick="send2FAPOST()">Finish</button>
-            </div>
-        </div>
-
-        <br>
-        <div class="wrap">
-            <button class="btn-red" onclick="location = `../signup`">I don't have an account</button>
-        </div>
-        <div class="line" style="--primary: white; display: none;"></div>
+        <div class="separator">OR</div>
+        <button class="go btn-red noacc" onclick="document.location = '/signup'">Sign up instead</button>
     </div>
 </body>
-
-<script>
-    checkLanguage('login');
-</script>
-
 </html>
