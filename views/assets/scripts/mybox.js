@@ -35,7 +35,7 @@ function deleteItemRequest(item) {
 }
 
 function share(item, id, mobile) {
-    const tl_share = `<i class="fa-solid fa-arrow-up-right-from-square"> Share</i>`;
+    const tl_share = `<i class="fa-solid fa-arrow-up-right-from-square"></i> Share`;
     const tl_share_mobile = `<i class="fa-solid fa-arrow-up-right-from-square"></i>`;
     const tl_copied = `<i class="fa-solid fa-arrow-up-right-from-square"></i></i><strong>  ${(document.cookie.includes("language=ja-jp"))? "リンクがコピーしました" : "Copied link!" }</strong>`;
     const tl_nvgt_text = document.cookie.includes("language=ja-jp")?"OkayuCDNで僕のファイルを見ます！":"View my file on OkayuCDN!";
