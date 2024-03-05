@@ -45,7 +45,7 @@ function share(item, id, mobile) {
         text:tl_nvgt_text,
         url:`${domain}/content/${user}/${item}`
     }) } catch(e) { 
-        navigator.clipboard.writeText(`${domain}/view/${user}/${item}`);
+        navigator.clipboard.writeText(`${domain}/@${user}/${item}`);
         document.getElementById(`share-content-${id}`).innerHTML = tl_copied;
         setTimeout(() => {
             document.getElementById(`share-content-${id}`).innerHTML = mobile?tl_share_mobile : tl_share;
