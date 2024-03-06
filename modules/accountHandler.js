@@ -61,6 +61,7 @@ function LoginCheck2FAStatus(username) {
 }
 
 function AccountCheckRestriction(username) {
+    if (!fs.existsSync(`./db/userLoginData/${username}.json`)) return false;
     var userData = JSON.parse(fs.readFileSync(`./db/userLoginData/${username}.json`));
     if (userData.restricted) {
         info('login', `${username} is banned for ${userData.restricted}`);

@@ -225,10 +225,9 @@ app.get('/mira', (req, res) => {
 
 // Main
 
-app.get('/content/:user/:item', [
-    param('user').notEmpty().escape(),
-    param('item').notEmpty().escape()
-], (req,res)=>ServeContent(req, res, config.domain));
+app.get('/content/:user/:item', (req, res)=>{
+    res.redirect(`/@${req.params.user}/${req.params.item}`)
+});
 
 app.get('/@:user/:item', [
     param('user').notEmpty().escape(),
