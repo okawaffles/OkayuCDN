@@ -9,10 +9,14 @@
     padding: 0;
     font-family: GenJyuuGothic;
 
-    --progress-previous-green: #45ffbb;
-    --progress-new-green: #00a987;
     --okayucdn-blue: #0087a9;
     --okayucdn-blue-hover: #0088a983;
+    --okayucdn-green: #00a987;
+    --okayucdn-green-hover: #00a98783;
+    --okayucdn-purple: #8200a9;
+    --okayucdn-purple-hover: #8200a983;
+    --progress-previous-green: #45ffbb;
+    --progress-new-green: var(--okayucdn-green);
     
     --default-background: #24252A;
     --default-background-compliment: #111214;
@@ -21,10 +25,11 @@
     --default-navbar: #1d1e22;
     --default-navbar-hover: #25262c93;
     --default-text: #edf0f1;
+    --default-text-opposite: #000;
     --default-button: var(--okayucdn-blue);
     --default-button-hover: var(--okayucdn-blue-hover);
-    --default-button-red: rgba(150, 0, 0, 1);
-    --default-button-red-hover: rgba(150, 0, 0, 0.8);
+    --default-button-red: rgb(153, 30, 30);
+    --default-button-red-hover: rgba(150, 30, 30, 0.8);
 
     --light-background: #ececec;
     --light-background-compliment: #d3d3d3;
@@ -33,7 +38,7 @@
     --light-navbar: #edf0f1;
     --light-navbar-hover: #edf0f193;
     --light-text: #000;
-    --light-text-opposite: #FFF;
+    --light-text-opposite: #edf0f1;
     --light-button: var(--okayucdn-blue);
     --light-button-hover: var(--okayucdn-blue-hover);
     --light-button-red: rgba(150, 0, 0, 1);
@@ -57,6 +62,7 @@
     --active-navbar: var(--default-navbar);
     --active-navbar-hover: var(--default-navbar-hover);
     --active-text: var(--default-text);
+    --active-text-opposite: var(--default-text-opposite);
     --active-button: var(--default-button);
     --active-button-hover:var(--default-button-hover);
     --active-button-red: var(--default-button-red);
@@ -65,19 +71,20 @@
 
 @media (prefers-color-scheme: light) {
     /* This is NOT ready for production! */
-    /* * {
+    * {
         --active-background: var(--light-background);
         --active-background-compliment: var(--light-background-compliment);
         --active-primary: var(--light-primary);
         --active-primary-hover: var(--light-primary-hover);
         --active-navbar: var(--light-navbar);
         --active-navbar-hover: var(--light-navbar-hover);
-        --active-text: var(--light-text-light);
+        --active-text: var(--light-text);
+        --active-text-opposite: var(--light-text-opposite);
         --active-button: var(--light-button);
         --active-button-hover:var(--light-button-hover);
         --active-button-red: var(--light-button-red);
         --active-button-red-hover: var(--light-button-red-hover);
-    } */
+    }
 }
 
 @media (prefers-contrast: more) {
@@ -204,7 +211,7 @@ button:hover {
 
 .btn-red {
     background-color: var(--active-button-red);
-    color: white;
+    color: var(--active-text);
 }
 .btn-red:hover {
     background-color: var(--active-button-red-hover);
@@ -332,7 +339,7 @@ button:hover {
     position: fixed;
     bottom: 0px;
     right: 10px;
-    color: white;
+    color: var(--active-text);
 }
 
 /* login */
@@ -369,6 +376,7 @@ button:hover {
     text-align: center;
 }
 .okayu-login .panel .top h1 {
+    color: var(--active-text);
     font-size: 2.5em;
 }
 .okayu-login .panel .top .twofactor-inputs {
@@ -652,10 +660,10 @@ button:hover {
     width: 10%;
 }
 .okayu-green {
-    background-color: rgb(0, 169, 113);
+    background-color: var(--okayucdn-green);
 }
 .okayu-green:hover {
-    background-color: rgb(0, 169, 113, 0.8);
+    background-color: var(--okayucdn-green-hover);
 }
 
 .content_items button {
@@ -682,7 +690,7 @@ button:hover {
 }
 
 .size {
-    background-color: #0087a9;
+    background-color: var(--active-primary);
     padding: 2px 4px;
     border-radius: 8px;
 }
@@ -873,7 +881,7 @@ button:hover {
 }
 .uploader {
 	text-align: center;
-    color: white;
+    color: var(--active-text);
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -886,7 +894,7 @@ button:hover {
     font-size: 3em;
 }
 #storageAmount {
-    color: var(--okayucdn-blue);
+    color: var(--active-primary);
     font-weight: 200;
     margin-bottom: 35px;
 }
@@ -903,7 +911,7 @@ button:hover {
 }
 #newStorageAmount #fill {
     position: absolute;
-    background-color: var(--okayucdn-blue);
+    background-color: var(--active-primary);
     border-radius: 16px;
     width: 0.0em;
     height: 2em;
@@ -926,11 +934,11 @@ button:hover {
 
 .uploadfile {
     color: white;
-    background-color: var(--okayucdn-blue);
+    background-color: var(--active-primary);
     cursor: pointer;
     padding: 60px 100px 50px;
     border-radius: 12px;
-    border: 5px white dashed;
+    border: 5px var(--active-text) dashed;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -1038,7 +1046,7 @@ button:hover {
 .sc_share {
     margin-top: 50px;
     padding: 9px 25px;
-    background-color: rgba(0, 136, 169, 1);
+    background-color: var(--active-primary);
     border: none;
     border-radius: 50px;
     cursor: pointer;
@@ -1050,7 +1058,7 @@ button:hover {
 .sc_view {
     margin-top: 10px;
     padding: 9px 25px;
-    background-color: rgb(0, 169, 113);
+    background-color: var(--okayucdn-green);
     border: none;
     border-radius: 50px;
     cursor: pointer;
@@ -1060,7 +1068,7 @@ button:hover {
     width: 250px;
 }
 .sc_view:hover {
-    background-color: rgb(0, 169, 113, 0.8);
+    background-color: var(--okayucdn-green-hover);
 }
 
 @media screen and (max-width: 600px) {
@@ -1072,7 +1080,7 @@ button:hover {
 
 /* extras */
 .red {
-    background-color: red;
+    background-color: var(--active-button-red);
 }
 
 .gdpr_regulation_cookie_banner {
@@ -1092,6 +1100,7 @@ button:hover {
     border: 2px solid white;
     padding: 4px 10px;
     margin-left: 15px;
+    color: white
 }
 .gdpr_button:hover {
     background-color: white;
@@ -1101,7 +1110,7 @@ button:hover {
 
 @media screen and (max-width: 600px) {
     .gdpr_regulation_cookie_banner p {
-        font-size: 1em;
+        font-size: .75em;
     }
     .gdpr_button {
         display: none;
@@ -1110,11 +1119,11 @@ button:hover {
 
 /* 2fa setup */
 .tfa_h1 {
-    color: white;
+    color: var(--active-text);
     margin-top: 15px;
 }
 .tfa_h3 {
-    color: white;
+    color: var(--active-text);
 }
 .center {
     text-align: center;
