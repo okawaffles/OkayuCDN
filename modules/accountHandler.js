@@ -33,21 +33,24 @@ async function LoginVerifySecure(username, raw_password) {
     if (fs.existsSync(path)) {
         let userData = JSON.parse(fs.readFileSync(path));
 
-        if (!userData.hashMethod == "argon2") {   
+        if (userData.hashMethod == "argon2") {   
             // this might be able to be simplified but im not taking chances yet
-            if (await verify(userData.password, raw_password+userData.password_salt)) {
-                return true;
-            } else return false;
+            const valid = await verify(userData.password, raw_password+userData.password_salt);
+            console.log(valid);
+            if (valid) return true; else return false;
         } else {
             // use legacy password method temporarily
             if (LoginVerify(username, raw_password)) {
+                warn('LoginSecure', 'Notice: Upgrading sha256 (pre-6.0) password to argon2!');
                 // rewrite the hash
-                userData.password_salt = UtilNewToken();
-                userData.password = await UtilHashSecureSalted(raw_password + userData.password_salt);
+                const salt = UtilNewToken();
+                userData.password_salt = salt;
+                userData.password = await UtilHashSecureSalted(raw_password + salt);
                 userData.hashMethod = "argon2";
 
                 // write out
                 fs.writeFileSync(path, JSON.stringify(userData));
+                return true;
             }
         }
     } else return false;
@@ -124,7 +127,7 @@ function LoginGETHandler(req, res) {
 async function LoginPOSTHandler(req, res) {
     const result = validationResult(req);
     if (!result.isEmpty()) {
-        res.status(401).json({success:false,reason:"Sanitizer rejected request. Please try again.", errors:result.array()});
+        res.status(401).json({success:false,reason:"Sanitizer rejected request. Please try again."});
         return;
     }
 
@@ -134,7 +137,7 @@ async function LoginPOSTHandler(req, res) {
     let password = data.password;
 
     // new function will also handle algorithm changing
-    if (LoginVerifySecure(username, password)) {
+    if (await LoginVerifySecure(username, password)) {
         let token = UtilNewToken(32);
         let session = {
             user: username
@@ -149,7 +152,7 @@ async function LoginPOSTHandler(req, res) {
             res.end();
             fs.writeFileSync(`./db/sessionStorage/${token}.json`, JSON.stringify(session));
         } else res.render('forbidden.ejs', { reason: checkRestriction(username) });
-    } else res.json({result:401});
+    } else res.json({result:401,reason:'invalid login'});
 }
 
 function LogoutHandler(req, res) {

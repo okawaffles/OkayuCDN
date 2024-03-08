@@ -406,6 +406,8 @@ button:hover {
 
 .okayu-login .panel .bottom .error {
     visibility: hidden;
+    font-size: 1em;
+    margin-bottom: 8px;
 }
 
 .okayu-login .panel .go {
