@@ -39,13 +39,16 @@ async function LoginVerifySecure(username, raw_password) {
         } else {
             // use legacy password method temporarily
             if (LoginVerify(username, raw_password)) {
+                warn('LoginSecure', 'Notice: Upgrading sha256 (pre-6.0) password to argon2!');
                 // rewrite the hash
-                userData.password_salt = UtilNewToken();
-                userData.password = await UtilHashSecureSalted(raw_password + userData.password_salt);
+                const salt = UtilNewToken();
+                userData.password_salt = salt;
+                userData.password = await UtilHashSecureSalted(raw_password + salt);
                 userData.hashMethod = "argon2";
 
                 // write out
                 fs.writeFileSync(path, JSON.stringify(userData));
+                return true;
             }
         }
     } else return false;
@@ -122,7 +125,7 @@ function LoginGETHandler(req, res) {
 async function LoginPOSTHandler(req, res) {
     const result = validationResult(req);
     if (!result.isEmpty()) {
-        res.status(401).json({success:false,reason:"Sanitizer rejected request. Please try again.", errors:result.array()});
+        res.status(401).json({success:false,reason:"Sanitizer rejected request. Please try again."});
         return;
     }
 
@@ -147,7 +150,7 @@ async function LoginPOSTHandler(req, res) {
             res.end();
             fs.writeFileSync(`./db/sessionStorage/${token}.json`, JSON.stringify(session));
         } else res.render('forbidden.ejs', { reason: checkRestriction(username) });
-    } else res.json({result:401});
+    } else res.json({result:401,reason:'invalid login'});
 }
 
 function LogoutHandler(req, res) {

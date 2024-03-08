@@ -406,6 +406,8 @@ button:hover {
 
 .okayu-login .panel .bottom .error {
     visibility: hidden;
+    font-size: 1em;
+    margin-bottom: 8px;
 }
 
 .okayu-login .panel .go {
@@ -451,6 +453,33 @@ button:hover {
     }
     .okayu-login .panel .bottom .error {
         font-size: 1.25em;
+    }
+}
+
+@keyframes bad-login {
+    0% {
+        margin-left: 0;
+        margin-right: 0;
+    }
+    16.5% {
+        margin-left: -1em;
+        margin-right: 1em;
+    }
+    33% {
+        margin-left: 1em;
+        margin-right: -1em;
+    }
+    49.5% {
+        margin-left: -1em;
+        margin-right: 1em;
+    }
+    66% {
+        margin-left: 1em;
+        margin-right: -1em;
+    }
+    100% {
+        margin-left: 0;
+        margin-right: 0;
     }
 }
 
