@@ -23,7 +23,7 @@ function LoginVerify(username, password) {
         let encryptedPasswd = UtilHash(password);
 
         // Compare encryption (Unencrypted password is never stored in database) do they match?
-        if (encryptedPasswd === userData.password) return true; else return false;
+        return (encryptedPasswd === userData.password);
     } else return false;
 }
 
@@ -33,11 +33,9 @@ async function LoginVerifySecure(username, raw_password) {
     if (fs.existsSync(path)) {
         let userData = JSON.parse(fs.readFileSync(path));
 
-        if (!userData.hashMethod == "argon2") {   
+        if (userData.hashMethod == "argon2") {   
             // this might be able to be simplified but im not taking chances yet
-            if (await verify(userData.password, raw_password+userData.password_salt)) {
-                return true;
-            } else return false;
+            return (await verify(userData.password, raw_password+userData.password_salt));
         } else {
             // use legacy password method temporarily
             if (LoginVerify(username, raw_password)) {
@@ -134,7 +132,7 @@ async function LoginPOSTHandler(req, res) {
     let password = data.password;
 
     // new function will also handle algorithm changing
-    if (LoginVerifySecure(username, password)) {
+    if (await LoginVerifySecure(username, password)) {
         let token = UtilNewToken(32);
         let session = {
             user: username
