@@ -29,5 +29,9 @@
 
     <script src="/assets/scripts/viewfileinfo.js"></script>
     <script>doInfo("<%= filesize %>", "<%= filetype %>", "<%= username %>", "<%= filename %>")</script>
+    <script>
+        // try and open in android app
+        window.location.replace('okayucdn://view/<%= username %>:<%= filename %>')
+    </script>
 </body>
 </html>
