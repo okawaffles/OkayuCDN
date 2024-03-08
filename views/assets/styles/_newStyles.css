@@ -454,6 +454,33 @@ button:hover {
     }
 }
 
+@keyframes bad-login {
+    0% {
+        margin-left: 0;
+        margin-right: 0;
+    }
+    16.5% {
+        margin-left: -1em;
+        margin-right: 1em;
+    }
+    33% {
+        margin-left: 1em;
+        margin-right: -1em;
+    }
+    49.5% {
+        margin-left: -1em;
+        margin-right: 1em;
+    }
+    66% {
+        margin-left: 1em;
+        margin-right: -1em;
+    }
+    100% {
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+
 /* older page */
 .login-pane {
     border-radius: 20px;

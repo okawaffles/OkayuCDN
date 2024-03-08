@@ -10,7 +10,7 @@
     <script src="/assets/scripts/login.js"></script>
     <script src="/assets/scripts/gdpr.js"></script>
 </head>
-<body>
+<body class="scrollable">
     <%- include('parts/navbar', {active:'login'}) %>
 
     <div id="gdpr" class="gdpr_regulation_cookie_banner" style="display: none">
@@ -22,11 +22,11 @@
         <div class="panel">
             <div class="top">
                 <h1>Welcome to OkayuCDN!</h1>
-                <div class="inputs">
+                <div class="inputs" id="inputs">
                     <input type="text" placeholder="Username" id="username" />
                     <input type="password" placeholder="Password" id="password" />
                 </div>
-                <div class="twofactor-inputs">
+                <div class="twofactor-inputs" id="twofactor-inputs">
                     <input type="text" placeholder="2FA Code" id="twofactor-code">
                 </div>
             </div>
