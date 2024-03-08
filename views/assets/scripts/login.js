@@ -25,6 +25,15 @@ $(document).ready(() => {
                     }, 550);
                     return;
                 }
+            }).fail(() => {
+                // probably bad request
+                $('#login_error').css('visibility', 'visible').html('Server communication error, please try again.');
+                $('#twofactor-code').prop('disabled', false)[0].value = '';
+                $('#twofactor-inputs').css('animation', 'bad-login 0.5s ease-in-out');
+                setTimeout(() => {
+                    $('#twofactor-inputs').css('animation', 'none');
+                }, 550);
+                return;
             });
             return;
         }
@@ -62,6 +71,23 @@ $(document).ready(() => {
                 $('#inputs').css('display', 'none');
                 $('#twofactor-inputs').css('display', 'flex');
             }
+        }).fail(() => {
+            // login failed, show error and let user try again
+            $('#login').css('visibility', 'visible');
+
+            if ($('#username')[0].value == '' || $('#password')[0].value == '')
+                $('#login_error').css('visibility', 'visible').html('Please fill out both fields.');
+            else
+                $('#login_error').css('visibility', 'visible').html('Please check your username and password.');
+
+            $('#username').prop('disabled', false);
+            $('#password').prop('disabled', false)[0].value = ''; // un-disable AND clear it
+
+            $('#inputs').css('animation', 'bad-login 0.5s ease-in-out');
+            setTimeout(() => {
+                $('#inputs').css('animation', 'none');
+            }, 550);
+            return;
         });
     });
 })

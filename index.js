@@ -506,12 +506,8 @@ app.post('/api/2fa/setupUser', urlencodedparser, (req, res) => {
     fs.rmSync(path.join(__dirname, `/cache/${getUsername(req.cookies.token)}.2fa`));
 
     let userdata = getUserData(req.cookies.token);
-    let newUserdata = {
-        "password": userdata.password,"email": userdata.email,"name": userdata.name,"storage": userdata.storage,"premium": userdata.premium,"tags": { "bugtester":userdata.tags.bugtester, "okasoft":userdata.tags.okasoft },
-
-        "uses2FA":true,
-        "2fa_config":secret.base32
-    }
+    userdata.uses2FA = true;
+    userdata['2fa_config'] = secret.base32; 
 
     fs.writeFileSync(`./db/userLoginData/${getUsername(req.cookies.token)}.json`, JSON.stringify(newUserdata));
 

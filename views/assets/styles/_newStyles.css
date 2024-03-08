@@ -382,6 +382,8 @@ button:hover {
 .okayu-login .panel .top .twofactor-inputs {
     width: 100%;
     display: none;
+    justify-content: center;
+    align-items: center;
 }
 .okayu-login .panel .top .inputs input, .okayu-login .panel .top .twofactor-inputs input {
     width: 90%;

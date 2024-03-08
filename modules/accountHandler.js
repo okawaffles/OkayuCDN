@@ -43,7 +43,7 @@ async function LoginVerifySecure(username, raw_password) {
                 // rewrite the hash
                 const salt = UtilNewToken();
                 userData.password_salt = salt;
-                userData.password = await UtilHashSecureSalted(raw_password + salt);
+                userData.password = await UtilHashSecureSalted(raw_password, salt);
                 userData.hashMethod = "argon2";
 
                 // write out
@@ -125,7 +125,7 @@ function LoginGETHandler(req, res) {
 async function LoginPOSTHandler(req, res) {
     const result = validationResult(req);
     if (!result.isEmpty()) {
-        res.status(401).json({success:false,reason:"Sanitizer rejected request. Please try again."});
+        res.status(400).json({success:false,reason:"Sanitizer rejected request. Please try again."});
         return;
     }
 
