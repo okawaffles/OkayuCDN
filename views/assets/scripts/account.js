@@ -12,10 +12,69 @@ function updatePwd() {
     })
 }
 
-function loadAccountData() {
-    $.get('/api/myAccountData').done((data) => {
-        if (data.twoFactor) {
-            
+function DisableOTP() {
+    $.post('/api/2fa/otp/disable', (data) => {
+        if (data.success) {
+            window.location = '/account/';
+        } else {
+            alert('Failed to disable OTP 2FA, please log in again and try again.');
+            window.location = '/login?redir=/account';
         }
+    }).fail(() => {
+        alert('Failed to disable OTP 2FA, please log in again and try again.');
+        window.location = '/login?redir=/account';
     });
 }
+
+async function StartPasskeySetup() {
+    let options;
+    $.post('/api/2fa/pkreg/start', async (data) => {
+        options = data;
+        //console.log(options);
+
+        let attResp;
+        try {
+            attResp = await SimpleWebAuthnBrowser.startRegistration(options);
+
+            const result = await fetch('/api/2fa/pkreg/finish', {
+                method: 'POST',
+                body: JSON.stringify(attResp),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+
+            const resultJSON = await result.json();
+
+            if (resultJSON.verified) {
+                alert('Passkey setup success!');
+                window.location = '/account/';
+            } else {
+                alert('Failed to finish setting up passkey, please log in again and try again.');
+                window.location = '/login?redir=/account';
+            }
+        } catch (err) {
+            alert('Passkey setup aborted.');
+            console.error(err);
+            return;
+        }
+    }).fail(() => {
+        alert('Failed to start passkey setup, please log in again and try again.');
+        window.location = '/login?redir=/account';
+        return;
+    });
+}
+
+$(document).ready(() => {
+    $.get('/api/myAccountData').done((data) => {
+        if (data.uses2FA) {
+            $('#otp-header').html('Disable OTP Two-Factor Authentication');
+            $('#submit-otp').html('Disable OTP 2FA').css('background-color', 'var(--active-button-red)').attr('onclick', 'DisableOTP()');
+        }
+
+        if (data.usesPasskey) {
+            $('#passkey-header').html('Disable Passkey Authentication');
+            $('#submit-passkey').html('Disable Passkey').css('background-color', 'var(--active-button-red)').attr('onclick', 'DisablePasskey()');
+        }
+    });
+});

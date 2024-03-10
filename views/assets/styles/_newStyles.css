@@ -406,13 +406,24 @@ button:hover {
     padding: 1em;
 }
 
+.okayu-login .panel .bottom .login-options {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+.login-options .passkey {
+    width: 4em;
+    margin-right: 1em;
+    overflow: hidden;
+}
+
 .okayu-login .panel .bottom .error {
     visibility: hidden;
     font-size: 1em;
     margin-bottom: 8px;
 }
 
-.okayu-login .panel .go {
+.okayu-login .panel .password {
     margin-bottom: 2em;
 }
 

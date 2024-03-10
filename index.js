@@ -14,12 +14,14 @@ const { info, warn, error, Logger } = require('okayulogger');
 // for sanitization:
 const { validationResult, matchedData, query, param, body, cookie, header } = require('express-validator');    
 // routes in separate files:
-const { LoginGETHandler, LoginPOSTHandler, LogoutHandler, POSTPasswordChange, SignupPOSTHandler, POSTDesktopVerifyToken, POSTDesktopAuth } = require('./modules/accountHandler.js')
+const { LoginGETHandler, LoginPOSTHandler, LogoutHandler, POSTPasswordChange, SignupPOSTHandler, POSTDesktopVerifyToken, POSTDesktopAuth, GETAccountPageData, POSTDisableOTP } = require('./modules/accountHandler.js')
 const { ServeContent, ServeEmbeddedContent, GenerateSafeViewPage } = require('./modules/contentServing.js');
 const { POSTUpload, POSTAnonymousUpload, POSTDesktopUpload, POSTRemoveMyBoxContent } = require('./modules/userUploadService');
 const { UtilLogRequest } = require('./modules/util.js');
 const lusca = require('lusca');
 const session = require('express-session');
+const { RegisterStart, RegisterFinish, LoginStart, LoginFinish } = require('./modules/passkey.js');
+const bodyParser = require('body-parser');
 // TODO: change all relative paths to use path.join(__dirname, 'etc/etc')
 try {
     // load env variables
@@ -476,11 +478,16 @@ app.post('/api/login', urlencodedparser, [
     body('password').notEmpty().escape()
 ], LoginPOSTHandler);
 
+app.get('/api/myAccountData', [
+    cookie('token').notEmpty().escape().isLength({min:32,max:32})
+], GETAccountPageData)
+
 app.post('/api/desktop/authenticate', [query('username').notEmpty().escape(), query('password').notEmpty().escape()], POSTDesktopAuth);
 app.post('/api/desktop/token', [query('token').notEmpty().escape()], POSTDesktopVerifyToken);
 
 app.get('/account/2fa/setup', (req, res) => {
     if (!verifyToken(req.cookies.token)) { res.redirect('/login?redir=/account/2fa/setup'); return; }
+
     if (getUserData(req.cookies.token).uses2FA) {
         res.render('error_general.ejs', {error:"You already have 2FA on your account!"})
         //res.end();
@@ -543,6 +550,26 @@ app.post('/api/2fa/verify', urlencodedparser, (req, res) => {
         res.json({result:401})
     }
 })
+
+app.post('/api/2fa/otp/disable', [
+    cookie('token').notEmpty().escape().isLength({min:32,max:32})
+], POSTDisableOTP)
+
+// passkeys
+// register
+app.post('/api/2fa/pkreg/start', [
+    cookie('token').notEmpty().escape().isLength({min:32,max:32})
+], RegisterStart);
+app.post('/api/2fa/pkreg/finish', bodyParser.json(), [
+    cookie('token').notEmpty().escape().isLength({min:32,max:32})
+], RegisterFinish);
+// login/challenge
+app.post('/api/2fa/pklogin/start', bodyParser.json(), [
+    body('username').notEmpty().escape()
+], LoginStart);
+app.post('/api/2fa/pklogin/finish', bodyParser.json(), [
+
+], LoginFinish);
 
 app.post('/api/signup', [
     // critical vulnerability before this!!

@@ -232,6 +232,79 @@ async function POSTPasswordChange(req, res) {
     res.json({result:200});
 }
 
+function GETAccountPageData(req, res) {
+    if (!validationResult(req).isEmpty()) {
+        res.status(400).json({result:400});
+        return;
+    }
+    const data = matchedData(req);
+    const username = GetUsernameFromToken(data.token);
+    const userdata_path = join(__dirname, '..', 'db', 'userLoginData', `${username}.json`);
+    let userdata = JSON.parse(fs.readFileSync(userdata_path, 'utf-8'));
+
+    res.json({
+        uses2FA: userdata.uses2FA,
+        usesPasskey: userdata.usesPasskey
+    })
+}
+
+// -- OTP 2FA --
+function POSTDisableOTP(req, res) {
+    if (!validationResult(req).isEmpty()) {
+        res.status(400).json({result:400});
+        return;
+    }
+    const data = matchedData(req);
+    const username = GetUsernameFromToken(data.token);
+    const userdata_path = join(__dirname, '..', 'db', 'userLoginData', `${username}.json`);
+    let userdata = JSON.parse(fs.readFileSync(userdata_path, 'utf-8'));
+
+    userdata.uses2FA = false;
+
+    fs.writeFileSync(userdata_path, JSON.stringify(userdata), 'utf-8');
+    res.json({success:true});
+}
+
+// -- Passkey registration/login helpers --
+function SetPasskeyRegisterInfo(username, options) {
+    const userdata_path = join(__dirname, '..', 'db', 'userLoginData', `${username}.json`);
+    let userdata = JSON.parse(fs.readFileSync(userdata_path, 'utf-8'));
+    userdata.passkey_registration = options;
+    fs.writeFileSync(userdata_path, JSON.stringify(userdata), 'utf-8');
+}
+function GetPasskeyRegisterInfo(username) {
+    const userdata_path = join(__dirname, '..', 'db', 'userLoginData', `${username}.json`);
+    const userdata = JSON.parse(fs.readFileSync(userdata_path, 'utf-8'));
+    return userdata.passkey_registration;
+}
+function SetFinalPasskeyInfo(username, options) {
+    const userdata_path = join(__dirname, '..', 'db', 'userLoginData', `${username}.json`);
+    let userdata = JSON.parse(fs.readFileSync(userdata_path, 'utf-8'));
+    userdata.passkey_registration = undefined;
+    userdata.passkey_final = options;
+    userdata.usesPasskey = true;
+    fs.writeFileSync(userdata_path, JSON.stringify(userdata), 'utf-8');
+}
+function GetFinalPasskeyInfo(username) {
+    const userdata_path = join(__dirname, '..', 'db', 'userLoginData', `${username}.json`);
+    const userdata = JSON.parse(fs.readFileSync(userdata_path, 'utf-8'));
+    return {
+        usesPasskey: userdata.usesPasskey,
+        options: userdata.passkey_final
+    };
+}
+function SetUserPasskeyChallenge(username, options) {
+    const userdata_path = join(__dirname, '..', 'db', 'userLoginData', `${username}.json`);
+    let userdata = JSON.parse(fs.readFileSync(userdata_path, 'utf-8'));
+    userdata.passkey_challenge = options;
+    fs.writeFileSync(userdata_path, JSON.stringify(userdata), 'utf-8');
+}
+function GetUserPasskeyChallenge(username) {
+    const userdata_path = join(__dirname, '..', 'db', 'userLoginData', `${username}.json`);
+    const userdata = JSON.parse(fs.readFileSync(userdata_path, 'utf-8'));
+    return userdata.passkey_challenge;
+}
+
 // -- Desktop App Handlers --
 
 function POSTDesktopAuth(req, res) {
@@ -282,11 +355,7 @@ function POSTDesktopVerifyToken(req, res) {
         res.status(401).json({success:false,code:'TOKEN_VERIFY_FAIL',reason:'Token is expired/invalid'});
     }
 }
-// --
 
-function NekoPasskiHandler(req, res) {
-    // later :3
-}
 
 module.exports = { 
     LoginGETHandler, 
@@ -298,5 +367,15 @@ module.exports = {
     POSTPasswordChange,
     VerifyToken,
     GetUsernameFromToken,
-    QueryUserStorage
+    QueryUserStorage,
+    GETAccountPageData,
+
+    POSTDisableOTP,
+
+    SetPasskeyRegisterInfo,
+    GetPasskeyRegisterInfo,
+    SetFinalPasskeyInfo,
+    GetFinalPasskeyInfo,
+    SetUserPasskeyChallenge,
+    GetUserPasskeyChallenge
 }

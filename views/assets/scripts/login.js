@@ -39,7 +39,7 @@ $(document).ready(() => {
         }
 
         // hide buttons
-        $('#login').css('visibility', 'hidden');
+        $('#login-options').css('visibility', 'hidden');
         $('#login_error').css('visibility', 'hidden');
         $('#username').prop('disabled', true);
         $('#password').prop('disabled', true);
@@ -49,7 +49,7 @@ $(document).ready(() => {
             console.log(data);
             if (data.result != 200) {
                 // login failed, show error and let user try again
-                $('#login').css('visibility', 'visible');
+                $('#login-options').css('visibility', 'visible');
                 $('#login_error').css('visibility', 'visible').html('Please check your username and password.');
                 $('#username').prop('disabled', false);
                 $('#password').prop('disabled', false)[0].value = ''; // un-disable AND clear it
@@ -67,7 +67,7 @@ $(document).ready(() => {
                 return;
             } else {
                 currentProcess = '2fa';
-                $('#login').css('visibility', 'visible').html('Verify 2FA');
+                $('#login-options').css('visibility', 'visible').html('Verify 2FA');
                 $('#inputs').css('display', 'none');
                 $('#twofactor-inputs').css('display', 'flex');
             }
@@ -90,4 +90,94 @@ $(document).ready(() => {
             return;
         });
     });
-})
+
+
+    // passkey button
+    $('#passkey').on('click', async () => {
+        $('#login-options').css('visibility', 'hidden');
+        $('#login_error').css('visibility', 'hidden');
+        $('#username').prop('disabled', true);
+        $('#password').prop('disabled', true);
+
+        if ($('#username')[0].value == '') {
+            $('#login-options').css('visibility', 'visible');
+            $('#login_error').css('visibility', 'visible').html('Please enter your username to use passkey!');
+            $('#inputs').css('animation', 'bad-login 0.5s ease-in-out');
+            $('#username').prop('disabled', false);
+            $('#password').prop('disabled', false);
+            setTimeout(() => {
+                $('#inputs').css('animation', 'none');
+            }, 550);
+            return;
+        }
+
+        const resp = await fetch('/api/2fa/pklogin/start', {
+            method:'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username:$('#username')[0].value
+            })
+        });
+        
+        let asseResp;
+
+        try {
+            asseResp = await SimpleWebAuthnBrowser.startAuthentication(resp.json());
+        } catch (err) {
+            $('#login-options').css('visibility', 'visible');
+            $('#login_error').css('visibility', 'visible').html('Passkey is unavailable for this account.');
+            $('#inputs').css('animation', 'bad-login 0.5s ease-in-out');
+            $('#username').prop('disabled', false);
+            $('#password').prop('disabled', false);
+            setTimeout(() => {
+                $('#inputs').css('animation', 'none');
+            }, 550);
+            return;
+        }
+
+        /*$.post('/api/2fa/pklogin/start', {username:$('#username')[0].value}, async (data) => {
+            let asseResp;
+
+            try {
+                asseResp = await SimpleWebAuthnBrowser.startAuthentication(data);
+
+                const verificationResp = await fetch('/api/2fa/pklogin/finish', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type':'application/json'
+                    },
+                    body: JSON.stringify(asseResp)
+                });
+
+                const verificationJSON = await verificationResp.json();
+
+                if (verificationJSON.verified) {
+                    alert('It worked!');
+                }
+            } catch (err) {
+                $('#login-options').css('visibility', 'visible');
+                $('#login_error').css('visibility', 'visible').html('Passkey login failed.');
+                $('#inputs').css('animation', 'bad-login 0.5s ease-in-out');
+                $('#username').prop('disabled', false);
+                $('#password').prop('disabled', false);
+                setTimeout(() => {
+                    $('#inputs').css('animation', 'none');
+                }, 550);
+                console.error(err);
+                return;
+            }
+        }).fail((data) => {
+            $('#login-options').css('visibility', 'visible');
+            $('#login_error').css('visibility', 'visible').html('Passkey is unavailable for this account.');
+            $('#inputs').css('animation', 'bad-login 0.5s ease-in-out');
+            $('#username').prop('disabled', false);
+            $('#password').prop('disabled', false);
+            setTimeout(() => {
+                $('#inputs').css('animation', 'none');
+            }, 550);
+            return;
+        });*/
+    });
+});

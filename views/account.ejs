@@ -9,8 +9,9 @@
     <script src="https://kit.fontawesome.com/dc1b60441b.js" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <script src="/assets/scripts/account.js"></script>
+    <script src="https://unpkg.com/@simplewebauthn/browser/dist/bundle/index.umd.min.js"></script>
 </head>
-<body>
+<body class="scrollable">
     <%- include('parts/navbar-logged-in', {active:'account'}) %>
 
     <div class="center">
@@ -24,8 +25,11 @@
         <button class="go" id="submit" onclick="updatePwd()">Change</button>
 
         <br><br>
-        <h1 class="tfa_h1">Enable Two-Factor Authentication (Beta)</h1><br>
-        <button class="go" id="submit" onclick="document.location = '/account/2fa/setup';">Enable 2FA (Beta)</button>
+        <h1 class="tfa_h1" id="otp-header">Enable OTP Two-Factor Authentication</h1><br>
+        <button class="go" id="submit-otp" onclick="document.location = '/account/2fa/setup';">Enable OTP 2FA</button><br><br>
+
+        <h1 class="tfa_h1" id="passkey-header">Enable Passkey Authentication</h1><br>
+        <button class="go" id="submit-passkey" onclick="StartPasskeySetup()">Enable Passkey</button>
     </div>
 </body>
 </html>

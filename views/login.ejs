@@ -9,6 +9,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <script src="/assets/scripts/login.js"></script>
     <script src="/assets/scripts/gdpr.js"></script>
+    <script src="https://unpkg.com/@simplewebauthn/browser/dist/bundle/index.umd.min.js"></script>
 </head>
 <body class="scrollable">
     <%- include('parts/navbar', {active:'login'}) %>
@@ -25,6 +26,7 @@
                 <div class="inputs" id="inputs">
                     <input type="text" placeholder="Username" id="username" />
                     <input type="password" placeholder="Password" id="password" />
+                    <p>Password is not required to use passkey login.</p>
                 </div>
                 <div class="twofactor-inputs" id="twofactor-inputs">
                     <input type="text" placeholder="2FA Code" id="twofactor-code">
@@ -32,7 +34,10 @@
             </div>
             <div class="bottom">
                 <p class="error" id="login_error">Error: please do this and that.</p>
-                <button class="go" id="login">Let's go!</button>
+                <div class="login-options" id="login-options">
+                    <button class="go passkey" id="passkey"><i class="fa-solid fa-user-lock"></i></button>
+                    <button class="go" id="login">Let's go!</button>
+                </div>
             </div>
         </div>
         <div class="separator">OR</div>
