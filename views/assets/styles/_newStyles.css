@@ -465,7 +465,10 @@ button:hover {
         padding-bottom: 1em;
     }
     .okayu-login .panel .bottom .error {
-        font-size: 1.25em;
+        font-size: 1em;
+    }
+    .okayu-login .panel .login-options {
+        width: 100%;
     }
 }
 

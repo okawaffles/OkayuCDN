@@ -280,9 +280,15 @@ function GetPasskeyRegisterInfo(username) {
 function SetFinalPasskeyInfo(username, options) {
     const userdata_path = join(__dirname, '..', 'db', 'userLoginData', `${username}.json`);
     let userdata = JSON.parse(fs.readFileSync(userdata_path, 'utf-8'));
+
+    if (!userdata.authenticators) {
+        userdata.authenticators = [];
+    }
+
     userdata.passkey_registration = undefined;
-    userdata.passkey_final = options;
+    userdata.authenticators.push(options);
     userdata.usesPasskey = true;
+
     fs.writeFileSync(userdata_path, JSON.stringify(userdata), 'utf-8');
 }
 function GetFinalPasskeyInfo(username) {
@@ -290,7 +296,7 @@ function GetFinalPasskeyInfo(username) {
     const userdata = JSON.parse(fs.readFileSync(userdata_path, 'utf-8'));
     return {
         usesPasskey: userdata.usesPasskey,
-        options: userdata.passkey_final
+        authenticators: userdata.authenticators
     };
 }
 function SetUserPasskeyChallenge(username, options) {

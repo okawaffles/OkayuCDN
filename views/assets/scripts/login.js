@@ -46,7 +46,6 @@ $(document).ready(() => {
 
         // send login post
         $.post('/api/login', {username:$('#username')[0].value, password:$('#password')[0].value}, (data) => {
-            console.log(data);
             if (data.result != 200) {
                 // login failed, show error and let user try again
                 $('#login-options').css('visibility', 'visible');
@@ -124,10 +123,12 @@ $(document).ready(() => {
         let asseResp;
 
         try {
-            asseResp = await SimpleWebAuthnBrowser.startAuthentication(resp.json());
+            asseResp = await SimpleWebAuthnBrowser.startAuthentication(await resp.json());
         } catch (err) {
+            console.error(err);
+
             $('#login-options').css('visibility', 'visible');
-            $('#login_error').css('visibility', 'visible').html('Passkey is unavailable for this account.');
+            $('#login_error').css('visibility', 'visible').html('Passkey authentication failed to start.');
             $('#inputs').css('animation', 'bad-login 0.5s ease-in-out');
             $('#username').prop('disabled', false);
             $('#password').prop('disabled', false);

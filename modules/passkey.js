@@ -41,8 +41,9 @@ async function RegisterStart(req, res) {
         userName: username,
         attestationType: 'none',
         authenticatorSelection: {
-            residentKey: 'preferred',
-            userVerification: 'preferred'
+            residentKey: 'discouraged',
+            userVerification: 'preferred',
+            authenticatorAttachment: 'platform'
         }
     });
 
@@ -117,7 +118,6 @@ async function LoginStart(req, res) {
     }
     const data = matchedData(req);
     const userPasskeyData = GetFinalPasskeyInfo(data.username);
-    const userAuthenticators = [userPasskeyData.options];
 
     if (!userPasskeyData.usesPasskey) {
         return res.status(401).json({success:false,code:'PASSKEY_NO_REG',reason:'The specified user has no passkey associated with their account.'});
@@ -125,8 +125,8 @@ async function LoginStart(req, res) {
 
     const options = await generateAuthenticationOptions({
         rpID,
-        allowCredentials: userAuthenticators.map(authenticator => ({
-            id: authenticator.credentialID,
+        allowCredentials: userPasskeyData.authenticators.map(authenticator => ({
+            id: new Uint8Array(Object.values(authenticator.credentialID)), // very important as we are storing the values as json! otherwise, 'id' is empty.
             type: 'public-key',
             transports: authenticator.transports
         })),

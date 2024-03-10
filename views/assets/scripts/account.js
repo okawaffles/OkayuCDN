@@ -27,6 +27,10 @@ function DisableOTP() {
 }
 
 async function StartPasskeySetup() {
+    if (navigator.userAgent.includes('Android') || navigator.userAgent.includes('iPhone OS') || navigator.userAgent.includes('iPad OS')) {
+        if (!confirm(`Warning: ${navigator.userAgent.includes('Android')?'Android does':'Apple devices do'} not support WebAuthn at the moment, would you like to continue anyways?`)) return;
+    }
+
     let options;
     $.post('/api/2fa/pkreg/start', async (data) => {
         options = data;
@@ -54,7 +58,7 @@ async function StartPasskeySetup() {
                 window.location = '/login?redir=/account';
             }
         } catch (err) {
-            alert('Passkey setup aborted.');
+            alert('Passkey setup failed.');
             console.error(err);
             return;
         }
