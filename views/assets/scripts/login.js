@@ -110,39 +110,12 @@ $(document).ready(() => {
             return;
         }
 
-        const resp = await fetch('/api/2fa/pklogin/start', {
-            method:'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                username:$('#username')[0].value
-            })
-        });
-        
-        let asseResp;
-
-        try {
-            asseResp = await SimpleWebAuthnBrowser.startAuthentication(await resp.json());
-        } catch (err) {
-            console.error(err);
-
-            $('#login-options').css('visibility', 'visible');
-            $('#login_error').css('visibility', 'visible').html('Passkey authentication failed to start.');
-            $('#inputs').css('animation', 'bad-login 0.5s ease-in-out');
-            $('#username').prop('disabled', false);
-            $('#password').prop('disabled', false);
-            setTimeout(() => {
-                $('#inputs').css('animation', 'none');
-            }, 550);
-            return;
-        }
-
-        /*$.post('/api/2fa/pklogin/start', {username:$('#username')[0].value}, async (data) => {
+        $.post('/api/2fa/pklogin/start', {username:$('#username')[0].value}, async (data) => {
             let asseResp;
 
             try {
                 asseResp = await SimpleWebAuthnBrowser.startAuthentication(data);
+                asseResp.username = $('#username')[0].value;
 
                 const verificationResp = await fetch('/api/2fa/pklogin/finish', {
                     method: 'POST',
@@ -155,7 +128,17 @@ $(document).ready(() => {
                 const verificationJSON = await verificationResp.json();
 
                 if (verificationJSON.verified) {
-                    alert('It worked!');
+                    alert('yippe doo!!!');
+                } else {
+                    $('#login-options').css('visibility', 'visible');
+                    $('#login_error').css('visibility', 'visible').html('Passkey could not be verified.');
+                    $('#inputs').css('animation', 'bad-login 0.5s ease-in-out');
+                    $('#username').prop('disabled', false);
+                    $('#password').prop('disabled', false);
+                    setTimeout(() => {
+                        $('#inputs').css('animation', 'none');
+                    }, 550);
+                    return;
                 }
             } catch (err) {
                 $('#login-options').css('visibility', 'visible');
@@ -179,6 +162,6 @@ $(document).ready(() => {
                 $('#inputs').css('animation', 'none');
             }, 550);
             return;
-        });*/
+        });
     });
 });

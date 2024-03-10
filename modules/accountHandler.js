@@ -267,48 +267,76 @@ function POSTDisableOTP(req, res) {
 
 // -- Passkey registration/login helpers --
 function SetPasskeyRegisterInfo(username, options) {
-    const userdata_path = join(__dirname, '..', 'db', 'userLoginData', `${username}.json`);
-    let userdata = JSON.parse(fs.readFileSync(userdata_path, 'utf-8'));
-    userdata.passkey_registration = options;
-    fs.writeFileSync(userdata_path, JSON.stringify(userdata), 'utf-8');
+    try {
+        const userdata_path = join(__dirname, '..', 'db', 'userLoginData', `${username}.json`);
+        let userdata = JSON.parse(fs.readFileSync(userdata_path, 'utf-8'));
+        userdata.passkey_registration = options;
+        fs.writeFileSync(userdata_path, JSON.stringify(userdata), 'utf-8');
+    } catch (err) {
+        return;
+    }
 }
 function GetPasskeyRegisterInfo(username) {
-    const userdata_path = join(__dirname, '..', 'db', 'userLoginData', `${username}.json`);
-    const userdata = JSON.parse(fs.readFileSync(userdata_path, 'utf-8'));
-    return userdata.passkey_registration;
+    try {
+        const userdata_path = join(__dirname, '..', 'db', 'userLoginData', `${username}.json`);
+        const userdata = JSON.parse(fs.readFileSync(userdata_path, 'utf-8'));
+        return userdata.passkey_registration;
+    } catch (err) {
+        error('accounts', err);
+        return undefined;
+    }
 }
 function SetFinalPasskeyInfo(username, options) {
-    const userdata_path = join(__dirname, '..', 'db', 'userLoginData', `${username}.json`);
-    let userdata = JSON.parse(fs.readFileSync(userdata_path, 'utf-8'));
+    try {
 
-    if (!userdata.authenticators) {
-        userdata.authenticators = [];
+        const userdata_path = join(__dirname, '..', 'db', 'userLoginData', `${username}.json`);
+        let userdata = JSON.parse(fs.readFileSync(userdata_path, 'utf-8'));
+        
+        if (!userdata.authenticators) {
+            userdata.authenticators = [];
+        }
+        
+        userdata.passkey_registration = undefined;
+        userdata.authenticators.push(options);
+        userdata.usesPasskey = true;
+        
+        fs.writeFileSync(userdata_path, JSON.stringify(userdata), 'utf-8');
+    } catch (err) {
+        return;
     }
-
-    userdata.passkey_registration = undefined;
-    userdata.authenticators.push(options);
-    userdata.usesPasskey = true;
-
-    fs.writeFileSync(userdata_path, JSON.stringify(userdata), 'utf-8');
 }
 function GetFinalPasskeyInfo(username) {
-    const userdata_path = join(__dirname, '..', 'db', 'userLoginData', `${username}.json`);
-    const userdata = JSON.parse(fs.readFileSync(userdata_path, 'utf-8'));
-    return {
-        usesPasskey: userdata.usesPasskey,
-        authenticators: userdata.authenticators
-    };
+    try {
+        const userdata_path = join(__dirname, '..', 'db', 'userLoginData', `${username}.json`);
+        const userdata = JSON.parse(fs.readFileSync(userdata_path, 'utf-8'));
+        return {
+            usesPasskey: userdata.usesPasskey,
+            authenticators: userdata.authenticators
+        };
+    } catch (err) {
+        return {
+            usesPasskey: false
+        };
+    }
 }
 function SetUserPasskeyChallenge(username, options) {
-    const userdata_path = join(__dirname, '..', 'db', 'userLoginData', `${username}.json`);
-    let userdata = JSON.parse(fs.readFileSync(userdata_path, 'utf-8'));
-    userdata.passkey_challenge = options;
-    fs.writeFileSync(userdata_path, JSON.stringify(userdata), 'utf-8');
+    try {
+        const userdata_path = join(__dirname, '..', 'db', 'userLoginData', `${username}.json`);
+        let userdata = JSON.parse(fs.readFileSync(userdata_path, 'utf-8'));
+        userdata.passkey_challenge = options;
+        fs.writeFileSync(userdata_path, JSON.stringify(userdata), 'utf-8');
+    } catch (err) {
+        return;
+    }
 }
 function GetUserPasskeyChallenge(username) {
     const userdata_path = join(__dirname, '..', 'db', 'userLoginData', `${username}.json`);
-    const userdata = JSON.parse(fs.readFileSync(userdata_path, 'utf-8'));
-    return userdata.passkey_challenge;
+    try {
+        const userdata = JSON.parse(fs.readFileSync(userdata_path, 'utf-8'));
+        return userdata.passkey_challenge;
+    } catch (err) {
+        return undefined;
+    }
 }
 
 // -- Desktop App Handlers --

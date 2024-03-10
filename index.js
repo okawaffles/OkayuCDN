@@ -564,11 +564,11 @@ app.post('/api/2fa/pkreg/finish', bodyParser.json(), [
     cookie('token').notEmpty().escape().isLength({min:32,max:32})
 ], RegisterFinish);
 // login/challenge
-app.post('/api/2fa/pklogin/start', bodyParser.json(), [
+app.post('/api/2fa/pklogin/start', urlencodedparser, [
     body('username').notEmpty().escape()
 ], LoginStart);
 app.post('/api/2fa/pklogin/finish', bodyParser.json(), [
-
+    body('username').notEmpty().escape()
 ], LoginFinish);
 
 app.post('/api/signup', [

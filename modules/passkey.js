@@ -147,23 +147,15 @@ async function LoginFinish(req, res) {
     const {body} = req;
 
     const options = GetUserPasskeyChallenge(data.username);
-    const userPasskeyData = GetPasskeyRegisterInfo(data.username);
-    const authenticator = {
-        id: userPasskeyData.options.credentialID,
-        type: 'public-key',
-        transports: userPasskeyData.options.transports
-    };
+    const userPasskeyData = GetFinalPasskeyInfo(data.username);
 
-    if (body.id != userPasskeyData.options.credentialID) {
-        console.log(body.id);
-        return res.status(400).json({success:false,code:'PASSKEY_LOGIN_FAIL',reason:'Passkey could not be verified.'});
-    }
+    let authenticator = userPasskeyData.authenticators[0];
 
-    let verification; 
+    let verification;
     try {
         verification = await verifyAuthenticationResponse({
             response: body,
-            expectedChallenge: options.expectedChallenge,
+            expectedChallenge: options.challenge,
             expectedOrigin,
             expectedRPID: rpID,
             authenticator
