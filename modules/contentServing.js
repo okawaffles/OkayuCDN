@@ -99,7 +99,7 @@ function GenerateSafeViewPage(req, res) {
         res.render('view_info.ejs', {
             username: params.user,
             filename: params.item,
-            filesize: data.size / 1024 / 1024,
+            filesize: data.size,
             filetype: params.item.split('.')[params.item.split('.').length - 1]
         });
     } catch (err) {

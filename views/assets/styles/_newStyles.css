@@ -873,18 +873,60 @@ button:hover {
 
 /* File Info */
 .view_info {
-    
-    width: fit-content;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    padding-bottom: 25px;
-}
-.view_preview {
     display: flex;
-    align-content: center;
-    color: white;
-    padding: 25px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.view_info>h2,h4 {
+    text-align: center;
+    color: var(--active-text);
+    width: 100%;
+}
+.view_info h2 {
+    font-size: 3em;
+}
+.view_info h4 {
+    font-size: 1.5em;
+}
+.view_info #warning {
+    color: red;
+    display: none;
+}
+
+.view_info .view_preview {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    color: var(--active-text);
+}
+
+@media screen and (max-width: 600px) {
+    .view_body {
+        overflow: hidden;
+    }
+    .view_info h2 {
+        font-size: 2em;
+    }
+    .view_info h4 {
+        font-size: 1em;
+    }
+    .view_preview img {
+        max-width: 95%;
+        max-height: 75%;
+    }
+
+    .go {
+        position: absolute;
+        bottom: 5px;
+        left: 50%;
+        transform: translate(-50%);
+    }
+}
+@media screen and (min-width: 601px) {
+    .view_preview img {
+        width: 35%;
+    }
 }
 
 /* error page */

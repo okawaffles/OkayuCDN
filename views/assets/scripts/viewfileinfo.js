@@ -1,9 +1,31 @@
-function doInfo(_filesize, _filetype, _user, _name) {
-    document.getElementById('size').innerHTML = "Size: " + (_filesize / 1024 / 1024).toFixed(2) + "MB";
+let warning = false;
 
+function doInfo(filesize, filetype, user, name) {
+    const type = getFileTypeDesc(filetype);
+    const size = formatSize(filesize);
 
-    document.getElementById('type').innerHTML = getFileTypeDesc(_filetype);
-    processPreview(_filetype, `/content/${_user}/${_name}`);
+    document.getElementById('type').innerHTML = `${type}`;
+    document.getElementById('download').innerText = `Download (${size})`;
+
+    processPreview(filetype, `/@${user}/${name}`);
+
+    if (warning) {
+        document.getElementById('warning').style.display = 'initial';
+    }
+}
+
+function formatSize(bytes) {
+    let fsize = "";
+    if (bytes > 750*1024*1024)
+        fsize = (((bytes / 1024) / 1024) / 1024).toFixed(2) + "GB";
+    else if (bytes > 750*1024)
+        fsize = ((bytes / 1024) / 1024).toFixed(2) + "MB";
+    else if (bytes > 1024)
+        fsize = (bytes / 1024).toFixed(2) + "KB";
+    else
+        fsize = `${bytes}B`;
+
+    return fsize;
 }
 
 let knownFileTypes = {
@@ -30,7 +52,7 @@ let knownFileTypes = {
 
     "EXE": "Windows Executable (EXE)",
     "MSI": "Windows Installer (MSI)",
-    "DMG": "MacOS Installer",
+    "DMG": "MacOS Installer (DMG)",
     "BAT": "Windows Batch File (BAT)",
     "CMD": "Windows Batch File (CMD)",
     "ISO": "Disk Image (ISO)",
@@ -50,6 +72,7 @@ let knownFileTypes = {
 
     "HTML": "Webpage (HTML)",
     "JS": "JavaScript File (JS)",
+    "JS": "TypeScript File (TS)",
     "EJS": "Embedded JavaScript Webpage (EJS)",
     "JSON": "JavaScript Object Notation (JSON)",
     "GITIGNORE": "Git Ignore File",
@@ -89,35 +112,58 @@ let knownFileTypes = {
     "MCWORLD": "Minecraft Bedrock World (MCWORLD)"
 }
 
-function getFileTypeDesc(_ft) {
-    if (knownFileTypes[_ft.toUpperCase()] != null) {
-        return "File Type: " + knownFileTypes[_ft.toUpperCase()];
-    } else return `File Type: ${_ft} File Format`;
+function getFileTypeDesc(filetype) {
+    let ft = filetype.toUpperCase();
+    if (knownFileTypes[ft] != null) {
+        // warning the user if the filetype might be malicious
+        if (
+            ft == "EXE" ||
+            ft == "MSI" ||
+            ft == "DMG" ||
+            ft == "ZIP" ||
+            ft == "RAR" ||
+            ft == "BAT" ||
+            ft == "CMD"
+        ) warning = true;
+
+        return "File Type: " + knownFileTypes[ft];
+    } else return `File Type: ${filetype} File Format`;
 }
 
-function processPreview(_ft, _li) {
+function processPreview(filetype, link) {
     let previewArea = document.getElementById('previewArea');
-    switch (_ft.toUpperCase()) {
+    switch (filetype.toUpperCase()) {
         case "MP4":
-            previewArea.innerHTML = `<video src="${_li}?bypass=true"></video>`
+            previewArea.innerHTML = `<video src="${link}?bypass=true"></video>`
             break;
         case "MOV": case "MKV": case "WEBM":
-            previewArea.innerHTML = `<video src="${_li}"></video>`;
+            previewArea.innerHTML = `<video src="${link}"></video>`;
             break;
         case "PNG": case "JPG": case "JPEG": case "WEBP": case "BMP": case "ICO": case "GIF": case "HEIC":
-            previewArea.innerHTML = `<img src="${_li}">`;
+            previewArea.innerHTML = `<img src="${link}">`;
             break;
         case "MP3": case "WAV": case "FLAC":
-            previewArea.innerHTML = `<audio src="${_li}"></audio>`
+            previewArea.innerHTML = `<audio src="${link}"></audio>`
             break;
         case "TTF": case "OTF":
             previewArea.innerHTML = `<h2 class="pf" style="font-family: previewFont;" >The quick brown fox jumped over the lazy dog.</h2> <style>@font-face {
                 font-family: previewFont;
-                src: url('${_li}');
+                src: url('${link}');
             }</style>`
             break;
         default:
             previewArea.innerHTML = `<h5>Preview is not supported for this filetype.</h5>`
             break;
+    }
+}
+
+function startDownload() {
+    if (!warning) {
+        document.location = `/@<%= username %>/<%= filename %>`;
+        return;
+    } else {
+        if (confirm("WARNING: This file might be dangerous, are you sure you still want to download it?\n\nNever trust executable files from strangers online.")) {
+            document.location = `/@<%= username %>/<%= filename %>`;
+        }
     }
 }
