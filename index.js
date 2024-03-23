@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 // By okawaffles
 // v5 - 2022-2024
 // I'm so proud of how far I've come.

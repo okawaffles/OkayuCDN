@@ -7,3 +7,4 @@ db/stats.json
 nodemon.json
 package-lock.json
 blocked_ips.json
+dist/

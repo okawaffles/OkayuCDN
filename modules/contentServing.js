@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const { info, warn, error, Logger } = require('okayulogger');
 const { existsSync, readFileSync, statSync } = require('node:fs');
 const { param, validationResult, matchedData } = require('express-validator');

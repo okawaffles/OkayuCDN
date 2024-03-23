@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const { validationResult, matchedData } = require("express-validator");
 const { createWriteStream, statSync, rmSync, copyFileSync, copyFile, existsSync } = require("node:fs");
 const { join } = require('node:path');

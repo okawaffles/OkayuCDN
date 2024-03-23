@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 "use strict";
 
 // this file handles routes for logging in/out, signing up, and account management

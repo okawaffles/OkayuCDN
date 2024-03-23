@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 // various utils used throughout
 
 const { hash } = require('argon2');

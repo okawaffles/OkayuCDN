@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const { validationResult, matchedData } = require('express-validator');
 const { LoginVerifySecure } = require('./accountHandler.js');
 const { info, warn, error } = require('okayulogger');
