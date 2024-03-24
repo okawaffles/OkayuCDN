@@ -165,12 +165,12 @@ function LogoutHandler(req, res) {
 function SignupPOSTHandler(req, res, config) {
     try {
         let form = new IncomingForm();
-        form.parse(req, (err, fields, files) => {
+        form.parse(req, async (err, fields, files) => {
             if (!config.start_flags['DISABLE_ACCOUNT_CREATION']) {
                 if (!fs.existsSync(`../db/userLoginData/${fields.un}.json`)) {
                     // Encrypt password with SHA-256 hash
                     let salt = UtilNewToken();
-                    let encryptedPasswd = UtilHashSecureSalted(fields.pw, salt);
+                    let encryptedPasswd = await UtilHashSecureSalted(fields.pw, salt);
 
                     let data = {
                         hashMethod:"argon2",
