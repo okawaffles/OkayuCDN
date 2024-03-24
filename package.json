@@ -43,7 +43,11 @@
   },
   "homepage": "https://github.com/okawaffles/OkayuCDN#readme",
   "devDependencies": {
+    "@types/cookie-parser": "^1.4.7",
     "@types/express": "^4.17.21",
+    "@types/express-session": "^1.18.0",
+    "@types/express-validator": "^3.0.0",
+    "@types/formidable": "^3.4.5",
     "@types/node": "^20.11.30",
     "@typescript-eslint/eslint-plugin": "^7.3.1",
     "@typescript-eslint/parser": "^7.3.1",

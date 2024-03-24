@@ -171,12 +171,6 @@ function verifyLogin(username, password) {
         if (encryptedPasswd === userData.password) return true; else return false;
     } else return false;
 }
-function check2FAStatus(username) {
-    if (fs.existsSync(`./db/userLoginData/${username}.json`)) {
-        var userData = JSON.parse(fs.readFileSync(`./db/userLoginData/${username}.json`));
-        return userData.uses2FA;
-    } else return false;
-}
 
 /* stats */
 
