@@ -38,7 +38,7 @@ function ReloadBlockedIPs() { BLOCKED_IPS = JSON.parse(readFileSync(join(__dirna
 
 function UtilLogRequest(req, res, next) {
     res.setHeader('X-Powered-By', 'OkayuCDN 6');
-    res.header('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
 
     // get IP address
     let ip_addr;
@@ -52,9 +52,10 @@ function UtilLogRequest(req, res, next) {
     info('RequestInfo', `${bold(red(ip_addr))} ${bold(blue(req.method))} ${green(req.originalUrl)}`);
 
     // IP ban check
-    if (BLOCKED_IPS && BLOCKED_IPS[ip_addr]) {
+    if (BLOCKED_IPS && BLOCKED_IPS.includes(ip_addr)) {
         info('RequestInfo', `Blocked request from ${ip_addr} due to inclusion in blocked_ips.json.`);
         res.status(403).send('403 Forbidden');
+        return;
     }
 
     next();
