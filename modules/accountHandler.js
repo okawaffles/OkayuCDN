@@ -31,13 +31,13 @@ function LoginVerify(username, password) {
 
 async function LoginVerifySecure(username, raw_password) {
     // todo
-    console.log(username, raw_password);
     let path = join(__dirname, '..', 'db', 'userLoginData', `${username}.json`);
     if (fs.existsSync(path)) {
         let userData = JSON.parse(fs.readFileSync(path));
 
         if (userData.hashMethod == "argon2") {   
             // this might be able to be simplified but im not taking chances yet
+            console.log(userData.password, raw_password+userData.password_salt);
             return (await verify(userData.password, raw_password+userData.password_salt));
         } else {
             // use legacy password method temporarily
