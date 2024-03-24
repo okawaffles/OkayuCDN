@@ -1,6 +1,7 @@
+/* eslint-disable no-undef */
 let user, domain;
-let alternate = false;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function startDeleteSequence(item, id, mobile) {
     if (mobile) {
         if ($(`#m-delete-item-${id}`).html() == '<i class="fa-solid fa-trash-can" aria-hidden="true"></i>') {
@@ -30,27 +31,30 @@ function deleteItemRequest(item) {
         id:item
     }).done(() => {
         // refresh page
-        document.location = "/mybox";
+        document.location = '/mybox';
     });
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function share(item, id, mobile) {
-    const tl_share = `<i class="fa-solid fa-arrow-up-right-from-square"></i> Share`;
-    const tl_share_mobile = `<i class="fa-solid fa-arrow-up-right-from-square"></i>`;
-    const tl_copied = `<i class="fa-solid fa-arrow-up-right-from-square"></i></i><strong>  ${(document.cookie.includes("language=ja-jp"))? "リンクがコピーしました" : "Copied link!" }</strong>`;
-    const tl_nvgt_text = document.cookie.includes("language=ja-jp")?"OkayuCDNで僕のファイルを見ます！":"View my file on OkayuCDN!";
+    const tl_share = '<i class="fa-solid fa-arrow-up-right-from-square"></i> Share';
+    const tl_share_mobile = '<i class="fa-solid fa-arrow-up-right-from-square"></i>';
+    const tl_copied = `<i class="fa-solid fa-arrow-up-right-from-square"></i></i><strong>  ${(document.cookie.includes('language=ja-jp'))? 'リンクがコピーしました' : 'Copied link!' }</strong>`;
+    const tl_nvgt_text = document.cookie.includes('language=ja-jp')?'OkayuCDNで僕のファイルを見ます！':'View my file on OkayuCDN!';
 
-    try { navigator.share({
-        title:'OkayuCDN',
-        text:tl_nvgt_text,
-        url:`${domain}/content/${user}/${item}`
-    }) } catch(e) { 
+    try { 
+        navigator.share({
+            title:'OkayuCDN',
+            text:tl_nvgt_text,
+            url:`${domain}/content/${user}/${item}`
+        }); 
+    } catch(e) { 
         navigator.clipboard.writeText(`${domain}/@${user}/${item}`);
         document.getElementById(`share-content-${id}`).innerHTML = tl_copied;
         setTimeout(() => {
             document.getElementById(`share-content-${id}`).innerHTML = mobile?tl_share_mobile : tl_share;
         }, 1500);
-     }
+    }
 }
 
 function generateItem(id, item, fsize, alternate) {
@@ -77,7 +81,7 @@ function generateItem(id, item, fsize, alternate) {
         <button class="dl mobile" onclick="download('${item}')"><i class="fa-solid fa-download"></i></button>
         <button class="btn-red delete mobile" id="m-delete-item-${id}" onclick="startDeleteSequence('${item}', ${id}, false)"><i class="fa-solid fa-trash-can"></i></button>
     </div>
-</div>`
+</div>`;
 }
 
 function placeUserContent(list, size) {
@@ -86,13 +90,13 @@ function placeUserContent(list, size) {
         list.forEach(item => {
             const i = list.indexOf(item);
 
-            let fsize = "";
+            let fsize = '';
             if (size[i] > 750*1024*1024)
-                fsize = (((size[i] / 1024) / 1024) / 1024).toFixed(2) + "GB";
+                fsize = (((size[i] / 1024) / 1024) / 1024).toFixed(2) + 'GB';
             else if (size[i] > 750*1024)
-                fsize = ((size[i] / 1024) / 1024).toFixed(2) + "MB";
+                fsize = ((size[i] / 1024) / 1024).toFixed(2) + 'MB';
             else if (size[i] > 1024)
-                fsize = (size[i] / 1024).toFixed(2) + "KB";
+                fsize = (size[i] / 1024).toFixed(2) + 'KB';
             else
                 fsize = `${size[i]}B`;
 
@@ -110,6 +114,7 @@ function placeUserContent(list, size) {
         alert('Error in mybox script : ' + e);
     }
 }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function setUser(name, this_domain) {
     domain = this_domain;
     user = name;
@@ -122,6 +127,7 @@ function setUser(name, this_domain) {
     }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function dropdown(id) {
     const item = id.toString();
 
@@ -134,10 +140,12 @@ function dropdown(id) {
     }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function view(item) {
     document.location = `${domain}/view/${user}/${item}`;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function download(item) {
     document.location = `${domain}/content/${user}/${item}?bypass=true`; // must use bypass or else videos would render the watchpage
 }

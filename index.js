@@ -19,7 +19,7 @@ const { validationResult, matchedData, query, param, body, cookie, header } = re
 const { LoginGETHandler, LoginPOSTHandler, LogoutHandler, POSTPasswordChange, SignupPOSTHandler, POSTDesktopVerifyToken, POSTDesktopAuth, GETAccountPageData, POSTDisableOTP } = require('./modules/accountHandler.js')
 const { ServeContent, ServeEmbeddedContent, GenerateSafeViewPage } = require('./modules/contentServing.js');
 const { POSTUpload, POSTAnonymousUpload, POSTDesktopUpload, POSTRemoveMyBoxContent } = require('./modules/userUploadService');
-const { UtilLogRequest } = require('./modules/util.js');
+const { UtilLogRequest, UtilNewToken } = require('./modules/util.js');
 const lusca = require('lusca');
 const session = require('express-session');
 const { RegisterStart, RegisterFinish, LoginStart, LoginFinish } = require('./modules/passkey.js');
@@ -28,6 +28,11 @@ const bodyParser = require('body-parser');
 try {
     // load env variables
     require('dotenv').config({path:path.join(__dirname, ".ENV")});
+    if (!process.env.NODE_ENV) {
+        warn('dotenv', 'Failed to load .ENV file. Creating one...'); // check for dotenv success
+        fs.writeFileSync(path.join(__dirname, '.ENV'), `NODE_ENV=production\nSESSION_SECRET=${UtilNewToken()}`);
+        require('dotenv').config({path:path.join(__dirname, ".ENV")});
+    }
 
     // don't default to debug mode!
     if (!process.env.NODE_ENV) process.env.NODE_ENV = "production";
@@ -116,7 +121,6 @@ info("boot", `Thanks for using OkayuCDN! Report bugs at ${pjson.bugs.url}`);
 cache.prepareDirectories();
 if (!config.start_flags.includes("DISABLE_CACHE_CLEAN")) cache.cleanCache();
 if (!config.start_flags.includes("DISABLE_TOKEN_CLEAN")) cache.cleanTokens(); // dont clean tokens on devmode boot
-if (!process.env.NODE_ENV) warn('dotenv', 'Failed to load .ENV file. Please create one with the contents "NODE_ENV=production"! Automatically defaulting to production environment!'); // check for dotenv success
 
 // Additional Functions
 

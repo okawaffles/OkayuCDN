@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 let currentProcess = 'login';
 let next = '/account';
 if (document.location.toString().includes('?redir=')) {
@@ -152,7 +153,7 @@ $(document).ready(() => {
                 console.error(err);
                 return;
             }
-        }).fail((data) => {
+        }).fail(() => {
             $('#login-options').css('visibility', 'visible');
             $('#login_error').css('visibility', 'visible').html('Passkey is unavailable for this account.');
             $('#inputs').css('animation', 'bad-login 0.5s ease-in-out');
