@@ -421,6 +421,7 @@ button:hover {
     visibility: hidden;
     font-size: 1em;
     margin-bottom: 8px;
+    width: 100%;
 }
 
 .okayu-login .panel .password {
@@ -431,7 +432,7 @@ button:hover {
     display: flex;
     align-items: center;
     text-align: center;
-    width: 30%;
+    width: 100%;
     margin-left: 30%;
     margin-right: 30%;
     color: var(--active-primary-hover);
