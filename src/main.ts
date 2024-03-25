@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { RegisterRoutes } from './routes';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-export const { port, version } = require(join(__dirname, 'config.json'));
+export const { port, version, paths } = require(join(__dirname, 'config.json'));
 export const BASE_DIRNAME: string = __dirname;
 
 

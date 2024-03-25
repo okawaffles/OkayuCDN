@@ -16,7 +16,7 @@ export interface UserSecureData {
     } 
 }
 
-enum LanguagesAvailable {
+export enum LanguagesAvailable {
     EN_US,
     //JA_JP
 }
