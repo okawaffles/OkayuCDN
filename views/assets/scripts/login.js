@@ -67,7 +67,9 @@ $(document).ready(() => {
                 return;
             } else {
                 currentProcess = '2fa';
-                $('#login-options').css('visibility', 'visible').html('Verify 2FA');
+                $('#login-options').css('visibility', 'visible');
+                $('#login').text('Verify 2FA');
+                $('#passkey').remove();
                 $('#inputs').css('display', 'none');
                 $('#twofactor-inputs').css('display', 'flex');
             }
