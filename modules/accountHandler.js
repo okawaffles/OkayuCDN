@@ -37,7 +37,6 @@ async function LoginVerifySecure(username, raw_password) {
 
         if (userData.hashMethod == "argon2") {   
             // this might be able to be simplified but im not taking chances yet
-            console.log(userData.password, raw_password+userData.password_salt);
             return (await verify(userData.password, raw_password+userData.password_salt));
         } else {
             // use legacy password method temporarily
