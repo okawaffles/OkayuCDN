@@ -29,10 +29,13 @@ import CookieParser = require('cookie-parser');
 Router.use(CookieParser());
 
 import Session from 'express-session';
-Router.use(Session({secret:process.env.SECRET}));
+import { RegisterRequestLogger } from './util/requestinfo';
+Router.use(Session({secret:process.env.SECRET,resave:false,saveUninitialized:true}));
 
 
 
+// this handles logging requests
+RegisterRequestLogger();
 
 /* routes.ts will manage loading all routes */
 RegisterRoutes();
