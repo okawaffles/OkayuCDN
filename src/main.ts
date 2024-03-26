@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { RegisterRoutes } from './routes';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-export const { port, version, paths } = require(join(__dirname, 'config.json'));
+export const { port, version, paths, domain, announcement } = require(join(__dirname, 'config.json'));
 export const BASE_DIRNAME: string = __dirname;
 
 
@@ -30,9 +30,19 @@ Router.use(CookieParser());
 
 import Session from 'express-session';
 import { RegisterRequestLogger } from './util/requestinfo';
-Router.use(Session({secret:process.env.SECRET,resave:false,saveUninitialized:true}));
+Router.use(Session({
+    secret:process.env.SECRET,
+    resave:false,
+    saveUninitialized:true,
+    name:'okayu-session'
+}));
 
-
+import { csrf, xssProtection } from 'lusca';
+Router.use(csrf({allowlist:[
+    'http://localhost:2773',
+    'https://okayu.okawaffles.com',
+    domain
+]}), xssProtection());
 
 // this handles logging requests
 RegisterRequestLogger();

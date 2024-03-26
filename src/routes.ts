@@ -1,6 +1,7 @@
 import { Router } from './main';
 import { Request, Response } from 'express';
 import { RegisterSimpleRoutes } from './routes/simple';
+import { RegisterAPIRoutes } from './routes/api';
 
 export function RegisterRoutes() {
     // base routes don't need their own files
@@ -19,4 +20,7 @@ export function RegisterRoutes() {
 
     // simple routes (content that doesn't update much)
     RegisterSimpleRoutes();
+
+    // api routes (dynamic content for clients to request from)
+    RegisterAPIRoutes();
 }
