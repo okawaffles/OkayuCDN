@@ -1,7 +1,8 @@
-import { Router } from './main';
+import { BASE_DIRNAME, Router } from './main';
 import { Request, Response } from 'express';
 import { RegisterSimpleRoutes } from './routes/simple';
 import { RegisterAPIRoutes } from './routes/api';
+import { join } from 'node:path';
 
 export function RegisterRoutes() {
     // base routes don't need their own files
@@ -16,6 +17,9 @@ export function RegisterRoutes() {
     });
     Router.get('/korone', (req: Request, res: Response) => {
         res.render('landing/korone.ejs'); // this may need to be changed later
+    });
+    Router.get('/favicon.ico', (req: Request, res: Response) => {
+        res.sendFile(join(BASE_DIRNAME, '..', 'views', 'assets', 'images', 'favicon.ico')); // will maybe need to be changed when we move these files to root.
     });
 
     // simple routes (content that doesn't update much)

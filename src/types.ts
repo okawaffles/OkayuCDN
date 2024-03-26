@@ -3,9 +3,8 @@ export interface OTPConfig {
 }
 
 export interface UserSecureData {
-    username: string,
-    userId: number,
     password: string,
+    password_salt: string,
     passwordIsLegacy: boolean,
     two_factor: boolean,
     two_factor_data?: {

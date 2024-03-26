@@ -3,9 +3,17 @@ import { Logger } from 'okayulogger';
 import { join } from 'node:path';
 import { RegisterRoutes } from './routes';
 
+/* load various data */
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-export const { port, version, paths, domain, announcement } = require(join(__dirname, 'config.json'));
+export const { port, paths, domain, announcement } = require(join(__dirname, 'config.json'));
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+export const { version } = require(join(__dirname, '../package.json')); // maybe change later...
 export const BASE_DIRNAME: string = __dirname;
+
+// ascii art isn't necessary but i think its a nice touch
+import { readFileSync } from 'node:fs';
+const asciiart: string = readFileSync(join(__dirname, 'asciiart.txt'), 'utf-8');
+console.log(asciiart);
 
 
 const L: Logger = new Logger('main');
