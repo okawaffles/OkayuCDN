@@ -23,14 +23,14 @@
   },
   "scripts": {
     "test": "npm ci && npm install && node index.js GITHUB_ACTIONS_TEST",
-    "start": "node index.js",
+    "start": "node dist/index.js",
     "tstest": "tsc && node ./dist/main.js"
   },
   "name": "okayucdn",
   "description": "A File Upload Server based around Nekomata Okayu",
   "version": "6.0.0-dev",
   "datecode": "CDN:20240306-00",
-  "main": "index.js",
+  "main": "dist/main.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/okawaffles/OkayuCDN.git"

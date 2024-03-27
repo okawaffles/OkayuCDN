@@ -36,7 +36,7 @@ export const Router: Express = express();
 Router.set('view engine', 'ejs');
 Router.use('/assets', staticFiles(join(__dirname, '../views/assets'))); // may need to be changed
 
-import CookieParser = require('cookie-parser');
+import CookieParser from 'cookie-parser';
 Router.use(CookieParser());
 
 import Session from 'express-session';
