@@ -29,6 +29,10 @@
         if (CHOOSE_RANDOM_LOGO) document.querySelector('#logo').src = `/assets/images/${PICK_PRIDE_OR_TRANS?'logo_pride_trans':'logo_pride'}.png`;
     }
 
+    // You might be wondering why this is here. This is for when I am showing off the website to friends/family who
+    // are not accepting of LGBTQ groups, as they can get extremely toxic, and I'd like to stay away from all that.
+    if (document.cookie.includes('logo-unsafe-mode=true')) document.querySelector('#logo').src = '/assets/images/logo.png';
+
     document.getElementById('mc').onclick = function() {
         let d = document.getElementById('mm').style.display;
         document.getElementById('mm').style.display = (d=='inline-block')?'none':'inline-block';
