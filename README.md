@@ -10,6 +10,7 @@ I felt like it. I wanted to make something useful. Now my friends can upload fil
 ## Should I use it?
 > [!CAUTION]
 > Do not use OkayuCDN in a commercial environment. Some images are property of cover corp. Using these without permission could land you in some legal hot water.
+
 Sure, go ahead. It's not intended to be used as a major server and it is quite unoptimized.
 Feel free to even customize the logos and name throughout your pages. Note that you must not replace any text strings containing "Powered by OkayuCDN"
 
