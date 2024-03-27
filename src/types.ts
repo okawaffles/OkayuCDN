@@ -33,3 +33,12 @@ export interface UserModel {
     preferences: LocalUserSettings,
     SecureData?: UserSecureData
 }
+
+export enum UploadResult {
+    UPLOAD_OK,
+    UPLOAD_FAILED_UNKNOWN,
+    UPLOAD_FAILED_STORAGE,
+    UPLOAD_FAILED_DISABLED,
+    UPLOAD_FAILED_AUTHORIZATION,
+    UPLOAD_FAILED_SANITIZER
+}

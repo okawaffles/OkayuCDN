@@ -19,7 +19,7 @@ export function RegisterRoutes() {
         res.render('landing/korone.ejs'); // this may need to be changed later
     });
     Router.get('/favicon.ico', (req: Request, res: Response) => {
-        res.sendFile(join(BASE_DIRNAME, '..', 'views', 'assets', 'images', 'favicon.ico')); // will maybe need to be changed when we move these files to root.
+        res.sendFile(join(BASE_DIRNAME, '..', 'views', 'assets', 'images', 'favicon.ico'));
     });
 
     // simple routes (content that doesn't update much)
