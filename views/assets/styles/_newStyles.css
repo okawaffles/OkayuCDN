@@ -1400,3 +1400,11 @@ button:hover {
         width: fit-content;
     } */
 }
+
+/* others */
+
+.clickable-link {
+    font-size: inherit;
+    text-decoration: underline; 
+    color: var(--okayucdn-blue);
+}

@@ -15,7 +15,11 @@ export function RegisterSimpleRoutes() {
         res.render('info.ejs');
     });
 
+    // used for testing features not ready for release, or just very specific issues
     Router.get('/test', (req: Request, res: Response) => {
+        if (req.query.invokeError == '400') return res.status(400).render('err400.ejs');
+        if (req.query.invokeError == '500') return res.status(500).render('err500.ejs');
+
         res.render('test.ejs');
     });
 

@@ -25,7 +25,7 @@ export const HandleBadRequest = (req: Request, res: Response, next: CallableFunc
         validationResult(req).array().forEach(item => {
             console.log(item);
         });
-        res.status(400).send('Bad request, please modify your request and try again.');
+        res.status(400).render('err400.ejs');
         return;
     }
 
