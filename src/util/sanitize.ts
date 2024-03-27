@@ -8,10 +8,10 @@ export const ValidateContentRequest = () => [
     param('item').notEmpty().escape()
 ];
 
-export const ValidateToken = () => cookie('cookie').notEmpty().escape().isLength({min:32,max:32});
+export const ValidateToken = () => cookie('token').notEmpty().escape().isLength({min:32,max:32});
 export const ValidateHeaderToken = () => header('authorization').notEmpty().escape().isLength({min:32,max:32});
 export const ValidateLoginGET = () => [
-    query('redir').optional().escape(),
+    query('redir').optional().escape().optional(),
 ];
 export const ValidateLoginPOST = () => [
     body('username').notEmpty().escape(),
@@ -22,6 +22,9 @@ export const ValidateLoginPOST = () => [
 export const HandleBadRequest = (req: Request, res: Response, next: CallableFunction) => {
     if (!validationResult(req).isEmpty()) {
         error('sanitize', 'bad request, rejecting.');
+        validationResult(req).array().forEach(item => {
+            console.log(item);
+        });
         res.status(400).send('Bad request, please modify your request and try again.');
         return;
     }

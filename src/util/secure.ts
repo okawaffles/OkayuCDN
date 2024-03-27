@@ -1,24 +1,29 @@
 import { join } from 'node:path';
-import { DATABASE_PATH } from './paths';
+import { USER_DATABASE_PATH, TOKEN_DATABASE_PATH } from './paths';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { Request, Response } from 'express';
 import { matchedData } from 'express-validator';
 import { UserModel, UserSecureData } from '../types';
-import { randomBytes } from 'node:crypto';
-import { hash } from 'argon2';
+import { createHash, randomBytes } from 'node:crypto';
+import { hash, verify } from 'argon2';
 
-
-const USER_DATABASE_PATH: string = join(DATABASE_PATH, 'users');
-const TOKEN_DATABASE_PATH: string = join(DATABASE_PATH, 'tokens');
-
-
+/**
+ * Generate a new 32-character token.
+ * @returns a cryptographically secure 32-character hexadecimal token
+ */
 export function CreateNewToken(): string {
     return randomBytes(16).toString('hex');
 }
 
-function RegisterNewToken(user: UserModel): void {
+/**
+ * Create and save a new token to the database
+ * @param user UserModel of the user to register the token to.
+ * @returns the generated token
+ */
+export function RegisterNewToken(user: UserModel): string {
     const token: string = CreateNewToken();
     writeFileSync(join(TOKEN_DATABASE_PATH, `${token}.json`), user.username);
+    return token;
 }
 
 /**
@@ -58,8 +63,16 @@ export function GetUserFromToken(token: string): UserModel {
     return model;
 }
 
-export function VerifyUserExists(username: string): boolean {
-    return existsSync(join(USER_DATABASE_PATH, `${username}.json`));
+/**
+ * Check if a user account exists in the database.
+ * @param user the username/UserModel of the user we want to verify exists
+ * @returns true if they exist, false otherwise
+ */
+export function VerifyUserExists(user: string | UserModel): boolean {
+    if (typeof(user) == 'object')
+        return existsSync(join(USER_DATABASE_PATH, `${user.username}.json`));
+    else
+        return existsSync(join(USER_DATABASE_PATH, `${user}.json`));
 }
 
 /**
@@ -85,6 +98,12 @@ export function GetSecureData(user: UserModel): UserSecureData {
     return SecureData; 
 }
 
+/**
+ * Get a UserModel from a username. This function assumes you have already checked whether the user exists in the database.
+ * @param username the username of the UserModel we want to get
+ * @param addSecureData add secure data to the UserModel when returned
+ * @returns UserModel of the user
+ */
 export function GetUserModel(username: string, addSecureData: boolean = false): UserModel {
     const userData = JSON.parse(readFileSync(join(USER_DATABASE_PATH, `${username}.json`), 'utf-8'));
 
@@ -109,32 +128,56 @@ export function GetUserModel(username: string, addSecureData: boolean = false): 
 }
 
 
-async function UpgradeUserPassword(user: UserModel, secureData: UserSecureData, raw_password: string) {
-    // TODO: add check to ensure password is correct
+/**
+ * This function should and will only be called when a user is upgrading from a pre-6.0 password which was
+ * encrypted with sha256 as opposed to argon2. The passwords are then re-encrypted and replaced with an argon2 hash.
+ * @param user UserModel of the user
+ * @param secureData UserSecureData of the user
+ * @param raw_password the unencrypted password of the user
+ * @returns true if password update was successful, false if the password is incorrect (or otherwise)
+ */
+async function UpgradeUserPassword(user: UserModel, secureData: UserSecureData, raw_password: string): Promise<boolean> {
+    return new Promise((resolve: CallableFunction) => {
+        const passwordInSHA256: string = createHash('sha256').update(raw_password).digest('hex');
+        if (passwordInSHA256 != secureData.password) {
+            resolve(false);
+            return;
+        }
 
-    const newPasswordSalt: string = CreateNewToken(); 
-    const newHashedPassword = await hash(raw_password + newPasswordSalt);
+        // re-encrypt the password
+        const newPasswordSalt: string = CreateNewToken(); 
 
-    secureData.password = newHashedPassword;
-    secureData.password_salt = newPasswordSalt;
-    secureData.passwordIsLegacy = false;
-    
-    user.SecureData = secureData;
-
-    writeFileSync(join(USER_DATABASE_PATH, `${user.username}.json`), JSON.stringify(user), 'utf-8');
+        // this nesting is quite ugly, but it seems as if this is the only way
+        // eslint will let me to it. PR if you can fix this :3
+        hash(raw_password + newPasswordSalt).then((newHashedPassword) => {
+            secureData.password = newHashedPassword;
+            secureData.password_salt = newPasswordSalt;
+            secureData.passwordIsLegacy = false;
+            
+            user.SecureData = secureData;
+            
+            writeFileSync(join(USER_DATABASE_PATH, `${user.username}.json`), JSON.stringify(user), 'utf-8');
+            resolve(true);
+        });
+    });
 }
 
-
-export async function VerifyLoginCredentials(username: string, password: string): boolean {
+/**
+ * Check whether provided login credentials are correct. Also upgrades pre-6.0 passwords to argon2 (and switches to the new UserModel data structure if so).
+ * @param username provided username
+ * @param password provided password
+ * @returns true if the credentials are correct, false otherwise
+ */
+export async function VerifyLoginCredentials(username: string, password: string): Promise<boolean> {
     if (!VerifyUserExists(username)) return false;
 
     const user: UserModel = GetUserModel(username, true);
 
     if (user.SecureData?.passwordIsLegacy) {
-        UpgradeUserPassword(user, user.SecureData, password);
+        return UpgradeUserPassword(user, user.SecureData, password);
     }
 
-    // TODO: finish argon2 checking
+    return await verify(<string> user.SecureData?.password, password + user.SecureData?.password_salt);
 }
 
 

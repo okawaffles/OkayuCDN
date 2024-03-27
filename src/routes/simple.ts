@@ -15,12 +15,16 @@ export function RegisterSimpleRoutes() {
         res.render('info.ejs');
     });
 
+    Router.get('/test', (req: Request, res: Response) => {
+        res.render('test.ejs');
+    });
+
     Router.get('/login', ValidateLoginGET(), HandleBadRequest, (req: Request, res: Response) => {
         res.render('login.ejs');
     });
 
     Router.get('/manage/upload', (req: Request, res: Response) => res.redirect('/upload'));
-    Router.get('/upload', PrefersLogin, ValidateToken(), HandleBadRequest, (req: Request, res: Response) => {
-        res.render('upload.ejs');
+    Router.get('/upload', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
+        res.render('upload.ejs', {USERNAME: 'FakeUser', isBT: 'true', premium: true, datecode: 'ts-0'}); // TODO: replace these options by using an API call
     });
 }

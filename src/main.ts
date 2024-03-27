@@ -6,9 +6,12 @@ import { RegisterRoutes } from './routes';
 /* load various data */
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 export const { port, paths, domain, announcement } = require(join(__dirname, 'config.json'));
+export const BASE_DIRNAME: string = __dirname;
+import { PreparePaths } from './util/paths';
+PreparePaths(); // called to prepare exported paths
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 export const { version } = require(join(__dirname, '../package.json')); // maybe change later...
-export const BASE_DIRNAME: string = __dirname;
 
 // ascii art isn't necessary but i think its a nice touch
 import { readFileSync } from 'node:fs';
@@ -51,6 +54,10 @@ Router.use(csrf({allowlist:[
     'https://okayu.okawaffles.com',
     domain
 ]}), xssProtection());
+
+import {urlencoded} from 'body-parser';
+Router.use(urlencoded({extended:true}));
+
 
 // this handles logging requests
 RegisterRequestLogger();

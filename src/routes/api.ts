@@ -1,5 +1,8 @@
 import { Request, Response } from 'express'; 
 import { Router, announcement, version } from '../main';
+import { HandleBadRequest, ValidateLoginPOST } from '../util/sanitize';
+import { matchedData } from 'express-validator';
+import { GetUserModel, RegisterNewToken, VerifyLoginCredentials } from '../util/secure';
 
 export function RegisterAPIRoutes() {
     /**
@@ -23,10 +26,17 @@ export function RegisterAPIRoutes() {
 
 
     /* ACCOUNTING */
-    /**
-     * Placeholder that makes the server send a valid response to login POSTS
-     */
-    Router.post('/api/login', (req: Request, res: Response) => {
-        res.status(501).json({status:501, reason:'Not implemented.'});
+    // Login page handler for first step
+    Router.post('/api/login', ValidateLoginPOST(), HandleBadRequest, (req: Request, res: Response) => {
+        const data = matchedData(req);
+
+        if (!VerifyLoginCredentials(data.username, data.password)) {
+            return res.status(401).json({status:401,reason:'Invalid login credentials'});
+        }
+
+        // TODO: Reimpliment 2FA checks
+
+        const authToken: string = RegisterNewToken(GetUserModel(data.username));
+        res.json({result:200,uses2FA:false,token:authToken});
     });
 }
