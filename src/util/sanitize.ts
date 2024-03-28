@@ -18,6 +18,10 @@ export const ValidateLoginPOST = () => [
     body('password').notEmpty().escape()
 ];
 
+export const ValidateUploadPOST = () => [
+    body('filename').notEmpty().escape().isLength({min:1,max:50})
+];
+
 
 export const HandleBadRequest = (req: Request, res: Response, next: CallableFunction) => {
     if (!validationResult(req).isEmpty()) {

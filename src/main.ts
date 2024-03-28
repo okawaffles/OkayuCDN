@@ -5,17 +5,17 @@ import { RegisterRoutes } from './routes';
 
 /* load various data */
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-export const { port, paths, domain, announcement } = require(join(__dirname, 'config.json'));
+export const { port, paths, domain, announcement } = require(join(__dirname, '..', 'config.json'));
 export const BASE_DIRNAME: string = __dirname;
 import { PreparePaths } from './util/paths';
 PreparePaths(); // called to prepare exported paths
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-export const { version } = require(join(__dirname, '../package.json')); // maybe change later...
+export const { version } = require(join(__dirname, '..', 'package.json')); // maybe change later...
 
 // ascii art isn't necessary but i think its a nice touch
 import { readFileSync } from 'node:fs';
-const asciiart: string = readFileSync(join(__dirname, 'asciiart.txt'), 'utf-8');
+const asciiart: string = readFileSync(join(__dirname, '..', 'asciiart.txt'), 'utf-8');
 console.log(asciiart);
 
 
@@ -34,7 +34,7 @@ if (!process.env.SECRET) process.env.SECRET = 'abcdef'; // replace this later.
 export const Router: Express = express();
 
 Router.set('view engine', 'ejs');
-Router.use('/assets', staticFiles(join(__dirname, '../views/assets'))); // may need to be changed
+Router.use('/assets', staticFiles(join(__dirname, '..', 'views' , 'assets'))); // may need to be changed
 
 import CookieParser from 'cookie-parser';
 Router.use(CookieParser());

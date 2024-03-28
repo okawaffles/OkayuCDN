@@ -1,8 +1,9 @@
 import { Request, Response } from 'express'; 
 import { Router, announcement, version } from '../main';
-import { HandleBadRequest, ValidateLoginPOST } from '../util/sanitize';
+import { HandleBadRequest, ValidateLoginPOST, ValidateUploadPOST } from '../util/sanitize';
 import { matchedData } from 'express-validator';
 import { GetUserModel, RegisterNewToken, VerifyLoginCredentials } from '../util/secure';
+import { MulterUploader } from '../api/upload';
 
 export function RegisterAPIRoutes() {
     /**
@@ -25,6 +26,7 @@ export function RegisterAPIRoutes() {
     });
 
 
+
     /* ACCOUNTING */
     // Login page handler for first step
     Router.post('/api/login', ValidateLoginPOST(), HandleBadRequest, (req: Request, res: Response) => {
@@ -38,5 +40,12 @@ export function RegisterAPIRoutes() {
 
         const authToken: string = RegisterNewToken(GetUserModel(data.username));
         res.json({result:200,uses2FA:false,token:authToken});
+    });
+
+
+
+    /* UPLOADING */
+    Router.post('/api/upload', ValidateUploadPOST(), HandleBadRequest, MulterUploader.single('file'), (req: Request, res: Response) => {
+        res.send({status:200});
     });
 }

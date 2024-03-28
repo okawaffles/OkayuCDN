@@ -1,6 +1,7 @@
 import { Request } from 'express';
 import { UploadResult } from '../types';
 import multer, { diskStorage } from 'multer';
+import { UPLOADS_TEMP_PATH } from '../util/paths';
 
 export const UploadResults = {
     'okawaffles':UploadResult.UPLOAD_OK
@@ -9,7 +10,12 @@ export const UploadResults = {
 
 
 const storage = diskStorage({
-    destination: (req: Request, file, cb)
+    destination: (req: Request, file: Express.Multer.File, callback: CallableFunction) => {
+        callback(null, UPLOADS_TEMP_PATH);
+    },
+    filename: (req: Request, file: Express.Multer.File, callback: CallableFunction) => {
+        callback(null, file.originalname);
+    }
 });
 
-const upload = multer({ storage: });
+export const MulterUploader = multer({ storage });
