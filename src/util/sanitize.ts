@@ -14,7 +14,7 @@ export const ValidateLoginGET = () => [
     query('redir').optional().escape().optional(),
 ];
 export const ValidateLoginPOST = () => [
-    body('username').notEmpty().escape(),
+    body('username').notEmpty().escape().isAlphanumeric('en-US'),
     body('password').notEmpty().escape()
 ];
 
@@ -22,6 +22,10 @@ export const ValidateUploadPOST = () => [
     body('filename').notEmpty().escape().isLength({min:1,max:50})
 ];
 
+export const ValidateOTP = () => [
+    body('username').notEmpty().escape().isAlphanumeric('en-US'),
+    body('code').notEmpty().escape().isNumeric().isLength({min:6,max:6})
+];
 
 export const HandleBadRequest = (req: Request, res: Response, next: CallableFunction) => {
     if (!validationResult(req).isEmpty()) {

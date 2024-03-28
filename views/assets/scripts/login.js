@@ -12,8 +12,8 @@ $(document).ready(() => {
             $('#twofactor-code').prop('disabled', true);
             $('#login_error').css('visibility', 'hidden');
 
-            $.post('/api/2fa/verify', {username:$('#username')[0].value, userToken:$('#twofactor-code')[0].value}, (data) => {
-                if (data.result == 200) {
+            $.post('/api/login/otp', {username:$('#username')[0].value, userToken:$('#twofactor-code')[0].value}, (data) => {
+                if (data.status == 200) {
                     document.cookie = `token=${data.token};`;
                     document.location = next;
                     return;
@@ -47,7 +47,9 @@ $(document).ready(() => {
 
         // send login post
         $.post('/api/login', {username:$('#username')[0].value, password:$('#password')[0].value}, (data) => {
-            if (data.result != 200) {
+            // 200 -> successful login, will have auth token
+            // 202 -> successful login, but requires 2fa code
+            if (data.status != 200 || data.status != 202) {
                 // login failed, show error and let user try again
                 $('#login-options').css('visibility', 'visible');
                 $('#login_error').css('visibility', 'visible').html('Please check your username and password.');
@@ -96,6 +98,10 @@ $(document).ready(() => {
 
     // passkey button
     $('#passkey').on('click', async () => {
+        // temporary
+        $('#login_error').css('visibility', 'visible').html('Passkey authentication is not yet available.');
+        return;
+
         $('#login-options').css('visibility', 'hidden');
         $('#login_error').css('visibility', 'hidden');
         $('#username').prop('disabled', true);

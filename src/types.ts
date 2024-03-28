@@ -1,5 +1,5 @@
 export interface OTPConfig {
-    data: string
+    secret: string
 }
 
 export interface UserSecureData {
@@ -7,7 +7,7 @@ export interface UserSecureData {
     password_salt: string,
     passwordIsLegacy: boolean,
     two_factor: boolean,
-    two_factor_data?: {
+    twoFactorData?: {
         usesOTP: boolean,
         usesPasskey: boolean,
         OTPConfig?: OTPConfig,
