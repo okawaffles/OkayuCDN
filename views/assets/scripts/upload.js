@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
-var browse = document.getElementsByClassName('uploadfile')[0];
-var selectDialog = document.getElementById('uploaded');
-var progressUpload = document.getElementById('progressUpload');
+var browse;
+var selectDialog;
+var progressUpload;
 var progress;
 
 let allowDropping = true;
@@ -202,6 +202,25 @@ function drop(ev) {
     console.log(selectDialog.files[0].name);
     $('#shownfilename').text(selectDialog.files[0].name);
 }
+
+
+// get username on load...
+$(document).ready(() => {
+    browse = document.getElementsByClassName('uploadfile')[0];
+    selectDialog = document.getElementById('uploaded');
+    progressUpload = document.getElementById('progressUpload');
+
+    $.getJSON('/api/whoami', (result) => {
+        if (result.status == 200) {
+            assignUserName(result.username, result.bugTester, result.increasedStorage);
+        } else {
+            document.location = '/login?redir=/upload';
+        }
+    }).error(() => {
+        
+    });
+});
+
 
 // Chunking system
 

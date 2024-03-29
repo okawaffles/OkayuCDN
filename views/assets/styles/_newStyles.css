@@ -988,6 +988,7 @@ button:hover {
     margin-bottom: 35px;
 }
 #newStorageAmount {
+    visibility: hidden;
     color: white;
     font-size: 1.5em;
     background-color: #121518;
@@ -1389,7 +1390,7 @@ button:hover {
               transform: scale(2); } }
 
 /* landing page */
-/** Chrominum */
+/* Chrominum */
 @media screen and (-webkit-min-device-pixel-ratio: 0) and (min-resolution: 0.001dpcm) {
     #body_landing {
         width: 100%;

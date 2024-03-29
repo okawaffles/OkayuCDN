@@ -1,10 +1,12 @@
 import { Request } from 'express';
-import { UploadResult } from '../types';
 import multer, { diskStorage } from 'multer';
 import { UPLOADS_TEMP_PATH } from '../util/paths';
+import { UploadResult } from '../types';
 
-export const UploadResults = {
-    'okawaffles':UploadResult.UPLOAD_OK
+// someone help me figure out a type for this PLEASE
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const UploadResults: any = {
+    'test':UploadResult.UPLOAD_OK
 };
 
 

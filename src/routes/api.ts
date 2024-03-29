@@ -1,9 +1,11 @@
 import { Request, Response } from 'express'; 
 import { Router, announcement, version } from '../main';
-import { HandleBadRequest, ValidateLoginPOST, ValidateUploadPOST } from '../util/sanitize';
+import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateUploadPOST } from '../util/sanitize';
 import { matchedData } from 'express-validator';
-import { GetUserModel, RegisterNewToken, VerifyLoginCredentials } from '../util/secure';
-import { MulterUploader } from '../api/upload';
+import { GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewToken, VerifyLoginCredentials } from '../util/secure';
+import { MulterUploader, UploadResults } from '../api/upload';
+import { StorageData, UploadResult } from '../types';
+import { GetStorageInfo } from '../api/content';
 
 export function RegisterAPIRoutes() {
     /**
@@ -42,10 +44,31 @@ export function RegisterAPIRoutes() {
         res.json({result:200,uses2FA:false,token:authToken});
     });
 
+    // pages will now call this route to authenticate and get a username from simply a token
+    Router.get('/api/whoami', ValidateToken(), HandleBadRequest, (req: Request, res: Response) => {
+        const data = matchedData(req);
+
+        const user = GetUserFromToken(data.token);
+
+        res.json({result: 200, username: user.username, extendedStorage: user.hasLargeStorage });
+    });
 
 
-    /* UPLOADING */
-    Router.post('/api/upload', ValidateUploadPOST(), HandleBadRequest, MulterUploader.single('file'), (req: Request, res: Response) => {
+
+    /* CONTENT */
+    Router.post('/api/upload', ValidateUploadPOST(), PrefersLogin, HandleBadRequest, MulterUploader.single('file'), (req: Request, res: Response) => {
+        const data = matchedData(req);
+        UploadResults[GetUserFromToken(data.token).username] = UploadResult.UPLOAD_OK;
         res.send({status:200});
+    });
+
+    Router.get('/api/storage', ValidateToken(), HandleBadRequest, (req: Request, res: Response) => {
+        const data = matchedData(req);
+
+        const user = GetUserFromToken(data.token);
+
+        const storage: StorageData = GetStorageInfo(user);
+
+        res.json(storage);
     });
 }

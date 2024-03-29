@@ -29,6 +29,6 @@ export function RegisterSimpleRoutes() {
 
     Router.get('/manage/upload', (req: Request, res: Response) => res.redirect('/upload'));
     Router.get('/upload', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
-        res.render('upload.ejs', {USERNAME: 'FakeUser', isBT: 'true', premium: true, datecode: 'ts-0'}); // TODO: replace these options by using an API call
+        res.render('upload.ejs'); // TODO: replace these options by using an API call
     });
 }

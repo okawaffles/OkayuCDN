@@ -42,3 +42,14 @@ export enum UploadResult {
     UPLOAD_FAILED_AUTHORIZATION,
     UPLOAD_FAILED_SANITIZER
 }
+
+export interface ContentItem {
+    name: string,
+    size: number
+}
+
+export interface StorageData {
+    used: number,
+    total: number,
+    content: Array<ContentItem>
+}
