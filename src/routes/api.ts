@@ -6,6 +6,7 @@ import { GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewToken, VerifyL
 import { MulterUploader, UploadResults } from '../api/upload';
 import { StorageData, UploadResult } from '../types';
 import { GetStorageInfo } from '../api/content';
+import { UserModel } from '../types';
 
 export function RegisterAPIRoutes() {
     /**
@@ -34,31 +35,35 @@ export function RegisterAPIRoutes() {
     Router.post('/api/login', ValidateLoginPOST(), HandleBadRequest, (req: Request, res: Response) => {
         const data = matchedData(req);
 
-        if (!VerifyLoginCredentials(data.username, data.password)) {
+        // validation of login credentials...
+        if (!VerifyLoginCredentials(data.username, data.password)) 
             return res.status(401).json({status:401,reason:'Invalid login credentials'});
-        }
+     
+        const user: UserModel = GetUserModel(data.username, true);
 
-        // TODO: Reimpliment 2FA checks
+        // don't register a token for 2fa users
+        if (user.SecureData.two_factor) return res.json({status:202,uses2FA:true});
 
+        // if the user doesn't use 2fa
+        const authToken: string = RegisterNewToken(user);
+        res.json({status:200,uses2FA:false,token:authToken});
+    });
+    // OTP-based two-factor auth
+    Router.post('/api/login/otp', ValidateOTP(), HandleBadRequest, (req: Request, res: Response) => {
+        const data = matchedData(req);
+
+        if (!VerifyOTPCode(data.code))
+            return res.status(401).json({status:401,reason:'Bad OTP code'});
+
+        // register and send the user the token if correct
         const authToken: string = RegisterNewToken(GetUserModel(data.username));
         res.json({result:200,uses2FA:false,token:authToken});
     });
 
-    // pages will now call this route to authenticate and get a username from simply a token
-    Router.get('/api/whoami', ValidateToken(), HandleBadRequest, (req: Request, res: Response) => {
-        const data = matchedData(req);
-
-        const user = GetUserFromToken(data.token);
-
-        res.json({result: 200, username: user.username, extendedStorage: user.hasLargeStorage });
-    });
 
 
-
-    /* CONTENT */
-    Router.post('/api/upload', ValidateUploadPOST(), PrefersLogin, HandleBadRequest, MulterUploader.single('file'), (req: Request, res: Response) => {
-        const data = matchedData(req);
-        UploadResults[GetUserFromToken(data.token).username] = UploadResult.UPLOAD_OK;
+    /* UPLOADING */
+    Router.post('/api/upload', ValidateUploadPOST(), HandleBadRequest, MulterUploader.single('file'), (req: Request, res: Response) => {
         res.send({status:200});
     });
 

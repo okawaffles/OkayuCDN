@@ -17,6 +17,7 @@ const TokenCache: Cache = {
 
 const L: Logger = new Logger('secure'); 
 
+import { totp } from 'speakeasy';
 
 /**
  * Generate a new 32-character token.
@@ -201,6 +202,22 @@ export async function VerifyLoginCredentials(username: string, password: string)
     }
 
     return await verify(<string> user.SecureData?.password, password + user.SecureData?.password_salt);
+}
+
+
+/**
+ * Validate whether a user's two-factor authentication code is correct.
+ * @param username username to get UserModel from
+ * @param otp the one-time 2FA code from the auth. app
+ */
+export function VerifyOTPCode(username: string, otp: number): boolean {
+    const user: UserModel = GetUserModel(username, true);
+
+    return totp.verify({
+        secret: user.SecureData.twoFactorData.OTPConfig.secret,
+        encoding: 'base32',
+        token: otp
+    });
 }
 
 
