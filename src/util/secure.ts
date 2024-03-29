@@ -116,7 +116,7 @@ export function GetSecureData(user: UserModel): UserSecureData {
         password_salt: userData.password_salt || undefined, // not present if not using argon2
         passwordIsLegacy: (userData.hash_method != 'argon2'),
         two_factor: userData.uses2FA,
-        two_factor_data: userData.tfa_config || undefined // not present if not using 2fa
+        twoFactorData: userData.tfa_config || undefined // not present if not using 2fa
     };
 
     return SecureData; 
@@ -212,6 +212,8 @@ export async function VerifyLoginCredentials(username: string, password: string)
  */
 export function VerifyOTPCode(username: string, otp: number): boolean {
     const user: UserModel = GetUserModel(username, true);
+
+    
 
     return totp.verify({
         secret: user.SecureData.twoFactorData.OTPConfig.secret,

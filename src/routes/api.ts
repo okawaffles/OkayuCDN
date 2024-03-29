@@ -1,12 +1,11 @@
 import { Request, Response } from 'express'; 
 import { Router, announcement, version } from '../main';
-import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateUploadPOST } from '../util/sanitize';
+import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateUploadPOST, ValidateOTP } from '../util/sanitize';
 import { matchedData } from 'express-validator';
-import { GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewToken, VerifyLoginCredentials } from '../util/secure';
-import { MulterUploader, UploadResults } from '../api/upload';
-import { StorageData, UploadResult } from '../types';
+import { GetUserFromToken, GetUserModel, RegisterNewToken, VerifyLoginCredentials, VerifyOTPCode, VerifyUserExists } from '../util/secure';
+import { MulterUploader } from '../api/upload';
+import { StorageData, UserModel } from '../types';
 import { GetStorageInfo } from '../api/content';
-import { UserModel } from '../types';
 
 export function RegisterAPIRoutes() {
     /**
@@ -52,11 +51,15 @@ export function RegisterAPIRoutes() {
     Router.post('/api/login/otp', ValidateOTP(), HandleBadRequest, (req: Request, res: Response) => {
         const data = matchedData(req);
 
-        if (!VerifyOTPCode(data.code))
+        if (!VerifyUserExists(data.username)) return res.status(400).end();
+        
+        const user = GetUserModel(data.username);
+
+        if (!VerifyOTPCode(user.username, data.code))
             return res.status(401).json({status:401,reason:'Bad OTP code'});
 
         // register and send the user the token if correct
-        const authToken: string = RegisterNewToken(GetUserModel(data.username));
+        const authToken: string = RegisterNewToken(user);
         res.json({result:200,uses2FA:false,token:authToken});
     });
 

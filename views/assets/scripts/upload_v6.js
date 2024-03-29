@@ -1,13 +1,10 @@
 /* eslint-disable no-undef */
 
-
-let username = '';
-
 // get identity on load
 $(document).ready(() => {
     $.getJSON('/api/whoami', (result) => {
         if (result.result == 200) {
-            username = result.username;
+            //username = result.username;
             start();
         } else {
             console.error('Did not recieve status 200, whoami failed.');
