@@ -6,6 +6,17 @@ import { matchedData } from 'express-validator';
 import { UserModel, UserSecureData } from '../types';
 import { createHash, randomBytes } from 'node:crypto';
 import { hash, verify } from 'argon2';
+import { Logger } from 'okayulogger';
+
+interface Cache {
+    [key: string]: string;
+}
+const TokenCache: Cache = {
+
+};
+
+const L: Logger = new Logger('secure'); 
+
 
 /**
  * Generate a new 32-character token.
@@ -42,6 +53,15 @@ function CheckToken(token: string): boolean {
  * @returns UserModel of the corresponding user
  */
 export function GetUserFromToken(token: string): UserModel {
+    // this allows us to save some potentially slow disk reads
+    // by caching results in memory
+    if (typeof TokenCache[token] == 'string') {
+        L.info(`Token is cached as ${TokenCache[token]}, skipping disk read.`);
+        return GetUserModel(TokenCache[token]);
+    }
+
+    L.info('Token is not cached, reading from disk.');
+
     const tokenUsername: string = readFileSync(join(TOKEN_DATABASE_PATH, `${token}.json`), 'utf-8');
     const userData = JSON.parse(readFileSync(join(USER_DATABASE_PATH, `${tokenUsername}.json`), 'utf-8'));
     
@@ -59,6 +79,9 @@ export function GetUserFromToken(token: string): UserModel {
             language: 0
         }
     };
+
+    // save to the cache
+    TokenCache[token] = tokenUsername;
 
     return model;
 }
