@@ -2,18 +2,20 @@
 
 // get identity on load
 $(document).ready(() => {
-    $.getJSON('/api/whoami', (result) => {
-        if (result.result == 200) {
-            //username = result.username;
-            start();
-        } else {
-            console.error('Did not recieve status 200, whoami failed.');
-            document.location = '/login?redir=/upload';
-        }
-    }).fail((err) => {
-        console.err(err);
-        document.location = '/login?redir=/upload';
-    });
+    // $.getJSON('/api/whoami', (result) => {
+    //     if (result.result == 200) {
+    //         //username = result.username;
+    //         start();
+    //     } else {
+    //         console.error('Did not recieve status 200, whoami failed.');
+    //         document.location = '/login?redir=/upload';
+    //     }
+    // }).fail((err) => {
+    //     console.error(err);
+    //     document.location = '/login?redir=/upload';
+    // });
+    
+    start();
 });
 
 /**

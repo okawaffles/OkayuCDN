@@ -66,9 +66,8 @@ export function GetUserFromToken(token: string): UserModel {
     const tokenUsername: string = readFileSync(join(TOKEN_DATABASE_PATH, `${token}.json`), 'utf-8');
     const userData = JSON.parse(readFileSync(join(USER_DATABASE_PATH, `${tokenUsername}.json`), 'utf-8'));
     
-    if (userData.UserModel) {
-        return userData as UserModel;
-    }
+    // simple way to check if it's already stored as a new usermodel
+    if (userData.storageAmount != undefined) return userData as UserModel;
 
     const model: UserModel = {
         username: tokenUsername,
@@ -211,14 +210,16 @@ export async function VerifyLoginCredentials(username: string, password: string)
  * @param otp the one-time 2FA code from the auth. app
  */
 export function VerifyOTPCode(username: string, otp: number): boolean {
+    if (!VerifyUserExists(username)) return false;
     const user: UserModel = GetUserModel(username, true);
 
-    
+    // hypothetically if all checks pass you should not get here without a valid usermodel
+    // but it should be handled fine if you do
 
     return totp.verify({
-        secret: user.SecureData.twoFactorData.OTPConfig.secret,
+        secret: <string> user.SecureData?.twoFactorData?.OTPConfig?.secret,
         encoding: 'base32',
-        token: otp
+        token: otp.toString()
     });
 }
 

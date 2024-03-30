@@ -1,4 +1,6 @@
 /* eslint-disable no-undef */
+/* eslint-disable no-unreachable */
+
 let currentProcess = 'login';
 let next = '/account';
 if (document.location.toString().includes('?redir=')) {
@@ -49,10 +51,10 @@ $(document).ready(() => {
         $.post('/api/login', {username:$('#username')[0].value, password:$('#password')[0].value}, (data) => {
             // 200 -> successful login, will have auth token
             // 202 -> successful login, but requires 2fa code
-            if (data.status != 200 || data.status != 202) {
+            if (data.status != 200 && data.status != 202) {
                 // login failed, show error and let user try again
                 $('#login-options').css('visibility', 'visible');
-                $('#login_error').css('visibility', 'visible').html('Please check your username and password.');
+                $('#login_error').css('visibility', 'visible').html('Please check your username and password. (err: bad credentials)');
                 $('#username').prop('disabled', false);
                 $('#password').prop('disabled', false)[0].value = ''; // un-disable AND clear it
 
@@ -82,7 +84,7 @@ $(document).ready(() => {
             if ($('#username')[0].value == '' || $('#password')[0].value == '')
                 $('#login_error').css('visibility', 'visible').html('Please fill out both fields.');
             else
-                $('#login_error').css('visibility', 'visible').html('Please check your username and password.');
+                $('#login_error').css('visibility', 'visible').html('Please check your username and password. (err: bad response)');
 
             $('#username').prop('disabled', false);
             $('#password').prop('disabled', false)[0].value = ''; // un-disable AND clear it
@@ -98,7 +100,7 @@ $(document).ready(() => {
 
     // passkey button
     $('#passkey').on('click', async () => {
-        // temporary
+        // temporary as passkeys don't really work yet  
         $('#login_error').css('visibility', 'visible').html('Passkey authentication is not yet available.');
         return;
 

@@ -17,7 +17,7 @@ export function GetStorageInfo(user: UserModel): StorageData {
         usedStorage += size;
         content.push({ name, size });
     });
-
+    
     const storage: StorageData = {
         used: usedStorage,
         total: user.storageAmount,

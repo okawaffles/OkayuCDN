@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { Router, announcement, version } from '../main';
 import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateUploadPOST, ValidateOTP } from '../util/sanitize';
 import { matchedData } from 'express-validator';
-import { GetUserFromToken, GetUserModel, RegisterNewToken, VerifyLoginCredentials, VerifyOTPCode, VerifyUserExists } from '../util/secure';
+import { GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewToken, VerifyLoginCredentials, VerifyOTPCode, VerifyUserExists } from '../util/secure';
 import { MulterUploader } from '../api/upload';
 import { StorageData, UserModel } from '../types';
 import { GetStorageInfo } from '../api/content';
@@ -41,7 +41,7 @@ export function RegisterAPIRoutes() {
         const user: UserModel = GetUserModel(data.username, true);
 
         // don't register a token for 2fa users
-        if (user.SecureData.two_factor) return res.json({status:202,uses2FA:true});
+        if (user.SecureData?.two_factor) return res.json({status:202,uses2FA:true});
 
         // if the user doesn't use 2fa
         const authToken: string = RegisterNewToken(user);
@@ -61,6 +61,17 @@ export function RegisterAPIRoutes() {
         // register and send the user the token if correct
         const authToken: string = RegisterNewToken(user);
         res.json({result:200,uses2FA:false,token:authToken});
+    });
+    // pages use this to igure out who they are based on the login token
+    Router.get('/api/whoami', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
+        const data = matchedData(req);
+        
+        try {
+            const username: string = GetUserFromToken(data.token).username;
+            res.json({result:200,username});
+        } catch (err) {
+            res.json({result:400,reason:'Bad request.'});
+        }
     });
 
 
