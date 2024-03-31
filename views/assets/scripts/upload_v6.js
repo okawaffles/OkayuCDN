@@ -67,4 +67,69 @@ function start() {
         alert('Error in upload_v6.js.\n\nIf you are on desktop, please open your browser console and report the bug at https://github.com/okawaffles/OkayuCDN');
         console.error('HELLO BUG REPORTER, YOU WANT THIS -> ' + err);
     });
+
+    // file picker!
+    $('#uploadInterface').on('click', FilePickerClicked);
+    $('#uploaded').on('change', UpdateFileName);
+
+    // upload button!
+    $('#uploadButton').on('click', StartFileUpload);
+}
+
+
+
+function FilePickerClicked() {
+    $('#uploaded')[0].click();
+}
+
+function UpdateFileName() {
+    $('#filename').text($('#uploaded')[0].files[0].name);
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function FPDrag(ev) { ev.preventDefault(); }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function FPDrop(ev) {
+    ev.preventDefault();
+
+    const temporaryDataTransfer = new DataTransfer();
+    temporaryDataTransfer.items.add(ev.dataTransfer.files[0]);
+    $('#uploaded')[0].files = temporaryDataTransfer.files;
+    UpdateFileName();
+}
+
+function StartFileUpload() {
+    const regex = new RegExp('[A-Za-z0-9_]');
+    if (!regex.test($('#filename_input')[0].value)) return alert('You may only use alphanumeric characters and underscores in your file names, as well as only up to 25 characters.');
+
+    $('#uploadInterface').css('display', 'none');
+    $('#filename_input').css('display', 'none');
+    $('#uploadButton').css('display', 'none');
+
+    // start chunked upload
+    $('#uploaded').on('change', async (event) => {
+        const file = event.target.files[0];
+        const chunk_size = 1024*1024*5; // 5MB chunks
+        const total_chunks = Math.ceil(file.size / chunk_size);
+        let start_byte = 0;
+        for (let i = 0; i <= total_chunks; i++) {
+            const end_byte = Math.min(start_byte + chunk_size, file.size);
+            const chunk = file.slice(start_byte, end_byte);
+            await sendChunk(chunk, total_chunks, i);
+        }
+    });
+}
+
+async function sendChunk(chunk, total_chunks, current_chunk) {
+    const formData = new FormData();
+    formData.append('file', chunk);
+    formData.append('totalChunks', total_chunks);
+    formData.append('currentChunk', current_chunk);
+    const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+    });
+    if (!response.ok) {
+        throw new Error(`chunk ${current_chunk} of ${total_chunks} failed.`);
+    }
 }

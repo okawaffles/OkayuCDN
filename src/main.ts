@@ -26,8 +26,9 @@ L.warn('The TypeScript rewrite is UNFINISHED! You should not use the typescript 
 
 /* load env variables */
 import {config} from 'dotenv';
-config({path:join(__dirname, '.ENV')});
-if (!process.env.SECRET) process.env.SECRET = 'abcdef'; // replace this later.
+import { CreateNewToken } from './util/secure';
+config({path:join(__dirname, '..', '.ENV')});
+if (!process.env.SESSION_SECRET) process.env.SESSION_SECRET = CreateNewToken();
 
 
 /* configure the server */
@@ -42,7 +43,7 @@ Router.use(CookieParser());
 import Session from 'express-session';
 import { RegisterRequestLogger } from './util/requestinfo';
 Router.use(Session({
-    secret:process.env.SECRET,
+    secret:process.env.SESSION_SECRET,
     resave:false,
     saveUninitialized:true,
     name:'okayu-session'

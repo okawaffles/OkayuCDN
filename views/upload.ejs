@@ -52,11 +52,11 @@
             </div>
                 
             <div id="hider" style="display: none">
-                <div class="uploadfile" ondragover="drag(event);" ondrop="drop(event);">
+                <div class="uploadfile" id="uploadInterface" ondragover="FPDrag(event);" ondrop="FPDrop(event);">
                     <div class="container-upload-first" id="container-upload-first">
                         <input type="file" class="chooseFiles" id="uploaded" required />
-                        <i class="fa-solid fa-arrow-up-from-bracket"></i><br>
-                        <p id="shownfilename">Click or drag and drop to upload</p>
+                        <i class="fa-solid fa-arrow-up-from-bracket"></i><br><br>
+                        <p id="filename">Click or drag and drop to upload</p>
                     </div>
                     <div class="container-upload-second" id="container-upload-second">
                         <p>Uploading...</p>
@@ -64,11 +64,11 @@
                     </div>
                 </div><br>
 
-                <input type="text" class="filename input_text" name="filename" required placeholder="Name Your File" pattern="[a-zA-Z0-9_-]{50}"
-                    style="width: 250px;" id="filename" /><br>
+                <input type="text" class="filename input_text" name="filename" required placeholder="Name Your File" pattern="[A-Za-z0-9_]{25}"
+                    style="width: 250px;" id="filename_input" /><br>
                 <p class="upload_error">Error Placeholder</p>
                 <div class="wrap up_wrap">
-                    <button class="go" id="uploadBtn">Upload</button>
+                    <button class="go" id="uploadButton">Upload</button>
                 </div>
             </div>
             <br>
