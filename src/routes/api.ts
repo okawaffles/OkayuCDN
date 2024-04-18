@@ -1,11 +1,14 @@
 import { Request, Response } from 'express'; 
 import { Router, announcement, version } from '../main';
-import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateUploadPOST, ValidateOTP } from '../util/sanitize';
+import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP } from '../util/sanitize';
 import { matchedData } from 'express-validator';
 import { GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewToken, VerifyLoginCredentials, VerifyOTPCode, VerifyUserExists } from '../util/secure';
 import { MulterUploader } from '../api/upload';
 import { StorageData, UserModel } from '../types';
 import { GetStorageInfo } from '../api/content';
+import { Logger } from 'okayulogger';
+
+const L: Logger = new Logger('API');
 
 export function RegisterAPIRoutes() {
     /**
@@ -33,6 +36,9 @@ export function RegisterAPIRoutes() {
     // Login page handler for first step
     Router.post('/api/login', ValidateLoginPOST(), HandleBadRequest, (req: Request, res: Response) => {
         const data = matchedData(req);
+
+        // oops we need to verify the user exists first!
+        if (!VerifyUserExists(data.username)) return res.json({status:401,reason:'Invalid login credentials'});
 
         // validation of login credentials...
         if (!VerifyLoginCredentials(data.username, data.password)) 
@@ -77,17 +83,23 @@ export function RegisterAPIRoutes() {
 
 
     /* UPLOADING */
-    Router.post('/api/upload', ValidateUploadPOST(), HandleBadRequest, MulterUploader.single('file'), (req: Request, res: Response) => {
+    Router.post('/api/upload', MulterUploader.single('file'), (req: Request, res: Response) => {
+
         res.send({status:200});
     });
 
     Router.get('/api/storage', ValidateToken(), HandleBadRequest, (req: Request, res: Response) => {
         const data = matchedData(req);
 
-        const user = GetUserFromToken(data.token);
+        try {
+            const user = GetUserFromToken(data.token);
 
-        const storage: StorageData = GetStorageInfo(user);
+            const storage: StorageData = GetStorageInfo(user);
 
-        res.json(storage);
+            res.json(storage);
+        } catch (err: unknown) {
+            L.error(err + '');
+            res.json({error:true,reason:'needs_login'});
+        }
     });
 }

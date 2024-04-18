@@ -45,6 +45,8 @@ function start() {
 
     // Get user's storage
     $.getJSON('/api/storage', (data) => {
+        if (data.error && data.reason == 'needs_login') document.location = '/login?redir=/upload';
+
         // we only care about the storage numbers right now
         usedStorage = data.used;
         totalStorage = data.total;
@@ -65,7 +67,7 @@ function start() {
         $('#hider').css('display', 'revert');
     }).fail((err) => {
         alert('Error in upload_v6.js.\n\nIf you are on desktop, please open your browser console and report the bug at https://github.com/okawaffles/OkayuCDN');
-        console.error('HELLO BUG REPORTER, YOU WANT THIS -> ' + err);
+        console.error('HELLO BUG REPORTER, YOU WANT THIS -> ' + err.responseText);
     });
 
     // file picker!
@@ -98,7 +100,7 @@ function FPDrop(ev) {
     UpdateFileName();
 }
 
-function StartFileUpload() {
+async function StartFileUpload() {
     const regex = new RegExp('[A-Za-z0-9_]');
     if (!regex.test($('#filename_input')[0].value)) return alert('You may only use alphanumeric characters and underscores in your file names, as well as only up to 25 characters.');
 
@@ -107,17 +109,22 @@ function StartFileUpload() {
     $('#uploadButton').css('display', 'none');
 
     // start chunked upload
-    $('#uploaded').on('change', async (event) => {
-        const file = event.target.files[0];
-        const chunk_size = 1024*1024*5; // 5MB chunks
-        const total_chunks = Math.ceil(file.size / chunk_size);
-        let start_byte = 0;
-        for (let i = 0; i <= total_chunks; i++) {
-            const end_byte = Math.min(start_byte + chunk_size, file.size);
-            const chunk = file.slice(start_byte, end_byte);
-            await sendChunk(chunk, total_chunks, i);
-        }
-    });
+    // $('#uploaded').on('change', async (event) => {
+        
+    // });
+
+    const file = $('#uploaded')[0].files[0];
+    const chunk_size = 1024*1024*5; // 5MB chunks
+    const total_chunks = Math.ceil(file.size / chunk_size);
+    let start_byte = 0;
+    for (let i = 0; i <= total_chunks; i++) {
+        const end_byte = Math.min(start_byte + chunk_size, file.size);
+        const chunk = file.slice(start_byte, end_byte);
+        console.debug('sending chunk...');
+        await sendChunk(chunk, total_chunks, i);
+    }
+
+    $.post('/api/upload/finish');
 }
 
 async function sendChunk(chunk, total_chunks, current_chunk) {

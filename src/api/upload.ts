@@ -20,4 +20,4 @@ const storage = diskStorage({
     }
 });
 
-export const MulterUploader = multer({ storage });
+export const MulterUploader = multer({ dest:'' });
