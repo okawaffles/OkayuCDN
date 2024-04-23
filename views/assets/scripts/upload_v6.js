@@ -124,7 +124,16 @@ async function StartFileUpload() {
         await sendChunk(chunk, total_chunks, i);
     }
 
-    $.post('/api/upload/finish');
+    let originalFilename = $('#uploaded')[0].files[0].name;
+    let extension = 'FILE';
+    if (originalFilename.split('.').length > 1) {
+        extension = originalFilename.split('.').at(-1);
+    }
+
+    $.post('/api/upload/finish', {
+        filename: $('#filename_input')[0].value,
+        extension
+    });
 }
 
 async function sendChunk(chunk, total_chunks, current_chunk) {

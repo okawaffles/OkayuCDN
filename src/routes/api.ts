@@ -1,9 +1,9 @@
 import { Request, Response } from 'express'; 
 import { Router, announcement, version } from '../main';
-import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP } from '../util/sanitize';
+import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST } from '../util/sanitize';
 import { matchedData } from 'express-validator';
 import { GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewToken, VerifyLoginCredentials, VerifyOTPCode, VerifyUserExists } from '../util/secure';
-import { MulterUploader } from '../api/upload';
+import { FinishUpload, MulterUploader } from '../api/upload';
 import { StorageData, UserModel } from '../types';
 import { GetStorageInfo } from '../api/content';
 import { Logger } from 'okayulogger';
@@ -84,9 +84,11 @@ export function RegisterAPIRoutes() {
 
     /* UPLOADING */
     Router.post('/api/upload', MulterUploader.single('file'), (req: Request, res: Response) => {
-
+        console.log(req.body);
         res.send({status:200});
     });
+
+    Router.post('/api/upload/finish', ValidateToken, ValidateUploadPOST, (req: Request, res: Response) => FinishUpload(req, res));
 
     Router.get('/api/storage', ValidateToken(), HandleBadRequest, (req: Request, res: Response) => {
         const data = matchedData(req);

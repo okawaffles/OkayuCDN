@@ -19,7 +19,8 @@ export const ValidateLoginPOST = () => [
 ];
 
 export const ValidateUploadPOST = () => [
-    body('filename').notEmpty().escape().isLength({min:1,max:50})
+    body('filename').notEmpty().escape().isLength({min:1,max:50}),
+    body('extension').notEmpty().escape().isLength({min:1,max:25}),
 ];
 
 export const ValidateOTP = () => [
