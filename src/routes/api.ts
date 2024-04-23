@@ -84,11 +84,10 @@ export function RegisterAPIRoutes() {
 
     /* UPLOADING */
     Router.post('/api/upload', MulterUploader.single('file'), (req: Request, res: Response) => {
-        console.log(req.body);
         res.send({status:200});
     });
 
-    Router.post('/api/upload/finish', ValidateToken, ValidateUploadPOST, (req: Request, res: Response) => FinishUpload(req, res));
+    Router.post('/api/upload/finish', ValidateToken(), ValidateUploadPOST(), HandleBadRequest, (req: Request, res: Response) => { FinishUpload(req, res) });
 
     Router.get('/api/storage', ValidateToken(), HandleBadRequest, (req: Request, res: Response) => {
         const data = matchedData(req);
@@ -104,4 +103,9 @@ export function RegisterAPIRoutes() {
             res.json({error:true,reason:'needs_login'});
         }
     });
+
+
+
+    /* MY BOX */
+    //Router.get('');
 }

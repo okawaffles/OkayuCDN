@@ -61,7 +61,7 @@ export function GetUserFromToken(token: string): UserModel {
         return GetUserModel(TokenCache[token]);
     }
 
-    L.info('Token is not cached, reading from disk.');
+    L.info(`Token is not cached, reading from disk.`);
 
     const tokenUsername: string = readFileSync(join(TOKEN_DATABASE_PATH, `${token}.json`), 'utf-8');
     const userData = JSON.parse(readFileSync(join(USER_DATABASE_PATH, `${tokenUsername}.json`), 'utf-8'));

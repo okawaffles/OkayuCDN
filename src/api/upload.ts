@@ -5,7 +5,7 @@ import { mkdirSync, renameSync } from 'fs';
 import { join } from 'path';
 import { UPLOADS_PATH } from '../util/paths';
 import { matchedData } from 'express-validator';
-import { error } from 'okayulogger';
+import { error, info } from 'okayulogger';
 import { Request, Response } from 'express';
 import { domain } from '../main';
 
@@ -34,6 +34,8 @@ const storage = multer.diskStorage({
 export const MulterUploader = multer({storage});
 
 export function FinishUpload(req: Request, res: Response) {
+    info('upload', 'finishing upload ...');
+
     const data = matchedData(req);
     const user = GetUserFromToken(data.token);
     const filename = data.filename;
@@ -47,8 +49,10 @@ export function FinishUpload(req: Request, res: Response) {
 
         res.json({
             status: 200,
-            goto: `${domain}/view/${user.username}/${filename}.${extension}`
+            goto: `${domain}/view/@${user.username}/${filename}.${extension}`
         });
+
+        info('upload', 'upload finished ok!');
     } catch (e: unknown) {
         error('upload', 'failed to upload file');
         error('upload', ''+e);

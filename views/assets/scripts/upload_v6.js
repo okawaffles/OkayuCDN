@@ -133,6 +133,10 @@ async function StartFileUpload() {
     $.post('/api/upload/finish', {
         filename: $('#filename_input')[0].value,
         extension
+    }, (data) => {
+        if (data.status == 200) {
+            document.location = data.goto;
+        }
     });
 }
 
