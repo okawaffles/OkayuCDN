@@ -57,11 +57,8 @@ export function GetUserFromToken(token: string): UserModel {
     // this allows us to save some potentially slow disk reads
     // by caching results in memory
     if (typeof TokenCache[token] == 'string') {
-        L.info(`Token is cached as ${TokenCache[token]}, skipping disk read.`);
         return GetUserModel(TokenCache[token]);
     }
-
-    L.info(`Token is not cached, reading from disk.`);
 
     const tokenUsername: string = readFileSync(join(TOKEN_DATABASE_PATH, `${token}.json`), 'utf-8');
     const userData = JSON.parse(readFileSync(join(USER_DATABASE_PATH, `${tokenUsername}.json`), 'utf-8'));

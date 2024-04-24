@@ -1,40 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Box | OkayuCDN</title>
-    <link rel="stylesheet" href="/assets/styles/_newStyles.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
-        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-    <script src="https://kit.fontawesome.com/dc1b60441b.js" crossorigin="anonymous"></script>
-    <script src="/assets/scripts/language.js"></script>
-</head>
-<body class="mybox_body">
+    <link rel="stylesheet" href="/assets/styles/_newStyles.css" />
+    <script
+      src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://kit.fontawesome.com/dc1b60441b.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="/assets/scripts/mybox_v6.js"></script>
+  </head>
+  <body class="mybox_body">
     <%- include('parts/navbar-logged-in', {active:'mybox'}) %>
 
     <div class="mybox_form_pane">
-        <h2 class="mybox_title">My Box</h2>
-        <h4 class="mybox_subtitle">Manage the files in your Box</h4><br>
-        <hr style="width: 100%">
-        <h2 class="mybox_contentH2">Your Content:</h2><br>
-        <!-- <select name="sort_method">
+      <h2 class="mybox_title">My Box</h2>
+      <h4 class="mybox_subtitle">Manage the files in your Box</h4>
+      <br />
+      <hr style="width: 100%" />
+      <h2 class="mybox_contentH2">Your Content:</h2>
+      <br />
+      <!-- <select name="sort_method">
             <option value="default">Default sort</option>
             <option value="size">Size (largest first)</option>
         </select> -->
-        <div class="loader_container"><span id="loader"></span></div>
-        <div id="content_container">
-
-            
-
-            <p class="mybox_noContent">You have no content to show. Try uploading something!</p>
-        </div>
+        <div class="line" id="loader"></div>
+      <div id="content_container">
+        <p class="mybox_noContent">
+          You have no content to show. Try uploading something!
+        </p>
+      </div>
     </div>
-
-    <script src="/assets/scripts/mybox.js"></script>
-    <script>
-    setUser("<%= USERNAME %>", "<%=domain%>"); checkLanguage("manage")
-    </script>
-</body>
+  </body>
 </html>
