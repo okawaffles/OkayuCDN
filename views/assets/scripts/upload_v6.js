@@ -108,10 +108,8 @@ async function StartFileUpload() {
     $('#filename_input').css('display', 'none');
     $('#uploadButton').css('display', 'none');
 
-    // start chunked upload
-    // $('#uploaded').on('change', async (event) => {
-        
-    // });
+    $('progressUpload').append('<div class="progressBar"><div class="up_progress" id="upload_progress"></div></div>');
+    $('upload_progress').css('width', '0%');
 
     const file = $('#uploaded')[0].files[0];
     const chunk_size = 1024*1024*5; // 5MB chunks
@@ -121,7 +119,10 @@ async function StartFileUpload() {
         const end_byte = Math.min(start_byte + chunk_size, file.size);
         const chunk = file.slice(start_byte, end_byte);
         console.debug('sending chunk...');
-        await sendChunk(chunk, total_chunks, i);
+        setTimeout(async () => {
+            await sendChunk(chunk, total_chunks, i);
+        }, 1000);
+        $('upload_progress').css('width', `${i / total_chunks}%`);
         start_byte += chunk_size;
     }
 
