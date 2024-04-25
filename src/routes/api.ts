@@ -1,12 +1,15 @@
 import { Request, Response } from 'express'; 
-import { Router, announcement, version } from '../main';
-import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST } from '../util/sanitize';
+import { Router, announcement, domain, version } from '../main';
+import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST, ValidateDeletionRequest } from '../util/sanitize';
 import { matchedData } from 'express-validator';
 import { GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewToken, VerifyLoginCredentials, VerifyOTPCode, VerifyUserExists } from '../util/secure';
 import { FinishUpload, MulterUploader } from '../api/upload';
 import { StorageData, UserModel } from '../types';
 import { GetStorageInfo } from '../api/content';
 import { Logger } from 'okayulogger';
+import { join } from 'path';
+import { UPLOADS_PATH } from '../util/paths';
+import { existsSync, renameSync, rmSync } from 'fs';
 
 const L: Logger = new Logger('API');
 
@@ -74,7 +77,7 @@ export function RegisterAPIRoutes() {
         
         try {
             const username: string = GetUserFromToken(data.token).username;
-            res.json({result:200,username});
+            res.json({result:200,username,domain});
         } catch (err) {
             res.json({result:400,reason:'Bad request.'});
         }
@@ -84,10 +87,17 @@ export function RegisterAPIRoutes() {
 
     /* UPLOADING */
     Router.post('/api/upload', MulterUploader.single('file'), (req: Request, res: Response) => {
-        res.send({status:200});
+        const user = GetUserFromToken(req.cookies.token);
+        const username = user.username;
+
+        const uploadPath = join(UPLOADS_PATH, username);
+
+        renameSync(join(uploadPath, 'LATEST.UPLOADING.ID'), join(uploadPath, `LATEST.UPLOADING.${req.query.current_chunk}`));
+        
+        res.status(200).end();
     });
 
-    Router.post('/api/upload/finish', ValidateToken(), ValidateUploadPOST(), HandleBadRequest, (req: Request, res: Response) => { FinishUpload(req, res) });
+    Router.post('/api/upload/finish', ValidateToken(), ValidateUploadPOST(), HandleBadRequest, (req: Request, res: Response) => { FinishUpload(req, res); });
 
     Router.get('/api/storage', ValidateToken(), HandleBadRequest, (req: Request, res: Response) => {
         const data = matchedData(req);
@@ -107,5 +117,25 @@ export function RegisterAPIRoutes() {
 
 
     /* MY BOX */
-    //Router.get('');
+    Router.post('/api/deleteItem', 
+        ValidateDeletionRequest(), 
+        ValidateToken(), 
+        PrefersLogin, 
+        HandleBadRequest, 
+        (req: Request, res: Response) => {
+            const data = matchedData(req);
+
+            const item = data.id;
+            const user = GetUserFromToken(data.token);
+
+            const pathOfContent = join(UPLOADS_PATH, user.username, item);
+
+            if (!existsSync(pathOfContent)) {
+                return res.status(404).send('Not found');
+            }
+
+            rmSync(pathOfContent);
+
+            res.status(200).end();
+        });
 }

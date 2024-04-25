@@ -132,7 +132,8 @@ async function StartFileUpload() {
 
     $.post('/api/upload/finish', {
         filename: $('#filename_input')[0].value,
-        extension
+        extension,
+        chunk_count: total_chunks
     }, (data) => {
         if (data.status == 200) {
             document.location = data.goto;
@@ -145,7 +146,7 @@ async function sendChunk(chunk, total_chunks, current_chunk) {
     formData.append('file', chunk);
     formData.append('totalChunks', total_chunks);
     formData.append('currentChunk', current_chunk);
-    const response = await fetch('/api/upload', {
+    const response = await fetch('/api/upload?current_chunk='+current_chunk, {
         method: 'POST',
         body: formData
     });

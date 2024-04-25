@@ -1,15 +1,22 @@
+let DOMAIN = 'https://okayu.okawaffles.com';
+let USERNAME = 'anonymous';
+
 $(document).ready(() => {
     $.getJSON('/api/whoami', (data) => {
         if (data.result != 200) {
             return document.location = '/login?redir=/mybox';
         }
 
+        DOMAIN = data.domain;
+        USERNAME = data.username;
         LoadBox(data.username);
     });
 });
 
 
-function LoadBox(username) {
+function LoadBox() {
+    $('#content_container').css('display', 'none');
+
     $.getJSON('/api/storage', (data) => {
         const items = data.content;
 
@@ -19,18 +26,53 @@ function LoadBox(username) {
             i++;
         });
 
-        $('#content_container').css('')
+        $('#content_container').css('display', 'inherit');
+        $('#mybox_nocontent').css('display', 'none');
+        $('#loader').css('display', 'none');
     });
 }
 
-alternate = false;
+let alternate = false;
 function AddItem(item, id) {
-    const element = generateItem(id, item.name, item.size, alternate);
+    const element = generateItem(id, item.name, parseStorageAmount(item.size), alternate);
     alternate = !alternate;
 
-    $('#content_container').add(element)
+    $('#content_container').append(element);
 }
 
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function dropdown(id) {
+    const item = id.toString();
+
+    if ($(`#showhide-id-${item}`).css('display') == 'none') {
+        $(`#showhide-id-${item}`).css('display', 'flex');
+        $(`#showhide-button-${item}`).html('<i class="fa-solid fa-caret-up"></i>');
+    } else {
+        $(`#showhide-id-${item}`).css('display', 'none');
+        $(`#showhide-button-${item}`).html('<i class="fa-solid fa-caret-down"></i>');
+    }
+}
+
+/**
+ * A nice little function that turns bytes into readable storage amounts.
+ * @param bytes the number to parse
+ * @returns a formatted string
+ */
+function parseStorageAmount(bytes) {
+    let formatted = '';
+
+    if (bytes > 750*1024*1024)
+        formatted = (((bytes / 1024) / 1024) / 1024).toFixed(2) + 'GB';
+    else if (bytes > 750*1024)
+        formatted = ((bytes / 1024) / 1024).toFixed(2) + 'MB';
+    else if (bytes > 1024)
+        formatted = (bytes / 1024).toFixed(2) + 'KB';
+    else
+        formatted = `${bytes}B`;
+
+    return formatted;
+}
 
 
 /* Moved from old script */
@@ -60,4 +102,72 @@ function generateItem(id, item, fsize, alternate) {
         <button class="btn-red delete mobile" id="m-delete-item-${id}" onclick="startDeleteSequence('${item}', ${id}, false)"><i class="fa-solid fa-trash-can"></i></button>
     </div>
 </div>`;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function view(item) {
+    document.location = `${DOMAIN}/view/@${USERNAME}/${item}`;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function download(item) {
+    document.location = `${DOMAIN}/@${USERNAME}/${item}?bypass=true`; // must use bypass or else videos would render the watchpage
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function share(item, id, mobile) {
+    const tl_share = '<i class="fa-solid fa-arrow-up-right-from-square"></i> Share';
+    const tl_share_mobile = '<i class="fa-solid fa-arrow-up-right-from-square"></i>';
+    const tl_copied = `<i class="fa-solid fa-arrow-up-right-from-square"></i></i><strong>  ${(document.cookie.includes('language=ja-jp'))? 'リンクがコピーしました' : 'Copied link!' }</strong>`;
+    const tl_nvgt_text = document.cookie.includes('language=ja-jp')?'OkayuCDNで僕のファイルを見ます！':'View my file on OkayuCDN!';
+
+    try { 
+        navigator.share({
+            title:'OkayuCDN',
+            text:tl_nvgt_text,
+            url:`${DOMAIN}/@${USERNAME}/${item}`
+        }); 
+    } catch(e) { 
+        navigator.clipboard.writeText(`${DOMAIN}/@${USERNAME}/${item}`);
+        document.getElementById(`share-content-${id}`).innerHTML = tl_copied;
+        setTimeout(() => {
+            document.getElementById(`share-content-${id}`).innerHTML = mobile?tl_share_mobile : tl_share;
+        }, 1500);
+    }
+}
+
+
+// TODO: Rewrite these two functions
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function startDeleteSequence(item, id, mobile) {
+    if (mobile) {
+        if ($(`#m-delete-item-${id}`).html() == '<i class="fa-solid fa-trash-can" aria-hidden="true"></i>') {
+            $(`#${id}`).html(`${document.cookie.includes('language=ja-jp')?'<i class="fa-solid fa-check"></i> デリートしますか？':'<i class="fa-solid fa-check"> Are you sure?</i>?'}`);
+            setTimeout(() => {
+                $(`#${id}`).html('<i class="fa-solid fa-trash-can" aria-hidden="true"> Delete</i>');
+            }, 3000);
+        } else {
+            deleteItemRequest(item);
+        }
+
+        return;
+    }
+
+
+    if ($(`#delete-item-${id}`).html() == '<i class="fa-solid fa-trash-can" aria-hidden="true"> Delete</i>') {
+        $(`#delete-item-${id}`).html(`${document.cookie.includes('language=ja-jp')?'<i class="fa-solid fa-check"></i> デリートしますか？':'<i class="fa-solid fa-check"> Are you sure?</i>?'}`);
+        setTimeout(() => {
+            $(`#delete-item-${id}`).html('<i class="fa-solid fa-trash-can" aria-hidden="true"> Delete</i>');
+        }, 3000);
+    } else {
+        deleteItemRequest(item);
+    }
+}
+function deleteItemRequest(item) {
+    $.post('/api/deleteItem', {
+        id:item
+    }).done(() => {
+        // refresh page
+        document.location = '/mybox';
+    });
 }

@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { RegisterSimpleRoutes } from './routes/simple';
 import { RegisterAPIRoutes } from './routes/api';
 import { join } from 'node:path';
+import { RegisterContentRoutes } from './routes/content';
 
 export function RegisterRoutes() {
     // base routes don't need their own files
@@ -27,4 +28,7 @@ export function RegisterRoutes() {
 
     // api routes (dynamic content for clients to request from)
     RegisterAPIRoutes();
+
+    // content routes, handles standard content and videos
+    RegisterContentRoutes();
 }

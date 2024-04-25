@@ -1,7 +1,7 @@
 import multer from 'multer';
 import { UploadResult } from '../types';
 import { GetUserFromToken } from '../util/secure';
-import { mkdirSync, renameSync } from 'fs';
+import { appendFileSync, mkdirSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { UPLOADS_PATH } from '../util/paths';
 import { matchedData } from 'express-validator';
@@ -27,7 +27,7 @@ const storage = multer.diskStorage({
         cb(null, uploadPath);
     },
     filename: (req, file, cb) => {
-        cb(null, 'LATEST.UPLOADING');
+        cb(null, 'LATEST.UPLOADING.ID');
     }
 });
 
@@ -40,13 +40,17 @@ export function FinishUpload(req: Request, res: Response) {
     const user = GetUserFromToken(data.token);
     const filename = data.filename;
     const extension = data.extension;
-
-    const currentPath = join(UPLOADS_PATH, user.username, 'LATEST.UPLOADING');
+    
     const newPath = join(UPLOADS_PATH, user.username, filename+'.'+extension);
+    
+    const totalChunks = req.body.chunk_count;
+    for (let i = 0; i != totalChunks; i++) {
+        info('upload', `joining chunk ${i}/${totalChunks}`);
+        const currentPath = join(UPLOADS_PATH, user.username, 'LATEST.UPLOADING.'+i);
+        appendFileSync(newPath, readFileSync(currentPath));
+    }
 
     try {
-        renameSync(currentPath, newPath);
-
         res.json({
             status: 200,
             goto: `${domain}/view/@${user.username}/${filename}.${extension}`

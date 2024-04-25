@@ -4,7 +4,7 @@ import { error } from 'okayulogger';
 import { cookie, header, body, query, param, validationResult } from 'express-validator';
 
 export const ValidateContentRequest = () => [
-    param('user').notEmpty().escape(),
+    param('username').notEmpty().escape(),
     param('item').notEmpty().escape()
 ];
 
@@ -40,3 +40,7 @@ export const HandleBadRequest = (req: Request, res: Response, next: CallableFunc
 
     next();
 };
+
+export const ValidateDeletionRequest = () => [
+    body('id').notEmpty().escape()
+];
