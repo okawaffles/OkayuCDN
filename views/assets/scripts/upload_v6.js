@@ -122,6 +122,7 @@ async function StartFileUpload() {
         const chunk = file.slice(start_byte, end_byte);
         console.debug('sending chunk...');
         await sendChunk(chunk, total_chunks, i);
+        start_byte += chunk_size;
     }
 
     let originalFilename = $('#uploaded')[0].files[0].name;
