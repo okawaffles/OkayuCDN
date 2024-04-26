@@ -32,8 +32,9 @@ function LoadBox() {
     });
 }
 
-let alternate = false;
+let alternate = true;
 function AddItem(item, id) {
+    if (item.name.startsWith('LATEST.UPLOADING.')) return;
     const element = generateItem(id, item.name, parseStorageAmount(item.size), alternate);
     alternate = !alternate;
 

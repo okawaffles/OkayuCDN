@@ -805,6 +805,10 @@ button:hover {
     font-size: 2em;
 }
 
+.freesoft {
+    margin: 0em 15em;
+}
+
 @media screen and (max-width: 600px) {
     .section_header {
         font-size: 2em;
@@ -812,6 +816,10 @@ button:hover {
     
     .info_item, .stats_item {
         font-size: 1.5em;
+    }
+
+    .freesoft {
+        margin: 1em;
     }
 }
 

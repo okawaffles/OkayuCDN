@@ -1,7 +1,7 @@
 import multer from 'multer';
 import { UploadResult, UserModel } from '../types';
 import { GetUserFromToken } from '../util/secure';
-import { appendFileSync, mkdirSync, readFileSync, readdirSync } from 'fs';
+import { appendFileSync, mkdirSync, readFileSync, readdirSync, rmSync } from 'fs';
 import { join } from 'path';
 import { UPLOADS_PATH } from '../util/paths';
 import { matchedData } from 'express-validator';
@@ -65,6 +65,7 @@ export function FinishUpload(req: Request, res: Response) {
             info('upload', `joining chunk ${i}/${totalChunks}`);
             const currentPath = join(UPLOADS_PATH, user.username, 'LATEST.UPLOADING.'+i);
             appendFileSync(newPath, readFileSync(currentPath));
+            rmSync(currentPath);
         }
     
         res.json({
