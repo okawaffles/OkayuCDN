@@ -4,6 +4,7 @@ import { RegisterSimpleRoutes } from './routes/simple';
 import { RegisterAPIRoutes } from './routes/api';
 import { join } from 'node:path';
 import { RegisterContentRoutes } from './routes/content';
+import { RegisterAccountRoutes } from './routes/account';
 
 export function RegisterRoutes() {
     // base routes don't need their own files
@@ -31,4 +32,7 @@ export function RegisterRoutes() {
 
     // content routes, handles standard content and videos
     RegisterContentRoutes();
+
+    // account routes
+    RegisterAccountRoutes();
 }

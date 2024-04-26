@@ -71,13 +71,25 @@ export function RegisterAPIRoutes() {
         const authToken: string = RegisterNewToken(user);
         res.json({result:200,uses2FA:false,token:authToken});
     });
-    // pages use this to igure out who they are based on the login token
+    // pages use this to figure out who they are based on the login token
     Router.get('/api/whoami', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
         const data = matchedData(req);
+        const user: UserModel = GetUserFromToken(data.token);
         
         try {
-            const username: string = GetUserFromToken(data.token).username;
-            res.json({result:200,username,domain});
+            const username: string = user.username;
+            res.json({
+                result:200,
+                username,
+                domain,
+                preferences: {
+                    language: user.preferences.language,
+                    two_factor: {
+                        otp_enabled: user.SecureData?.twoFactorData?.usesOTP,
+                        passkey_enabled: user.SecureData?.twoFactorData?.usesPasskey
+                    }
+                }
+            });
         } catch (err) {
             res.json({result:400,reason:'Bad request.'});
         }

@@ -1,15 +1,18 @@
+/* eslint-disable no-undef */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 function updatePwd() {
     $.post('/api/account/changePassword', {
-        currentPassword:$("#password_current").val(),
-        newPassword:$("#password_new").val()
+        currentPassword:$('#password_current').val(),
+        newPassword:$('#password_new').val()
     }).done(function (data) {
         if (data.result == 200) {
-            alert("Your password has been changed successfully.")
+            alert('Your password has been changed successfully.');
         } else {
-            $("p.login_error").css("display", "inline")
-            console.log(data)
+            $('p.login_error').css('display', 'inline');
+            console.log(data);
         }
-    })
+    });
 }
 
 function DisableOTP() {
@@ -46,7 +49,7 @@ async function StartPasskeySetup() {
                 headers: {
                     'Content-Type': 'application/json'
                 }
-            })
+            });
 
             const resultJSON = await result.json();
 
@@ -70,13 +73,15 @@ async function StartPasskeySetup() {
 }
 
 $(document).ready(() => {
-    $.get('/api/myAccountData').done((data) => {
-        if (data.uses2FA) {
+    $.get('/api/whoami').done((data) => {
+        $('#account_name').text(`Your Account (${data.username})`);
+
+        if (data.preferences.two_factor.otp_enabled) {
             $('#otp-header').html('Disable OTP Two-Factor Authentication');
             $('#submit-otp').html('Disable OTP 2FA').css('background-color', 'var(--active-button-red)').attr('onclick', 'DisableOTP()');
         }
 
-        if (data.usesPasskey) {
+        if (data.preferences.two_factor.passkey_enabled) {
             $('#passkey-header').html('Disable Passkey Authentication');
             $('#submit-passkey').html('Disable Passkey').css('background-color', 'var(--active-button-red)').attr('onclick', 'DisablePasskey()');
         }
