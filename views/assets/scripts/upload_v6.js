@@ -119,9 +119,7 @@ async function StartFileUpload() {
         const end_byte = Math.min(start_byte + chunk_size, file.size);
         const chunk = file.slice(start_byte, end_byte);
         console.debug('sending chunk...');
-        setTimeout(async () => {
-            await sendChunk(chunk, total_chunks, i);
-        }, 1000);
+        await sendChunk(chunk, total_chunks, i);
         $('upload_progress').css('width', `${i / total_chunks}%`);
         start_byte += chunk_size;
     }

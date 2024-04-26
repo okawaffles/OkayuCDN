@@ -1,7 +1,7 @@
 import multer from 'multer';
-import { UploadResult } from '../types';
+import { UploadResult, UserModel } from '../types';
 import { GetUserFromToken } from '../util/secure';
-import { appendFileSync, mkdirSync, readFileSync } from 'fs';
+import { appendFileSync, mkdirSync, readFileSync, readdirSync } from 'fs';
 import { join } from 'path';
 import { UPLOADS_PATH } from '../util/paths';
 import { matchedData } from 'express-validator';
@@ -37,23 +37,39 @@ export function FinishUpload(req: Request, res: Response) {
     info('upload', 'finishing upload ...');
 
     const data = matchedData(req);
-    const user = GetUserFromToken(data.token);
-    const filename = data.filename;
-    const extension = data.extension;
+    const user: UserModel = GetUserFromToken(data.token);
+    const filename: string = data.filename;
+    const extension: string = data.extension;
     
-    const newPath = join(UPLOADS_PATH, user.username, filename+'.'+extension);
-    
-    const totalChunks = req.body.chunk_count;
-    for (let i = 0; i != totalChunks; i++) {
-        info('upload', `joining chunk ${i}/${totalChunks}`);
-        const currentPath = join(UPLOADS_PATH, user.username, 'LATEST.UPLOADING.'+i);
-        appendFileSync(newPath, readFileSync(currentPath));
+    let newName: string = `${filename}.${extension}`;
+
+    const userFiles: string[] = readdirSync(join(UPLOADS_PATH, user.username));
+
+    // ensure we don't write over a preexisting file:
+    // do this by adding numbers to the filename
+    if (userFiles.indexOf(newName) > -1) {
+        newName = `${filename}-0.${extension}`;
+        let i = 0;
+        while (userFiles.indexOf(newName) > -1) {
+            i++;
+            newName = `${filename}-${i}.${extension}`;
+        }
     }
 
+    const newPath = join(UPLOADS_PATH, user.username, newName);
+    
+    const totalChunks = req.body.chunk_count;
+
     try {
+        for (let i = 0; i != totalChunks; i++) {
+            info('upload', `joining chunk ${i}/${totalChunks}`);
+            const currentPath = join(UPLOADS_PATH, user.username, 'LATEST.UPLOADING.'+i);
+            appendFileSync(newPath, readFileSync(currentPath));
+        }
+    
         res.json({
             status: 200,
-            goto: `${domain}/view/@${user.username}/${filename}.${extension}`
+            goto: `${domain}/view/@${user.username}/${newName}`
         });
 
         info('upload', 'upload finished ok!');
