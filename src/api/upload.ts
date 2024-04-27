@@ -62,7 +62,7 @@ export function FinishUpload(req: Request, res: Response) {
 
     try {
         for (let i = 0; i != totalChunks; i++) {
-            info('upload', `joining chunk ${i}/${totalChunks}`);
+            info('upload', `joining chunk ${i+1}/${totalChunks}`);
             const currentPath = join(UPLOADS_PATH, user.username, 'LATEST.UPLOADING.'+i);
             appendFileSync(newPath, readFileSync(currentPath));
             rmSync(currentPath);

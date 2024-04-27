@@ -830,6 +830,10 @@ button:hover {
     flex-wrap: wrap;
 }
 
+.view_info>h2 {
+    margin-top: 1.5rem;
+}
+
 .view_info>h2,h4 {
     text-align: center;
     color: var(--active-text);
@@ -850,7 +854,12 @@ button:hover {
     display: flex;
     justify-content: center;
     width: 100%;
+    margin: 2rem 0em;
     color: var(--active-text);
+}
+
+.view_info .font_preview {
+    font-size: 2rem;
 }
 
 @media screen and (max-width: 600px) {

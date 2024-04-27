@@ -1,6 +1,6 @@
 import { join } from 'node:path';
 import { USER_DATABASE_PATH, TOKEN_DATABASE_PATH } from './paths';
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { Request, Response } from 'express';
 import { matchedData } from 'express-validator';
 import { UserModel, UserSecureData } from '../types';
@@ -193,6 +193,7 @@ export async function VerifyLoginCredentials(username: string, password: string)
 
     const user: UserModel = GetUserModel(username, true);
 
+    CheckPrivateIndex(user.username);
     if (user.SecureData?.passwordIsLegacy) {
         return UpgradeUserPassword(user, user.SecureData, password);
     }
@@ -235,3 +236,36 @@ export const PrefersLogin = (req: Request, res: Response, next: CallableFunction
     // all is good, continue:
     next();
 };
+
+
+/**
+ * Check whether the user has a private file data index.
+ * This is required to be able to use the private files feature.
+ * @param username The username to check
+ */
+function CheckPrivateIndex(username: string): void {
+    const userPath: string = join(USER_DATABASE_PATH, username);
+    if (!existsSync(userPath)) mkdirSync(userPath, {recursive:true});
+
+    if (!existsSync(join(userPath, 'private.json'))) {
+        L.info(`Creating private file index for ${username}`);
+        const private_index = {
+            protected_files: []
+        };
+        writeFileSync(join(userPath, 'private.json'), JSON.stringify(private_index), 'utf-8');
+    }
+}
+
+/**
+ * Check whether a file is protected (uploaded as private) by the uploader 
+ * @param username The uploader of the file
+ * @param filename The name of the file
+ */
+export function IsContentProtected(username: string, filename: string): boolean {
+    CheckPrivateIndex(username);
+
+    const privateIndexPath: string = join(USER_DATABASE_PATH, username, 'private.json');
+    const data = JSON.parse(readFileSync(privateIndexPath, 'utf-8'));
+    
+    return (data.protected_files.indexOf(filename) != -1);
+}

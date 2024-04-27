@@ -143,13 +143,12 @@ function processPreview(filetype, link) {
         previewArea.innerHTML = `<img src='${link}'>`;
         break;
     case 'MP3': case 'WAV': case 'FLAC':
-        previewArea.innerHTML = `<audio src='${link}'></audio>`;
+        previewArea.innerHTML = `<audio controls src='${link}'></audio>`;
         break;
     case 'TTF': case 'OTF':
-        previewArea.innerHTML = `<h2 class='pf' style='font-family: previewFont;' >The quick brown fox jumped over the lazy dog.</h2> <style>@font-face {
-            font-family: previewFont;
-            src: url('${link}');
-        }</style>`;
+        previewArea.innerHTML = `
+        <h3 class='font_preview'>The quick brown fox jumped over the lazy dog.</h3>
+        <style>@font-face { font-family: previewFont; src: url('${link}'); } .font_preview { font-family: previewFont; }</style>`;
         break;
     default:
         previewArea.innerHTML = '<h5>Preview is not supported for this filetype.</h5>';

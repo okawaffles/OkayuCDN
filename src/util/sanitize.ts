@@ -9,6 +9,7 @@ export const ValidateContentRequest = () => [
 ];
 
 export const ValidateToken = () => cookie('token').notEmpty().escape().isLength({min:32,max:32});
+export const ValidateOptionalToken = () => cookie('token').notEmpty().escape().isLength({min:32,max:32}).optional();
 export const ValidateHeaderToken = () => header('authorization').notEmpty().escape().isLength({min:32,max:32});
 export const ValidateLoginGET = () => [
     query('redir').optional().escape().optional(),

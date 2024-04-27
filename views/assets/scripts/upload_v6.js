@@ -108,6 +108,7 @@ async function StartFileUpload() {
     $('#filename_input').css('display', 'none');
     $('#uploadButton').css('display', 'none');
 
+    // append progress bar
     $('progressUpload').append('<div class="progressBar"><div class="up_progress" id="upload_progress"></div></div>');
     $('upload_progress').css('width', '0%');
 
@@ -120,8 +121,10 @@ async function StartFileUpload() {
         const chunk = file.slice(start_byte, end_byte);
         console.debug('sending chunk...');
         await sendChunk(chunk, total_chunks, i);
-        $('upload_progress').css('width', `${i / total_chunks}%`);
         start_byte += chunk_size;
+        
+        // change progress bar based on current progress
+        $('upload_progress').css('width', `${i / total_chunks}%`);
     }
 
     let originalFilename = $('#uploaded')[0].files[0].name;
