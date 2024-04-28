@@ -97,6 +97,7 @@ function generateItem(id, item, fsize, alternate, private) {
         <button class="share desktop" id="share-content-${id}" onclick="share('${item}', ${id}, false)"><i class="fa-solid fa-arrow-up-right-from-square"></i> Share</button>
         <button class="view desktop" onclick="view('${item}')"><i class="fa-solid fa-eye"></i> View</button>
         <button class="dl desktop" onclick="download('${item}')"><i class="fa-solid fa-download"></i> Download</button>
+        <button class="btn-red delete desktop" id="change-visibility-${id}" onclick="changeVisibility('${item}', ${id})">${private?'<i class="fa-solid fa-lock-open"></i> Make Public':'<i class="fa-solid fa-lock"></i> Make Private'}</button>
         <button class="btn-red delete desktop" id="delete-item-${id}" onclick="startDeleteSequence('${item}', ${id}, false)"><i class="fa-solid fa-trash-can"></i> Delete</button>
 
         <button class="share mobile" id="share-content-${id}" onclick="share('${item}', ${id}, true)"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>

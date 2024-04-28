@@ -107,6 +107,7 @@ async function StartFileUpload() {
     $('#uploadInterface').css('display', 'none');
     $('#filename_input').css('display', 'none');
     $('#uploadButton').css('display', 'none');
+    $('#private_toggle').css('display', 'none');
 
     // append progress bar
     $('progressUpload').append('<div class="progressBar"><div class="up_progress" id="upload_progress"></div></div>');
