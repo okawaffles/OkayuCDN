@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { Router, announcement, domain, version } from '../main';
 import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST, ValidateDeletionRequest } from '../util/sanitize';
 import { matchedData } from 'express-validator';
-import { GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewToken, VerifyLoginCredentials, VerifyOTPCode, VerifyUserExists } from '../util/secure';
+import { ChangeFileVisibility, GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewToken, VerifyLoginCredentials, VerifyOTPCode, VerifyUserExists } from '../util/secure';
 import { FinishUpload, MulterUploader } from '../api/upload';
 import { StorageData, UserModel } from '../types';
 import { GetStorageInfo } from '../api/content';
@@ -129,7 +129,7 @@ export function RegisterAPIRoutes() {
 
 
     /* MY BOX */
-    Router.post('/api/deleteItem', 
+    Router.delete('/api/deleteItem', 
         ValidateDeletionRequest(), 
         ValidateToken(), 
         PrefersLogin, 
@@ -148,6 +148,15 @@ export function RegisterAPIRoutes() {
 
             rmSync(pathOfContent);
 
-            res.status(200).end();
-        });
+            res.status(204).end();
+        }
+    );
+
+    Router.patch('/api/changeVisibility', ValidateToken(), ValidateDeletionRequest(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
+        const data = matchedData(req);
+
+        ChangeFileVisibility(data.token, data.id);
+
+        res.status(204).end();
+    });
 }

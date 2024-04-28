@@ -299,3 +299,38 @@ export function AddProtectedFile(username: string, name: string) {
     data.protected_files.push(name);
     writeFileSync(privateIndexPath, JSON.stringify(data), 'utf-8');
 }
+
+/**
+ * Add a file to the user's protected file index
+ * @param username The user who is uploading
+ * @param name The name of the file
+ */
+export function RemoveProtectedFile(username: string, name: string) {
+    CheckPrivateIndex(username);
+
+    const privateIndexPath: string = join(USER_DATABASE_PATH, username, 'private.json');
+    const data = JSON.parse(readFileSync(privateIndexPath, 'utf-8'));
+
+    const pos: number = data.protected_files.indexOf(name);
+    if (pos == -1) return;
+
+    data.protected_files.splice(pos, 1);
+
+    writeFileSync(privateIndexPath, JSON.stringify(data), 'utf-8');
+}
+
+
+/**
+ * Toggle whether a file is public or private
+ * @param token The user's token
+ * @param name The name of the file to change
+ */
+export function ChangeFileVisibility(token: string, name: string) {
+    const user: UserModel = GetUserFromToken(token);
+    const protected_files: Array<string> = GetProtectedFiles(user.username);
+
+    if (protected_files.indexOf(name) != -1)
+        RemoveProtectedFile(user.username, name);
+    else
+        AddProtectedFile(user.username, name);
+}

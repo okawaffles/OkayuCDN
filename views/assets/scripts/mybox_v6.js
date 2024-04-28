@@ -115,7 +115,26 @@ function view(item) {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function download(item) {
-    document.location = `${DOMAIN}/@${USERNAME}/${item}?bypass=true`; // must use bypass or else videos would render the watchpage
+    document.location = `${DOMAIN}/@${USERNAME}/${item}?bypass=true&intent=download`; // must use bypass or else videos would render the watchpage
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function changeVisibility(item, id) {
+    $.ajax({
+        type: 'PATCH',
+        url: '/api/changeVisibility',
+        data: {id:item},
+        statusCode: {
+            400: () => {
+                alert('Failed to update visibility.');
+            },
+            204: () => {
+                const isPrivate = $(`#change-visibility-${id}`).html() != '<i class="fa-solid fa-lock-open" aria-hidden="true"></i> Make Public';
+
+                $(`#change-visibility-${id}`).html(isPrivate?'<i class="fa-solid fa-lock-open"></i> Make Public':'<i class="fa-solid fa-lock"></i> Make Private');
+            }
+        }
+    });
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -146,7 +165,7 @@ function share(item, id, mobile) {
 function startDeleteSequence(item, id, mobile) {
     if (mobile) {
         if ($(`#m-delete-item-${id}`).html() == '<i class="fa-solid fa-trash-can" aria-hidden="true"></i>') {
-            $(`#${id}`).html(`${document.cookie.includes('language=ja-jp')?'<i class="fa-solid fa-check"></i> デリートしますか？':'<i class="fa-solid fa-check"> Are you sure?</i>?'}`);
+            $(`#${id}`).html('<i class="fa-solid fa-check"> Are you sure?</i>?');
             setTimeout(() => {
                 $(`#${id}`).html('<i class="fa-solid fa-trash-can" aria-hidden="true"> Delete</i>');
             }, 3000);
@@ -158,20 +177,27 @@ function startDeleteSequence(item, id, mobile) {
     }
 
 
-    if ($(`#delete-item-${id}`).html() == '<i class="fa-solid fa-trash-can" aria-hidden="true"> Delete</i>') {
-        $(`#delete-item-${id}`).html(`${document.cookie.includes('language=ja-jp')?'<i class="fa-solid fa-check"></i> デリートしますか？':'<i class="fa-solid fa-check"> Are you sure?</i>?'}`);
+    if ($(`#delete-item-${id}`).html() == '<i class="fa-solid fa-trash-can" aria-hidden="true"></i> Delete') {
+        $(`#delete-item-${id}`).html('<i class="fa-solid fa-check"></i> Are you sure?');
         setTimeout(() => {
-            $(`#delete-item-${id}`).html('<i class="fa-solid fa-trash-can" aria-hidden="true"> Delete</i>');
+            $(`#delete-item-${id}`).html('<i class="fa-solid fa-trash-can" aria-hidden="true"></i> Delete');
         }, 3000);
     } else {
         deleteItemRequest(item);
     }
 }
 function deleteItemRequest(item) {
-    $.post('/api/deleteItem', {
-        id:item
-    }).done(() => {
-        // refresh page
-        document.location = '/mybox';
+    $.ajax({
+        type: 'DELETE',
+        url: '/api/deleteItem',
+        data: {id:item},
+        statusCode: {
+            400: () => {
+                alert('Failed to delete item');
+            },
+            204: () => {
+                document.location = '/mybox';
+            }
+        }
     });
 }

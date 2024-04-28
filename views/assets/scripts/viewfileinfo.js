@@ -160,11 +160,11 @@ function processPreview(filetype, link) {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function startDownload(username, filename) {
     if (!warning) {
-        document.location = `/@${username}/${filename}`;
+        document.location = `/@${username}/${filename}?bypass=true&intent=download`;
         return;
     } else {
         if (confirm('WARNING: This file might be dangerous, are you sure you still want to download it?\n\nNever trust executable files from strangers online.')) {
-            document.location = `/@${username}/${filename}`;
+            document.location = `/@${username}/${filename}?intent=download`;
         }
     }
 }
