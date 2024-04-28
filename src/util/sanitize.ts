@@ -5,7 +5,9 @@ import { cookie, header, body, query, param, validationResult } from 'express-va
 
 export const ValidateContentRequest = () => [
     param('username').notEmpty().escape(),
-    param('item').notEmpty().escape()
+    param('item').notEmpty().escape(),
+    query('bypass').escape().optional(),
+    query('intent').escape().optional()
 ];
 
 export const ValidateToken = () => cookie('token').notEmpty().escape().isLength({min:32,max:32});

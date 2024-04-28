@@ -17,7 +17,7 @@ export function RegisterContentRoutes() {
 
         if (item.startsWith('LATEST.UPLOADING.')) return res.status(404).render('notfound.ejs', {version}); // don't allow sending of pre-joined uploading files
 
-        const bypassVideoPage = req.query && req.query.bypass;
+        const bypassVideoPage = data.bypass;
 
         const pathOfContent = join(UPLOADS_PATH, username, item);
 
@@ -31,6 +31,7 @@ export function RegisterContentRoutes() {
         if (pathOfContent.endsWith('.mp4') && !bypassVideoPage) {
             res.render('watchpage.ejs', {filename: item, domain, user: username});
         } else {
+            if (data.intent == 'download') return res.download(pathOfContent);
             res.sendFile(pathOfContent);
         }
     });
