@@ -2,6 +2,7 @@ import { join } from 'node:path';
 import { ContentItem, StorageData, UserModel } from '../types';
 import { UPLOADS_PATH } from '../util/paths';
 import { readdirSync, statSync } from 'node:fs';
+import { GetProtectedFiles } from '../util/secure';
 
 
 export function GetStorageInfo(user: UserModel): StorageData {
@@ -17,11 +18,14 @@ export function GetStorageInfo(user: UserModel): StorageData {
         usedStorage += size;
         content.push({ name, size });
     });
+
+    const protected_files: Array<string> = GetProtectedFiles(user.username);
     
     const storage: StorageData = {
         used: usedStorage,
         total: user.storageAmount,
-        content
+        content,
+        protected_files
     };
 
     return storage;

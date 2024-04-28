@@ -269,3 +269,33 @@ export function IsContentProtected(username: string, filename: string): boolean 
     
     return (data.protected_files.indexOf(filename) != -1);
 }
+
+
+/**
+ * Get the protected files list of a user
+ * @param username The user to get
+ */
+export function GetProtectedFiles(username: string): Array<string> {
+    CheckPrivateIndex(username);
+
+    const privateIndexPath: string = join(USER_DATABASE_PATH, username, 'private.json');
+    const data = JSON.parse(readFileSync(privateIndexPath, 'utf-8'));
+
+    return data.protected_files;
+}
+
+
+/**
+ * Add a file to the user's protected file index
+ * @param username The user who is uploading
+ * @param name The name of the file
+ */
+export function AddProtectedFile(username: string, name: string) {
+    CheckPrivateIndex(username);
+
+    const privateIndexPath: string = join(USER_DATABASE_PATH, username, 'private.json');
+    const data = JSON.parse(readFileSync(privateIndexPath, 'utf-8'));
+
+    data.protected_files.push(name);
+    writeFileSync(privateIndexPath, JSON.stringify(data), 'utf-8');
+}

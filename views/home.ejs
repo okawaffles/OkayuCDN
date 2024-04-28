@@ -1,16 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to OkayuCDN!</title>
-    <link rel="stylesheet" href="/assets/styles/_newStyles.css">
-    <script src="https://kit.fontawesome.com/dc1b60441b.js" crossorigin="anonymous"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-    <script src="/assets/scripts/language.js"></script>
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Welcome to OkayuCDN!</title>
+        <link rel="stylesheet" href="/assets/styles/_newStyles.css">
+        <script src="https://kit.fontawesome.com/dc1b60441b.js" crossorigin="anonymous"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+        <script src="/assets/scripts/language.js"></script>
+
+        <meta property="og:title" content="Home - OkayuCDN" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://okayu.okawaffles.com" />
+        <!-- <meta property="og:image" content="https://okayu.okawaffles.com/assets/images/thumbnail.png" /> -->
+        <meta property="og:description" content="Upload files for free" />
+        <meta name="theme-color" content="#9a21db">
+    </head>
+    <body>
     <%- include('parts/navbar', {active:'home'}) %>
 
     <!-- this will be removed, currently for okayu-nightly.catgirls.space -->
@@ -33,8 +40,6 @@
 </body>
 
 <script>
-    checkLanguage('home');
-
     $.getJSON('/api/health', (data) => {
         const announcement = data.config.announcement;
         if (announcement.active) {

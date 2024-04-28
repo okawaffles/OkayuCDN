@@ -136,7 +136,8 @@ async function StartFileUpload() {
     $.post('/api/upload/finish', {
         filename: $('#filename_input')[0].value,
         extension,
-        chunk_count: total_chunks
+        chunk_count: total_chunks,
+        isPrivate: $('#private_toggle').is(':checked')
     }, (data) => {
         if (data.status == 200) {
             document.location = data.goto;

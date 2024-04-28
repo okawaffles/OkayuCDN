@@ -1,6 +1,6 @@
 import multer from 'multer';
 import { UploadResult, UserModel } from '../types';
-import { GetUserFromToken } from '../util/secure';
+import { AddProtectedFile, GetUserFromToken } from '../util/secure';
 import { appendFileSync, mkdirSync, readFileSync, readdirSync, rmSync } from 'fs';
 import { join } from 'path';
 import { UPLOADS_PATH } from '../util/paths';
@@ -67,6 +67,8 @@ export function FinishUpload(req: Request, res: Response) {
             appendFileSync(newPath, readFileSync(currentPath));
             rmSync(currentPath);
         }
+
+        if (req.body.isPrivate) AddProtectedFile(user.username, newName);
     
         res.json({
             status: 200,

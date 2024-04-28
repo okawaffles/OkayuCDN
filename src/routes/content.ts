@@ -24,8 +24,8 @@ export function RegisterContentRoutes() {
         if (!existsSync(pathOfContent)) return res.status(404).render('notfound.ejs', {version});
 
         if (IsContentProtected(username, item)) {
-            if (data.token == undefined) return res.status(404).render('notfound.ejs', {version});
-            if (GetUserFromToken(data.token) != username) return res.status(404).render('notfound.ejs', {version});
+            if (data.token == undefined) return res.status(404).render('err401');
+            if (GetUserFromToken(data.token).username != username) return res.status(404).render('err401');
         }
 
         if (pathOfContent.endsWith('.mp4') && !bypassVideoPage) {
@@ -34,14 +34,20 @@ export function RegisterContentRoutes() {
             res.sendFile(pathOfContent);
         }
     });
-    Router.get('/view/@:username/:item', ValidateContentRequest(), HandleBadRequest, (req: Request, res: Response) => {
-        const username = req.params.username;
-        const item = req.params.item;
+    Router.get('/view/@:username/:item', ValidateContentRequest(), ValidateOptionalToken(), HandleBadRequest, (req: Request, res: Response) => {
+        const data = matchedData(req);
+        const username = data.username;
+        const item = data.item;
 
         const pathOfContent = join(UPLOADS_PATH, username, item);
 
         if (!existsSync(pathOfContent)) {
             return res.status(404).render('notfound.ejs');
+        }
+
+        if (IsContentProtected(username, item)) {
+            if (data.token == undefined) return res.status(404).render('err401');
+            if (GetUserFromToken(data.token).username != username) return res.status(404).render('err401');
         }
 
         const info = statSync(pathOfContent);

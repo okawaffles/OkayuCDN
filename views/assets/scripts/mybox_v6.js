@@ -22,7 +22,8 @@ function LoadBox() {
 
         let i = 0;
         items.forEach((item) => {
-            AddItem(item, i);
+            const private = (data.protected_files.indexOf(item.name) != -1);
+            AddItem(item, i, private);
             i++;
         });
 
@@ -33,9 +34,10 @@ function LoadBox() {
 }
 
 let alternate = true;
-function AddItem(item, id) {
+function AddItem(item, id, private) {
+    if (private) console.log(`${item} is private`);
     if (item.name.startsWith('LATEST.UPLOADING.')) return;
-    const element = generateItem(id, item.name, parseStorageAmount(item.size), alternate);
+    const element = generateItem(id, item.name, parseStorageAmount(item.size), alternate, private);
     alternate = !alternate;
 
     $('#content_container').append(element);
@@ -78,11 +80,11 @@ function parseStorageAmount(bytes) {
 
 /* Moved from old script */
 
-function generateItem(id, item, fsize, alternate) {
+function generateItem(id, item, fsize, alternate, private) {
     return `<div class="content_items ${alternate?'alternate':''}">
     <div class="top">
         <div class="left">
-            <span class="size">${fsize}</span>
+            <span class="size">${fsize}    ${private?'<i class="fa-solid fa-lock"></i>':''}</span>
             <p class="name">${item}</p>
         </div>
         <div class="right">

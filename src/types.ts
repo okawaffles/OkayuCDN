@@ -51,5 +51,6 @@ export interface ContentItem {
 export interface StorageData {
     used: number,
     total: number,
-    content: Array<ContentItem>
+    content: Array<ContentItem>,
+    protected_files: Array<string>
 }

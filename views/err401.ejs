@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<head>
+    <title>Whoops! | OkayuCDN</title>
+    <link rel="stylesheet" href="/assets/styles/_newStyles.css">
+    <link rel="icon" href="/assets/images/favicon.png" type="image/x-icon" />
+    <script src="https://kit.fontawesome.com/dc1b60441b.js" crossorigin="anonymous"></script>
+    
+</head>
+
+<html>
+
+<body>
+    <%- include('parts/navbar', {active:'none'}) %>
+    <div class="container404">
+        <img src="/assets/images/okayu_angry.jpg">
+        <h1>Whoops! This file is private!</h1>
+        <h4>Ask the owner of this file to make it public!</h4>
+        <br><br>
+        <h4>Keep ending up here but you're sure the file is public? Report it on <a class="clickable-link" href="https://github.com/okawaffles/OkayuCDN">GitHub</a>!</h4>
+    </div>
+</body>
+
+<style>
+    * {
+        color: white;
+    }
+    .container404 {
+        text-align: center;
+        margin-top: 5em;
+    }
+    img {
+        width: 10%; 
+        height: 10%
+    }
+    @media screen and (max-width: 714px) {
+        img {
+            width: 75%;
+            height: 75%
+        }
+    }
+</style>
+
+</html>
