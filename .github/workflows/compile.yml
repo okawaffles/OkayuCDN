@@ -19,4 +19,4 @@ jobs:
     - name: install npm packages
       run: npm install --save-dev
     - name: compile
-      uses: icrawl/action-tsc@v1
+      run: npx tsc
