@@ -47,3 +47,8 @@ export const HandleBadRequest = (req: Request, res: Response, next: CallableFunc
 export const ValidateDeletionRequest = () => [
     body('id').notEmpty().escape()
 ];
+
+export const ValidatePasswordRequest = () => [
+    body('new_password').notEmpty().escape(),
+    body('current_password').notEmpty().escape()
+];

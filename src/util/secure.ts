@@ -182,6 +182,23 @@ async function UpgradeUserPassword(user: UserModel, secureData: UserSecureData, 
     });
 }
 
+export async function UpdateUserPassword(user: UserModel, rawNewPassword: string): Promise<boolean> {
+    return new Promise((resolve: CallableFunction) => {
+        try {
+            const newPasswordSalt: string = CreateNewToken();
+            hash(rawNewPassword + newPasswordSalt).then((newPassword) => { 
+                user.SecureData!.password = newPassword;
+                user.SecureData!.password_salt = newPasswordSalt;
+                
+                resolve(true);
+            });
+        } catch (err: unknown) {
+            L.error(<string> err);
+            resolve(false);
+        }
+    });
+}
+
 /**
  * Check whether provided login credentials are correct. Also upgrades pre-6.0 passwords to argon2 (and switches to the new UserModel data structure if so).
  * @param username provided username

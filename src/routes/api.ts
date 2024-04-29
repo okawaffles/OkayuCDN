@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'; 
 import { Router, announcement, domain, version } from '../main';
-import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST, ValidateDeletionRequest } from '../util/sanitize';
+import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST, ValidateDeletionRequest, ValidatePasswordRequest } from '../util/sanitize';
 import { matchedData } from 'express-validator';
-import { ChangeFileVisibility, GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewToken, VerifyLoginCredentials, VerifyOTPCode, VerifyUserExists } from '../util/secure';
+import { ChangeFileVisibility, GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewToken, UpdateUserPassword, VerifyLoginCredentials, VerifyOTPCode, VerifyUserExists } from '../util/secure';
 import { FinishUpload, MulterUploader } from '../api/upload';
 import { StorageData, UserModel } from '../types';
 import { GetStorageInfo } from '../api/content';
@@ -158,5 +158,17 @@ export function RegisterAPIRoutes() {
         ChangeFileVisibility(data.token, data.id);
 
         res.status(204).end();
+    });
+
+    Router.patch('/api/password', ValidateToken(), PrefersLogin, ValidatePasswordRequest(), HandleBadRequest, async (req: Request, res: Response) => {
+        const data = matchedData(req);
+        const user = GetUserFromToken(data.token);
+
+        if (!await VerifyLoginCredentials(user.username, data.current_password)) return res.status(401).json({success:false});
+
+        if (await UpdateUserPassword(GetUserFromToken(data.token), data.new_password)) 
+            res.status(200).json({success:true});
+        else
+            res.status(500).json({success:false});
     });
 }
