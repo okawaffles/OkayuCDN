@@ -84,7 +84,7 @@ function generateItem(id, item, fsize, alternate, private) {
     return `<div class="content_items ${alternate?'alternate':''}">
     <div class="top">
         <div class="left">
-            <span class="size">${fsize}    ${private?'<i class="fa-solid fa-lock"></i>':''}</span>
+            <span class="size" id="size-${id}">${fsize}    ${private?'<i class="fa-solid fa-lock"></i>':''}</span>
             <p class="name">${item}</p>
         </div>
         <div class="right">
@@ -132,6 +132,14 @@ function changeVisibility(item, id) {
                 const isPrivate = $(`#change-visibility-${id}`).html() != '<i class="fa-solid fa-lock-open" aria-hidden="true"></i> Make Public';
 
                 $(`#change-visibility-${id}`).html(isPrivate?'<i class="fa-solid fa-lock-open"></i> Make Public':'<i class="fa-solid fa-lock"></i> Make Private');
+
+                if (isPrivate) {
+                    let currentHTML = $(`#size-${id}`).html();
+                    $(`#size-${id}`).html(`${currentHTML}    <i class="fa-solid fa-lock" aria-hidden="true"></i>`);
+                } else {
+                    let currentHTML = $(`#size-${id}`).html().split(' ')[0];
+                    $(`#size-${id}`).html(currentHTML);
+                }
             }
         }
     });
