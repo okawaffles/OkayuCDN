@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Welcome to OkayuCDN!</title>
+        <link rel="stylesheet" href="/assets/styles/_newStyles.css">
+        <script src="https://kit.fontawesome.com/dc1b60441b.js" crossorigin="anonymous"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+        <script src="/assets/scripts/language.js"></script>
+
+        <meta property="og:title" content="Home - OkayuCDN" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://okayu.okawaffles.com" />
+        <!-- <meta property="og:image" content="https://okayu.okawaffles.com/assets/images/thumbnail.png" /> -->
+        <meta property="og:description" content="Upload files for free" />
+        <meta name="theme-color" content="#9a21db">
+    </head>
+    <body>
+    <%- include('parts/navbar', {active:'home'}) %>
+
+    <!-- this will be removed, currently for okayu-nightly.catgirls.space -->
+    <div id="announcement">
+        <p id="announcement-content">We've decided to take the site in a different direction, read more <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">here</a>.</p>
+    </div>
+
+    <div class="container">
+        <h1 class="title" id="t_title">Welcome to MococoCDN!</h1>
+        <h2 class="subtitle sa" id="t_sa">You can upload your files for free here!</h2>
+        <h2 class="subtitle sb" id="t_sb">Any file type is supported and they can be embedded in Discord!</h2>
+    </div>
+
+    <div class="characters">
+        <img src="./assets/aprilfools/images/mococo_450.png" class="chara-center" />
+    </div>
+
+    <h3 class="v">April fools! <%= version %></h3>
+    <br>
+</body>
+
+<script>
+    // $.getJSON('/api/health', (data) => {
+    //     const announcement = data.config.announcement;
+    //     if (announcement.active) {
+             $('#announcement').css('display', 'inherit');
+    //         $('#announcement-content').html(announcement.content);
+    //     }
+    // });
+</script>
+
+</html>
