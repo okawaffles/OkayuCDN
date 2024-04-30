@@ -164,7 +164,8 @@ export function RegisterAPIRoutes() {
         const data = matchedData(req);
         const user = GetUserFromToken(data.token);
 
-        if (!await VerifyLoginCredentials(user.username, data.current_password)) return res.status(401).json({success:false});
+        console.log(user.username, data.current_password);
+        if (!await VerifyLoginCredentials(user.username, data.current_password)) return res.status(401).json({success:false,reason:'bad login'});
 
         if (await UpdateUserPassword(GetUserFromToken(data.token), data.new_password)) 
             res.status(200).json({success:true});

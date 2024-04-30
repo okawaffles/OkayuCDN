@@ -2,15 +2,24 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 function updatePwd() {
-    $.post('/api/account/changePassword', {
-        currentPassword:$('#password_current').val(),
-        newPassword:$('#password_new').val()
-    }).done(function (data) {
-        if (data.result == 200) {
-            alert('Your password has been changed successfully.');
-        } else {
-            $('p.login_error').css('display', 'inline');
-            console.log(data);
+    $.ajax({
+        type:'PATCH',
+        url:'/api/password',
+        data: {
+            current_password: $('#password_current').val(),
+            new_password: $('#password_new').val()
+        },
+        statusCode: {
+            200: () => {
+                alert('Your password has been changed successfully.');
+                document.location = '/logout';
+            },
+            400: () => {
+                $('p.login_error').css('display', 'inline').text('Bad request. Please check your inputs.');
+            },
+            401: () => {
+                $('p.login_error').css('display', 'inline').text('Please check your current password.');
+            }
         }
     });
 }
