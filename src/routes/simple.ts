@@ -7,13 +7,15 @@ import { TOKEN_DATABASE_PATH } from '../util/paths';
 import { matchedData } from 'express-validator';
 import { join } from 'node:path';
 import { error } from 'okayulogger';
+import { IsAprilFools } from '../util/aprilfools';
 
 /**
  * These are routes that don't change much, such as /home and /info.
  */
 export function RegisterSimpleRoutes() {
     Router.get('/home', (req: Request, res: Response) => {
-        res.render('home.ejs', {version});
+        if (IsAprilFools()) return res.render('assets/aprilfools/home', {version});
+        res.render('home', {version});
     });
 
     Router.get('/info', (req: Request, res: Response) => {
