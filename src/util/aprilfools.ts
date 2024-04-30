@@ -8,5 +8,5 @@ export function IsAprilFools() {
     const day = date.getDate();
 
     // april fools changes will take effect for one week.
-    return (month == 4 && day < 30);
+    return (month == 4 && day < 8);
 }
