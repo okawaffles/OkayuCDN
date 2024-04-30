@@ -1,5 +1,8 @@
 export interface OTPConfig {
-    secret: string
+    secret: string,
+    setup?: {
+        data: string
+    }
 }
 
 export interface UserSecureData {

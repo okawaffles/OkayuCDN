@@ -24,6 +24,12 @@ function updatePwd() {
     });
 }
 
+function EnableOTP() {
+    $.getJSON('/api/otp', (data) => {
+        $('#qrcode').prop('src', data.url);
+    });
+}
+
 function DisableOTP() {
     $.post('/api/2fa/otp/disable', (data) => {
         if (data.success) {

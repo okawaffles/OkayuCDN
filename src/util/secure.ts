@@ -17,7 +17,8 @@ const TokenCache: Cache = {
 
 const L: Logger = new Logger('secure'); 
 
-import { totp } from 'speakeasy';
+import { GeneratedSecret, generateSecret, totp } from 'speakeasy';
+import { toDataURL } from 'qrcode';
 
 /**
  * Generate a new 32-character token.
@@ -350,4 +351,28 @@ export function ChangeFileVisibility(token: string, name: string) {
         RemoveProtectedFile(user.username, name);
     else
         AddProtectedFile(user.username, name);
+}
+
+
+export async function BeginTOTPSetup(user: UserModel): Promise<string> {
+    const secret: GeneratedSecret = generateSecret();
+
+    user.SecureData!.twoFactorData!.OTPConfig!.setup!.data = secret.base32;
+    writeFileSync(join(USER_DATABASE_PATH, `${user.username}.json`), JSON.stringify(user));
+    
+    return new Promise((resolve) => {
+        toDataURL(<string> secret.otpauth_url, (err: unknown, data_url: string) => {
+            resolve(data_url);
+        });
+    });
+}
+
+export function CheckTOTPCode(username: string, code: number): boolean {
+    const user = GetUserModel(username, true);
+
+    return totp.verify({
+        secret: user.SecureData!.twoFactorData!.OTPConfig!.setup!.data,
+        encoding: 'base32',
+        token: ''+code
+    });
 }

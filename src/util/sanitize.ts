@@ -27,8 +27,9 @@ export const ValidateUploadPOST = () => [
 ];
 
 export const ValidateOTP = () => [
-    body('username').notEmpty().escape().isAlphanumeric('en-US'),
-    body('code').notEmpty().escape().isNumeric().isLength({min:6,max:6})
+    body('code').notEmpty().escape().isNumeric().isLength({min:6,max:6}),
+    body('isSetup').optional().escape().isBoolean(),
+    body('username').notEmpty().escape().isString().isAlphanumeric('en-US')
 ];
 
 export const HandleBadRequest = (req: Request, res: Response, next: CallableFunction) => {

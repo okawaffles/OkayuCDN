@@ -26,7 +26,11 @@
 
         <br><br>
         <h1 class="tfa_h1" id="otp-header">Enable OTP Two-Factor Authentication</h1><br>
-        <button class="go" id="submit-otp" onclick="document.location = '/account/2fa/setup';">Enable OTP 2FA</button><br><br>
+        <button class="go" id="submit-otp" onclick="EnableOTP();">Enable OTP 2FA</button><br><br>
+
+        <div class="totpSetup">
+            <img src="null" id="qrcode" />
+        </div>
 
         <!-- TO ANYONE SNOOPING AROUND: PASSKEY LOGIN DOES NOT WORK! -->
         <!-- If you do know what you're doing and can help me, make a PR on the github!! -->

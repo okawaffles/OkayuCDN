@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { Router, announcement, domain, version } from '../main';
 import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST, ValidateDeletionRequest, ValidatePasswordRequest } from '../util/sanitize';
 import { matchedData } from 'express-validator';
-import { ChangeFileVisibility, GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewToken, UpdateUserPassword, VerifyLoginCredentials, VerifyOTPCode, VerifyUserExists } from '../util/secure';
+import { BeginTOTPSetup, ChangeFileVisibility, CheckTOTPCode, GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewToken, UpdateUserPassword, VerifyLoginCredentials, VerifyOTPCode, VerifyUserExists } from '../util/secure';
 import { FinishUpload, MulterUploader } from '../api/upload';
 import { StorageData, UserModel } from '../types';
 import { GetStorageInfo } from '../api/content';
@@ -160,6 +160,8 @@ export function RegisterAPIRoutes() {
         res.status(204).end();
     });
 
+
+    /* ACCOUNT PAGE */
     Router.patch('/api/password', ValidateToken(), PrefersLogin, ValidatePasswordRequest(), HandleBadRequest, async (req: Request, res: Response) => {
         const data = matchedData(req);
         const user = GetUserFromToken(data.token);
@@ -170,5 +172,22 @@ export function RegisterAPIRoutes() {
             res.status(200).json({success:true});
         else
             res.status(500).json({success:false});
+    });
+
+    // GET route = begin TOTP setup
+    Router.get('/api/otp', ValidateToken(), PrefersLogin, HandleBadRequest, async (req: Request, res: Response) => {
+        const data = matchedData(req);
+        const url = await BeginTOTPSetup(GetUserFromToken(data.token));
+        res.json({url});
+    });
+
+    // POST route = verify TOTP
+    Router.post('/api/otp', ValidateOTP(), HandleBadRequest, (req: Request, res: Response) => {
+        const data = matchedData(req);
+
+        if (CheckTOTPCode(data.username, data.code))
+            res.status(200).end();
+        else
+            res.status(401).end();
     });
 }
