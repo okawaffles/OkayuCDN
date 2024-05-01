@@ -18,9 +18,7 @@ export function RegisterSimpleRoutes() {
         res.render('home', {version});
     });
 
-    Router.get('/info', (req: Request, res: Response) => {
-        res.render('info.ejs');
-    });
+    Router.get('/info', (req: Request, res: Response) => res.render('info.ejs'));
 
     // used for testing features not ready for release, or just very specific issues
     Router.get('/test', (req: Request, res: Response) => {
@@ -31,9 +29,7 @@ export function RegisterSimpleRoutes() {
         res.render('test.ejs');
     });
 
-    Router.get('/login', ValidateLoginGET(), HandleBadRequest, (req: Request, res: Response) => {
-        res.render('login.ejs');
-    });
+    Router.get('/login', ValidateLoginGET(), HandleBadRequest, (req: Request, res: Response) => res.render('login.ejs'));
     Router.get('/logout', ValidateToken(), PrefersLogin, (req: Request, res: Response) => {
         const data = matchedData(req);
         res.cookie('token', 'logout').redirect('/login');
@@ -44,11 +40,11 @@ export function RegisterSimpleRoutes() {
         }
     });
 
-    Router.get('/upload', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
-        res.render('upload.ejs');
-    });
+    Router.get('/signup', (req: Request, res: Response) => res.render('signup'));
 
-    Router.get('/mybox', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
-        res.render('mybox.ejs');
-    });
+    Router.get('/terms', (req: Request, res: Response) => res.render('terms'));
+
+    Router.get('/upload', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => res.render('upload.ejs'));
+
+    Router.get('/mybox', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => res.render('mybox.ejs'));
 }
