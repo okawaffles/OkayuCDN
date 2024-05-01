@@ -7,6 +7,9 @@ import { UserModel, UserSecureData } from '../types';
 import { createHash, randomBytes } from 'node:crypto';
 import { hash, verify } from 'argon2';
 import { Logger } from 'okayulogger';
+import { toDataURL } from 'qrcode';
+import { authenticator, totp } from 'otplib';
+
 
 interface Cache {
     [key: string]: string;
@@ -16,10 +19,6 @@ const TokenCache: Cache = {
 };
 
 const L: Logger = new Logger('secure'); 
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const speakeasy = require('speakeasy');
-import { toDataURL } from 'qrcode';
 
 /**
  * Generate a new 32-character token.
@@ -132,8 +131,8 @@ export function GetUserModel(username: string, addSecureData: boolean = false): 
     // oops...
     if (userData.userId) {
         // strip securedata if we don't want it
-        if (!addSecureData) userData.SecureData = undefined; 
-        
+        if (!addSecureData) userData.SecureData = undefined;
+
         return userData as UserModel;
     }
 
@@ -233,26 +232,7 @@ export async function VerifyLoginCredentials(username: string, password: string)
         });
     });
 }
-
-
-/**
- * Validate whether a user's two-factor authentication code is correct.
- * @param username username to get UserModel from
- * @param otp the one-time 2FA code from the auth. app
- */
-export function VerifyOTPCode(username: string, otp: number): boolean {
-    if (!VerifyUserExists(username)) return false;
-    const user: UserModel = GetUserModel(username, true);
-
-    // hypothetically if all checks pass you should not get here without a valid usermodel
-    // but it should be handled fine if you do
-
-    return speakeasy.totp.verify({
-        secret: <string> user.SecureData?.twoFactorData?.OTPConfig?.secret,
-        encoding: 'base32',
-        token: otp.toString()
-    });
-}
+    
 
 
 /**
@@ -370,17 +350,27 @@ export function ChangeFileVisibility(token: string, name: string) {
 
 
 export async function BeginTOTPSetup(user: UserModel): Promise<string> {
-    const secret = speakeasy.generateSecret({
-        name:`OkayuCDN (${user.username})`
-    });
+    const secret = authenticator.generateSecret();
 
     const fullUser = GetUserModel(user.username, true);
 
-    fullUser.SecureData!.twoFactorData!.OTPConfig!.setup!.data = secret.base32;
+    fullUser.SecureData!.twoFactorData = {
+        usesOTP: false,
+        usesPasskey: false,
+        PasskeyConfig: {},
+        OTPConfig: {
+            secret: '',
+            setup: {
+                data: secret
+            }
+        }
+    };
+
     writeFileSync(join(USER_DATABASE_PATH, `${user.username}.json`), JSON.stringify(fullUser));
     
     return new Promise((resolve) => {
-        toDataURL(<string> secret.otpauth_url, (err: unknown, data_url: string) => {
+        const URI: string = `otpauth://totp/OkayuCDN%20(${user.username})?secret=${secret}`;
+        toDataURL(URI, (err: unknown, data_url: string) => {
             resolve(data_url);
         });
     });
@@ -389,9 +379,8 @@ export async function BeginTOTPSetup(user: UserModel): Promise<string> {
 export function CheckTOTPCode(username: string, code: number): boolean {
     const user = GetUserModel(username, true);
 
-    return speakeasy.totp.verify({
-        secret: user.SecureData!.twoFactorData!.OTPConfig!.setup!.data,
-        encoding: 'base32',
+    return totp.verify({
+        secret: user.SecureData!.twoFactorData!.OTPConfig!.setup!.data, 
         token: ''+code
     });
 }

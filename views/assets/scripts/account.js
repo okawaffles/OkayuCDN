@@ -1,6 +1,8 @@
 /* eslint-disable no-undef */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
+let USERNAME = '';
+
 function updatePwd() {
     $.ajax({
         type:'PATCH',
@@ -27,6 +29,17 @@ function updatePwd() {
 function EnableOTP() {
     $.getJSON('/api/otp', (data) => {
         $('#qrcode').prop('src', data.url);
+        $('#totpSetup').css('display', 'inherit');
+    });
+}
+
+function CheckOTP() {
+    $.post('/api/otp', {username: USERNAME, code: $('#totpCode').val()}, (result) => {
+        if (result.statusCode == 204) {
+            alert('OK!');
+        } else {
+            alert('NOT OK!');
+        }
     });
 }
 
@@ -89,6 +102,7 @@ async function StartPasskeySetup() {
 
 $(document).ready(() => {
     $.get('/api/whoami').done((data) => {
+        USERNAME = data.username;
         $('#account_name').text(`Your Account (${data.username})`);
 
         if (data.preferences.two_factor.otp_enabled) {

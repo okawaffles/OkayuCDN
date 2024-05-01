@@ -28,8 +28,11 @@
         <h1 class="tfa_h1" id="otp-header">Enable OTP Two-Factor Authentication</h1><br>
         <button class="go" id="submit-otp" onclick="EnableOTP();">Enable OTP 2FA</button><br><br>
 
-        <div class="totpSetup">
-            <img src="null" id="qrcode" />
+        <div id="totpSetup" style="display: none;">
+            <img id="qrcode" />
+            <h3>Scan this QR code with your desired authenticator app.<br>Then, enter the code below to activate.</h3>
+            <input type="number" id="totpCode" />
+            <button class="go" id="submit" onclick="CheckOTP()">Check</button>
         </div>
 
         <!-- TO ANYONE SNOOPING AROUND: PASSKEY LOGIN DOES NOT WORK! -->
