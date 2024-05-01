@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/assets/styles/_newStyles.css">
     <script src="https://kit.fontawesome.com/dc1b60441b.js" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-    <script src="/assets/scripts/language.js"></script>
+    <script src="/assets/scripts/signup.js"></script>
 </head>
 <body>
     <%- include('parts/navbar', {active:'none'}) %>
@@ -16,24 +16,26 @@
     <div class="login-pane">
         <h2 class="login_title">Welcome to OkayuCDN!</h2>
         <h4 class="login_subtitle">We're happy to see new users!</h4>
-        <form class="login_form" action="/api/signup" method="POST">
-            <p style="text-align: center;" class="p">6-25 characters, letters and numbers only.</p>
-            <p style="text-align: center; font-style: italic;" class="p">New: Password must be at least 8 characters, with at<br>least 2 numbers, 2 symbols, and 2 uppercase letters.</p>
-            <input type="text" placeholder="Username" class="input_text" pattern="[a-zA-Z0-9]{6,25}" name="un" required /><br>
-            <input type="password" placeholder="Password" name="pw" class="input_text" required /><br>
-            <input type="text" placeholder="Real Name" name="nm" class="input_text" required /><br>
-            <input type="email" placeholder="Email" name="em" class="input_text" required /><br>
+
+        <p style="text-align: center;" class="p">6-25 characters, letters and numbers only.</p>
+        <p style="text-align: center; font-style: italic;" class="p">New: Password must be at least 8 characters, with at<br>least 2 numbers, 2 symbols, and 2 uppercase letters.</p>
+        
+        <div class="center">
+            <input type="text" placeholder="Username" class="input_text" pattern="^[a-zA-Z0-9]{6,25}$" id="username" required /><br>
+            <input type="password" placeholder="Password" id="password" class="input_text" required /><br>
+            <input type="text" placeholder="Real Name" id="realname" class="input_text" required /><br>
+            <input type="email" placeholder="Email" id="email" class="input_text" pattern="^(?=.*[a-z])(?=.*[A-Z].*[A-Z])(?=.*\d.*\d)(?=.*[^a-zA-Z\d].*[^a-zA-Z\d]).{8,}$" required /><br>
             <p class="p">By signing up, you are agreeing to our <a style="color:cornflowerblue;" href="../terms">Terms of Service</a>.</p>
-            <div class="wrap">
-                <input type="submit" class="go" id="submit" value="Go" />
-            </div>
-        </form>
+        </div>
+        
+        <div class="wrap">
+            <input type="submit" class="go" id="submit" value="Go" />
+        </div>
+        
         <br><hr><br>
         <div class="wrap">
             <button class="go" onclick="location = `../login?redir=/home`">I already have an account</button>
         </div>
     </div>
-
-    <script>checkLanguage("signup");</script>
 </body>
 </html>

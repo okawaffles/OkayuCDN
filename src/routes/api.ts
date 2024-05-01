@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'; 
 import { Router, announcement, domain, version } from '../main';
-import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST, ValidateDeletionRequest, ValidatePasswordRequest } from '../util/sanitize';
+import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST, ValidateDeletionRequest, ValidatePasswordRequest, ValidateSignupPOST } from '../util/sanitize';
 import { matchedData } from 'express-validator';
-import { BeginTOTPSetup, ChangeFileVisibility, CheckTOTPCode, GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewToken, UpdateUserPassword, VerifyLoginCredentials, VerifyUserExists } from '../util/secure';
+import { BeginTOTPSetup, ChangeFileVisibility, CheckTOTPCode, GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewAccount, RegisterNewToken, UpdateUserPassword, VerifyLoginCredentials, VerifyUserExists } from '../util/secure';
 import { FinishUpload, MulterUploader } from '../api/upload';
 import { StorageData, UserModel } from '../types';
 import { GetStorageInfo } from '../api/content';
@@ -83,6 +83,12 @@ export function RegisterAPIRoutes() {
         }
     });
 
+    Router.post('/api/signup', ValidateSignupPOST(), HandleBadRequest, async (req: Request, res: Response) => {
+        const data = matchedData(req);
+        
+        if (!await RegisterNewAccount(data.username, data.password, data.email, data.realname)) return res.status(409).json({error:'account already exists'});
+        else res.status(200).end();
+    });
 
 
     /* UPLOADING */

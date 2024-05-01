@@ -31,6 +31,7 @@ export interface UserModel {
     username: string,
     userId: number,
     email: string,
+    realname?: string,
     storageAmount: number,
     hasLargeStorage: boolean,
     preferences: LocalUserSettings,

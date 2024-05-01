@@ -53,3 +53,10 @@ export const ValidatePasswordRequest = () => [
     body('new_password').notEmpty().escape(),
     body('current_password').notEmpty().escape()
 ];
+
+export const ValidateSignupPOST = () => [
+    body('username').notEmpty().isAlphanumeric('en-US').escape().isLength({min:6,max:25}),
+    body('password').notEmpty().escape().isStrongPassword({minLength:8,minNumbers:2,minSymbols:2,minUppercase:2}),
+    body('realname').notEmpty().escape(),
+    body('email').notEmpty().escape().isEmail()
+];

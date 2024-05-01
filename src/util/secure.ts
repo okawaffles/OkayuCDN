@@ -401,3 +401,52 @@ export function CheckTOTPCode(username: string, code: number): boolean {
         token: ''+code
     });
 }
+
+/**
+ * Checks whether an account exists, which returns false if it does; If not, it creates a new account and returns true.
+ * @param username The provided username
+ * @param password The provided password
+ * @param email The provided email
+ * @param realname The provided real name
+ * @returns true if successful, false if account already exists
+ */
+export function RegisterNewAccount(username: string, password: string, email: string, realname: string): Promise<boolean> {
+    return new Promise((resolve) => {
+        if (VerifyUserExists(username)) return resolve(false);
+
+        const salt = CreateNewToken();
+        hash(password + salt).then(hashedPassword => {
+            const userData: UserModel = {
+                username: username,
+                userId: -1,
+                email: email,
+                realname: realname,
+                hasLargeStorage: false,
+                storageAmount: 25*1024*1024*1024, // 25gb
+                preferences: {
+                    language: 0
+                },
+                SecureData: {
+                    password: hashedPassword,
+                    password_salt: salt,
+                    passwordIsLegacy: false,
+                    two_factor: false,
+                    twoFactorData: {
+                        usesOTP: false,
+                        usesPasskey: false,
+                        OTPConfig: {
+                            secret: '',
+                            setup: {
+                                data: ''
+                            }
+                        },
+                        PasskeyConfig: {}
+                    }
+                }
+            };
+
+            writeFileSync(join(USER_DATABASE_PATH, `${username}.json`), JSON.stringify(userData));
+            resolve(true);
+        });
+    });
+}
