@@ -17,7 +17,8 @@ const TokenCache: Cache = {
 
 const L: Logger = new Logger('secure'); 
 
-import { GeneratedSecret, generateSecret, totp } from 'speakeasy';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const speakeasy = require('speakeasy');
 import { toDataURL } from 'qrcode';
 
 /**
@@ -128,7 +129,11 @@ export function GetSecureData(user: UserModel): UserSecureData {
 export function GetUserModel(username: string, addSecureData: boolean = false): UserModel {
     const userData = JSON.parse(readFileSync(join(USER_DATABASE_PATH, `${username}.json`), 'utf-8'));
 
-    if (userData.UserModel) {
+    // oops...
+    if (userData.userId) {
+        // strip securedata if we don't want it
+        if (!addSecureData) userData.SecureData = undefined; 
+        
         return userData as UserModel;
     }
 
@@ -191,6 +196,8 @@ export async function UpdateUserPassword(user: UserModel, rawNewPassword: string
                 user.SecureData!.password = newPassword;
                 user.SecureData!.password_salt = newPasswordSalt;
                 
+                writeFileSync(join(USER_DATABASE_PATH, user.username + '.json'), JSON.stringify(user));
+                
                 resolve(true);
             });
         } catch (err: unknown) {
@@ -207,16 +214,24 @@ export async function UpdateUserPassword(user: UserModel, rawNewPassword: string
  * @returns true if the credentials are correct, false otherwise
  */
 export async function VerifyLoginCredentials(username: string, password: string): Promise<boolean> {
-    if (!VerifyUserExists(username)) return false;
+    return new Promise((resolve) => {
 
-    const user: UserModel = GetUserModel(username, true);
-
-    CheckPrivateIndex(user.username);
-    if (user.SecureData?.passwordIsLegacy) {
-        return UpgradeUserPassword(user, user.SecureData, password);
-    }
-
-    return await verify(<string> user.SecureData?.password, password + user.SecureData?.password_salt);
+        if (!VerifyUserExists(username)) return false;
+        
+        const user: UserModel = GetUserModel(username, true);
+        
+        CheckPrivateIndex(user.username);
+        if (user.SecureData!.passwordIsLegacy) {
+            L.warn(`passwordIsLegacy, ${user.SecureData!.passwordIsLegacy}`);
+            UpgradeUserPassword(user, user.SecureData!, password).then(result => {
+                resolve(result);
+            });
+        }
+         
+        verify(<string> user.SecureData?.password, password + user.SecureData?.password_salt).then(result => {
+            resolve(result);
+        });
+    });
 }
 
 
@@ -232,7 +247,7 @@ export function VerifyOTPCode(username: string, otp: number): boolean {
     // hypothetically if all checks pass you should not get here without a valid usermodel
     // but it should be handled fine if you do
 
-    return totp.verify({
+    return speakeasy.totp.verify({
         secret: <string> user.SecureData?.twoFactorData?.OTPConfig?.secret,
         encoding: 'base32',
         token: otp.toString()
@@ -355,10 +370,14 @@ export function ChangeFileVisibility(token: string, name: string) {
 
 
 export async function BeginTOTPSetup(user: UserModel): Promise<string> {
-    const secret: GeneratedSecret = generateSecret();
+    const secret = speakeasy.generateSecret({
+        name:`OkayuCDN (${user.username})`
+    });
 
-    user.SecureData!.twoFactorData!.OTPConfig!.setup!.data = secret.base32;
-    writeFileSync(join(USER_DATABASE_PATH, `${user.username}.json`), JSON.stringify(user));
+    const fullUser = GetUserModel(user.username, true);
+
+    fullUser.SecureData!.twoFactorData!.OTPConfig!.setup!.data = secret.base32;
+    writeFileSync(join(USER_DATABASE_PATH, `${user.username}.json`), JSON.stringify(fullUser));
     
     return new Promise((resolve) => {
         toDataURL(<string> secret.otpauth_url, (err: unknown, data_url: string) => {
@@ -370,7 +389,7 @@ export async function BeginTOTPSetup(user: UserModel): Promise<string> {
 export function CheckTOTPCode(username: string, code: number): boolean {
     const user = GetUserModel(username, true);
 
-    return totp.verify({
+    return speakeasy.totp.verify({
         secret: user.SecureData!.twoFactorData!.OTPConfig!.setup!.data,
         encoding: 'base32',
         token: ''+code

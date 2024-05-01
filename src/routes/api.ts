@@ -37,14 +37,14 @@ export function RegisterAPIRoutes() {
 
     /* ACCOUNTING */
     // Login page handler for first step
-    Router.post('/api/login', ValidateLoginPOST(), HandleBadRequest, (req: Request, res: Response) => {
+    Router.post('/api/login', ValidateLoginPOST(), HandleBadRequest, async (req: Request, res: Response) => {
         const data = matchedData(req);
 
         // oops we need to verify the user exists first!
         if (!VerifyUserExists(data.username)) return res.json({status:401,reason:'Invalid login credentials'});
 
         // validation of login credentials...
-        if (!VerifyLoginCredentials(data.username, data.password)) 
+        if (!await VerifyLoginCredentials(data.username, data.password)) 
             return res.status(401).json({status:401,reason:'Invalid login credentials'});
      
         const user: UserModel = GetUserModel(data.username, true);
@@ -166,9 +166,11 @@ export function RegisterAPIRoutes() {
         const data = matchedData(req);
         const user = GetUserFromToken(data.token);
 
-        if (!VerifyLoginCredentials(user.username, data.current_password)) return res.status(401).json({success:false,reason:'bad login'});
+        if (!await VerifyLoginCredentials(user.username, data.current_password)) return res.status(401).json({success:false,reason:'bad login'});
 
-        if (await UpdateUserPassword(GetUserFromToken(data.token), data.new_password)) 
+        // TODO: Simplify this down
+        const fullUserModel: UserModel = GetUserModel(GetUserFromToken(data.token).username, true);
+        if (await UpdateUserPassword(fullUserModel, data.new_password)) 
             res.status(200).json({success:true});
         else
             res.status(500).json({success:false});
