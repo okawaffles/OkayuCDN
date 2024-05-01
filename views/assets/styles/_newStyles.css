@@ -737,6 +737,7 @@ button:hover {
     margin-bottom: 7px;
     background-color: #1a1f25;
     padding: 6px;
+    transition: ease-in-out 1s;
 }
 .alternate {
     background-color: #121518;
@@ -746,6 +747,19 @@ button:hover {
     background-color: var(--active-primary);
     padding: 2px 4px;
     border-radius: 8px;
+}
+
+.sort_select {
+    border: none;
+    border-radius: 50px;
+    width: 10em;
+    height: 3em;
+    font-size: 1rem;
+    background-color: white;
+    text-align: center;
+    display: flex;
+    justify-self: center;
+    margin-bottom: 1em;
 }
 
 @media screen and (max-width: 600px) {

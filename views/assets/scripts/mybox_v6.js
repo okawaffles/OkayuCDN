@@ -1,5 +1,7 @@
 let DOMAIN = 'https://okayu.okawaffles.com';
 let USERNAME = 'anonymous';
+let BOX_ITEMS = [];
+let PROTECTED_BOX_ITEMS = [];
 
 $(document).ready(() => {
     $.getJSON('/api/whoami', (data) => {
@@ -11,6 +13,11 @@ $(document).ready(() => {
         USERNAME = data.username;
         LoadBox(data.username);
     });
+
+    $('#sort_method').on('change', () => {
+        $('#content_container').empty();
+        RenderBox();
+    });
 });
 
 
@@ -18,19 +25,50 @@ function LoadBox() {
     $('#content_container').css('display', 'none');
 
     $.getJSON('/api/storage', (data) => {
-        const items = data.content;
-
-        let i = 0;
-        items.forEach((item) => {
-            const private = (data.protected_files.indexOf(item.name) != -1);
-            AddItem(item, i, private);
-            i++;
-        });
-
-        $('#content_container').css('display', 'inherit');
-        $('#mybox_nocontent').css('display', 'none');
-        $('#loader').css('display', 'none');
+        BOX_ITEMS = data.content;
+        RenderBox();
     });
+}
+
+function GetSort(type) {
+    switch (type) {
+    case 'default':
+        return function(a, b) {
+            if (a.name < b.name) return -1; else return 1;
+        };
+    case 'size-large':
+        return function(a, b) {
+            if (a.size > b.size) return -1; else return 1;
+        };
+    case 'size-small':
+        return function(a, b) {
+            if (a.size < b.size) return -1; else return 1;
+        };
+    default:
+        return function(a, b) {
+            if (a.name < b.name) return -1; else return 1;
+        };
+    }
+}
+
+function RenderBox() {
+    $('#content_container').css('display', 'none');
+
+    let SORTED_BOX_ITEMS = [];
+    const SortFunction = GetSort($('#sort_method').val());
+
+    SORTED_BOX_ITEMS = BOX_ITEMS.sort(SortFunction);
+
+    let i = 0;
+    SORTED_BOX_ITEMS.forEach((item) => {
+        const private = (PROTECTED_BOX_ITEMS.indexOf(item.name) != -1);
+        AddItem(item, i, private);
+        i++;
+    });
+
+    $('#content_container').css('display', 'inherit');
+    $('#mybox_nocontent').css('display', 'none');
+    $('#loader').css('display', 'none');
 }
 
 let alternate = true;

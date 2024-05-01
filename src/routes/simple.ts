@@ -47,4 +47,10 @@ export function RegisterSimpleRoutes() {
     Router.get('/upload', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => res.render('upload.ejs'));
 
     Router.get('/mybox', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => res.render('mybox.ejs'));
+
+    /**
+     * This route is for the April Fools homepage
+     * It's to hide the YouTube link so you can't see that it leads to... yk 
+     */
+    Router.get('/info/newDirection', (req: Request, res: Response) => res.redirect('https://youtu.be/dQw4w9WgXcQ'));
 }
