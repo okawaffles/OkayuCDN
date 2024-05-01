@@ -136,6 +136,7 @@ export function GetUserModel(username: string, addSecureData: boolean = false): 
         return userData as UserModel;
     }
 
+    // upgrade usermodel if we need to
     const model: UserModel = {
         username: username,
         userId: -1, // userId is -1 until implemented, if ever
@@ -187,6 +188,15 @@ async function UpgradeUserPassword(user: UserModel, secureData: UserSecureData, 
     });
 }
 
+/**
+ * Update a user's data to the new UserModel format
+ * @param username The user to upgrade
+ */
+function UpgradeToUserModel(username: string) {
+    const userData = GetUserModel(username, true); // get UserModel with secure data
+    writeFileSync(join(USER_DATABASE_PATH, `${username}.json`), JSON.stringify(userData)); // rewrite it
+}
+
 export async function UpdateUserPassword(user: UserModel, rawNewPassword: string): Promise<boolean> {
     return new Promise((resolve: CallableFunction) => {
         try {
@@ -220,16 +230,23 @@ export async function VerifyLoginCredentials(username: string, password: string)
         const user: UserModel = GetUserModel(username, true);
         
         CheckPrivateIndex(user.username);
+
+        // we can check whether a user is legacy by checking whether they have a password in the root element
+        const data = JSON.parse(readFileSync(join(USER_DATABASE_PATH, `${username}.json`), 'utf-8'));
+        if (data.password != undefined) {
+            UpgradeToUserModel(username);
+        }
+
         if (user.SecureData!.passwordIsLegacy) {
             L.warn(`passwordIsLegacy, ${user.SecureData!.passwordIsLegacy}`);
             UpgradeUserPassword(user, user.SecureData!, password).then(result => {
-                resolve(result);
+                return resolve(result);
+            });
+        } else {   
+            verify(<string> user.SecureData!.password, password + user.SecureData!.password_salt).then(result => {
+                return resolve(result);
             });
         }
-         
-        verify(<string> user.SecureData?.password, password + user.SecureData?.password_salt).then(result => {
-            resolve(result);
-        });
     });
 }
     

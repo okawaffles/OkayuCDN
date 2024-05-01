@@ -41,20 +41,23 @@ export function RegisterAPIRoutes() {
         const data = matchedData(req);
 
         // oops we need to verify the user exists first!
-        if (!VerifyUserExists(data.username)) return res.json({status:401,reason:'Invalid login credentials'});
+        if (!VerifyUserExists(data.username)) return res.json({status:401,reason:'User not found'});
+
+        console.log('user exists');
 
         // validation of login credentials...
-        if (!await VerifyLoginCredentials(data.username, data.password)) 
-            return res.status(401).json({status:401,reason:'Invalid login credentials'});
-     
-        const user: UserModel = GetUserModel(data.username, true);
-
-        // don't register a token for 2fa users
-        if (user.SecureData?.two_factor) return res.json({status:202,uses2FA:true});
-
-        // if the user doesn't use 2fa
-        const authToken: string = RegisterNewToken(user);
-        res.json({status:200,uses2FA:false,token:authToken});
+        VerifyLoginCredentials(data.username, data.password).then(isValid => {
+            if (!isValid) return res.status(401).json({status:401,reason:'Invalid login credentials'});
+            
+            const user: UserModel = GetUserModel(data.username, true);
+            
+            // don't register a token for 2fa users
+            if (user.SecureData?.two_factor) return res.json({status:202,uses2FA:true});
+            
+            // if the user doesn't use 2fa
+            const authToken: string = RegisterNewToken(user);
+            res.json({status:200,uses2FA:false,token:authToken});
+        });
     });
     // pages use this to figure out who they are based on the login token
     Router.get('/api/whoami', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
