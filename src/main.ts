@@ -5,7 +5,7 @@ import { RegisterRoutes } from './routes';
 
 /* load various data */
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-export const { port, paths, domain, announcement } = require(join(__dirname, '..', 'config.json'));
+export const { port, paths, domain, announcement, admins } = require(join(__dirname, '..', 'config.json'));
 export const BASE_DIRNAME: string = __dirname;
 import { PreparePaths } from './util/paths';
 PreparePaths(); // called to prepare exported paths

@@ -1,29 +1,5 @@
 {
-    "start_flags_available": [
-        "DISABLE_ACCOUNT_CREATION",
-        "DISABLE_UPLOADING",
-        "DISABLE_ANONYMOUS_UPLOADING",
-        "DISABLE_ASCII_ART",
-        "DISABLE_CACHE_CLEAN",
-        "DISABLE_TOKEN_CLEAN"
-    ],
-    "start_flags":[
-        "PLACE_FLAGS_HERE",
-        "LIKE_THIS",
-        
-
-        "DISABLE_ANONYMOUS_UPLOADING",
-        "DISABLE_TOKEN_CLEAN"
-    ],
-    "announcement":{
-        "active":true,
-        "content":"This site is for live-testing development builds of OkayuCDN. Please use <a href='https://okayu.okawaffles.com'>the stable website</a> if you're not a tester."
-    },
-    "version": "6.0.0 in TypeScript",
-
-
-
-    "__COMMENT__":"This is the new config:",
+    "__COMMENT__":"This is the new config for version 6.0+",
 
     "port":2773,
     "domain":"http://localhost:2773",
@@ -35,6 +11,14 @@
     "DISABLE_ASCII_ART": false,
     "DEV_MODE": false,
     
+    "announcement":{
+        "active":true,
+        "content":"This site is for live-testing development builds of OkayuCDN. Please use <a href='https://okayu.okawaffles.com'>the stable website</a> if you're not a tester."
+    },
+
+    "admins": [
+        "asdf"
+    ],
 
     "paths": {
         "paths_are_relative": true,

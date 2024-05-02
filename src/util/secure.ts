@@ -1,5 +1,5 @@
 import { join } from 'node:path';
-import { USER_DATABASE_PATH, TOKEN_DATABASE_PATH } from './paths';
+import { USER_DATABASE_PATH, TOKEN_DATABASE_PATH, UPLOADS_PATH } from './paths';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { Request, Response } from 'express';
 import { matchedData } from 'express-validator';
@@ -446,6 +446,7 @@ export function RegisterNewAccount(username: string, password: string, email: st
             };
 
             writeFileSync(join(USER_DATABASE_PATH, `${username}.json`), JSON.stringify(userData));
+            mkdirSync(join(UPLOADS_PATH, username));
             resolve(true);
         });
     });

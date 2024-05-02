@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { Router, version } from '../main';
+import { admins, Router, version } from '../main';
 import { HandleBadRequest, ValidateLoginGET, ValidateToken } from '../util/sanitize';
-import { PrefersLogin } from '../util/secure';
+import { GetUserFromToken, PrefersLogin } from '../util/secure';
 import { rmSync } from 'node:fs';
 import { TOKEN_DATABASE_PATH } from '../util/paths';
 import { matchedData } from 'express-validator';
@@ -47,6 +47,11 @@ export function RegisterSimpleRoutes() {
     Router.get('/upload', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => res.render('upload.ejs'));
 
     Router.get('/mybox', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => res.render('mybox.ejs'));
+
+    Router.get('/admin', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
+        const data = matchedData(req);
+        if (admins.indexOf(GetUserFromToken(data.token).username) == -1) res.status(403).render('err403');
+    });
 
     /**
      * This route is for the April Fools homepage

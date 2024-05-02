@@ -8,8 +8,8 @@ import { StorageData, UserModel } from '../types';
 import { GetStorageInfo } from '../api/content';
 import { Logger } from 'okayulogger';
 import { join } from 'path';
-import { UPLOADS_PATH } from '../util/paths';
-import { existsSync, renameSync, rmSync } from 'fs';
+import { UPLOADS_PATH, USER_DATABASE_PATH } from '../util/paths';
+import { existsSync, readdirSync, renameSync, rmSync } from 'fs';
 
 const L: Logger = new Logger('API');
 
@@ -185,5 +185,12 @@ export function RegisterAPIRoutes() {
             res.status(200).end();
         else
             res.status(401).end();
+    });
+
+    /* Admin Page */
+    Router.get('/api/admin', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
+        // we want all users so far
+        const users = readdirSync(join(USER_DATABASE_PATH));
+        console.log(users);
     });
 }
