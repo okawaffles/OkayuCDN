@@ -45,3 +45,23 @@ function ConstructItem(name) {
     </div>
     `);
 }
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function DeleteItem(item) {
+    $.ajax({
+        type: 'DELETE',
+        url: '/content',
+        data: {
+            username: MANAGING_USER,
+            item
+        },
+        statusCode: {
+            204: () => {
+                ManageUser(MANAGING_USER); // reload the content
+            },
+            503: () => {
+                alert('An error occurred.');
+            }
+        }
+    });
+}

@@ -48,6 +48,10 @@ export const HandleBadRequest = (req: Request, res: Response, next: CallableFunc
 export const ValidateDeletionRequest = () => [
     body('id').notEmpty().escape()
 ];
+export const ValidateAdminDeletionRequest = () => [
+    body('item').notEmpty().escape(),
+    body('username').notEmpty().isAlphanumeric('en-US').escape().isLength({min:6,max:25})
+];
 
 export const ValidatePasswordRequest = () => [
     body('new_password').notEmpty().escape(),

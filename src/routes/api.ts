@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'; 
 import { Router, admins, announcement, domain, version } from '../main';
-import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST, ValidateDeletionRequest, ValidatePasswordRequest, ValidateSignupPOST } from '../util/sanitize';
+import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST, ValidateDeletionRequest, ValidatePasswordRequest, ValidateSignupPOST, ValidateAdminDeletionRequest } from '../util/sanitize';
 import { matchedData } from 'express-validator';
 import { BeginTOTPSetup, ChangeFileVisibility, CheckTOTPCode, GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewAccount, RegisterNewToken, UpdateUserPassword, VerifyLoginCredentials, VerifyUserExists } from '../util/secure';
 import { FinishUpload, MulterUploader } from '../api/upload';
@@ -211,6 +211,15 @@ export function RegisterAPIRoutes() {
 
         const info: StorageData = GetStorageInfo(GetUserModel(<string> req.query.username));
         res.json(info);
+    });
+    Router.delete('/content', ValidateToken(), ValidateAdminDeletionRequest(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
+        const data = matchedData(req);
+        if (admins.indexOf(GetUserFromToken(data.token).username) == -1) return res.status(403).end();
+
+        const username = data.username;
+        const item = data.item;
+        rmSync(join(UPLOADS_PATH, username, item), {recursive: false});
+        res.status(204).end();
     });
 }
 
