@@ -26,6 +26,8 @@ function LoadBox() {
 
     $.getJSON('/api/storage', (data) => {
         BOX_ITEMS = data.content;
+        PROTECTED_BOX_ITEMS = data.protected_files;
+        console.log(data);
         RenderBox();
     });
 }

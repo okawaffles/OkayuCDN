@@ -68,7 +68,7 @@ export function FinishUpload(req: Request, res: Response) {
             rmSync(currentPath);
         }
 
-        if (req.body.isPrivate) AddProtectedFile(user.username, newName);
+        if (req.body.isPrivate == 'true') AddProtectedFile(user.username, newName);
     
         res.json({
             status: 200,
