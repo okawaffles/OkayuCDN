@@ -1,4 +1,5 @@
 ![Commits](https://img.shields.io/github/commit-activity/m/okawaffles/okayucdn/main?style=flat-square)
+![Build](https://github.com/okawaffles/OkayuCDN/actions/workflows/tsc_build.yml/badge.svg)
 
 # A File Upload Server
 You create an account. You log in. You upload a file. You send the link. It embeds.
