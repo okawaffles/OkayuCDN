@@ -17,96 +17,36 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+    <script src="/assets/scripts/admin.js"></script>
 </head>
 
 <body>
     <%- include('parts/navbar-logged-in', {active:'none'}) %>
 
-    <br><br>
+    <div class="admin_full">
+        <div class="userList" id="userList">
+            
+        </div>
+        <div class="options" id="userOptions">
+            <div class="sticky_top">
+                <h2 class="admin_title" id="username">Managing Username</h2>
+                <div class="buttons">
+                    <button id="forgeToken">
+                        Log in as this user
+                    </button>
+                </div>
+            </div>
+            <div class="userContent" id="userContent">
+                <!-- <h2 class="admin_subtitle">User Content:</h2> -->
+                <div class="userItems">
 
-    <div class="server-stats">
-        <div class="stat">
-            <h1 class="stat-title">
-                Memory Usage
-            </h1>
-            <h2 id="memory-usage">
-                0.00MB
-            </h2>
+                </div>
+            </div>
         </div>
     </div>
 
-    <br><br>
-
-    <div class="admin-pane">
-        <h2 id="title">Delete Content</h2>
-        <div class="flexbreak"></div>
-        <form action="/api/admin/delFile" method="post" class="admin-form">
-            <input type="text" name="username" class="admin-pane-input" placeholder="Username">
-            <input type="text" name="filename" class="admin-pane-input" placeholder="File name">
-            <div class="flexbreak"></div>
-            <input type="submit" value="Delete" class="admin-pane-button">
-        </form>
-    </div>
-
-    <br><br>
-
-    <div class="admin-pane">
-        <h2 id="title">Restrict User</h2>
-        <div class="flexbreak"></div>
-        <form action="/api/admin/resUser" method="post" class="admin-form">
-            <input type="text" name="username" class="admin-pane-input" placeholder="Username">
-            <input type="text" name="filename" class="admin-pane-input" placeholder="Reason">
-            <div class="flexbreak"></div>
-            <input type="submit" value="Restrict" class="admin-pane-button">
-        </form>
-    </div>
-
-    <br><br>
-
-    <div class="admin-pane">
-        <h2 id="title">Log in as another user</h2>
-        <div class="flexbreak"></div>
-        <form class="admin-form">
-            <input type="text" id="their_username" class="admin-pane-input-large" placeholder="Their username">
-            <div class="flexbreak"></div>
-            <input type="text" name="your_username" class="admin-pane-input" placeholder="Your username">
-            <input type="password" name="your_password" class="admin-pane-input" placeholder="Your password">
-            <div class="flexbreak"></div>
-            <button class="admin-pane-button" onclick="loginAs()">Log in</button>
-        </form>
-    </div>
-
-    <h3 class="version">OkayuCDN Admin Panel</h3>
+    <h3 class="version">OkayuCDN Admin Panel<p id="memory-usage">?</p></h3>
 </body>
-
-<script>
-function get() {
-    $.getJSON('/api/health', (data) => {
-        $('#memory-usage').text(data.system.mem.used + ' / ' + data.system.mem.malloc + ' / ' + data.system.mem.systotal);
-    });
-
-    setTimeout(() => {
-        get();
-    }, 5000);
-}
-
-function loginAs() {
-    $.post('/api/admin/loginAs', {
-        admin_un:document.getElementById('your_username').value,
-        admin_pw:document.getElementById('your_password').value,
-        user_un:document.getElementById('their_username').value,
-    }).done((data) => {
-        if (data.status == 204) {
-            document.location = '/account';
-        } else {
-            alert('Failed to log in as another user. Check your username and password');
-        }
-    }).fail(() => {
-        alert('Failed to log in as another user. Check your username and password.');
-    });
-}
-
-get();
-</script>
 
 </html>

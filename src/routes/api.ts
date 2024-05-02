@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'; 
-import { Router, announcement, domain, version } from '../main';
+import { Router, admins, announcement, domain, version } from '../main';
 import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST, ValidateDeletionRequest, ValidatePasswordRequest, ValidateSignupPOST } from '../util/sanitize';
 import { matchedData } from 'express-validator';
 import { BeginTOTPSetup, ChangeFileVisibility, CheckTOTPCode, GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewAccount, RegisterNewToken, UpdateUserPassword, VerifyLoginCredentials, VerifyUserExists } from '../util/secure';
@@ -187,16 +187,30 @@ export function RegisterAPIRoutes() {
 
     /* Admin Page */
     Router.get('/api/admin', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
+        const data = matchedData(req);
+        if (admins.indexOf(GetUserFromToken(data.token).username) == -1) return res.status(403).end();
         // we want all users so far
-        const users = readdirSync(join(USER_DATABASE_PATH));
+        const entries = readdirSync(join(USER_DATABASE_PATH), {withFileTypes: true});
         
         // remove any files that aren't .json as they're not user data
+        const users = entries.filter(entry => entry.isFile()).map(entry => entry.name);
+
+        // remove the .json from the end
+        let i = 0;
         users.forEach(user => {
-            if (!user.endsWith('.json')) users.slice(users.indexOf(user), 1);
-            console.log(user, user.endsWith('.json'));
+            users[i] = user.split('.json')[0];
+            i++;
         });
 
         res.json({users});
+    });
+
+    Router.get('/api/adminStorage', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
+        const data = matchedData(req);
+        if (admins.indexOf(GetUserFromToken(data.token).username) == -1) return res.status(403).end();
+
+        const info: StorageData = GetStorageInfo(GetUserModel(<string> req.query.username));
+        res.json(info);
     });
 }
 

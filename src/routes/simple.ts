@@ -51,6 +51,7 @@ export function RegisterSimpleRoutes() {
     Router.get('/admin', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
         const data = matchedData(req);
         if (admins.indexOf(GetUserFromToken(data.token).username) == -1) res.status(403).render('err403');
+        res.render('admin');
     });
 
     /**

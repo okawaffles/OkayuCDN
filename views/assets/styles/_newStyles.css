@@ -1431,3 +1431,112 @@ button:hover {
     color: var(--okayucdn-blue);
 }
 
+/* New admin page */
+.admin_full {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    height: 100%;
+}
+.userList {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    width: 33%;
+    padding: 1em;
+    min-height: 100%;
+}
+.admin_user {
+    background-color: #1a1f25;
+    display: flex;
+    justify-content: space-between;
+    width: 25em;
+    height: 4em;
+    border-radius: 1em;
+    margin: .5em;
+}
+.admin_user p {
+    color: white;
+    justify-self: center;
+    align-self: center;
+    margin-left: 1em;
+    font-size: 1.3em;
+}
+.admin_user button {
+    justify-self: center;
+    align-self: center;
+    height: 3em;
+    width: 7em;
+    border-radius: 1em;
+    background-color: #00a987;
+    margin-right: .3em;
+}
+.admin_user button:hover {
+    background-color: rgb(0, 169, 135, 0.8);
+}
+
+.options {
+    display: none;
+    justify-content: center;
+    align-items: start;
+    width: 66%;
+    margin: 1em;
+    padding: 1em;
+    background-color: #1d1e22;
+    border-radius: 1em;
+    flex-wrap: wrap;
+    min-height: 100%;
+}
+.options .admin_title {
+    margin: 0.3rem;
+    font-size: 2rem;
+    width: 100%;
+    justify-self: start;
+    text-align: center;
+}
+.options .admin_subtitle {
+    font-size: 1.5rem;
+    margin: 1rem;
+    text-align: center;
+}
+.options button {
+    margin: 0rem;
+}
+.options .sticky_top {
+    align-self: flex-start;
+    justify-content: center;
+    text-align: center;
+}
+.options .userContent {
+    width: 100%;
+    background-color: #33343b;
+    border-radius: 1rem;
+    margin-top: 2rem;
+}
+.admin_content {
+    background-color: #1a1f25;
+    display: flex;
+    justify-content: space-between;
+    height: 4em;
+    border-radius: 1em;
+    margin: .5em;
+}
+.admin_content p {
+    color: white;
+    justify-self: center;
+    align-self: center;
+    margin-left: 1em;
+    font-size: 1.3em;
+}
+.admin_content button {
+    justify-self: center;
+    align-self: center;
+    height: 3em;
+    width: 7em;
+    border-radius: 1em;
+    background-color: var(--default-button-red);
+    margin-right: .3em;
+}
+.admin_content button:hover {
+    background-color: var(--default-button-red-hover);
+}
