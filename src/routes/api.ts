@@ -43,8 +43,6 @@ export function RegisterAPIRoutes() {
         // oops we need to verify the user exists first!
         if (!VerifyUserExists(data.username)) return res.json({status:401,reason:'User not found'});
 
-        console.log('user exists');
-
         // validation of login credentials...
         VerifyLoginCredentials(data.username, data.password).then(isValid => {
             if (!isValid) return res.status(401).json({status:401,reason:'Invalid login credentials'});
@@ -191,6 +189,17 @@ export function RegisterAPIRoutes() {
     Router.get('/api/admin', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
         // we want all users so far
         const users = readdirSync(join(USER_DATABASE_PATH));
-        console.log(users);
+        
+        // remove any files that aren't .json as they're not user data
+        users.forEach(user => {
+            if (!user.endsWith('.json')) users.slice(users.indexOf(user), 1);
+            console.log(user, user.endsWith('.json'));
+        });
+
+        res.json({users});
     });
+}
+
+export function RateLimitHandler(req: Request, res: Response) {
+    res.status(429).render('err429');
 }
