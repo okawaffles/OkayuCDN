@@ -30,10 +30,21 @@ function ManageUser(username) {
     $('#userOptions').css('display', 'flex');
 
     $('#userContent').empty();
-    $.getJSON('/api/adminStorage', {username}, (data) => {
-        data.content.forEach(item => {
-            ConstructItem(item.name);
-        });
+
+    $.ajax({
+        type: 'GET',
+        url: '/api/adminStorage',
+        data: {username},
+        statusCode: {
+            200: (data) => {
+                data.content.forEach(item => {
+                    ConstructItem(item.name);
+                });
+            },
+            503: () => {
+                alert('Error getting content for user.');
+            }
+        }
     });
 }
 
