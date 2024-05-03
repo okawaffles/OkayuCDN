@@ -386,7 +386,8 @@ export async function BeginTOTPSetup(user: UserModel): Promise<string> {
     writeFileSync(join(USER_DATABASE_PATH, `${user.username}.json`), JSON.stringify(fullUser));
     
     return new Promise((resolve) => {
-        const URI: string = `otpauth://totp/OkayuCDN%20(${user.username})?secret=${secret}`;
+        const URI = authenticator.keyuri(user.username, 'OkayuCDN', secret);
+
         toDataURL(URI, (err: unknown, data_url: string) => {
             resolve(data_url);
         });
@@ -395,11 +396,19 @@ export async function BeginTOTPSetup(user: UserModel): Promise<string> {
 
 export function CheckTOTPCode(username: string, code: number): boolean {
     const user = GetUserModel(username, true);
+    console.log(code, user.SecureData!.twoFactorData!.OTPConfig!.setup!.data);
 
-    return totp.verify({
-        secret: user.SecureData!.twoFactorData!.OTPConfig!.setup!.data, 
-        token: ''+code
-    });
+    let correct: boolean;
+    try {
+        correct = totp.check(code.toString(), user.SecureData!.twoFactorData!.OTPConfig!.setup!.data);
+    } catch (err: unknown) {
+        console.log(err);
+        return false;
+    }
+
+    console.log(correct);
+
+    return correct;
 }
 
 /**
