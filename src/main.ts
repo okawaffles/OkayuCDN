@@ -46,7 +46,10 @@ Router.use(Session({
     secret:process.env.SESSION_SECRET,
     resave:false,
     saveUninitialized:true,
-    name:'okayu-session'
+    name:'okayu-session',
+    cookie: {
+        secure: true
+    }
 }));
 
 import { csrf, xssProtection } from 'lusca';
