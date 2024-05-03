@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'; 
 import { Router, admins, announcement, domain, version } from '../main';
-import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST, ValidateDeletionRequest, ValidatePasswordRequest, ValidateSignupPOST, ValidateAdminDeletionRequest } from '../util/sanitize';
+import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST, ValidateDeletionRequest, ValidatePasswordRequest, ValidateSignupPOST, ValidateAdminDeletionRequest, ValidateAdminStorageRequest, ValidateUploadChunk } from '../util/sanitize';
 import { matchedData } from 'express-validator';
 import { BeginTOTPSetup, ChangeFileVisibility, CheckTOTPCode, GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewAccount, RegisterNewToken, UpdateUserPassword, VerifyLoginCredentials, VerifyUserExists } from '../util/secure';
 import { FinishUpload, MulterUploader } from '../api/upload';
@@ -90,13 +90,14 @@ export function RegisterAPIRoutes() {
 
 
     /* UPLOADING */
-    Router.post('/api/upload', MulterUploader.single('file'), (req: Request, res: Response) => {
-        const user = GetUserFromToken(req.cookies.token);
+    Router.post('/api/upload', ValidateToken(), PrefersLogin, ValidateUploadChunk(), HandleBadRequest, MulterUploader.single('file'), (req: Request, res: Response) => {
+        const data = matchedData(req);
+        const user = GetUserFromToken(data.token);
         const username = user.username;
 
         const uploadPath = join(UPLOADS_PATH, username);
 
-        renameSync(join(uploadPath, 'LATEST.UPLOADING.ID'), join(uploadPath, `LATEST.UPLOADING.${req.query.current_chunk}`));
+        renameSync(join(uploadPath, 'LATEST.UPLOADING.ID'), join(uploadPath, `LATEST.UPLOADING.${data.current_chunk}`));
         
         res.status(200).end();
     });
@@ -205,11 +206,11 @@ export function RegisterAPIRoutes() {
         res.json({users});
     });
 
-    Router.get('/api/adminStorage', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
+    Router.get('/api/adminStorage', ValidateToken(), PrefersLogin, ValidateAdminStorageRequest(), HandleBadRequest, (req: Request, res: Response) => {
         const data = matchedData(req);
         if (admins.indexOf(GetUserFromToken(data.token).username) == -1) return res.status(403).end();
 
-        const info: StorageData = GetStorageInfo(GetUserModel(<string> req.query.username));
+        const info: StorageData = GetStorageInfo(GetUserModel(data.username));
         res.json(info);
     });
     Router.delete('/content', ValidateToken(), ValidateAdminDeletionRequest(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {

@@ -64,3 +64,11 @@ export const ValidateSignupPOST = () => [
     body('realname').notEmpty().escape(),
     body('email').notEmpty().escape().isEmail()
 ];
+
+export const ValidateAdminStorageRequest = () => [
+    query('username').notEmpty().escape().isAlphanumeric('en-US').isLength({min:6,max:25})
+];
+
+export const ValidateUploadChunk = () => [
+    query('current_chunk').isNumeric().notEmpty().escape()
+];
