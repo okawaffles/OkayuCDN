@@ -226,3 +226,6 @@ export function RegisterAPIRoutes() {
 export function RateLimitHandler(req: Request, res: Response) {
     res.status(429).render('err429');
 }
+export function IsUpload(req: Request): boolean {
+    return (req.originalUrl.startsWith('/api/upload') || req.originalUrl.startsWith('/api/upload/finish'));
+}

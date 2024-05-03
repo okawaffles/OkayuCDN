@@ -60,13 +60,14 @@ import {urlencoded} from 'body-parser';
 Router.use(urlencoded({extended:true}));
 
 import { rateLimit } from 'express-rate-limit';
-import { RateLimitHandler } from './routes/api';
+import { IsUpload, RateLimitHandler } from './routes/api';
 const limiter = rateLimit({
     windowMs: 5*60*1000, // 5 minutes
     limit: 100, // 100 requests
     standardHeaders: 'draft-7',
     legacyHeaders: false,
-    handler: RateLimitHandler
+    handler: RateLimitHandler,
+    skip: IsUpload,
 });
 
 Router.use('/api/*', limiter);

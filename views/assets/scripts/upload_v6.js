@@ -66,6 +66,7 @@ function start() {
         // allow the rest of the page to load
         $('#hider').css('display', 'revert');
     }).fail((err) => {
+        if (err.contains('Too Many Requests')) return alert('Too many API requests. Please wait at least 5 minutes and try again.');
         alert('Error in upload_v6.js.\n\nIf you are on desktop, please open your browser console and report the bug at https://github.com/okawaffles/OkayuCDN');
         console.error('HELLO BUG REPORTER, YOU WANT THIS -> ' + err.responseText);
     });
@@ -107,7 +108,7 @@ async function StartFileUpload() {
     $('#uploadInterface').css('display', 'none');
     $('#filename_input').css('display', 'none');
     $('#uploadButton').css('display', 'none');
-    $('#private_toggle').css('display', 'none');
+    $('#div_private').css('display', 'none');
 
     // append progress bar
     $('progressUpload').append('<div class="progressBar"><div class="up_progress" id="upload_progress"></div></div>');
