@@ -1,5 +1,5 @@
 import multer from 'multer';
-import { UploadResult, UserModel } from '../types';
+import { StorageData, UploadResult, UserModel } from '../types';
 import { AddProtectedFile, GetUserFromToken } from '../util/secure';
 import { appendFileSync, mkdirSync, readFileSync, readdirSync, rmSync } from 'fs';
 import { join } from 'path';
@@ -8,6 +8,7 @@ import { matchedData } from 'express-validator';
 import { error, info } from 'okayulogger';
 import { Request, Response } from 'express';
 import { domain } from '../main';
+import { GetStorageInfo } from './content';
 
 // someone help me figure out a type for this PLEASE
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -58,18 +59,36 @@ export function FinishUpload(req: Request, res: Response) {
 
     const newPath = join(UPLOADS_PATH, user.username, newName);
     
-    const totalChunks = req.body.chunk_count;
+    const totalChunks: number = req.body.chunk_count;
+    let uploadAllowed: boolean = true;
+
+    const userStorage: StorageData = GetStorageInfo(user);
+
+    // OkayuCDN is nice about storage:
+    // if you are at, for example, 99mb of 100mb, you may upload files until you are equal or over your limit
+    // this is limited to a 100mb file at max
+    uploadAllowed = (!(userStorage.used >= userStorage.total));
+
+    // we can estimate the size of a file based on the number of chunks
+    // 5mb * 20 = ~100mb
+    if (totalChunks > 20) uploadAllowed = false;
 
     try {
         for (let i = 0; i != totalChunks; i++) {
             info('upload', `joining chunk ${i+1}/${totalChunks}`);
             const currentPath = join(UPLOADS_PATH, user.username, 'LATEST.UPLOADING.'+i);
-            appendFileSync(newPath, readFileSync(currentPath));
+            // don't append to file unless they have sufficient storage
+            if (uploadAllowed) appendFileSync(newPath, readFileSync(currentPath));
             rmSync(currentPath);
         }
 
         if (req.body.isPrivate == 'true') AddProtectedFile(user.username, newName);
     
+        if (!uploadAllowed) {
+            error('upload', 'insufficient storage for upload: aborting!');
+            return res.json({status:423,reason:'Insufficient storage'});
+        }
+
         res.json({
             status: 200,
             goto: `${domain}/view/@${user.username}/${newName}`

@@ -27,6 +27,8 @@ function updatePwd() {
 }
 
 function EnableOTP() {
+    return alert('Due to an unmaintained package, OTP 2FA is currently unavailable until a new package is implemented. Sorry about that!');
+    // eslint-disable-next-line no-unreachable
     $.getJSON('/api/otp', (data) => {
         $('#qrcode').prop('src', data.url);
         $('#totpSetup').css('display', 'inherit');
