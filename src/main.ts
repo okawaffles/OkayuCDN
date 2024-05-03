@@ -71,6 +71,11 @@ const limiter = rateLimit({
 });
 
 Router.use('/api/*', limiter);
+Router.use('/content', limiter);
+Router.use('/@:user/:item', limiter);
+Router.use('/view/@:user/:item', limiter);
+Router.use('/logout', limiter);
+Router.use('/favicon.ico', limiter);
 
 
 // this handles logging requests
