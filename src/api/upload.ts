@@ -71,7 +71,8 @@ export function FinishUpload(req: Request, res: Response) {
 
     // we can estimate the size of a file based on the number of chunks
     // 5mb * 20 = ~100mb
-    if (totalChunks > 20) uploadAllowed = false;
+    // only run this if we're within 100mb of our storage limit
+    if (totalChunks > 20 && (userStorage.total - userStorage.used) <= 100*1024*1024) uploadAllowed = false;
 
     try {
         for (let i = 0; i != totalChunks; i++) {
