@@ -15,7 +15,6 @@ export function RegisterRequestLogger(): void {
             IPAddress = req.socket.remoteAddress;
 
         L.info(`${bold(red(IPAddress))} ${blue(req.method)} ${green(req.originalUrl)}`);
-        
 
         next();
     });

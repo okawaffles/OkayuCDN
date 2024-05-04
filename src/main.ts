@@ -80,7 +80,6 @@ Router.use('/view/@:user/:item', limiter);
 Router.use('/logout', limiter);
 Router.use('/favicon.ico', limiter);
 
-
 // this handles logging requests
 RegisterRequestLogger();
 

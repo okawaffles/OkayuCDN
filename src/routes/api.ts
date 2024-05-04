@@ -29,6 +29,10 @@ export function RegisterAPIRoutes() {
                     malloc: Math.ceil((process.memoryUsage().rss / 1000000)*100)/100+'MB',
                     used: Math.ceil((process.memoryUsage().heapUsed / 1000000)*100)/100+'MB'
                 }
+            },
+            desktop: {
+                min_version: 2,
+                to: '/api/upload'
             }
         });
     });

@@ -52,6 +52,7 @@ function ConstructItem(name) {
     $('#userContent').append(`
     <div class="admin_content">
         <p class="name">${name}</p>
+        <button class="admin_content_option orange" onclick='ViewItem("${name}")'>View</button>
         <button class="admin_content_option" onclick='DeleteItem("${name}")'>Delete</button>
     </div>
     `);

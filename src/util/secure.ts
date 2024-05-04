@@ -63,6 +63,8 @@ export function GetUserFromToken(token: string): UserModel {
 
     const tokenUsername: string = readFileSync(join(TOKEN_DATABASE_PATH, `${token}.json`), 'utf-8');
     const userData = JSON.parse(readFileSync(join(USER_DATABASE_PATH, `${tokenUsername}.json`), 'utf-8'));
+
+    CheckPrivateIndex(tokenUsername);
     
     // simple way to check if it's already stored as a new usermodel
     if (userData.storageAmount != undefined) return userData as UserModel;

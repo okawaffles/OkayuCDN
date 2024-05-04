@@ -830,6 +830,12 @@ button:hover {
     margin: 0em 15em;
 }
 
+.hyperlink_text {
+    text-decoration: underline;
+    color: var(--active-primary);
+    font-size: inherit;
+}
+
 @media screen and (max-width: 600px) {
     .section_header {
         font-size: 2em;
@@ -1437,6 +1443,7 @@ button:hover {
     flex-wrap: nowrap;
     justify-content: space-between;
     height: 100%;
+    overflow: scroll;
 }
 .userList {
     display: flex;
@@ -1543,3 +1550,4 @@ button:hover {
 .admin_content button:hover {
     background-color: var(--default-button-red-hover);
 }
+
