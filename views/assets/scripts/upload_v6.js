@@ -102,8 +102,8 @@ function FPDrop(ev) {
 }
 
 async function StartFileUpload() {
-    const regex = new RegExp('[A-Za-z0-9_]');
-    if (!regex.test($('#filename_input')[0].value)) return alert('You may only use alphanumeric characters and underscores in your file names, as well as only up to 25 characters.');
+    const regex = new RegExp('[A-Za-z0-9_][^ ]');
+    if (!regex.test($('#filename_input')[0].value) || $('#filename_input').val().length > 25) return alert('You may only use alphanumeric characters and underscores in your file names, as well as only up to 25 characters.');
 
     $('#uploadInterface').css('display', 'none');
     $('#filename_input').css('display', 'none');
