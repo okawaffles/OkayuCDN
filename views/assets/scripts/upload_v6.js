@@ -47,7 +47,7 @@ function start() {
         // set up the new storage bar
         $('#used').text(parseStorageAmount(usedStorage));
         $('#total').text(parseStorageAmount(totalStorage));
-        $('#fill').css('width', `${(usedStorage / totalStorage)*100}%`);
+        $('#fill').css('width', `${(usedStorage / totalStorage)*20}em`);
         $('#newStorageAmount').css('visibility', 'visible');
 
         // allow the rest of the page to load

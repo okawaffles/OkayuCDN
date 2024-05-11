@@ -1115,7 +1115,7 @@ button:hover {
     flex-wrap: wrap;
     place-content: center;
 }
-.progress h1, h3 {
+.progress h1, .progress h3 {
     text-align: center;
     width: 100%;
 }
