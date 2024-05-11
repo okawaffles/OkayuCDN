@@ -5,8 +5,12 @@ import { RegisterRoutes } from './routes';
 
 /* load various data */
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-export const { port, paths, domain, announcement, admins } = require(join(__dirname, '..', 'config.json'));
+export const { paths, domain, announcement, admins, version_include_git_commit, ENABLE_ACCOUNT_CREATION, ENABLE_UPLOADING } = require(join(__dirname, '..', 'config.json'));
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { port, DISABLE_ASCII_ART } = require(join(__dirname, '..', 'config.json'));
+
 export const BASE_DIRNAME: string = __dirname;
+
 import { PreparePaths } from './util/paths';
 PreparePaths(); // called to prepare exported paths
 
@@ -16,12 +20,11 @@ export const { version } = require(join(__dirname, '..', 'package.json')); // ma
 // ascii art isn't necessary but i think its a nice touch
 import { readFileSync } from 'node:fs';
 const asciiart: string = readFileSync(join(__dirname, '..', 'asciiart.txt'), 'utf-8');
-console.log(asciiart);
+if (!DISABLE_ASCII_ART) console.log(asciiart);
 
 
 const L: Logger = new Logger('main');
 L.info('Starting OkayuCDN...');
-L.warn('The TypeScript rewrite is UNFINISHED! You should not use the typescript files unless you are a developer/tester.');
 
 
 /* load env variables */

@@ -7,9 +7,7 @@
 
     "ENABLE_ACCOUNT_CREATION": true,
     "ENABLE_UPLOADING":true,
-    "ENABLE_ANONYMOUS_UPLOADING": false,
     "DISABLE_ASCII_ART": false,
-    "DEV_MODE": false,
     
     "announcement":{
         "active":true,

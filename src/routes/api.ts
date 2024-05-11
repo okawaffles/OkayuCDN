@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'; 
-import { Router, admins, announcement, domain, version } from '../main';
+import { ENABLE_ACCOUNT_CREATION, ENABLE_UPLOADING, Router, admins, announcement, domain, version } from '../main';
 import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST, ValidateDeletionRequest, ValidatePasswordRequest, ValidateSignupPOST, ValidateAdminDeletionRequest, ValidateAdminStorageRequest, ValidateUploadChunk } from '../util/sanitize';
 import { matchedData } from 'express-validator';
 import { BeginTOTPSetup, ChangeFileVisibility, CheckTOTPCode, GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewAccount, RegisterNewToken, UpdateUserPassword, VerifyLoginCredentials, VerifyUserExists } from '../util/secure';
@@ -87,6 +87,8 @@ export function RegisterAPIRoutes() {
 
     Router.post('/api/signup', ValidateSignupPOST(), HandleBadRequest, async (req: Request, res: Response) => {
         const data = matchedData(req);
+
+        if (!ENABLE_ACCOUNT_CREATION) return res.status(423).json({error:'account creation is disabled'});
         
         if (!await RegisterNewAccount(data.username, data.password, data.email, data.realname)) return res.status(409).json({error:'account already exists'});
         else res.status(200).end();
@@ -95,6 +97,8 @@ export function RegisterAPIRoutes() {
 
     /* UPLOADING */
     Router.post('/api/upload', ValidateToken(), PrefersLogin, ValidateUploadChunk(), HandleBadRequest, MulterUploader.single('file'), (req: Request, res: Response) => {
+        if (!ENABLE_UPLOADING) return res.status(423).end();
+
         const data = matchedData(req);
         const user = GetUserFromToken(data.token);
         const username = user.username;
@@ -106,7 +110,10 @@ export function RegisterAPIRoutes() {
         res.status(200).end();
     });
 
-    Router.post('/api/upload/finish', ValidateToken(), ValidateUploadPOST(), HandleBadRequest, (req: Request, res: Response) => { FinishUpload(req, res); });
+    Router.post('/api/upload/finish', ValidateToken(), ValidateUploadPOST(), HandleBadRequest, (req: Request, res: Response) => { 
+        if (!ENABLE_UPLOADING) return res.status(423).end();
+        FinishUpload(req, res);
+    });
 
     Router.get('/api/storage', ValidateToken(), HandleBadRequest, (req: Request, res: Response) => {
         const data = matchedData(req);
