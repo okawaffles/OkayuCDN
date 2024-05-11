@@ -27,14 +27,12 @@
     "xgplayer": "^3.0.0-alpha.119"
   },
   "scripts": {
-    "test": "npm ci && npm install && node index.js GITHUB_ACTIONS_TEST",
     "start": "node dist/index.js",
     "tstest": "tsc && node ./dist/main.js"
   },
   "name": "okayucdn",
   "description": "A File Upload Server based around Nekomata Okayu",
-  "version": "6.0.1",
-  "datecode": "CDN:20240306-00",
+  "version": "6.0.2",
   "main": "dist/main.js",
   "repository": {
     "type": "git",

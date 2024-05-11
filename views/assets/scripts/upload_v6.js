@@ -1,20 +1,7 @@
 /* eslint-disable no-undef */
 
-// get identity on load
+// get identity on load <- no.
 $(document).ready(() => {
-    // $.getJSON('/api/whoami', (result) => {
-    //     if (result.result == 200) {
-    //         //username = result.username;
-    //         start();
-    //     } else {
-    //         console.error('Did not recieve status 200, whoami failed.');
-    //         document.location = '/login?redir=/upload';
-    //     }
-    // }).fail((err) => {
-    //     console.error(err);
-    //     document.location = '/login?redir=/upload';
-    // });
-    
     start();
 });
 
@@ -101,18 +88,28 @@ function FPDrop(ev) {
     UpdateFileName();
 }
 
+let uploadInProgress = false;
+
 async function StartFileUpload() {
-    const regex = new RegExp('[A-Za-z0-9_][^ ]');
+    if ($('#uploaded')[0].files[0] == undefined) {
+        $('#uploadInterface').css('animation', 'file_missing 1s');
+        setTimeout(() => {
+            $('#uploadInterface').css('animation', 'none');
+        }, 1000);
+        return;
+    }
+
+    const regex = new RegExp('^[A-Za-z0-9_-]+$');
     if (!regex.test($('#filename_input')[0].value) || $('#filename_input').val().length > 25) return alert('You may only use alphanumeric characters and underscores in your file names, as well as only up to 25 characters.');
 
     $('#uploadInterface').css('display', 'none');
     $('#filename_input').css('display', 'none');
     $('#uploadButton').css('display', 'none');
     $('#div_private').css('display', 'none');
+    $('#div_progress').css('display', 'flex');
 
-    // append progress bar
-    $('progressUpload').append('<div class="progressBar"><div class="up_progress" id="upload_progress"></div></div>');
-    $('upload_progress').css('width', '0%');
+
+    uploadInProgress = true;
 
     const file = $('#uploaded')[0].files[0];
     const chunk_size = 1024*1024*5; // 5MB chunks
@@ -126,7 +123,7 @@ async function StartFileUpload() {
         start_byte += chunk_size;
         
         // change progress bar based on current progress
-        $('upload_progress').css('width', `${i / total_chunks}%`);
+        $('#progress').css('width', `${(i / total_chunks)*100}%`);
     }
 
     let originalFilename = $('#uploaded')[0].files[0].name;
@@ -134,6 +131,8 @@ async function StartFileUpload() {
     if (originalFilename.split('.').length > 1) {
         extension = originalFilename.split('.').at(-1);
     }
+
+    $('#processing').css('display', 'inherit');
 
     $.post('/api/upload/finish', {
         filename: $('#filename_input')[0].value,
@@ -157,6 +156,16 @@ async function sendChunk(chunk, total_chunks, current_chunk) {
         body: formData
     });
     if (!response.ok) {
+        alert(`Upload failed (${current_chunk} of ${total_chunks} failed)`);
+        uploadInProgress = false;
         throw new Error(`chunk ${current_chunk} of ${total_chunks} failed.`);
     }
 }
+
+$(window).on('beforeunload', (e) => {
+    if (!uploadInProgress) return;
+    
+    if (confirm('WARNING: Leaving will cancel your upload! Are you sure you want to leave?')) {
+        e.preventDefault();
+    }
+});

@@ -1022,6 +1022,18 @@ button:hover {
     justify-content: center;
     width: 35em;
     height: 15em;
+    animation: none;
+}
+@keyframes file_missing {
+    0% {
+        background-color: var(--active-button-red);
+    }
+    25% {
+        background-color: var(--active-button-red);
+    }
+    100% {
+        background-color: var(--active-primary);
+    }
 }
 
 .container-upload-second {
@@ -1098,6 +1110,39 @@ button:hover {
     margin: 10px;
 }
 
+.progress {
+    display: none;
+    flex-wrap: wrap;
+    place-content: center;
+}
+.progress h1, h3 {
+    text-align: center;
+    width: 100%;
+}
+#processing {
+    display: none;
+}
+.progressBarContainer {
+    margin-top: 2rem;
+    background-color: var(--active-background-compliment);
+    width: 31.25rem;
+    height: 40px;
+    border-radius: 16px;
+    z-index: 1;
+    overflow: hidden;
+}
+.progressBar {
+    background-color: var(--progress-new-green);
+    padding: 10px 0px;
+    width: 0%;
+    height: 40px;
+    border-radius: 16px;
+    font-size: 1.2rem;
+    z-index: 0;
+    float: left;
+    transition: width 0.5s ease;
+}
+
 @media screen and (max-width: 600px) {
     .uploader #title {
         font-size: 2em;
@@ -1110,6 +1155,8 @@ button:hover {
         width: 100%;
     }
 }
+
+
 
 
 /* Success page */
@@ -1550,4 +1597,3 @@ button:hover {
 .admin_content button:hover {
     background-color: var(--default-button-red-hover);
 }
-
