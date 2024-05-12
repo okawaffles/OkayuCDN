@@ -58,3 +58,13 @@ export interface StorageData {
     content: Array<ContentItem>,
     protected_files: Array<string>
 }
+
+export interface ShortenedLink {
+    user: string,
+    content: string,
+    isViewPage: boolean,
+}
+
+export interface ShortenedLinksList {
+    [key: string]: ShortenedLink
+}

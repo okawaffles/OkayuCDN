@@ -2,10 +2,11 @@ import { Request, Response } from 'express';
 import { Router, domain, version } from '../main';
 import { join } from 'path';
 import { UPLOADS_PATH } from '../util/paths';
-import { HandleBadRequest, ValidateContentRequest, ValidateOptionalToken } from '../util/sanitize';
+import { HandleBadRequest, ValidateContentRequest, ValidateOptionalToken, ValidateShortURL } from '../util/sanitize';
 import { existsSync, statSync } from 'fs';
 import { GetUserFromToken, IsContentProtected } from '../util/secure';
 import { matchedData } from 'express-validator';
+import { GetLinkData } from '../api/shortener';
 
 
 export function RegisterContentRoutes() {
@@ -54,5 +55,17 @@ export function RegisterContentRoutes() {
         const info = statSync(pathOfContent);
 
         res.render('view_info.ejs', {username, filename:item, filesize:info.size, filetype:item.split('.').at(-1)});
+    });
+
+    // Short URL GET route
+    Router.get('/.:id', ValidateShortURL(), HandleBadRequest, (req: Request, res: Response) => {
+        const data = matchedData(req);
+
+        const linkData = GetLinkData(data.id);
+
+        if (linkData.isViewPage)
+            res.redirect(`/view/@${linkData.user}/${linkData.content}`);
+        else
+            res.redirect(`/@${linkData.user}/${linkData.content}`);
     });
 }

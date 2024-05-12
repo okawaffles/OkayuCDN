@@ -192,18 +192,36 @@ function share(item, id, mobile) {
     const tl_copied = `<i class="fa-solid fa-arrow-up-right-from-square"></i></i><strong>  ${(document.cookie.includes('language=ja-jp'))? 'リンクがコピーしました' : 'Copied link!' }</strong>`;
     const tl_nvgt_text = document.cookie.includes('language=ja-jp')?'OkayuCDNで僕のファイルを見ます！':'View my file on OkayuCDN!';
 
-    try { 
-        navigator.share({
-            title:'OkayuCDN',
-            text:tl_nvgt_text,
-            url:`${DOMAIN}/@${USERNAME}/${item}`
-        }); 
-    } catch(e) { 
-        navigator.clipboard.writeText(`${DOMAIN}/@${USERNAME}/${item}`);
-        document.getElementById(`share-content-${id}`).innerHTML = tl_copied;
-        setTimeout(() => {
-            document.getElementById(`share-content-${id}`).innerHTML = mobile?tl_share_mobile : tl_share;
-        }, 1500);
+    if (mobile) {
+        $.getJSON(`/api/shorturl/${USERNAME}/${item}`, (data) => {
+            try { 
+                navigator.share({
+                    title:'OkayuCDN',
+                    text:tl_nvgt_text,
+                    url:`${DOMAIN}/.${data.id}`
+                }); 
+            } catch(e) { 
+                navigator.clipboard.writeText(`${DOMAIN}/.${data.id}`);
+                document.getElementById(`share-content-${id}`).innerHTML = tl_copied;
+                setTimeout(() => {
+                    document.getElementById(`share-content-${id}`).innerHTML = mobile?tl_share_mobile : tl_share;
+                }, 1500);
+            }
+        });
+    } else {
+        try { 
+            navigator.share({
+                title:'OkayuCDN',
+                text:tl_nvgt_text,
+                url:`${DOMAIN}/@${USERNAME}/${item}`
+            }); 
+        } catch(e) { 
+            navigator.clipboard.writeText(`${DOMAIN}/@${USERNAME}/${item}`);
+            document.getElementById(`share-content-${id}`).innerHTML = tl_copied;
+            setTimeout(() => {
+                document.getElementById(`share-content-${id}`).innerHTML = mobile?tl_share_mobile : tl_share;
+            }, 1500);
+        }
     }
 }
 

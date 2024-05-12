@@ -72,3 +72,7 @@ export const ValidateAdminStorageRequest = () => [
 export const ValidateUploadChunk = () => [
     query('current_chunk').isNumeric().notEmpty().escape()
 ];
+
+export const ValidateShortURL = () => [
+    param('id').escape().notEmpty().isLength({min:6,max:6})
+];

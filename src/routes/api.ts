@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'; 
 import { ENABLE_ACCOUNT_CREATION, ENABLE_UPLOADING, Router, admins, announcement, domain, version } from '../main';
-import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST, ValidateDeletionRequest, ValidatePasswordRequest, ValidateSignupPOST, ValidateAdminDeletionRequest, ValidateAdminStorageRequest, ValidateUploadChunk } from '../util/sanitize';
+import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST, ValidateDeletionRequest, ValidatePasswordRequest, ValidateSignupPOST, ValidateAdminDeletionRequest, ValidateAdminStorageRequest, ValidateUploadChunk, ValidateContentRequest } from '../util/sanitize';
 import { matchedData } from 'express-validator';
 import { BeginTOTPSetup, ChangeFileVisibility, CheckTOTPCode, GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewAccount, RegisterNewToken, UpdateUserPassword, VerifyLoginCredentials, VerifyUserExists } from '../util/secure';
 import { FinishUpload, MulterUploader } from '../api/upload';
@@ -10,6 +10,7 @@ import { Logger } from 'okayulogger';
 import { join } from 'path';
 import { UPLOADS_PATH, USER_DATABASE_PATH } from '../util/paths';
 import { existsSync, readdirSync, renameSync, rmSync } from 'fs';
+import { CreateLink } from '../api/shortener';
 
 const L: Logger = new Logger('API');
 
@@ -232,6 +233,17 @@ export function RegisterAPIRoutes() {
         const item = data.item;
         rmSync(join(UPLOADS_PATH, username, item), {recursive: false});
         res.status(204).end();
+    });
+
+    
+
+    /* Link Shortening */
+
+    // Creation of short URL
+    Router.get('/api/shorturl/:username/:item', ValidateContentRequest(), HandleBadRequest, (req: Request, res: Response) => {
+        const data = matchedData(req);
+        const id: string = CreateLink(data.username, data.item, true);
+        res.json({id});
     });
 }
 

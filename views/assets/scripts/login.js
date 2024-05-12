@@ -77,22 +77,35 @@ $(document).ready(() => {
                 $('#inputs').css('display', 'none');
                 $('#twofactor-inputs').css('display', 'flex');
             }
-        }).fail(() => {
+        }).fail(($xhr) => {
             // login failed, show error and let user try again
             $('#login').css('visibility', 'visible');
 
-            if ($('#username')[0].value == '' || $('#password')[0].value == '')
-                $('#login_error').css('visibility', 'visible').html('Please fill out both fields.');
-            else
-                $('#login_error').css('visibility', 'visible').html('Please check your username and password. (err: bad response)');
+            if ($('#username')[0].value == '' || $('#password')[0].value == '') {
+                $('#login').css('animation', 'button-incorrect 1s ease');
+                $('#login').text('Please fill both fields');
+                setTimeout(() => {
+                    $('#login').css('animation', 'none');
+                    $('#login').text('Let\'s go!');
+                }, 1050);
+            } else {
+                $('#login').css('animation', 'button-incorrect 1s ease');
+                $('#login').text($xhr.responseJSON.reason);
+                setTimeout(() => {
+                    $('#login').css('animation', 'none');
+                    $('#login').text('Let\'s go!');
+                }, 1050);
+            }
 
             $('#username').prop('disabled', false);
             $('#password').prop('disabled', false)[0].value = ''; // un-disable AND clear it
 
             $('#inputs').css('animation', 'bad-login 0.5s ease-in-out');
+            $('#login').css('animation', 'button-incorrect 1s ease');
             setTimeout(() => {
                 $('#inputs').css('animation', 'none');
-            }, 550);
+                $('#login').css('animation', 'none');
+            }, 1050);
             return;
         });
     });
