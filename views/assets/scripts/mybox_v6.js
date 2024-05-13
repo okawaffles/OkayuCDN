@@ -267,3 +267,7 @@ function deleteItemRequest(item) {
         }
     });
 }
+
+$('#body').scroll(() => {
+    $('#overlay').css('top', $(this).scrollTop());
+});

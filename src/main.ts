@@ -15,7 +15,9 @@ import { PreparePaths } from './util/paths';
 PreparePaths(); // called to prepare exported paths
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-export const { version } = require(join(__dirname, '..', 'package.json')); // maybe change later...
+export let { version } = require(join(__dirname, '..', 'package.json')); // maybe change later...
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+if (version_include_git_commit) version = `${version} (${require('child_process').execSync('git rev-parse HEAD').toString().trim().slice(0, 7)})`;
 
 // ascii art isn't necessary but i think its a nice touch
 import { readFileSync } from 'node:fs';
@@ -39,6 +41,7 @@ export const Router: Express = express();
 
 Router.set('view engine', 'ejs');
 Router.use('/assets', staticFiles(join(__dirname, '..', 'views' , 'assets'))); // may need to be changed
+Router.use('/sp', staticFiles(join(__dirname, '..', 'views', 'singlepage')));
 
 import CookieParser from 'cookie-parser';
 Router.use(CookieParser());

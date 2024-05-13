@@ -17,8 +17,25 @@
     ></script>
     <script src="/assets/scripts/mybox_v6.js"></script>
   </head>
-  <body class="mybox_body">
+  <body class="mybox_body" id="body">
     <%- include('parts/navbar-logged-in', {active:'mybox'}) %>
+
+    <div class="modal-overlay" id="overlay"></div>
+    <div class="modal" id="link_type_modal">
+        <div class="modal-body">
+            <div class="modal-top">
+                <p class="modal-title">What type of link do you want?</p>
+                <p class="modal-description">
+                    If you want to temporarily share something, use a short link. If you
+                    want to host a file (for use somewhere else), use the default link.
+                </p>
+            </div>
+            <div class="modal-bottom">
+                <button class="modal-button" id="link_short">Short Link</button>
+                <button class="modal-button" id="link_long">Default Link</button>
+            </div>
+        </div>
+    </div>
 
     <div class="mybox_form_pane">
       <h2 class="mybox_title">My Box</h2>
@@ -29,11 +46,11 @@
       <br />
       <h3>Sort Method</h3>
       <select id="sort_method" class="sort_select">
-          <option value="default">Alphabetical (A-Z)</option>
-          <option value="size-large">Size (largest first)</option>
-          <option value="size-small">Size (smallest first)</option>
-        </select>
-        <div class="line" id="loader"></div>
+        <option value="default">Alphabetical (A-Z)</option>
+        <option value="size-large">Size (largest first)</option>
+        <option value="size-small">Size (smallest first)</option>
+      </select>
+      <div class="line" id="loader"></div>
       <div id="content_container">
         <p class="mybox_noContent">
           You have no content to show. Try uploading something!
