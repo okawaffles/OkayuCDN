@@ -30,6 +30,8 @@
     --default-button-hover: var(--okayucdn-blue-hover);
     --default-button-red: rgb(153, 30, 30);
     --default-button-red-hover: rgba(150, 30, 30, 0.8);
+    --default-mybox-item: #1a1f25;
+    --default-mybox-item-alternate: #121518;
 
     --light-background: #ececec;
     --light-background-compliment: #d3d3d3;
@@ -43,6 +45,8 @@
     --light-button-hover: var(--okayucdn-blue-hover);
     --light-button-red: rgba(150, 0, 0, 1);
     --light-button-red-hover: rgba(150, 0, 0, 0.8);
+    --light-mybox-item: #c7c7c7;
+    --light-mybox-item-alternate: #adb6be;
 
     --highcontrast-background: #000;
     --highcontrast-primary: #00F;
@@ -67,6 +71,8 @@
     --active-button-hover:var(--default-button-hover);
     --active-button-red: var(--default-button-red);
     --active-button-red-hover: var(--default-button-red-hover);
+    --active-mybox-item: var(--default-mybox-item);
+    --active-mybox-item-alternate: var(--default-mybox-item-alternate);
 }
 
 @media (prefers-color-scheme: light) {
@@ -84,6 +90,8 @@
         --active-button-hover:var(--light-button-hover);
         --active-button-red: var(--light-button-red);
         --active-button-red-hover: var(--light-button-red-hover);
+        --active-mybox-item: var(--light-mybox-item);
+        --active-mybox-item-alternate: var(--light-mybox-item-alternate);
     }
 }
 
@@ -111,6 +119,11 @@ body {
 .info_body {
     /* chromium is very picky about this: */
     overflow: auto;
+}
+
+/* global */
+.follow_text {
+    color: var(--active-text);
 }
 
 /* navbar desktop */
@@ -657,11 +670,6 @@ button:hover {
     text-align: center;
 }
 
-.p {
-    color: white;
-    margin-bottom: 7px;
-}
-
 .acc {
     font-size: 16px;
     margin-top: 15px;
@@ -775,12 +783,12 @@ button:hover {
     flex-wrap: wrap;
     margin-left: 25%;
     margin-bottom: 7px;
-    background-color: #1a1f25;
+    background-color: var(--active-mybox-item);
     padding: 6px;
     transition: ease-in-out 1s;
 }
 .alternate {
-    background-color: #121518;
+    background-color: var(--active-mybox-item-alternate);
 }
 
 .size {
@@ -1094,7 +1102,7 @@ button:hover {
     cursor: pointer;
     padding: 60px 100px 50px;
     border-radius: 12px;
-    border: 5px var(--active-text) dashed;
+    border: 5px var(--active-text-opposite) dashed;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -1103,6 +1111,8 @@ button:hover {
     height: 15em;
     animation: none;
 }
+
+
 @keyframes file_missing {
     0% {
         background-color: var(--active-button-red);
