@@ -57,6 +57,15 @@ export function RegisterContentRoutes() {
         res.render('view_info.ejs', {username, filename:item, filesize:info.size, filetype:item.split('.').at(-1)});
     });
 
+    // Backwards-compatibility with old links
+    Router.get('/content/:username/:item', ValidateContentRequest(), HandleBadRequest, (req: Request, res: Response) => {
+        const data = matchedData(req);
+        const username = data.username;
+        const item = data.item;
+
+        res.redirect(301, `/@${username}/${item}`);
+    });
+
     // Short URL GET route
     Router.get('/.:id', ValidateShortURL(), HandleBadRequest, (req: Request, res: Response) => {
         const data = matchedData(req);
