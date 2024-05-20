@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { admins, Router, version } from '../main';
+import { admins, BASE_DIRNAME, Router, version } from '../main';
 import { HandleBadRequest, ValidateLoginGET, ValidateToken } from '../util/sanitize';
 import { GetUserFromToken, PrefersLogin } from '../util/secure';
 import { rmSync } from 'node:fs';
@@ -53,6 +53,8 @@ export function RegisterSimpleRoutes() {
         if (admins.indexOf(GetUserFromToken(data.token).username) == -1) res.status(403).render('err403');
         res.render('admin');
     });
+
+    Router.get('/robots.txt', (req: Request, res: Response) => res.sendFile(join(BASE_DIRNAME, '..', 'views', 'assets', 'robots.txt')));
 
     /**
      * This route is for the April Fools homepage
