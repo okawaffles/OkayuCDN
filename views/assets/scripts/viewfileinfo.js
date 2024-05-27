@@ -142,7 +142,7 @@ function processPreview(filetype, link) {
     case 'PNG': case 'JPG': case 'JPEG': case 'WEBP': case 'BMP': case 'ICO': case 'GIF': case 'HEIC':
         previewArea.innerHTML = `<img src='${link}'>`;
         break;
-    case 'MP3': case 'WAV': case 'FLAC':
+    case 'MP3': case 'WAV': case 'FLAC': case 'AAC': case 'M4A':
         previewArea.innerHTML = `<audio controls src='${link}'></audio>`;
         break;
     case 'TTF': case 'OTF':
@@ -163,7 +163,7 @@ function startDownload(username, filename) {
         document.location = `/@${username}/${filename}?bypass=true&intent=download`;
         return;
     } else {
-        if (confirm('WARNING: This file might be dangerous, are you sure you still want to download it?\n\nNever trust executable files from strangers online.')) {
+        if (confirm('WARNING: This file might be dangerous, are you sure you still want to download it?\n\nNever trust executable files from strangers online. Only trust executables from people you know and trust, like close friends and family.')) {
             document.location = `/@${username}/${filename}?intent=download`;
         }
     }
