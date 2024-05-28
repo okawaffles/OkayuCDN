@@ -1102,7 +1102,7 @@ button:hover {
     cursor: pointer;
     padding: 60px 100px 50px;
     border-radius: 12px;
-    border: 5px var(--active-text-opposite) dashed;
+    border: 5px var(--active-text) dashed;
     display: flex;
     flex-wrap: wrap;
     align-items: center;

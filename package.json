@@ -22,6 +22,8 @@
     "mysql": "^2.18.1",
     "okayulogger": "^1.2.0",
     "otplib": "^12.0.1",
+    "passport": "^0.7.0",
+    "passport-oauth2": "^1.8.0",
     "qrcode": "^1.5.3",
     "qs": "^6.11.0",
     "xgplayer": "^3.0.0-alpha.119"
@@ -32,7 +34,7 @@
   },
   "name": "okayucdn",
   "description": "A File Upload Server based around Nekomata Okayu",
-  "version": "6.0.6",
+  "version": "6.1.0",
   "main": "dist/main.js",
   "repository": {
     "type": "git",
@@ -53,6 +55,8 @@
     "@types/formidable": "^3.4.5",
     "@types/lusca": "^1.7.4",
     "@types/node": "^20.11.30",
+    "@types/passport": "^1.0.16",
+    "@types/passport-oauth2": "^1.4.16",
     "@typescript-eslint/eslint-plugin": "^7.3.1",
     "@typescript-eslint/parser": "^7.3.1",
     "eslint": "^8.57.0",
