@@ -5,7 +5,7 @@ import { readdirSync, rmSync, statSync } from 'node:fs';
 import { GetProtectedFiles } from '../util/secure';
 
 
-export function GetStorageInfo(user: UserModel): StorageData {
+export function GetStorageInfo(user: UserModel, keepFileRemnants = false): StorageData {
     const content: Array<ContentItem> = [];
 
     const contentPath: string = join(UPLOADS_PATH, user.username);
@@ -19,7 +19,7 @@ export function GetStorageInfo(user: UserModel): StorageData {
         // Check if user has remnants of a broken file upload
         // if so, remove them, and don't add them to the user's storage
         if (name.startsWith('LATEST.UPLOADING')) {
-            rmSync(join(contentPath, name));
+            if (!keepFileRemnants) rmSync(join(contentPath, name));
         } else {
             usedStorage += size;
             content.push({ name, size });

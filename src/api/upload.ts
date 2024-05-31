@@ -62,7 +62,7 @@ export function FinishUpload(req: Request, res: Response) {
     const totalChunks: number = req.body.chunk_count;
     let uploadAllowed: boolean = true;
 
-    const userStorage: StorageData = GetStorageInfo(user);
+    const userStorage: StorageData = GetStorageInfo(user, true);
 
     // OkayuCDN is nice about storage:
     // if you are at, for example, 99mb of 100mb, you may upload files until you are equal or over your limit
