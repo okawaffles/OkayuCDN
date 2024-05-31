@@ -50,6 +50,10 @@
 
 
     <script>
+        // mobile devices cause issues and i don't want to risk it with ipads lol
+        const goToHome = navigator.userAgent.includes("Android") || navigator.userAgent.includes("iOS") || navigator.userAgent.includes("iPadOS");
+        if (goToHome) document.location = '/home';
+
         window.onload = () => {
 
         let zoom = (( window.outerWidth - 10 ) / window.innerWidth).toFixed(2);
