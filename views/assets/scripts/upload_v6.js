@@ -102,6 +102,7 @@ async function StartFileUpload() {
     const regex = new RegExp('^[A-Za-z0-9_-]+$');
     if (!regex.test($('#filename_input')[0].value) || $('#filename_input').val().length > 25) return alert('You may only use alphanumeric characters and underscores in your file names, as well as only up to 25 characters.');
 
+    $('#hider').css('display', 'none');
     $('#uploadInterface').css('display', 'none');
     $('#filename_input').css('display', 'none');
     $('#uploadButton').css('display', 'none');
@@ -142,6 +143,8 @@ async function StartFileUpload() {
     }, (data) => {
         if (data.status == 200) {
             document.location = data.goto;
+        } else {
+            alert('Failed to finish file upload.');
         }
     });
 }

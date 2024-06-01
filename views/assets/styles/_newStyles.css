@@ -1111,7 +1111,9 @@ button:hover {
     height: 15em;
     animation: none;
 }
-
+#processing {
+    place-content: center;
+}
 
 @keyframes file_missing {
     0% {
