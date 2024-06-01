@@ -44,7 +44,7 @@ export function RegisterNewToken(user: UserModel): string {
  * @param token the user's token
  * @returns true or false whether the token is valid
  */
-function CheckToken(token: string): boolean {
+export function CheckToken(token: string): boolean {
     return existsSync(join(TOKEN_DATABASE_PATH, `${token}.json`));
 }
 
@@ -262,8 +262,9 @@ export const PrefersLogin = (req: Request, res: Response, next: CallableFunction
     const data = matchedData(req);
     
     // validate token...
-    if (!data.token) return res.redirect(`/login?redir=${req.originalUrl}`);
-    if (!CheckToken(data.token)) return res.redirect(`/login?redir=${req.originalUrl}`);
+    if (!data.token || !CheckToken(data.token)) {
+        return res.redirect(`/login?redir=${req.originalUrl}`); 
+    }
 
     // all is good, continue:
     next();

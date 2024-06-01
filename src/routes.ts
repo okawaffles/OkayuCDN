@@ -5,6 +5,7 @@ import { RegisterAPIRoutes } from './routes/api';
 import { join } from 'node:path';
 import { RegisterContentRoutes } from './routes/content';
 import { RegisterAccountRoutes } from './routes/account';
+import { RegisterDesktopRoutes } from './routes/desktop';
 
 export function RegisterRoutes() {
     // base routes don't need their own files
@@ -35,4 +36,7 @@ export function RegisterRoutes() {
 
     // account routes
     RegisterAccountRoutes();
+
+    // routes for the desktop app (these use headers for the token rather than cookies)
+    RegisterDesktopRoutes();
 }

@@ -66,7 +66,7 @@ $(document).ready(() => {
             }
 
             if (!data.uses2FA) {
-                document.cookie = `token=${data.token};`;
+                document.cookie = `token=${data.token}; max-age=${14*86400}; path=/;`;
                 document.location = next;
                 return;
             } else {

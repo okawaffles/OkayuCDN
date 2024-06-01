@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'; 
 import { ENABLE_ACCOUNT_CREATION, ENABLE_UPLOADING, Router, admins, announcement, domain, version } from '../main';
-import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST, ValidateDeletionRequest, ValidatePasswordRequest, ValidateSignupPOST, ValidateAdminDeletionRequest, ValidateAdminStorageRequest, ValidateUploadChunk, ValidateContentRequest } from '../util/sanitize';
+import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST, ValidateDeletionRequest, ValidatePasswordRequest, ValidateSignupPOST, ValidateAdminDeletionRequest, ValidateAdminStorageRequest, ValidateUploadChunk, ValidateContentRequest, ValidateTokenBothModes } from '../util/sanitize';
 import { matchedData } from 'express-validator';
 import { BeginTOTPSetup, ChangeFileVisibility, CheckTOTPCode, GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewAccount, RegisterNewToken, UpdateUserPassword, VerifyLoginCredentials, VerifyUserExists } from '../util/secure';
 import { FinishUpload, MulterUploader } from '../api/upload';
@@ -63,9 +63,16 @@ export function RegisterAPIRoutes() {
         });
     });
     // pages use this to figure out who they are based on the login token
-    Router.get('/api/whoami', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
+    Router.get('/api/whoami', ValidateTokenBothModes(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
         const data = matchedData(req);
-        const user: UserModel = GetUserFromToken(data.token);
+
+        if (!data.token && !data.authorization) return res.status(400).end();
+
+        let token: string = 'invalid';
+        if (data.authorization) token = data.authorization;
+        else token = data.token;
+
+        const user: UserModel = GetUserFromToken(token);
         
         try {
             const username: string = user.username;
@@ -82,9 +89,11 @@ export function RegisterAPIRoutes() {
                 }
             });
         } catch (err) {
-            res.json({result:400,reason:'Bad request.'});
+            L.error('whoami: Bad request');
+            res.status(400).json({result:400,reason:'Bad request.'});
         }
     });
+
 
     Router.post('/api/signup', ValidateSignupPOST(), HandleBadRequest, async (req: Request, res: Response) => {
         const data = matchedData(req);
@@ -116,7 +125,7 @@ export function RegisterAPIRoutes() {
         FinishUpload(req, res);
     });
 
-    Router.get('/api/storage', ValidateToken(), HandleBadRequest, (req: Request, res: Response) => {
+    Router.get('/api/storage', ValidateTokenBothModes(), HandleBadRequest, (req: Request, res: Response) => {
         const data = matchedData(req);
 
         try {
