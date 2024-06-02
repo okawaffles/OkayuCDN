@@ -112,80 +112,80 @@ $(document).ready(() => {
 
 
     // passkey button
-    $('#passkey').on('click', async () => {
-        // temporary as passkeys don't really work yet  
-        $('#login_error').css('visibility', 'visible').html('Passkey authentication is not yet available.');
-        return;
+    // $('#passkey').on('click', async () => {
+    //     // temporary as passkeys don't really work yet  
+    //     $('#login_error').css('visibility', 'visible').html('Passkey authentication is not yet available.');
+    //     return;
 
-        $('#login-options').css('visibility', 'hidden');
-        $('#login_error').css('visibility', 'hidden');
-        $('#username').prop('disabled', true);
-        $('#password').prop('disabled', true);
+    //     $('#login-options').css('visibility', 'hidden');
+    //     $('#login_error').css('visibility', 'hidden');
+    //     $('#username').prop('disabled', true);
+    //     $('#password').prop('disabled', true);
 
-        if ($('#username')[0].value == '') {
-            $('#login-options').css('visibility', 'visible');
-            $('#login_error').css('visibility', 'visible').html('Please enter your username to use passkey!');
-            $('#inputs').css('animation', 'bad-login 0.5s ease-in-out');
-            $('#username').prop('disabled', false);
-            $('#password').prop('disabled', false);
-            setTimeout(() => {
-                $('#inputs').css('animation', 'none');
-            }, 550);
-            return;
-        }
+    //     if ($('#username')[0].value == '') {
+    //         $('#login-options').css('visibility', 'visible');
+    //         $('#login_error').css('visibility', 'visible').html('Please enter your username to use passkey!');
+    //         $('#inputs').css('animation', 'bad-login 0.5s ease-in-out');
+    //         $('#username').prop('disabled', false);
+    //         $('#password').prop('disabled', false);
+    //         setTimeout(() => {
+    //             $('#inputs').css('animation', 'none');
+    //         }, 550);
+    //         return;
+    //     }
 
-        $.post('/api/2fa/pklogin/start', {username:$('#username')[0].value}, async (data) => {
-            let asseResp;
+    //     $.post('/api/2fa/pklogin/start', {username:$('#username')[0].value}, async (data) => {
+    //         let asseResp;
 
-            try {
-                asseResp = await SimpleWebAuthnBrowser.startAuthentication(data);
-                asseResp.username = $('#username')[0].value;
+    //         try {
+    //             asseResp = await SimpleWebAuthnBrowser.startAuthentication(data);
+    //             asseResp.username = $('#username')[0].value;
 
-                const verificationResp = await fetch('/api/2fa/pklogin/finish', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type':'application/json'
-                    },
-                    body: JSON.stringify(asseResp)
-                });
+    //             const verificationResp = await fetch('/api/2fa/pklogin/finish', {
+    //                 method: 'POST',
+    //                 headers: {
+    //                     'Content-Type':'application/json'
+    //                 },
+    //                 body: JSON.stringify(asseResp)
+    //             });
 
-                const verificationJSON = await verificationResp.json();
+    //             const verificationJSON = await verificationResp.json();
 
-                if (verificationJSON.verified) {
-                    alert('yippe doo!!!');
-                } else {
-                    $('#login-options').css('visibility', 'visible');
-                    $('#login_error').css('visibility', 'visible').html('Passkey could not be verified.');
-                    $('#inputs').css('animation', 'bad-login 0.5s ease-in-out');
-                    $('#username').prop('disabled', false);
-                    $('#password').prop('disabled', false);
-                    setTimeout(() => {
-                        $('#inputs').css('animation', 'none');
-                    }, 550);
-                    return;
-                }
-            } catch (err) {
-                $('#login-options').css('visibility', 'visible');
-                $('#login_error').css('visibility', 'visible').html('Passkey login failed.');
-                $('#inputs').css('animation', 'bad-login 0.5s ease-in-out');
-                $('#username').prop('disabled', false);
-                $('#password').prop('disabled', false);
-                setTimeout(() => {
-                    $('#inputs').css('animation', 'none');
-                }, 550);
-                console.error(err);
-                return;
-            }
-        }).fail(() => {
-            $('#login-options').css('visibility', 'visible');
-            $('#login_error').css('visibility', 'visible').html('Passkey is unavailable for this account.');
-            $('#inputs').css('animation', 'bad-login 0.5s ease-in-out');
-            $('#username').prop('disabled', false);
-            $('#password').prop('disabled', false);
-            setTimeout(() => {
-                $('#inputs').css('animation', 'none');
-            }, 550);
-            return;
-        });
-    });
+    //             if (verificationJSON.verified) {
+    //                 alert('yippe doo!!!');
+    //             } else {
+    //                 $('#login-options').css('visibility', 'visible');
+    //                 $('#login_error').css('visibility', 'visible').html('Passkey could not be verified.');
+    //                 $('#inputs').css('animation', 'bad-login 0.5s ease-in-out');
+    //                 $('#username').prop('disabled', false);
+    //                 $('#password').prop('disabled', false);
+    //                 setTimeout(() => {
+    //                     $('#inputs').css('animation', 'none');
+    //                 }, 550);
+    //                 return;
+    //             }
+    //         } catch (err) {
+    //             $('#login-options').css('visibility', 'visible');
+    //             $('#login_error').css('visibility', 'visible').html('Passkey login failed.');
+    //             $('#inputs').css('animation', 'bad-login 0.5s ease-in-out');
+    //             $('#username').prop('disabled', false);
+    //             $('#password').prop('disabled', false);
+    //             setTimeout(() => {
+    //                 $('#inputs').css('animation', 'none');
+    //             }, 550);
+    //             console.error(err);
+    //             return;
+    //         }
+    //     }).fail(() => {
+    //         $('#login-options').css('visibility', 'visible');
+    //         $('#login_error').css('visibility', 'visible').html('Passkey is unavailable for this account.');
+    //         $('#inputs').css('animation', 'bad-login 0.5s ease-in-out');
+    //         $('#username').prop('disabled', false);
+    //         $('#password').prop('disabled', false);
+    //         setTimeout(() => {
+    //             $('#inputs').css('animation', 'none');
+    //         }, 550);
+    //         return;
+    //     });
+    // });
 });
