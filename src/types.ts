@@ -68,3 +68,27 @@ export interface ShortenedLink {
 export interface ShortenedLinksList {
     [key: string]: ShortenedLink
 }
+
+export enum TokenType {
+    TOKEN_TYPE_USER, // a user's login token
+    TOKEN_TYPE_AUTHORIZATION // an authorized app which holds extra info
+}
+
+export interface TokenV2 {
+    username: string
+    tokenType: TokenType
+    authorizedAppId?: number // only used if a token is for an authorization, such as the desktop app
+    intents: AuthorizationIntents
+}
+
+export interface AuthorizationIntents {
+    canUseWebsite?: boolean // is this token allowed to authorize the website?
+    canUseDesktop?: boolean // is this token allowed to authorize the desktop app?
+    canGetStorage?: boolean // can this token be used to get the user's storage info?
+    canViewPublicItems?: boolean // can this token be used to view user's public box items?
+    canViewPrivateItems?: boolean // can this token be used to view user's privated box items?
+    canChangeItemPrivacy?: boolean // can this token be used to change a box item to private or public?
+    canDeleteItem?: boolean // can this token be used to delete mybox items?
+    canUpload?: boolean // can this token be used to upload to the user's account?
+    canChangeAccountOptions?: boolean // can this token be used to change a user's security/account info?   
+}

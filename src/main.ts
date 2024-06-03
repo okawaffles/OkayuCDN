@@ -41,7 +41,6 @@ export const Router: Express = express();
 
 Router.set('view engine', 'ejs');
 Router.use('/assets', staticFiles(join(__dirname, '..', 'views' , 'assets'))); // may need to be changed
-Router.use('/sp', staticFiles(join(__dirname, '..', 'views', 'singlepage')));
 
 import CookieParser from 'cookie-parser';
 Router.use(CookieParser());
@@ -61,7 +60,7 @@ Router.use(Session({
 import { csrf, xssProtection } from 'lusca';
 Router.use(csrf({allowlist:[
     'http://localhost:2773',
-    'https://okayu.okawaffles.com',
+    'https://okayucdn.com',
     domain
 ]}), xssProtection());
 

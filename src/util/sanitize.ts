@@ -82,3 +82,8 @@ export const ValidateUploadChunk = () => [
 export const ValidateShortURL = () => [
     param('id').escape().notEmpty().isLength({min:6,max:6})
 ];
+
+export const ValidateAuthorizationRequest = () => [
+    query('appId').notEmpty().escape().isNumeric().isLength({min:1,max:16}),
+    query('intents').notEmpty().escape().isNumeric()
+];

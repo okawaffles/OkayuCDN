@@ -15,6 +15,7 @@
     "express-validator": "^7.0.1",
     "express.js": "^1.0.0",
     "ffmpeg": "^0.0.4",
+    "fido2-lib": "^3.5.3",
     "fluent-ffmpeg": "^2.1.2",
     "formidable": "^3.2.4",
     "lusca": "^1.7.0",
@@ -30,11 +31,11 @@
   },
   "scripts": {
     "start": "node dist/index.js",
-    "tstest": "tsc && node ./dist/main.js"
+    "recompile_start": "tsc && node ."
   },
   "name": "okayucdn",
   "description": "A File Upload Server based around Nekomata Okayu",
-  "version": "6.1.0",
+  "version": "6.2.0",
   "main": "dist/main.js",
   "repository": {
     "type": "git",
