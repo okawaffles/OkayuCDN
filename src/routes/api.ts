@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'; 
 import { ENABLE_ACCOUNT_CREATION, ENABLE_UPLOADING, Router, admins, announcement, domain, version } from '../main';
-import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST, ValidateDeletionRequest, ValidatePasswordRequest, ValidateSignupPOST, ValidateAdminDeletionRequest, ValidateAdminStorageRequest, ValidateUploadChunk, ValidateContentRequest, ValidateTokenBothModes, ValidateAuthorizationRequest } from '../util/sanitize';
+import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST, ValidateDeletionRequest, ValidatePasswordRequest, ValidateSignupPOST, ValidateAdminDeletionRequest, ValidateAdminStorageRequest, ValidateUploadChunk, ValidateContentRequest, ValidateTokenBothModes } from '../util/sanitize';
 import { matchedData } from 'express-validator';
 import { BeginTOTPSetup, ChangeFileVisibility, CheckTOTPCode, GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewAccount, RegisterNewToken, UpdateUserPassword, VerifyLoginCredentials, VerifyUserExists } from '../util/secure';
 import { FinishUpload, MulterUploader } from '../api/upload';
@@ -11,7 +11,6 @@ import { join } from 'path';
 import { UPLOADS_PATH, USER_DATABASE_PATH } from '../util/paths';
 import { existsSync, readdirSync, renameSync, rmSync } from 'fs';
 import { CreateLink } from '../api/shortener';
-import { DecodeIntents } from '../api/newtoken';
 
 const L: Logger = new Logger('API');
 
@@ -247,15 +246,7 @@ export function RegisterAPIRoutes() {
 
 
     /* Token V2 */
-    // test authorization page
-    Router.get('/authorize', ValidateToken(), ValidateAuthorizationRequest(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
-        const data = matchedData(req);
-
-        res.json({
-            appId: data.appId,
-            intents: DecodeIntents(data.intents)
-        });
-    });
+    
     
 
     /* Link Shortening */

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { admins, BASE_DIRNAME, Router, version } from '../main';
-import { HandleBadRequest, ValidateLoginGET, ValidateToken } from '../util/sanitize';
+import { HandleBadRequest, ValidateAuthorizationRequest, ValidateLoginGET, ValidateToken } from '../util/sanitize';
 import { GetUserFromToken, PrefersLogin } from '../util/secure';
 import { rmSync } from 'node:fs';
 import { TOKEN_DATABASE_PATH } from '../util/paths';
@@ -47,6 +47,10 @@ export function RegisterSimpleRoutes() {
     Router.get('/upload', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => res.render('upload.ejs'));
 
     Router.get('/mybox', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => res.render('mybox.ejs'));
+
+    Router.get('/authorize', ValidateToken(), ValidateAuthorizationRequest(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
+        res.render('authorize');
+    });
 
     Router.get('/admin', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
         const data = matchedData(req);

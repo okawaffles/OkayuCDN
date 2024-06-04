@@ -1,4 +1,4 @@
-import { AuthorizationIntents } from '../types';
+import { AuthorizationIntents, TokenType, TokenV2 } from '../types';
 
 const authorizedIntentsBits: {[key in keyof AuthorizationIntents]: number} = {
     canUseWebsite: 0,
@@ -34,3 +34,34 @@ export function DecodeIntents(encoded: number): AuthorizationIntents {
     return intents;
 }
 
+
+enum DefaultIntents {
+    USER_INTENTS = 509,
+    DESKTOP_INTENTS = 134
+}
+
+
+/**
+ * Generate a user Token V2, with the default intents  
+ * @param username The username of the user who wants the token
+ */
+export function GenerateDefaultUserToken(username: string): TokenV2 {
+    return {
+        tokenType: TokenType.TOKEN_TYPE_USER,
+        username,
+        intents: DecodeIntents(DefaultIntents.USER_INTENTS)
+    } as TokenV2;
+}
+
+/**
+ * Generate a desktop Token V2, with the default intents  
+ * @param username The username of the user who wants the token
+ */
+export function GenerateDefaultDesktopToken(username: string): TokenV2 {
+    return {
+        tokenType: TokenType.TOKEN_TYPE_AUTHORIZATION,
+        username,
+        intents: DecodeIntents(DefaultIntents.DESKTOP_INTENTS),
+        authorizedAppId: 2773
+    } as TokenV2;
+}

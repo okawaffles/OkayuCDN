@@ -9,6 +9,7 @@ export let UPLOADS_PATH: string = '';
 //export let UPLOADS_TEMP_PATH: string = '';
 export let USER_DATABASE_PATH: string = '';
 export let TOKEN_DATABASE_PATH: string = '';
+export let APPLICATION_DATABASE_PATH: string = '';
 
 /**
  * Set up path variables and ensure all paths exist.
@@ -23,6 +24,7 @@ export function PreparePaths() {
     //UPLOADS_TEMP_PATH = join(UPLOADS_PATH, '.uploading');
     USER_DATABASE_PATH = join(DATABASE_PATH, 'users');
     TOKEN_DATABASE_PATH = join(DATABASE_PATH, 'tokens');
+    APPLICATION_DATABASE_PATH = join(DATABASE_PATH, 'applications');
 
     // ensure these paths exist
     if (!existsSync(DATABASE_PATH)) mkdirSync(DATABASE_PATH, {recursive: true});
@@ -30,4 +32,5 @@ export function PreparePaths() {
     //if (!existsSync(UPLOADS_TEMP_PATH)) mkdirSync(UPLOADS_TEMP_PATH, {recursive: true});
     if (!existsSync(USER_DATABASE_PATH)) mkdirSync(USER_DATABASE_PATH, {recursive: true});
     if (!existsSync(TOKEN_DATABASE_PATH)) mkdirSync(TOKEN_DATABASE_PATH, {recursive: true});
+    if (!existsSync(APPLICATION_DATABASE_PATH)) mkdirSync(APPLICATION_DATABASE_PATH, {recursive: true});
 }
