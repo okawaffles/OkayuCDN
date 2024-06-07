@@ -10,8 +10,8 @@
     "DISABLE_ASCII_ART": false,
     
     "announcement":{
-        "active":true,
-        "content":"This site is for live-testing development builds of OkayuCDN. Please use <a href='https://okayu.okawaffles.com'>the stable website</a> if you're not a tester."
+        "active":false,
+        "content":""
     },
 
     "admins": [
