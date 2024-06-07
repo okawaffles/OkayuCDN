@@ -3,20 +3,14 @@ import { USER_DATABASE_PATH, TOKEN_DATABASE_PATH, UPLOADS_PATH } from './paths';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { Request, Response } from 'express';
 import { matchedData } from 'express-validator';
-import { UserModel, UserSecureData } from '../types';
+import { TokenV2, UserModel, UserSecureData } from '../types';
 import { createHash, randomBytes } from 'node:crypto';
 import { hash, verify } from 'argon2';
 import { Logger } from 'okayulogger';
 import { toDataURL } from 'qrcode';
 import { authenticator, totp } from 'otplib';
+import { GenerateDefaultUserToken } from '../api/newtoken';
 
-
-interface Cache {
-    [key: string]: string;
-}
-const TokenCache: Cache = {
-
-};
 
 const L: Logger = new Logger('secure'); 
 
@@ -35,7 +29,8 @@ export function CreateNewToken(): string {
  */
 export function RegisterNewToken(user: UserModel): string {
     const token: string = CreateNewToken();
-    writeFileSync(join(TOKEN_DATABASE_PATH, `${token}.json`), user.username);
+    const content: TokenV2 = GenerateDefaultUserToken(user.username);
+    writeFileSync(join(TOKEN_DATABASE_PATH, `${token}.json`), JSON.stringify(content));
     return token;
 }
 
@@ -55,33 +50,24 @@ export function CheckToken(token: string): boolean {
  * @returns UserModel of the corresponding user
  */
 export function GetUserFromToken(token: string): UserModel {
-    // this allows us to save some potentially slow disk reads
-    // by caching results in memory
-    if (typeof TokenCache[token] == 'string') {
-        return GetUserModel(TokenCache[token]);
-    }
+    const tokenData: TokenV2 = JSON.parse(readFileSync(join(TOKEN_DATABASE_PATH, `${token}.json`), 'utf-8'));
+    const tokenUser = JSON.parse(readFileSync(join(USER_DATABASE_PATH, `${tokenData.username}.json`), 'utf-8')); // read this raw because the usermodel might not be upgraded
 
-    const tokenUsername: string = readFileSync(join(TOKEN_DATABASE_PATH, `${token}.json`), 'utf-8');
-    const userData = JSON.parse(readFileSync(join(USER_DATABASE_PATH, `${tokenUsername}.json`), 'utf-8'));
-
-    CheckPrivateIndex(tokenUsername);
+    CheckPrivateIndex(tokenUser.username);
     
     // simple way to check if it's already stored as a new usermodel
-    if (userData.storageAmount != undefined) return userData as UserModel;
+    if (tokenUser.storageAmount != undefined) return tokenUser as UserModel;
 
     const model: UserModel = {
-        username: tokenUsername,
+        username: tokenUser.username,
         userId: -1, // userId is -1 until implemented, if ever
-        email: userData.email,
-        storageAmount: userData.storage,
-        hasLargeStorage: userData.premium,
+        email: tokenUser.email,
+        storageAmount: tokenUser.storage,
+        hasLargeStorage: tokenUser.premium,
         preferences: {
             language: 0
         }
     };
-
-    // save to the cache
-    TokenCache[token] = tokenUsername;
 
     return model;
 }
@@ -262,7 +248,8 @@ export const PrefersLogin = (req: Request, res: Response, next: CallableFunction
     const data = matchedData(req);
     
     // validate token...
-    if (!data.token || !CheckToken(data.token)) {
+    // TokenV2 -- must validate whether a token as the "CanUseWebsite" intent
+    if (!data.token || !CheckToken(data.token) || !(JSON.parse(readFileSync(join(TOKEN_DATABASE_PATH, `${data.token}.json`), 'utf-8')).intents.canUseWebsite)) {
         return res.redirect(`/login?redir=${req.originalUrl}`); 
     }
 
