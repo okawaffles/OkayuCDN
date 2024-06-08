@@ -119,8 +119,13 @@ async function StartFileUpload() {
     for (let i = 0; i <= total_chunks; i++) {
         const end_byte = Math.min(start_byte + chunk_size, file.size);
         const chunk = file.slice(start_byte, end_byte);
-        console.debug('sending chunk...');
-        await sendChunk(chunk, total_chunks, i);
+        // console.debug('sending chunk...');
+        chunkHasFailed = false;
+        try {
+            await sendChunk(chunk, total_chunks, i);
+        } catch(e) {
+            return alert(`Upload failed due to an unknown error (${e})`);
+        }
         start_byte += chunk_size;
         
         // change progress bar based on current progress
@@ -149,6 +154,8 @@ async function StartFileUpload() {
     });
 }
 
+let chunkHasFailed = false;
+
 async function sendChunk(chunk, total_chunks, current_chunk) {
     const formData = new FormData();
     formData.append('file', chunk);
@@ -159,7 +166,13 @@ async function sendChunk(chunk, total_chunks, current_chunk) {
         body: formData
     });
     if (!response.ok) {
-        alert(`Upload failed (${current_chunk} of ${total_chunks} failed)`);
+        if (!chunkHasFailed) {
+            chunkHasFailed = true;
+            // retry the chunk
+            sendChunk(chunk, total_chunks, current_chunk);
+            return;
+        }
+        alert(`Upload failed, as one of the file chunks was unable to be uploaded. Trying again may help. (${current_chunk} of ${total_chunks} failed twice)`);
         uploadInProgress = false;
         throw new Error(`chunk ${current_chunk} of ${total_chunks} failed.`);
     }

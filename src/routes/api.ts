@@ -4,13 +4,14 @@ import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, Valida
 import { matchedData } from 'express-validator';
 import { BeginTOTPSetup, ChangeFileVisibility, CheckTOTPCode, GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewAccount, RegisterNewToken, UpdateUserPassword, VerifyLoginCredentials, VerifyUserExists } from '../util/secure';
 import { FinishUpload, MulterUploader } from '../api/upload';
-import { StorageData, UserModel } from '../types';
+import { AuthorizationIntents, ContentItem, StorageData, UserModel } from '../types';
 import { GetStorageInfo } from '../api/content';
 import { Logger } from 'okayulogger';
 import { join } from 'path';
 import { UPLOADS_PATH, USER_DATABASE_PATH } from '../util/paths';
 import { existsSync, readdirSync, renameSync, rmSync } from 'fs';
 import { CreateLink } from '../api/shortener';
+import { ReadIntents } from '../api/newtoken';
 
 const L: Logger = new Logger('API');
 
@@ -110,6 +111,9 @@ export function RegisterAPIRoutes() {
         if (!ENABLE_UPLOADING) return res.status(423).end();
 
         const data = matchedData(req);
+        const intents: AuthorizationIntents = ReadIntents(data.token);
+        if (!intents.canUpload) return res.status(403).json({success:false,reason:'No permission'});
+
         const user = GetUserFromToken(data.token);
         const username = user.username;
 
@@ -122,16 +126,40 @@ export function RegisterAPIRoutes() {
 
     Router.post('/api/upload/finish', ValidateToken(), ValidateUploadPOST(), HandleBadRequest, (req: Request, res: Response) => { 
         if (!ENABLE_UPLOADING) return res.status(423).end();
+
+        const data = matchedData(req);
+
+        const intents: AuthorizationIntents = ReadIntents(data.token);
+        if (!intents.canUpload) return res.status(403).json({success:false,reason:'No permission'});
+
         FinishUpload(req, res);
     });
 
     Router.get('/api/storage', ValidateTokenBothModes(), HandleBadRequest, (req: Request, res: Response) => {
         const data = matchedData(req);
 
+        const intents: AuthorizationIntents = ReadIntents(data.token);
+        if (!intents.canGetStorage) {
+            return res.status(403).send({success:false,reason:'No permission'});
+        }
+
         try {
             const user = GetUserFromToken(data.token);
 
             const storage: StorageData = GetStorageInfo(user);
+
+            if (!intents.canViewPublicItems) { storage.content = []; storage.protected_files = []; }
+            if (!intents.canViewPrivateItems) {
+                storage.content.forEach((item: ContentItem) => {
+                    if (storage.protected_files.indexOf(item.name) != -1) {
+                        storage.content[storage.content.indexOf(item)] = {
+                            name: 'Protected Item',
+                            size: 0
+                        };
+                    }
+                });
+                storage.protected_files = [];
+            }
 
             res.json(storage);
         } catch (err: unknown) {
@@ -150,6 +178,9 @@ export function RegisterAPIRoutes() {
         HandleBadRequest, 
         (req: Request, res: Response) => {
             const data = matchedData(req);
+            const intents: AuthorizationIntents = ReadIntents(data.token);
+
+            if (!intents.canDeleteItem) return res.status(403).json({success:false,reason:'No permission'});
 
             const item = data.id;
             const user = GetUserFromToken(data.token);
@@ -169,6 +200,9 @@ export function RegisterAPIRoutes() {
     Router.patch('/api/changeVisibility', ValidateToken(), ValidateDeletionRequest(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
         const data = matchedData(req);
 
+        const intents: AuthorizationIntents = ReadIntents(data.token);
+        if (!intents.canChangeItemPrivacy) return res.status(403).json({success:false,reason:'No permission'});
+
         ChangeFileVisibility(data.token, data.id);
 
         res.status(204).end();
@@ -179,6 +213,9 @@ export function RegisterAPIRoutes() {
     Router.patch('/api/password', ValidateToken(), PrefersLogin, ValidatePasswordRequest(), HandleBadRequest, async (req: Request, res: Response) => {
         const data = matchedData(req);
         const user = GetUserFromToken(data.token);
+
+        const intents: AuthorizationIntents = ReadIntents(data.token);
+        if (!intents.canChangeAccountOptions) return res.status(403).json({success:false,reason:'No permission'});
 
         if (!await VerifyLoginCredentials(user.username, data.current_password)) return res.status(401).json({success:false,reason:'bad login'});
 
@@ -193,6 +230,10 @@ export function RegisterAPIRoutes() {
     // GET route = begin TOTP setup
     Router.get('/api/otp', ValidateToken(), PrefersLogin, HandleBadRequest, async (req: Request, res: Response) => {
         const data = matchedData(req);
+
+        const intents: AuthorizationIntents = ReadIntents(data.token);
+        if (!intents.canChangeAccountOptions) return res.status(403).json({success:false,reason:'No permission'});
+
         const url = await BeginTOTPSetup(GetUserFromToken(data.token));
         res.json({url});
     });
@@ -200,6 +241,9 @@ export function RegisterAPIRoutes() {
     // POST route = verify TOTP
     Router.post('/api/otp', ValidateOTP(), HandleBadRequest, (req: Request, res: Response) => {
         const data = matchedData(req);
+
+        const intents: AuthorizationIntents = ReadIntents(data.token);
+        if (!intents.canChangeAccountOptions) return res.status(403).json({success:false,reason:'No permission'});
 
         if (CheckTOTPCode(data.username, data.code))
             res.status(200).end();
@@ -246,7 +290,7 @@ export function RegisterAPIRoutes() {
 
 
     /* Token V2 */
-    
+    // lol i didnt put anything here
     
 
     /* Link Shortening */

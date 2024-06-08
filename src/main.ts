@@ -28,6 +28,8 @@ if (!DISABLE_ASCII_ART) console.log(asciiart);
 const L: Logger = new Logger('main');
 L.info('Starting OkayuCDN...');
 
+if (process.argv[0].includes('bun')) L.warn('Bun support is not guaranteed. It is recommended that you use NodeJS until it is guaranteed 100% support.');
+
 
 /* load env variables */
 import {config} from 'dotenv';

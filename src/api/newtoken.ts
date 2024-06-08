@@ -1,4 +1,7 @@
+import { readFileSync } from 'fs';
 import { AuthorizationIntents, TokenType, TokenV2 } from '../types';
+import { join } from 'path';
+import { TOKEN_DATABASE_PATH } from '../util/paths';
 
 const authorizedIntentsBits: {[key in keyof AuthorizationIntents]: number} = {
     canUseWebsite: 0,
@@ -64,4 +67,18 @@ export function GenerateDefaultDesktopToken(username: string): TokenV2 {
         intents: DecodeIntents(DefaultIntents.DESKTOP_INTENTS),
         authorizedAppId: 2773
     } as TokenV2;
+}
+
+/**
+ * Read the intents property of a token
+ * @param token The token to read
+ * @returns AuthorizationIntents of the token
+ */
+export function ReadIntents(token: string): AuthorizationIntents {
+    try {
+        const intents = JSON.parse(readFileSync(join(TOKEN_DATABASE_PATH, `${token}.json`), 'utf-8')).intents;
+        return intents;
+    } catch(e: unknown) {
+        return {};
+    }
 }
