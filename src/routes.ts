@@ -1,4 +1,4 @@
-import { BASE_DIRNAME, Router } from './main';
+import { BASE_DIRNAME, domain, Router } from './main';
 import { Request, Response } from 'express';
 import { RegisterSimpleRoutes } from './routes/simple';
 import { RegisterAPIRoutes } from './routes/api';
@@ -13,7 +13,7 @@ export function RegisterRoutes() {
         res.render('landing/okayu.ejs'); // this may need to be changed later
     });
     Router.get('/wallpaper', (req: Request, res: Response) => {
-        res.render('landing/okayu_wallpaper.ejs'); // this may need to be changed later
+        res.render('landing/okayu_wallpaper.ejs', {domain}); // this may need to be changed later
     });
     Router.get('/mira', (req: Request, res: Response) => {
         res.render('landing/mira.ejs'); // this may need to be changed later

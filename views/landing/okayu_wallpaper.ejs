@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= pagetitle %></title>
+    <title>OkayuCDN Wallpaper</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/5.1.3/pixi.min.js"></script>
     <style type="text/css">
         body {
@@ -15,9 +15,9 @@
         }
     </style>
 
-    <meta content="<%= pagetitle %>" property="og:title">
-    <meta content="<%= desc %>" property="og:description">
-    <meta content="https://okayu.okawaffles.com/" property="og:url">
+    <meta content="OkayuCDN Wallpaper" property="og:title">
+    <meta content="umm yeah its a wallpaper compatible landing page :D :D :D" property="og:description">
+    <meta content="https://okayucdn.com/" property="og:url">
     <meta content="#9000e3" data-react-helmet="true" name="theme-color">
 </head>
 
@@ -39,8 +39,8 @@
         let app = new PIXI.Application({ width: swid, height: shei });
         app.stage.interactive = true;
         document.body.appendChild(app.view);
-        let bgi = PIXI.Sprite.from('https://okayu.okawaffles.com/assets/images/landing/bgi.png');
-        let okayu = PIXI.Sprite.from('https://okayu.okawaffles.com/assets/images/landing/okayu.png');
+        let bgi = PIXI.Sprite.from('<%= domain%>/assets/images/landing/bgi.png');
+        let okayu = PIXI.Sprite.from('<%= domain%>/assets/images/landing/okayu.png');
         bgi.scale.set(1.1, 1.1);
         bgi.anchor.set(0.5);
         app.stage.addChild(bgi);
