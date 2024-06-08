@@ -2,6 +2,7 @@ let DOMAIN = 'https://okayu.okawaffles.com';
 let USERNAME = 'anonymous';
 let BOX_ITEMS = [];
 let PROTECTED_BOX_ITEMS = [];
+const IS_MOBILE = navigator.userAgent.includes('Android') || navigator.userAgent.includes('iOS');
 
 $(document).ready(() => {
     $.getJSON('/api/whoami', (data) => {
@@ -143,6 +144,7 @@ function generateItem(id, item, fsize, alternate, private) {
         <button class="share mobile" id="share-content-${id}" onclick="share('${item}', ${id}, true)"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
         <button class="view mobile" onclick="view('${item}')"><i class="fa-solid fa-eye"></i></button>
         <button class="dl mobile" onclick="download('${item}')"><i class="fa-solid fa-download"></i></button>
+        <button class="btn-orange visibility mobile" id="m-change-visibility-${id}" onclick="changeVisibility('${item}', ${id})">${private?'<i class="fa-solid fa-lock-open"></i>':'<i class="fa-solid fa-lock"></i>'}</button>
         <button class="btn-red delete mobile" id="m-delete-item-${id}" onclick="startDeleteSequence('${item}', ${id}, false)"><i class="fa-solid fa-trash-can"></i></button>
     </div>
 </div>`;
@@ -169,9 +171,15 @@ function changeVisibility(item, id) {
                 alert('Failed to update visibility.');
             },
             204: () => {
-                const isPrivate = $(`#change-visibility-${id}`).html() != '<i class="fa-solid fa-lock-open" aria-hidden="true"></i> Make Public';
+                let isPrivate;
 
-                $(`#change-visibility-${id}`).html(isPrivate?'<i class="fa-solid fa-lock-open"></i> Make Public':'<i class="fa-solid fa-lock"></i> Make Private');
+                if (IS_MOBILE) {
+                    isPrivate = $(`#m-change-visibility-${id}`).html() != '<i class="fa-solid fa-lock-open" aria-hidden="true"></i>';
+                    $(`#m-change-visibility-${id}`).html(isPrivate?'<i class="fa-solid fa-lock-open"></i>':'<i class="fa-solid fa-lock"></i>');
+                } else {
+                    isPrivate = $(`#change-visibility-${id}`).html() != '<i class="fa-solid fa-lock-open" aria-hidden="true"></i> Make Public';
+                    $(`#change-visibility-${id}`).html(isPrivate?'<i class="fa-solid fa-lock-open"></i> Make Public':'<i class="fa-solid fa-lock"></i> Make Private');
+                }
 
                 if (isPrivate) {
                     let currentHTML = $(`#size-${id}`).html();
