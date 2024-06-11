@@ -33,7 +33,7 @@
     --default-mybox-item: #1a1f25;
     --default-mybox-item-alternate: #121518;
 
-    --light-background: #ececec;
+    --light-background: #ebebeb;
     --light-background-compliment: #d3d3d3;
     --light-primary: var(--okayucdn-blue);
     --light-primary-hover: var(--okayucdn-blue-hover);
@@ -93,6 +93,10 @@
         --active-mybox-item: var(--light-mybox-item);
         --active-mybox-item-alternate: var(--light-mybox-item-alternate);
     }
+
+    header {
+        border-bottom: 2px solid #00000033; 
+    }
 }
 
 @media (prefers-contrast: more) {
@@ -123,7 +127,7 @@ body {
 
 /* global */
 .follow_text {
-    color: var(--active-text);
+    color: var(--active-text) !important;
 }
 
 /* navbar desktop */
@@ -684,12 +688,12 @@ button:hover {
 }
 
 .mybox_title {
-    color: white;
+    color: var(--active-text);
     font-size: 52px;
 }
 
 .mybox_subtitle {
-    color: white;
+    color: var(--active-text);
     font-size: 28px;
     padding-bottom: 10px;
 }
@@ -701,6 +705,9 @@ button:hover {
 .mybox_all p {
     margin-bottom: 15px;
 }
+.mybox_body h3 {
+    color: var(--active-text);
+}
 .mybox_form_pane select {
     width: 200px;
     text-align: center;
@@ -708,12 +715,12 @@ button:hover {
 
 .mybox_contentH2 {
     margin: 10px;
-    color: white;
+    color: var(--active-text);
 }
 
 .mybox_noContent {
     display: none;
-    color: white;
+    color: var(--active-text);
 }
 
 .content_container {
@@ -769,12 +776,13 @@ button:hover {
 
 .content_items button {
     width: 24%;
+    color: var(--active-text-opposite);
 }
 
 .content_items {
     display: flex;
     justify-content: space-between;
-    color: white;
+    color: var(--active-text);
     font-size: 18px;
     width: 50%;
     padding: 0px;
@@ -793,6 +801,7 @@ button:hover {
 
 .size {
     background-color: var(--active-primary);
+    color: var(--active-text-opposite);
     padding: 2px 4px;
     border-radius: 8px;
 }
@@ -1102,7 +1111,7 @@ button:hover {
     cursor: pointer;
     padding: 60px 100px 50px;
     border-radius: 12px;
-    border: 5px var(--active-text) dashed;
+    border: 5px white dashed;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
