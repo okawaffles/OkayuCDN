@@ -1,4 +1,4 @@
-let DOMAIN = 'https://okayu.okawaffles.com';
+let DOMAIN = 'https://okayucdn.com';
 let USERNAME = 'anonymous';
 let BOX_ITEMS = [];
 let PROTECTED_BOX_ITEMS = [];
@@ -128,7 +128,7 @@ function parseStorageAmount(bytes) {
 /* Moved from old script */
 
 function generateItem(id, item, fsize, alternate, private) {
-    return `<div class="content_items ${alternate?'alternate':''}">
+    return `<div id="item-${id}" class="content_items ${alternate?'alternate':''}">
     <div class="top">
         <div class="left">
             <span class="size" id="size-${id}">${fsize}    ${private?'<i class="fa-solid fa-lock"></i>':''}</span>
@@ -250,7 +250,7 @@ function startDeleteSequence(item, id, mobile) {
                 $(`#${id}`).html('<i class="fa-solid fa-trash-can" aria-hidden="true"> Delete</i>');
             }, 3000);
         } else {
-            deleteItemRequest(item);
+            deleteItemRequest(item, id);
         }
 
         return;
@@ -263,10 +263,10 @@ function startDeleteSequence(item, id, mobile) {
             $(`#delete-item-${id}`).html('<i class="fa-solid fa-trash-can" aria-hidden="true"></i> Delete');
         }, 3000);
     } else {
-        deleteItemRequest(item);
+        deleteItemRequest(item, id);
     }
 }
-function deleteItemRequest(item) {
+function deleteItemRequest(item, id) {
     $.ajax({
         type: 'DELETE',
         url: '/api/deleteItem',
@@ -276,7 +276,10 @@ function deleteItemRequest(item) {
                 alert('Failed to delete item');
             },
             204: () => {
-                document.location = '/mybox';
+                // remove it from the list, so if the user sorts, it doesn't show up
+                BOX_ITEMS.splice(id, 1);
+                // delete from visibility
+                $(`#item-${id}`).remove();
             }
         }
     });
