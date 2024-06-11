@@ -154,7 +154,8 @@ export function RegisterAPIRoutes() {
                     if (storage.protected_files.indexOf(item.name) != -1) {
                         storage.content[storage.content.indexOf(item)] = {
                             name: 'Protected Item',
-                            size: 0
+                            size: 0,
+                            date: -1
                         };
                     }
                 });

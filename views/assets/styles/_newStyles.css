@@ -802,7 +802,7 @@ button:hover {
 .sort_select {
     border: none;
     border-radius: 50px;
-    width: 10em;
+    width: 20rem !important;
     height: 3em;
     font-size: 1rem;
     background-color: white;

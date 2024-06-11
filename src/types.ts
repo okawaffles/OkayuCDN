@@ -49,7 +49,8 @@ export enum UploadResult {
 
 export interface ContentItem {
     name: string,
-    size: number
+    size: number,
+    date: number
 }
 
 export interface StorageData {

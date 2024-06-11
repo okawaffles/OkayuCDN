@@ -53,6 +53,14 @@ function GetSort(type) {
         return function(a, b) {
             if (a.size < b.size) return -1; else return 1;
         };
+    case 'date-new':
+        return function(a, b) {
+            if (a.date > b.date) return -1; else return 1;
+        };
+    case 'date-old':
+        return function(a, b) {
+            if (a.date < b.date) return -1; else return 1;
+        };
     default:
         return function(a, b) {
             if (a.name < b.name) return -1; else return 1;
