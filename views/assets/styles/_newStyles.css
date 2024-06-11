@@ -1778,6 +1778,7 @@ button:hover {
     background-color: var(--active-background-compliment);
     padding: 1em;
     border-radius: 1rem;
+    border: 2px solid grey;
 
     .authorize_name, authorize_title, authorize_subtitle {
         width: 100%;
@@ -1789,7 +1790,7 @@ button:hover {
         width: 100%;
         color: var(--active-primary);
         border: 2px solid var(--active-primary);
-        margin: .5em;
+        margin: .5em 0;
     }
     .permissions {
         margin-top: 1em;
@@ -1810,9 +1811,11 @@ button:hover {
         display: inline;
         height: 10rem;
         align-self: center;
+        margin-top: 5em;
     }
     #displayed {
         display: none;
+        width: 90%;
     }
 }
 
@@ -1822,6 +1825,21 @@ button:hover {
 
 .permissions_list li {
     text-decoration: dotted;
+    display: inline;
+    font-size: 1.25em;
+    vertical-align: middle;
+}
+.permissions_list .fa-xmark {
+    color: red;
+    font-size: 2em;
+    vertical-align: middle;
+    display: none;
+}
+.permissions_list .fa-check {
+    color: var(--okayucdn-green);
+    font-size: 2em;
+    vertical-align: middle;
+    display: none;
 }
 
 .authorize_body footer {

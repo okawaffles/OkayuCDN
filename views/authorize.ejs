@@ -6,7 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Authorize App | OkayuCDN</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <link rel="stylesheet" href="/assets/styles/_newStyles.css">
+    <script src="/assets/scripts/authorize.js"></script>
     <script src="https://kit.fontawesome.com/dc1b60441b.js" crossorigin="anonymous"></script>
 </head>
 
@@ -27,22 +29,48 @@
         <div id="displayed">
             <div class="top">
                 <h3 class="authorize_title">Do you want to authorize</h3>
-                <h1 class="authorize_name">AppName</h1>
+                <h1 class="authorize_name">OkayuCDN Desktop</h1>
                 <h3 class="authorize_subtitle">on your account?</h3>
             </div>
             <hr>
             <h3 class="authorize_title">It will have permission to:</h3>
             <div class="permissions">
                 <ul class="permissions_list">
-                    <li>Authorize the website</li>
-                    <li>Authorize the desktop app</li>
-                    <li>Read your storage info</li>
-                    <li>View your public items</li>
-                    <li>View your private items</li>
-                    <li>Change privacy of your items</li>
-                    <li>Delete items from your box</li>
-                    <li>Upload on your behalf</li>
-                    <li>Change your account options</li>
+                    <i class="fa-solid fa-check" id="auth_web_yes"></i>
+                    <i class="fa-solid fa-xmark" id="auth_web_no"></i>
+                    <li>Authorize the website</li><br>
+
+                    <i class="fa-solid fa-check" id="auth_desktop_yes"></i>
+                    <i class="fa-solid fa-xmark" id="auth_desktop_no"></i>
+                    <li>Authorize the desktop app</li><br>
+
+                    <i class="fa-solid fa-check" id="read_storage_yes"></i>
+                    <i class="fa-solid fa-xmark" id="read_storage_no"></i>
+                    <li>Read your storage info</li><br>
+
+                    <i class="fa-solid fa-check" id="read_public_yes"></i>
+                    <i class="fa-solid fa-xmark" id="read_public_no"></i>
+                    <li>View your public items</li><br>
+
+                    <i class="fa-solid fa-check" id="read_private_yes"></i>
+                    <i class="fa-solid fa-xmark" id="read_private_no"></i>
+                    <li>View your private items</li><br>
+
+                    <i class="fa-solid fa-check" id="change_privacy_yes"></i>
+                    <i class="fa-solid fa-xmark" id="change_privacy_no"></i>
+                    <li>Change privacy of your items</li><br>
+                    
+                    <i class="fa-solid fa-check" id="delete_items_yes"></i>
+                    <i class="fa-solid fa-xmark" id="delete_items_no"></i>
+                    <li>Delete items from your box</li><br>
+                    
+                    <i class="fa-solid fa-check" id="upload_yes"></i>
+                    <i class="fa-solid fa-xmark" id="upload_no"></i>
+                    <li>Upload on your behalf</li><br>
+                    
+                    <i class="fa-solid fa-check" id="change_secure_yes"></i>
+                    <i class="fa-solid fa-xmark" id="change_secure_no"></i>
+                    <li>Change your account options</li><br>
                 </ul>
             </div>
             
