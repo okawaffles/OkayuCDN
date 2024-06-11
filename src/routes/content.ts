@@ -70,11 +70,15 @@ export function RegisterContentRoutes() {
     Router.get('/.:id', ValidateShortURL(), HandleBadRequest, (req: Request, res: Response) => {
         const data = matchedData(req);
 
-        const linkData = GetLinkData(data.id);
+        try {
+            const linkData = GetLinkData(data.id);
 
-        if (linkData.isViewPage)
-            res.redirect(`/view/@${linkData.user}/${linkData.content}`);
-        else
-            res.redirect(`/@${linkData.user}/${linkData.content}`);
+            if (linkData.isViewPage)
+                res.redirect(`/view/@${linkData.user}/${linkData.content}`);
+            else
+                res.redirect(`/@${linkData.user}/${linkData.content}`);
+        } catch {
+            res.status(404).send('This shortened link has expired. Please ask the sender to create a new link.');
+        }
     });
 }
