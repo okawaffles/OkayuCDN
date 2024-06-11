@@ -1,9 +1,9 @@
-import { readFileSync } from 'fs';
+import { readFileSync, writeFileSync } from 'fs';
 import { AuthorizationIntents, TokenType, TokenV2 } from '../types';
 import { join } from 'path';
 import { TOKEN_DATABASE_PATH } from '../util/paths';
 
-const authorizedIntentsBits: {[key in keyof AuthorizationIntents]: number} = {
+const authorizedIntentsBits: { [key in keyof AuthorizationIntents]: number } = {
     canUseWebsite: 0,
     canUseDesktop: 1,
     canGetStorage: 2,
@@ -17,7 +17,7 @@ const authorizedIntentsBits: {[key in keyof AuthorizationIntents]: number} = {
 
 export function EncodeIntents(intents: AuthorizationIntents): number {
     let encoded: number = 0;
-        
+
     for (const [key, bit] of Object.entries(authorizedIntentsBits)) {
         if (intents[key as keyof AuthorizationIntents]) {
             encoded |= (1 << bit);
@@ -78,7 +78,28 @@ export function ReadIntents(token: string): AuthorizationIntents {
     try {
         const intents = JSON.parse(readFileSync(join(TOKEN_DATABASE_PATH, `${token}.json`), 'utf-8')).intents;
         return intents;
-    } catch(e: unknown) {
+    } catch (e: unknown) {
         return {};
     }
+}
+
+/**
+ * Change the active user in a token while keeping the rest of the token the same.
+ * @param token The token of the user who is getting their username changed
+ * @param new_username The new username to assign to that token
+ */
+export function ChangeTokenUsername(token: string, new_username: string) {
+    const tokenData: TokenV2 = JSON.parse(
+        readFileSync(
+            join(TOKEN_DATABASE_PATH), 'utf-8'
+        )
+    );
+
+    tokenData.username = new_username;
+
+    writeFileSync(
+        join(TOKEN_DATABASE_PATH, `${token}.json`),
+        JSON.stringify(tokenData),
+        'utf-8'
+    );
 }

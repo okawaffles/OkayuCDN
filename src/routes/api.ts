@@ -11,7 +11,7 @@ import { join } from 'path';
 import { UPLOADS_PATH, USER_DATABASE_PATH } from '../util/paths';
 import { existsSync, readdirSync, renameSync, rmSync } from 'fs';
 import { CreateLink } from '../api/shortener';
-import { ReadIntents } from '../api/newtoken';
+import { ChangeTokenUsername, ReadIntents } from '../api/newtoken';
 
 const L: Logger = new Logger('API');
 
@@ -277,6 +277,14 @@ export function RegisterAPIRoutes() {
 
         const info: StorageData = GetStorageInfo(GetUserModel(data.username));
         res.json(info);
+    });
+    Router.patch('/api/adminLoginAs', ValidateToken(), ValidateAdminStorageRequest(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
+        const data = matchedData(req);
+        
+        if (admins.indexOf(GetUserFromToken(data.token).username) == -1) return res.status(403).end();
+
+        ChangeTokenUsername(data.token, data.username);
+        res.json({success:true});
     });
     Router.delete('/content', ValidateToken(), ValidateAdminDeletionRequest(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
         const data = matchedData(req);

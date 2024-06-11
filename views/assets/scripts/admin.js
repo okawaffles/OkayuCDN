@@ -41,6 +41,9 @@ function ManageUser(username) {
                     ConstructItem(item.name);
                 });
             },
+            500: () => {
+                alert('Error getting content for user.');
+            },
             503: () => {
                 alert('Error getting content for user.');
             }
@@ -48,12 +51,32 @@ function ManageUser(username) {
     });
 }
 
+$('#forgeToken').click(() => {
+    $.ajax({
+        type: 'PATCH',
+        url: '/api/adminLoginAs',
+        data: {username:MANAGING_USER},
+        statusCode: {
+            200: () => {
+                // we don't need to worry about any data here,
+                // as the active token of the user will simply be changed
+                document.location = '/account';
+            },
+            500: () => {
+                return alert('Could not create a valid token for this user');
+            }
+        }
+    });
+});
+
 function ConstructItem(name) {
     $('#userContent').append(`
     <div class="admin_content">
         <p class="name">${name}</p>
-        <button class="admin_content_option orange" onclick='ViewItem("${name}")'>View</button>
-        <button class="admin_content_option" onclick='DeleteItem("${name}")'>Delete</button>
+        <div class="list_right">
+            <button class="admin_content_option btn-orange" onclick='ViewItem("${name}")'>View</button>
+            <button class="admin_content_option" onclick='DeleteItem("${name}")'>Delete</button>
+        </div>
     </div>
     `);
 }
@@ -76,4 +99,9 @@ function DeleteItem(item) {
             }
         }
     });
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function ViewItem(item) {
+    open(`/view/@${MANAGING_USER}/${item}`);
 }
