@@ -29,6 +29,12 @@ function LoadBox() {
         BOX_ITEMS = data.content;
         PROTECTED_BOX_ITEMS = data.protected_files;
         console.log(data);
+
+        $('#used').text(parseStorageAmount(data.used));
+        $('#total').text(parseStorageAmount(data.total));
+        $('#fill').css('width', `${(data.used / data.total)*20}em`);
+        $('#newStorageAmount').css('visibility', 'visible');
+
         RenderBox();
     });
 }

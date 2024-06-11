@@ -1,61 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Box | OkayuCDN</title>
-    <link rel="stylesheet" href="/assets/styles/_newStyles.css" />
-    <script
-      src="https://code.jquery.com/jquery-3.6.0.min.js"
-      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://kit.fontawesome.com/dc1b60441b.js"
-      crossorigin="anonymous"
-    ></script>
-    <script src="/assets/scripts/mybox_v6.js"></script>
-  </head>
-  <body class="mybox_body" id="body">
-    <%- include('parts/navbar-logged-in', {active:'mybox'}) %>
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>My Box | OkayuCDN</title>
+        <link rel="stylesheet" href="/assets/styles/_newStyles.css" />
+        <script
+            src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+            crossorigin="anonymous"
+        ></script>
+        <script
+            src="https://kit.fontawesome.com/dc1b60441b.js"
+            crossorigin="anonymous"
+        ></script>
+        <script src="/assets/scripts/mybox_v6.js"></script>
+    </head>
+    <body class="mybox_body" id="body">
+        <%- include('parts/navbar-logged-in', {active:'mybox'}) %>
 
-    <div class="modal-overlay" id="overlay"></div>
-    <div class="modal" id="link_type_modal">
-        <div class="modal-body">
-            <div class="modal-top">
-                <p class="modal-title">What type of link do you want?</p>
-                <p class="modal-description">
-                    If you want to temporarily share something, use a short link. If you
-                    want to host a file (for use somewhere else), use the default link.
-                </p>
-            </div>
-            <div class="modal-bottom">
-                <button class="modal-button" id="link_short">Short Link</button>
-                <button class="modal-button" id="link_long">Default Link</button>
+        <div class="modal-overlay" id="overlay"></div>
+        <div class="modal" id="link_type_modal">
+            <div class="modal-body">
+                <div class="modal-top">
+                    <p class="modal-title">What type of link do you want?</p>
+                    <p class="modal-description">
+                        If you want to temporarily share something, use a short
+                        link. If you want to host a file (for use somewhere
+                        else), use the default link.
+                    </p>
+                </div>
+                <div class="modal-bottom">
+                    <button class="modal-button" id="link_short">
+                        Short Link
+                    </button>
+                    <button class="modal-button" id="link_long">
+                        Default Link
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="mybox_form_pane">
-      <h2 class="mybox_title">My Box</h2>
-      <h4 class="mybox_subtitle">Manage the files in your Box</h4>
-      <br />
-      <hr style="width: 100%" />
-      <h2 class="mybox_contentH2">Your Content:</h2>
-      <br />
-      <h3>Sort Method</h3>
-      <select id="sort_method" class="sort_select">
-        <option value="default">Alphabetical (A-Z)</option>
-        <option value="size-large">Size (largest first)</option>
-        <option value="size-small">Size (smallest first)</option>
-      </select>
-      <div class="line" id="loader"></div>
-      <div id="content_container">
-        <p class="mybox_noContent">
-          You have no content to show. Try uploading something!
-        </p>
-      </div>
-    </div>
-  </body>
+        <div class="mybox_form_pane">
+            <h2 class="mybox_title">Manage your Box</h2>
+
+            <div id="newStorageAmount">
+                <div id="fill"></div>
+                <div class="texts">
+                    <p class="left" id="used">0B</p>
+                    <p class="right" id="total">1024GB</p>
+                </div>
+            </div>
+
+            <br />
+            <hr style="width: 100%" />
+            <h2 class="mybox_contentH2">Your Content:</h2>
+            <br />
+            <h3>Sort Method</h3>
+            <select id="sort_method" class="sort_select">
+                <option value="default">Alphabetical (A-Z)</option>
+                <option value="size-large">Size (largest first)</option>
+                <option value="size-small">Size (smallest first)</option>
+            </select>
+            <div class="line" id="loader"></div>
+            <div id="content_container">
+                <p class="mybox_noContent">
+                    You have no content to show. Try uploading something!
+                </p>
+            </div>
+        </div>
+    </body>
 </html>

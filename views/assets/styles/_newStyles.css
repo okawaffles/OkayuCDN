@@ -76,7 +76,6 @@
 }
 
 @media (prefers-color-scheme: light) {
-    /* This is NOT ready for production! */
     * {
         --active-background: var(--light-background);
         --active-background-compliment: var(--light-background-compliment);
@@ -93,7 +92,7 @@
         --active-mybox-item: var(--light-mybox-item);
         --active-mybox-item-alternate: var(--light-mybox-item-alternate);
     }
-
+    
     header {
         border-bottom: 2px solid #00000033; 
     }
@@ -686,20 +685,14 @@ button:hover {
     display: grid;
     text-align: center;
 }
+.mybox_form_pane #newStorageAmount {
+    justify-self: center;
+}
 
 .mybox_title {
     color: var(--active-text);
-    font-size: 52px;
-}
-
-.mybox_subtitle {
-    color: var(--active-text);
-    font-size: 28px;
-    padding-bottom: 10px;
-}
-
-.mb_input {
-    width: 750px;
+    font-size: 2.5rem;
+    margin: .5rem;
 }
 
 .mybox_all p {
@@ -776,7 +769,7 @@ button:hover {
 
 .content_items button {
     width: 24%;
-    color: var(--active-text-opposite);
+    color: white;
 }
 
 .content_items {
@@ -801,7 +794,7 @@ button:hover {
 
 .size {
     background-color: var(--active-primary);
-    color: var(--active-text-opposite);
+    color: white;
     padding: 2px 4px;
     border-radius: 8px;
 }
@@ -1078,16 +1071,19 @@ button:hover {
     margin-bottom: 1em;
     border-radius: 16px;
     z-index: 0;
-    height: 2em;
+    height: 2.1em;
     width: 20em;
     text-align: center;
+    overflow: hidden;
+    border: 2px solid white;
+    position: relative;
 }
 #newStorageAmount #fill {
     position: absolute;
     background-color: var(--active-primary);
     border-radius: 16px;
     width: 0.0em;
-    height: 2em;
+    height: 2.1em;
     z-index: 2;
 }
 #newStorageAmount .texts {
@@ -1119,6 +1115,23 @@ button:hover {
     width: 35em;
     height: 15em;
     animation: none;
+}
+.filename {
+    width: 350px !important;
+    height: 50px;
+    font-size: 16px;
+    border-radius: 1em;
+    padding: .5em;
+    border: 1px solid var(--active-text);
+    color: var(--active-text);
+    background-color: var(--active-background-compliment);
+}
+.private_toggle {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+#div_private p {
+    font-size: 1.1rem;
 }
 #processing {
     place-content: center;
