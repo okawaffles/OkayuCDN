@@ -791,6 +791,33 @@ button:hover {
 .alternate {
     background-color: var(--active-mybox-item-alternate);
 }
+.new_list_item {
+    margin-left: 15%;
+    width: 70%;
+}
+.new_button {
+    height: 3em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 8.5em !important;
+}
+.new_list_item .right {
+    width: 65% !important;
+    
+    .share, .delete {
+        width: 7.5em !important;
+    }
+    .view {
+        width: 7em !important;
+    }
+    .dl {
+        width: 9em !important;
+    }
+    .visibility {
+        width: 10em !important;
+    }
+}
 
 .size {
     background-color: var(--active-primary);
