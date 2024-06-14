@@ -79,6 +79,7 @@ const limiter = rateLimit({
     handler: RateLimitHandler,
     skip: IsUpload,
 });
+Router.set('trust proxy', 1);
 
 Router.use('/api/*', limiter);
 Router.use('/content', limiter);

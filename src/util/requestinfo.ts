@@ -14,14 +14,10 @@ const BannedIPs: Array<string> = JSON.parse(readFileSync(join(DATABASE_PATH, 'ba
 
 export function RegisterRequestLogger(): void {
     Router.use('*', (req: Request, res: Response, next: CallableFunction) => {
-        let IPAddress: string = 'IP Unavailable';
-        
-        if (req.headers && req.headers['x-forwarded-for'])
-            IPAddress = <string> req.headers['x-forwarded-for'];
-        if (req.socket.remoteAddress)
-            IPAddress = req.socket.remoteAddress;
+        let IPAddress: string | undefined = 'IP Unavailable';
+        IPAddress = <string> req.ip;
 
-        if (BannedIPs.indexOf(IPAddress) != -1) return res.status(403).render('err403');
+        if (BannedIPs.indexOf('' + IPAddress) != -1) return res.status(403).render('err403');
 
         L.info(`${bold(red(IPAddress))} ${blue(req.method)} ${green(req.originalUrl)}`);
 
