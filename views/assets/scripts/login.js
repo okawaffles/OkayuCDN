@@ -66,7 +66,11 @@ $(document).ready(() => {
             }
 
             if (!data.uses2FA) {
-                document.cookie = `token=${data.token}; max-age=${14*86400}; path=/;`;
+                if ($('#keeplogin').is(':checked'))
+                    document.cookie = `token=${data.token}; max-age=${14*86400}; path=/;`;
+                else
+                    document.cookie = `token=${data.token}; path=/;`;
+
                 document.location = next;
                 return;
             } else {

@@ -26,7 +26,7 @@
                 <div class="inputs" id="inputs">
                     <input type="text" placeholder="Username" id="username" />
                     <input type="password" placeholder="Password" id="password" />
-                    <p>Password is not required to use passkey login.</p>
+                    <!-- <p>Password is not required to use passkey login.</p> -->
                 </div>
                 <div class="twofactor-inputs" id="twofactor-inputs">
                     <input type="text" placeholder="2FA Code" id="twofactor-code">
@@ -35,6 +35,7 @@
             <div class="bottom">
                 <p class="error" id="login_error">Error: please do this and that.</p>
                 <div class="login-options" id="login-options">
+                    <span class="keeplogin"><input type="checkbox" name="keeplogin" id="keeplogin"><p>Stay logged in?</p></span>
                     <!-- <button class="go passkey" id="passkey"><i class="fa-solid fa-user-lock"></i></button> -->
                     <button class="go" id="login">Let's go!</button>
                 </div>
