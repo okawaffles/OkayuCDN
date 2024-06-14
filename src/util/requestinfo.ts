@@ -16,10 +16,10 @@ export function RegisterRequestLogger(): void {
     Router.use('*', (req: Request, res: Response, next: CallableFunction) => {
         let IPAddress: string | undefined = 'IP Unavailable';
         IPAddress = <string> req.ip;
-
-        if (BannedIPs.indexOf('' + IPAddress) != -1) return res.status(403).render('err403');
-
+        
         L.info(`${bold(red(IPAddress))} ${blue(req.method)} ${green(req.originalUrl)}`);
+        
+        if (BannedIPs.indexOf('' + IPAddress) != -1) return res.status(403).render('err403');
 
         next();
     });
