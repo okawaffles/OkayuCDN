@@ -4,11 +4,12 @@ import { Logger } from 'okayulogger';
 import { red, green, blue, bold } from 'chalk';
 //import { readFileSync } from 'node:fs';
 import { DATABASE_PATH } from './paths';
-import { readFileSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
 const L: Logger = new Logger('RequestInfo');
 
+if (!existsSync(join(DATABASE_PATH, 'banned_ips.json'))) writeFileSync(join(DATABASE_PATH, 'banned_ips.json'), JSON.stringify({banned:[]}));
 const BannedIPs: Array<string> = JSON.parse(readFileSync(join(DATABASE_PATH, 'banned_ips.json'), 'utf-8')).banned;
 
 export function RegisterRequestLogger(): void {
