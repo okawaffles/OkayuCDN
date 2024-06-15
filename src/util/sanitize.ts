@@ -87,3 +87,8 @@ export const ValidateAuthorizationRequest = () => [
     query('appId').notEmpty().escape().isNumeric().isLength({min:1,max:16}),
     query('intents').notEmpty().escape().isNumeric()
 ];
+
+export const ValidateAdminBanIP = () => [
+    body('ip').notEmpty().escape(),
+    body('reason').notEmpty().escape()
+];

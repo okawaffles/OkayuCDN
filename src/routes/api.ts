@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'; 
 import { ENABLE_ACCOUNT_CREATION, ENABLE_UPLOADING, Router, admins, announcement, domain, version } from '../main';
-import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST, ValidateDeletionRequest, ValidatePasswordRequest, ValidateSignupPOST, ValidateAdminDeletionRequest, ValidateAdminStorageRequest, ValidateUploadChunk, ValidateContentRequest, ValidateTokenBothModes } from '../util/sanitize';
+import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST, ValidateDeletionRequest, ValidatePasswordRequest, ValidateSignupPOST, ValidateAdminDeletionRequest, ValidateAdminStorageRequest, ValidateUploadChunk, ValidateContentRequest, ValidateTokenBothModes, ValidateAdminBanIP } from '../util/sanitize';
 import { matchedData } from 'express-validator';
 import { BeginTOTPSetup, ChangeFileVisibility, CheckTOTPCode, GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewAccount, RegisterNewToken, UpdateUserPassword, VerifyLoginCredentials, VerifyUserExists } from '../util/secure';
 import { FinishUpload, MulterUploader } from '../api/upload';
@@ -12,6 +12,7 @@ import { UPLOADS_PATH, USER_DATABASE_PATH } from '../util/paths';
 import { existsSync, readdirSync, renameSync, rmSync } from 'fs';
 import { CreateLink } from '../api/shortener';
 import { ChangeTokenUsername, ReadIntents } from '../api/newtoken';
+import { AddIPBan } from '../util/ipManage';
 
 const L: Logger = new Logger('API');
 
@@ -294,6 +295,13 @@ export function RegisterAPIRoutes() {
         const username = data.username;
         const item = data.item;
         rmSync(join(UPLOADS_PATH, username, item), {recursive: false});
+        res.status(204).end();
+    });
+    Router.post('/api/admin/banIP', ValidateToken(), ValidateAdminBanIP(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
+        const data = matchedData(req);
+
+        AddIPBan(data.ip, data.reason);
+
         res.status(204).end();
     });
 

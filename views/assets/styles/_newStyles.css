@@ -1640,26 +1640,57 @@ button:hover {
 }
 
 /* New admin page */
+.admin_body {
+    overflow: scroll;
+}
 .admin_full {
     display: flex;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     justify-content: space-between;
     height: 100%;
     overflow: scroll;
 }
+.admin_top_bar {
+    width: 100%;
+    height: 5em;
+    display: flex;
+    justify-content: space-between;
+    
+    p {
+        text-align: right;
+    }
+    button {
+        margin: .5em;
+    }
+}
+.admin_page {
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+}
 .userList {
+    background-color: #1d1e22;
+    place-content: center;
+    align-self: start;
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
     width: 33%;
     padding: 1em;
-    min-height: 100%;
+    border-radius: 1em;
+    margin-left: .5em;
+    
+    h3 {
+        width: 100%;
+        font-size: 2em;
+        text-align: center;
+    }
 }
 .admin_user {
-    background-color: #1a1f25;
+    background-color: #33343b;
     display: flex;
     justify-content: space-between;
-    width: 25em;
+    width: 100%;
     height: 4em;
     border-radius: 1em;
     margin: .5em;
@@ -1722,7 +1753,7 @@ button:hover {
     border-radius: 1rem;
     margin-top: 2rem;
     justify-self: start;
-    max-height: 64%;
+    /* max-height: 64%; */
     overflow-y: auto;
 }
 .admin_content {
@@ -1752,6 +1783,7 @@ button:hover {
 .admin_content button:hover {
     background-color: var(--default-button-red-hover);
 }
+
 
 /* Modals */
 /* Not ready for use */

@@ -21,32 +21,43 @@
     <script src="/assets/scripts/admin.js"></script>
 </head>
 
-<body>
+<body class="admin_body">
     <%- include('parts/navbar-logged-in', {active:'none'}) %>
 
     <div class="admin_full scrollable">
-        <div class="userList x-scrollable" id="userList">
-            
-        </div>
-        <div class="options" id="userOptions">
-            <div class="sticky_top">
-                <h2 class="admin_title" id="username">Managing Username</h2>
-                <div class="buttons">
-                    <button id="forgeToken">
-                        Log in as this user
-                    </button>
-                </div>
+        <div class="admin_top_bar">
+            <div class="left">
+                <button id="userManagement">User Management</button>
+                <button id="ipManagement">IP Management</button>
             </div>
-            <div class="userContent" id="userContent">
-                <!-- <h2 class="admin_subtitle">User Content:</h2> -->
-                <div class="userItems">
+            <div class="right">
+                <h3><p id="memory-usage">Memory Usage Loading...</p></h3>
+            </div>
+        </div>
 
+        <div class="admin_page userManagement" id="userPage">
+
+            <div class="userList x-scrollable" id="userList">
+                <h3>Users</h3>
+            </div>
+            <div class="options" id="userOptions">
+                <div class="sticky_top">
+                    <h2 class="admin_title" id="username">Managing Username</h2>
+                    <div class="buttons">
+                        <button id="forgeToken">
+                            Log in as this user
+                        </button>
+                    </div>
+                </div>
+                <div class="userContent" id="userContent">
+                    <!-- <h2 class="admin_subtitle">User Content:</h2> -->
+                    <div class="userItems">
+                        
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <h3 class="version">OkayuCDN Admin Panel<p id="memory-usage">?</p></h3>
 </body>
 
 </html>

@@ -105,3 +105,4 @@ function DeleteItem(item) {
 function ViewItem(item) {
     open(`/view/@${MANAGING_USER}/${item}`);
 }
+

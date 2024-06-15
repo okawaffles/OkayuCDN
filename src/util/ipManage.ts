@@ -10,7 +10,7 @@ const L: Logger = new Logger('IP Management');
 
 // check for db and load banned IPs on boot
 const BANNED_IP_DB_PATH = join(DATABASE_PATH, 'banned_ips.json');
-if (!existsSync(BANNED_IP_DB_PATH)) writeFileSync(DATABASE_PATH, JSON.stringify({banned:[]}));
+if (!existsSync(BANNED_IP_DB_PATH)) writeFileSync(BANNED_IP_DB_PATH, JSON.stringify({banned:[]}));
 
 let bannedIPs: IPBanList;
 let loadOK = true;
@@ -33,7 +33,7 @@ export function CheckIP(req: Request, res: Response, next: CallableFunction) {
 
     const ip_ban: IPBan | undefined = bannedIPs[<string> IPAddress];
 
-    if (ip_ban) {
+    if (ip_ban && ip_ban.reason != '@DO_NOT_REJECT') {
         L.warn(red(`IP ${yellowBright(bold(IPAddress))} is IP banned and the request has been rejected.`));
         return res.status(403).render('err403', {reason: ip_ban.reason});
     }
@@ -45,6 +45,14 @@ export function AddIPBan(IP: string, reason: string, user?: string) {
     bannedIPs[IP] = {reason, user};
 
     if (!loadOK) return L.warn('IP bans failed to load on boot. This IP ban will not save to the database of IP bans!');
+
+    writeFileSync(BANNED_IP_DB_PATH, JSON.stringify({banned:bannedIPs}));
+}
+
+export function RemoveIPBan(IP: string) {
+    bannedIPs[IP].reason = '@DO_NOT_REJECT'; // probably a lazy ass way to do this but whatever...
+
+    if (!loadOK) return L.warn('IP bans failed to load on boot. This change will not save to the database of IP bans!');
 
     writeFileSync(BANNED_IP_DB_PATH, JSON.stringify({banned:bannedIPs}));
 }
