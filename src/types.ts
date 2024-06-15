@@ -93,3 +93,12 @@ export interface AuthorizationIntents {
     canUpload?: boolean // can this token be used to upload to the user's account?
     canChangeAccountOptions?: boolean // can this token be used to change a user's security/account info?   
 }
+
+export interface IPBan {
+    user?: string,
+    reason: string,
+}
+
+export interface IPBanList {
+    [key: string]: IPBan
+}

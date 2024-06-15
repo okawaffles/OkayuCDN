@@ -71,6 +71,7 @@ Router.use(urlencoded({extended:true}));
 
 import { rateLimit } from 'express-rate-limit';
 import { IsUpload, RateLimitHandler } from './routes/api';
+import { CheckIP } from './util/ipManage';
 const limiter = rateLimit({
     windowMs: 5*60*1000, // 5 minutes
     limit: 100, // 100 requests
@@ -92,6 +93,7 @@ Router.use('/robots.txt', limiter);
 
 // this handles logging requests
 RegisterRequestLogger();
+Router.use('*', CheckIP);
 
 /* routes.ts will manage loading all routes */
 RegisterRoutes();
