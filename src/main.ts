@@ -47,9 +47,13 @@ Router.use('/assets', staticFiles(join(__dirname, '..', 'views' , 'assets'))); /
 import CookieParser from 'cookie-parser';
 Router.use(CookieParser());
 
-import Session from 'express-session';
+
+// sorry. it works i guess.
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const session = require('cookie-session');
+// import Session from 'cookie-session';
 import { RegisterRequestLogger } from './util/requestinfo';
-Router.use(Session({
+Router.use(session({
     secret:process.env.SESSION_SECRET,
     resave:false,
     saveUninitialized:true,
