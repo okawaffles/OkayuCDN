@@ -26,6 +26,13 @@ try {
     bannedIPs = {};
 }
 
+/**
+ * Middleware to check whether an IP is banned. This should be called before a request is handled.
+ * @param req Express Request object
+ * @param res Express Response object
+ * @param next Express next CallableFunction
+ * @returns Either continues if IP is not banned; or ends the request if the IP is banned
+ */
 export function CheckIP(req: Request, res: Response, next: CallableFunction) {
     let IPAddress: string = 'IP Unavailable';
     IPAddress = <string> req.ip;
@@ -33,7 +40,7 @@ export function CheckIP(req: Request, res: Response, next: CallableFunction) {
 
     const ip_ban: IPBan | undefined = bannedIPs[<string> IPAddress];
 
-    if (ip_ban && ip_ban.reason != '@DO_NOT_REJECT') {
+    if (ip_ban) {
         L.warn(red(`IP ${yellowBright(bold(IPAddress))} is IP banned and the request has been rejected.`));
         return res.status(403).render('err403', {reason: ip_ban.reason});
     }
@@ -41,6 +48,13 @@ export function CheckIP(req: Request, res: Response, next: CallableFunction) {
     next();
 }
 
+/**
+ * Add an IP ban to the database of IP bans. 
+ * The database will not be updated if it failed to load on boot.
+ * @param IP The IP to ban
+ * @param reason The reason for the ban
+ * @param user The user which caused the IP to be banned - Not currently referenced anywhere, but may be in the future.
+ */
 export function AddIPBan(IP: string, reason: string, user?: string) {
     bannedIPs[IP] = {reason, user};
 
@@ -49,8 +63,15 @@ export function AddIPBan(IP: string, reason: string, user?: string) {
     writeFileSync(BANNED_IP_DB_PATH, JSON.stringify({banned:bannedIPs}));
 }
 
+/**
+ * Remove an IP ban from the database of IP bans. 
+ * The database will not be updated if it failed to load on boot.
+ * @param IP The IP to unban
+ */
 export function RemoveIPBan(IP: string) {
-    bannedIPs[IP].reason = '@DO_NOT_REJECT'; // probably a lazy ass way to do this but whatever...
+    if (Object.prototype.hasOwnProperty.call(bannedIPs, IP)) {
+        delete bannedIPs[IP];
+    }
 
     if (!loadOK) return L.warn('IP bans failed to load on boot. This change will not save to the database of IP bans!');
 
