@@ -4,7 +4,7 @@ import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, Valida
 import { matchedData } from 'express-validator';
 import { BeginTOTPSetup, ChangeFileVisibility, CheckTOTPCode, GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewAccount, RegisterNewToken, UpdateUserPassword, VerifyLoginCredentials, VerifyUserExists } from '../util/secure';
 import { FinishUpload, MulterUploader } from '../api/upload';
-import { AuthorizationIntents, ContentItem, StorageData, UserModel } from '../types';
+import { AuthorizationIntents, ContentItem, IPBanList, StorageData, UserModel } from '../types';
 import { GetStorageInfo } from '../api/content';
 import { Logger } from 'okayulogger';
 import { join } from 'path';
@@ -12,7 +12,7 @@ import { UPLOADS_PATH, USER_DATABASE_PATH } from '../util/paths';
 import { existsSync, readdirSync, renameSync, rmSync, writeFileSync } from 'fs';
 import { CreateLink } from '../api/shortener';
 import { ChangeTokenUsername, ReadIntents } from '../api/newtoken';
-import { AddIPBan } from '../util/ipManage';
+import { AddIPBan, GetIPBans, RemoveIPBan } from '../util/ipManage';
 
 const L: Logger = new Logger('API');
 
@@ -312,9 +312,20 @@ export function RegisterAPIRoutes() {
     Router.post('/api/admin/banIP', ValidateToken(), ValidateAdminBanIP(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
         const data = matchedData(req);
 
-        AddIPBan(data.ip, data.reason);
+        AddIPBan(data.ip, data.reason || 'Reason not given');
 
         res.status(204).end();
+    });
+    Router.post('/api/admin/unbanIP', ValidateToken(), ValidateAdminBanIP(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
+        const data = matchedData(req);
+
+        RemoveIPBan(data.ip);
+
+        res.status(204).end();
+    });
+    Router.get('/api/admin/getIPBans', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
+        const bans: IPBanList = GetIPBans();
+        if (Object.keys(bans).length == 0) res.status(204).end(); else res.json(bans);
     });
 
 

@@ -90,5 +90,5 @@ export const ValidateAuthorizationRequest = () => [
 
 export const ValidateAdminBanIP = () => [
     body('ip').notEmpty().escape(),
-    body('reason').notEmpty().escape()
+    body('reason').notEmpty().escape().optional()
 ];

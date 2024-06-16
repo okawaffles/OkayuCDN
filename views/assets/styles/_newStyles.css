@@ -1655,6 +1655,7 @@ button:hover {
     height: 5em;
     display: flex;
     justify-content: space-between;
+    align-items: center;
     
     p {
         text-align: right;
@@ -1667,7 +1668,13 @@ button:hover {
     width: 100%;
     display: flex;
     flex-wrap: nowrap;
+    height: 80vh;
 }
+
+#userPage, #ipManage {
+    display: none;
+}
+
 .userList {
     background-color: #1d1e22;
     place-content: center;
@@ -1722,6 +1729,7 @@ button:hover {
     align-content: start;
     width: 66%;
     margin: 1em;
+    margin-top: 0;
     padding: 1em;
     background-color: #1d1e22;
     border-radius: 1em;
@@ -1750,11 +1758,13 @@ button:hover {
 .options .userContent {
     width: 100%;
     background-color: #33343b;
-    border-radius: 1rem;
+    border-radius: 1em;
     margin-top: 2rem;
     justify-self: start;
-    /* max-height: 64%; */
+    max-height: 82%;
     overflow-y: auto;
+    display: flex;
+    flex-wrap: wrap;
 }
 .admin_content {
     background-color: #1a1f25;
@@ -1763,6 +1773,7 @@ button:hover {
     height: 4em;
     border-radius: 1em;
     margin: .5em;
+    width: 100%;
 }
 .admin_content p {
     color: white;
@@ -1782,6 +1793,10 @@ button:hover {
 }
 .admin_content button:hover {
     background-color: var(--default-button-red-hover);
+}
+
+.admin_content .list_right {
+    align-self: center;
 }
 
 

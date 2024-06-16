@@ -106,3 +106,32 @@ function ViewItem(item) {
     open(`/view/@${MANAGING_USER}/${item}`);
 }
 
+
+let bannedIPs = [];
+
+$(document).ready(() => {
+    $.ajax({
+        type: 'GET',
+        url: '/api/admin/getIPBans',
+        statusCode: {
+            204: () => {
+                bannedIPs = [];
+                console.log('no IP bans');
+            },
+            200: (data) => {
+                bannedIPs = data.bans;
+                console.log(bannedIPs);
+            }
+        }
+    });
+
+    $('#userManagement').click(() => {
+        $('#ipManage').css('display', 'none');
+        $('#userPage').css('display', 'flex');
+    });
+    
+    $('#ipManagement').click(() => {
+        $('#userPage').css('display', 'none');
+        $('#ipManage').css('display', 'flex');
+    });
+});
