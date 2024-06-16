@@ -14,8 +14,9 @@ export interface UserSecureData {
         usesOTP: boolean,
         usesPasskey: boolean,
         OTPConfig?: OTPConfig,
-        PasskeyConfig: unknown // i want to make this an actual data type sometime but thats so much work
-    } 
+        PasskeyConfig: unknown // i want to make this an actual data type sometime but thats so much work, help wanted!
+    },
+    IPHistory?: Array<string> // not going to require it since it's not THAT important + backwards compat
 }
 
 export enum LanguagesAvailable {
