@@ -75,7 +75,8 @@ Router.use(urlencoded({extended:true}));
 
 import { rateLimit } from 'express-rate-limit';
 import { IsUpload, RateLimitHandler } from './routes/api';
-import { CheckIP } from './util/ipManage';
+import { LoadIPs, CheckIP } from './util/ipManage';
+LoadIPs();
 const limiter = rateLimit({
     windowMs: 5*60*1000, // 5 minutes
     limit: 100, // 100 requests

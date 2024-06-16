@@ -8,22 +8,26 @@ import { red, yellowBright, bold } from 'chalk';
 
 const L: Logger = new Logger('IP Management');
 
-// check for db and load banned IPs on boot
-const BANNED_IP_DB_PATH = join(DATABASE_PATH, 'banned_ips.json');
-if (!existsSync(BANNED_IP_DB_PATH)) writeFileSync(BANNED_IP_DB_PATH, JSON.stringify({banned:[]}));
-
 let bannedIPs: IPBanList;
 let loadOK = true;
+let BANNED_IP_DB_PATH: string;
 
-try {
-    bannedIPs = JSON.parse(readFileSync(BANNED_IP_DB_PATH, 'utf-8')).banned;
-} catch {
-    L.error('Unable to load IP bans! Please check your db/banned_ips.json file for errors!');
-    L.error('Alternatively, you can delete the file to make the server automatically recreate the file.');
-    L.warn('An empty IP ban list will be loaded until the next restart.');
+// console.log(BANNED_IP_DB_PATH, JSON.parse(readFileSync(BANNED_IP_DB_PATH, 'utf-8')));
 
-    loadOK = false;
-    bannedIPs = {};
+export function LoadIPs() {
+    BANNED_IP_DB_PATH = join(DATABASE_PATH, 'banned_ips.json');
+    if (!existsSync(BANNED_IP_DB_PATH)) writeFileSync(BANNED_IP_DB_PATH, JSON.stringify({banned:{}}));
+
+    try {
+        bannedIPs = JSON.parse(readFileSync(BANNED_IP_DB_PATH, 'utf-8')).banned;
+    } catch {
+        L.error(`Unable to load IP bans! Please check your ${BANNED_IP_DB_PATH} file for errors!`);
+        L.error('Alternatively, you can delete the file to make the server automatically recreate the file.');
+        L.warn('An empty IP ban list will be loaded until the next restart.');
+    
+        loadOK = false;
+        bannedIPs = {};
+    }
 }
 
 /**
@@ -77,3 +81,5 @@ export function RemoveIPBan(IP: string) {
 
     writeFileSync(BANNED_IP_DB_PATH, JSON.stringify({banned:bannedIPs}));
 }
+
+export function GetIPBans(): IPBanList { return bannedIPs; }
