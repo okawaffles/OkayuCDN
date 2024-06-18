@@ -58,7 +58,27 @@
         </div>
 
         <div class="admin_page ipManagement" id="ipManage">
-            <h1>hi</h1>
+            <div class="bans_panel">
+                <div class="top">
+                    
+                </div>
+
+                <div class="banlist">
+                    <div class="top">    
+                        <h1>Banned IP Addresses</h1>
+                        <button id="add_ban">Ban an IP</button>
+                    </div>
+                    <div id="ip_container">
+                        <!-- Banned IPs will populate this div -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="ipBanner" id="ipBanner">
+                <input type="text" id="ip">
+                <input type="text" id="reason">
+                <button id="ban">Ban this IP</button>
+            </div>
         </div>
     </div>
 </body>

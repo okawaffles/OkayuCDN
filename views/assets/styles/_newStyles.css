@@ -1359,8 +1359,12 @@ button:hover {
 }
 
 /* extras */
+/* generally this .red class is used for buttons */
 .red {
     background-color: var(--active-button-red);
+}
+.red:hover {
+    background-color: var(--active-button-red-hover);
 }
 
 .gdpr_regulation_cookie_banner {
@@ -1798,6 +1802,71 @@ button:hover {
 .admin_content .list_right {
     align-self: center;
 }
+
+.ipManagement {
+    display: flex;
+
+    #ipBanner {
+        display: none;
+    }
+}
+.bans_panel {
+    color: white;
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    align-content: start;
+
+    .banlist {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+
+        .top {
+            text-align: center;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 1rem;
+
+            h1 {
+                width: 100%;
+            }
+        }
+    }
+    #ip_container {
+        width: 80%;
+        justify-content: center;
+        display: flex;
+        background-color: #33343b;
+        border-radius: 1em;
+        flex-wrap: wrap;
+        padding: 1em;
+        overflow: scroll;
+        max-height: 65vh;
+
+        .banned_ip {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 1em;
+            border-radius: 1em;
+            background-color: var(--default-background-compliment);
+            margin: .25em;
+
+            .right {
+                align-content: center;
+            }
+
+            p:nth-child(1) {
+                font-size: 1.5em;
+            }
+        }
+    }
+}
+
+
 
 
 /* Modals */

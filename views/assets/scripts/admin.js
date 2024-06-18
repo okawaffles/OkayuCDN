@@ -1,6 +1,7 @@
 $(document).ready(() => {
     $.getJSON('/api/health', (data) => {
         $('#memory-usage').text('Used: ' + data.system.mem.used + ' / Malloc: ' + data.system.mem.malloc);
+
     });
 
     $.getJSON('/api/admin', (data) => {
@@ -117,10 +118,24 @@ $(document).ready(() => {
             204: () => {
                 bannedIPs = [];
                 console.log('no IP bans');
+                $('#ip_container').append('<h3>No IPs are banned.</h3>');
             },
             200: (data) => {
-                bannedIPs = data.bans;
+                bannedIPs = data;
                 console.log(bannedIPs);
+                Object.keys(bannedIPs).forEach(ip => {
+                    const element = `<div class="banned_ip">
+                            <div class="left">
+                                <p class="ip">${ip}</p>
+                                <p class="reason">${bannedIPs[ip].reason}</p>
+                            </div>
+                            <div class="right">
+                                <button class="red" onclick="reallowIP('${ip}')">Re-allow IP</button>
+                            </div>
+                        </div>`;
+
+                    $('#ip_container').append(element);
+                });
             }
         }
     });
@@ -135,3 +150,26 @@ $(document).ready(() => {
         $('#ipManage').css('display', 'flex');
     });
 });
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function reallowIP(ip) {
+    $.ajax({
+        type: 'POST',
+        url: '/api/admin/unbanIP',
+        data: {
+            ip
+        },
+        statusCode: {
+            204: () => {
+                alert('IP unbanned successfully.');
+                location.reload();
+            },
+            400: () => {
+                alert('Failed to unban IP: Bad Request');
+            },
+            503: () => {
+                alert('Failed to unban IP: Internal Server Error');
+            }
+        }
+    });
+}
