@@ -17,10 +17,24 @@ function updatePwd() {
                 document.location = '/logout';
             },
             400: () => {
-                $('p.login_error').css('display', 'inline').text('Bad request. Please check your inputs.');
+                // $('p.login_error').css('display', 'inline').text('Bad request. Please check your inputs.');
+
+                $('#password_current').css('animation', 'bad-login 0.5s ease-in-out');
+                $('#password_new').css('animation', 'bad-login 0.5s ease-in-out');
+
+                setTimeout(() => {
+                    $('#password_current').css('animation', 'none');
+                    $('#password_new').css('animation', 'none');
+                }, 550);
             },
             401: () => {
-                $('p.login_error').css('display', 'inline').text('Please check your current password.');
+                // $('p.login_error').css('display', 'inline').text('Please check your current password.');
+                
+                $('#password_current').css('animation', 'bad-login 0.5s ease-in-out');
+
+                setTimeout(() => {
+                    $('#password_current').css('animation', 'none');
+                }, 550);
             }
         }
     });

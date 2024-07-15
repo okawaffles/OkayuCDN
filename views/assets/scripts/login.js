@@ -58,9 +58,11 @@ $(document).ready(() => {
                 $('#username').prop('disabled', false);
                 $('#password').prop('disabled', false)[0].value = ''; // un-disable AND clear it
 
-                $('#inputs').css('animation', 'bad-login 0.5s ease-in-out');
+                $('#username').css('animation', 'bad-login 0.5s ease-in-out');
+                $('#password').css('animation', 'bad-login 0.5s ease-in-out');
                 setTimeout(() => {
-                    $('#inputs').css('animation', 'none');
+                    $('#username').css('animation', 'none');
+                    $('#password').css('animation', 'none');
                 }, 550);
                 return;
             }
@@ -104,12 +106,15 @@ $(document).ready(() => {
             $('#username').prop('disabled', false);
             $('#password').prop('disabled', false)[0].value = ''; // un-disable AND clear it
 
-            $('#inputs').css('animation', 'bad-login 0.5s ease-in-out');
+            $('#username').css('animation', 'bad-login 0.5s ease-in-out');
+            $('#password').css('animation', 'bad-login 0.5s ease-in-out');
             $('#login').css('animation', 'button-incorrect 1s ease');
             setTimeout(() => {
-                $('#inputs').css('animation', 'none');
+                $('#username').css('animation', 'none');
+                $('#password').css('animation', 'none');
                 $('#login').css('animation', 'none');
-            }, 1050);
+            }, 550);
+            
             return;
         });
     });
