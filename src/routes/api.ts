@@ -177,7 +177,7 @@ export function RegisterAPIRoutes() {
 
             res.json(storage);
         } catch (err: unknown) {
-            L.error(err + '');
+            L.error('api/storage: ' + err + '');
             res.json({error:true,reason:'needs_login'});
         }
     });
