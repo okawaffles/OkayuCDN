@@ -66,7 +66,37 @@ function start() {
     $('#uploadButton').on('click', StartFileUpload);
 }
 
+/**
+ * Calculate the approximate time to upload a file.
+ * Because of Cloudflare proxying, uploads take around 1200ms per chunk.
+ * It's stupid but I can't find a fix.
+ * @param {number} chunk_count number of file chunks
+ * @returns {string} formatted approximate upload time
+ */
+function CalculateApproxUploadTime(chunk_count) {
+    if (typeof chunk_count != 'number') return 0;
+        
+    let ms = chunk_count * 1500;
+    let sec = 0;
+    let min = 0;
+    if (ms >= 1200) {
+        while (ms >= 1000 && ms > 0) {
+            sec++;
+            ms -= 1000;
+        }
 
+        if (ms > 0) sec++;
+    }
+
+    if (sec >= 60) {
+        while (sec / 60 >= 1 && sec > 0) {
+            min++;
+            sec -= 60;
+        }
+    }
+
+    return `${min}min ${sec}sec`;
+}
 
 function FilePickerClicked() {
     $('#uploaded')[0].click();
@@ -74,6 +104,10 @@ function FilePickerClicked() {
 
 function UpdateFileName() {
     $('#filename').text($('#uploaded')[0].files[0].name);
+
+    const chunk_size = 1024*1024*5; // 5MB chunks
+    const total_chunks = Math.ceil($('#uploaded')[0].files[0].size / chunk_size);
+    $('#approxTime').text(`Approximate Upload Time: ${CalculateApproxUploadTime(total_chunks)}`);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -100,7 +134,17 @@ async function StartFileUpload() {
     }
 
     const regex = new RegExp('^[A-Za-z0-9_-]+$');
-    if (!regex.test($('#filename_input')[0].value) || $('#filename_input').val().length > 25) return alert('You may only use alphanumeric characters and underscores in your file names, as well as only up to 25 characters.');
+    if (!regex.test($('#filename_input')[0].value) || $('#filename_input').val().length > 25) {
+        // alert('You may only use alphanumeric characters and underscores in your file names, as well as only up to 25 characters.');
+
+        $('#filename_input').css('animation', 'bad-login 0.5s ease-in-out');
+        $('#filename-error').css('display', 'inherit');
+        setTimeout(() => {
+            $('#filename_input').css('animation', 'none');
+        }, 550);
+
+        return;
+    }
 
     $('#hider').css('display', 'none');
     $('#uploadInterface').css('display', 'none');

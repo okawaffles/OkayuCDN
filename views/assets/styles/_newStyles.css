@@ -131,6 +131,9 @@ body {
     background-color: var(--active-background);
     overflow: hidden;
 }
+.default-bg {
+    background-color: var(--active-background);
+}
 .view_body,
 .mybox_body,
 .info_body {
@@ -1199,12 +1202,12 @@ button:hover {
     margin: 10px;
 }
 
-.progress {
+.upload-progress {
     display: none;
     flex-wrap: wrap;
     place-content: center;
 }
-.progress h1, .progress h3 {
+.upload-progress h1, .upload-progress h3 {
     text-align: center;
     width: 100%;
 }
@@ -2041,4 +2044,7 @@ button:hover {
 }
 .margin-bottom {
     margin-bottom: 1rem;
+}
+.text-hidden {
+    display: none;
 }

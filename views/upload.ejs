@@ -21,7 +21,7 @@
     <script src="/assets/scripts/upload_v6.js"></script>
 </head>
 
-<body class="scrollable">
+<body class="default-bg scrollable">
     <%- include('parts/navbar-logged-in', {active:'upload'}) %>
    
     <div id="banner-hider" style="display: none;">
@@ -34,11 +34,6 @@
             <p id="ua-warning-contents">Warning: useragent</p>
         </ul>
     </div>
-
-   
-    <!-- <div id="visibleToggle">
-        <div class="cascade" style="--primary: white; display: flex; align-items: center;"><div>a</div><div>a</div><div>a</div><div>a</div><div>a</div></div>
-    </div> -->
 
     <div class="upload-pane">
         <div class="uploader">
@@ -57,6 +52,7 @@
                         <input type="file" class="chooseFiles" id="uploaded" required />
                         <i class="fa-solid fa-arrow-up-from-bracket"></i><br><br>
                         <p id="filename">Click or drag and drop to upload</p>
+                        <p id="approxTime"></p>
                     </div>
                     <div class="container-upload-second" id="container-upload-second">
                         <p>Uploading...</p>
@@ -71,11 +67,12 @@
                     <input type="checkbox" class="private_toggle" id="private_toggle" style="margin: 0em 1em" />
                     <p>Upload this file as private</p>
                 </div>
+                <p id="filename-error" class="text-hidden">You may only use alphanumeric characters and underscores in your file names, as well as only up to 25 characters.</p>
                 <div class="wrap up_wrap">
                     <button class="go" id="uploadButton">Upload</button>
                 </div>
             </div>
-            <div class="progress" id="div_progress">
+            <div class="upload-progress" id="div_progress">
                 <h1>Uploading file...</h1>
                 <h3 id="processing">Please wait while the server processes your file...</h3>
                 <div class="progressBarContainer">
