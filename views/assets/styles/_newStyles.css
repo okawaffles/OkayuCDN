@@ -131,9 +131,7 @@ body {
     background-color: var(--active-background);
     overflow: hidden;
 }
-.default-bg {
-    background-color: var(--active-background);
-}
+
 .view_body,
 .mybox_body,
 .info_body {
@@ -156,7 +154,7 @@ button {
     text-decoration: none;
 }
 
-header {
+header:not(.nav-ignore) {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -855,6 +853,9 @@ button:hover {
         align-items: center;
         justify-content: center;
     }
+    #newStorageAmount {
+        margin: 0 1em 1em 1em;
+    }
 }
 
 .loader_container {
@@ -1094,6 +1095,10 @@ button:hover {
     height: 15em;
     animation: none;
 }
+.uploadfile #filename {
+    display: flex;
+    justify-content: center;
+}
 .filename, .common_input {
     width: 350px !important;
     height: 50px;
@@ -1105,9 +1110,23 @@ button:hover {
     background-color: var(--active-background-compliment);
     text-align: center;
 }
+#hider {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+#filename_input {
+    margin: 1em 25%;
+}
+#filename-error {
+    width: max-content;
+}
 .private_toggle {
     width: 1.5rem;
     height: 1.5rem;
+}
+#div_private {
+    margin: 0 25%;
 }
 #div_private p {
     font-size: 1.1rem;
@@ -1245,6 +1264,12 @@ button:hover {
     }
     .uploader { 
         width: 100%;
+    }
+    #filename_input {
+        margin: 1em 0;
+    }
+    #div_private {
+        margin: 0;
     }
 }
 

@@ -51,7 +51,7 @@ function start() {
         $('#newStorageAmount').css('visibility', 'visible');
 
         // allow the rest of the page to load
-        $('#hider').css('display', 'revert');
+        $('#hider').css('display', 'flex');
     }).fail((err) => {
         if (err.contains('Too Many Requests')) return alert('Too many API requests. Please wait at least 5 minutes and try again.');
         alert('Error in upload_v6.js.\n\nIf you are on desktop, please open your browser console and report the bug at https://github.com/okawaffles/OkayuCDN');
@@ -133,12 +133,20 @@ async function StartFileUpload() {
         return;
     }
 
+    if ($('#filename_input').val() == '') {
+        $('#filename_input').css('animation', 'bad-login 0.5s ease-in-out');
+        setTimeout(() => {
+            $('#filename_input').css('animation', 'none');
+        }, 550);
+        return;
+    }
+
     const regex = new RegExp('^[A-Za-z0-9_-]+$');
     if (!regex.test($('#filename_input')[0].value) || $('#filename_input').val().length > 25) {
         // alert('You may only use alphanumeric characters and underscores in your file names, as well as only up to 25 characters.');
 
         $('#filename_input').css('animation', 'bad-login 0.5s ease-in-out');
-        $('#filename-error').css('display', 'inherit');
+        $('#filename-error').css('display', 'inherit').text('You may only use alphanumeric characters and underscores in your file names, as well as only up to 25 characters.');
         setTimeout(() => {
             $('#filename_input').css('animation', 'none');
         }, 550);
