@@ -17,8 +17,7 @@ Feel free to even customize the logos and name throughout your pages. Note that 
 
 ## How do I set it up?
 > [!IMPORTANT]
-> As of March 27th, 2024, the pre-6.0 JS codebase has been discontinued in favor of a cleaner TypeScript-based codebase with many improvements.
-> Due to this, there are some extra steps needed
+> You will not be able to see icons unless you replace the Font Awesome license elements in each page.
 ### 6.0+ versions
 1. Download the latest release (recommended) or clone the repository (for cutting-edge features)
 2. Navigate to the folder
@@ -28,13 +27,6 @@ Feel free to even customize the logos and name throughout your pages. Note that 
 6. Edit `config.json` to your liking.
 7. Start the server with `node .` (alternatively, you can use some watchdog such as PM2 like `pm2 start . -n "OkayuCDN"`)
 8. It is recommended you use a reverse proxy such as NGINX to allow SSL.
-### Pre-6.0 versions
-1. Download the latest release (recommended) or clone the repository (for bugtesting/development)
-2. Navigate to the folder. **IMPORTANT**: The server will not run properly if you are not in the correct folder upon starting. (this is actively being worked on)
-3. Edit `config.json` to suit your needs. You should change the domain property to fit your domain/IP address.
-4. Run `npm i`
-5. Run `node .` OR `pm2 start index.js`
-6. Optionally, use nginx, etc. to make a reverse proxy.
 
 ## Cool! I want to contribute!
 Here's some things you could help me with:
