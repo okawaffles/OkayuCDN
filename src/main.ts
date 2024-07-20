@@ -87,14 +87,7 @@ const limiter = rateLimit({
 });
 Router.set('trust proxy', 1);
 
-Router.use('/api/*', limiter);
-Router.use('/content', limiter);
-Router.use('/authorize', limiter);
-Router.use('/@:user/:item', limiter);
-Router.use('/view/@:user/:item', limiter);
-Router.use('/logout', limiter);
-Router.use('/favicon.ico', limiter);
-Router.use('/robots.txt', limiter);
+Router.use('*', limiter);
 
 // this handles logging requests
 RegisterRequestLogger();
