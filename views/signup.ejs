@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up | OkayuCDN!</title>
+    <title>Sign Up | OkayuCDN</title>
     <link rel="stylesheet" href="/assets/styles/_newStyles.css">
     <script src="https://kit.fontawesome.com/dc1b60441b.js" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
@@ -13,7 +13,7 @@
 <body>
     <%- include('parts/navbar', {active:'none'}) %>
 
-    <div class="login-pane">
+    <!-- <div class="login-pane">
         <h2 class="login_title">Welcome to OkayuCDN!</h2>
         <h4 class="login_subtitle">We're happy to see new users!</h4>
 
@@ -35,6 +35,29 @@
         <br><hr><br>
         <div class="wrap">
             <button class="go" onclick="location = `../login?redir=/home`">I already have an account</button>
+        </div>
+    </div> -->
+
+    <div class="okayu-login">
+        <div class="panel">
+            <div class="top">
+                <h1>Welcome to OkayuCDN!</h1>
+
+                <div class="inputs">
+                    <input class="margin-bottom-less" type="text" placeholder="Username" id="username" pattern="^[a-zA-Z0-9]{6,25}$" required>
+                    
+                    <input class="margin-bottom-less" type="password" placeholder="Password" id="password" required>
+                    
+                    <input class="margin-bottom-less" type="text" placeholder="Real Name" id="realname" required>
+
+                    <input type="email" placeholder="Email" id="email" pattern="^(?=.*[a-z])(?=.*[A-Z].*[A-Z])(?=.*\d.*\d)(?=.*[^a-zA-Z\d].*[^a-zA-Z\d]).{8,}$" required>
+                </div>
+            </div>
+
+            <div class="bottom">
+                <p class="input-error hide-by-default" id="input_error">Error: This and that.</p>
+                <button class="go hide-by-default" id="submit">Sign Up</button>
+            </div>
         </div>
     </div>
 </body>

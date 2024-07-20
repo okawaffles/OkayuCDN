@@ -2064,11 +2064,20 @@ button:hover {
 
 
 /* various extra */
+.hide-by-default {
+    display: none;
+}
 .slight-margin-top {
     margin-top: .5rem;
 }
+.margin-top {
+    margin-top: 1rem;
+}
 .margin-bottom {
     margin-bottom: 1rem;
+}
+.margin-bottom-less {
+    margin-bottom: .25rem !important;
 }
 .text-hidden {
     display: none;
