@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'; 
 import { ENABLE_ACCOUNT_CREATION, ENABLE_UPLOADING, Router, admins, announcement, domain, version } from '../main';
-import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST, ValidateDeletionRequest, ValidatePasswordRequest, ValidateSignupPOST, ValidateAdminDeletionRequest, ValidateAdminStorageRequest, ValidateUploadChunk, ValidateContentRequest, ValidateTokenBothModes, ValidateAdminBanIP } from '../util/sanitize';
+import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST, ValidateDeletionRequest, ValidatePasswordRequest, ValidateSignupPOST, ValidateAdminDeletionRequest, ValidateAdminStorageRequest, ValidateUploadChunk, ValidateContentRequest, ValidateTokenBothModes, ValidateAdminBanIP, ValidateUsernameCheck } from '../util/sanitize';
 import { matchedData } from 'express-validator';
 import { BeginTOTPSetup, ChangeFileVisibility, CheckTOTPCode, GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewAccount, RegisterNewToken, UpdateUserPassword, VerifyLoginCredentials, VerifyUserExists } from '../util/secure';
 import { FinishUpload, MulterUploader } from '../api/upload';
@@ -108,6 +108,15 @@ export function RegisterAPIRoutes() {
         }
     });
 
+    // Used to check whether a username is taken or not.
+    // Returns 409 if taken, 204 if not taken
+    Router.get('/api/username', ValidateUsernameCheck(), HandleBadRequest, (req: Request, res: Response) => {
+        const data = matchedData(req);
+
+        if (VerifyUserExists(data.username)) res.status(409); else res.status(204);
+
+        res.end();
+    });
 
     Router.post('/api/signup', ValidateSignupPOST(), HandleBadRequest, async (req: Request, res: Response) => {
         const data = matchedData(req);

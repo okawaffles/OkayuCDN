@@ -8,40 +8,15 @@
     <link rel="stylesheet" href="/assets/styles/_newStyles.css">
     <script src="https://kit.fontawesome.com/dc1b60441b.js" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-    <script src="/assets/scripts/signup.js"></script>
+    <script src="/assets/scripts/signup_v6.js"></script>
 </head>
 <body>
     <%- include('parts/navbar', {active:'none'}) %>
 
-    <!-- <div class="login-pane">
-        <h2 class="login_title">Welcome to OkayuCDN!</h2>
-        <h4 class="login_subtitle">We're happy to see new users!</h4>
-
-        <p style="text-align: center;" class="p follow_text">6-25 characters, letters and numbers only.</p>
-        <p style="text-align: center; font-style: italic;" class="p follow_text">New: Password must be at least 8 characters, with at<br>least 2 numbers, 2 symbols, and 2 uppercase letters.</p>
-        
-        <div class="center">
-            <input type="text" placeholder="Username" class="input_text" pattern="^[a-zA-Z0-9]{6,25}$" id="username" required /><br>
-            <input type="password" placeholder="Password" id="password" class="input_text" required /><br>
-            <input type="text" placeholder="Real Name" id="realname" class="input_text" required /><br>
-            <input type="email" placeholder="Email" id="email" class="input_text" pattern="^(?=.*[a-z])(?=.*[A-Z].*[A-Z])(?=.*\d.*\d)(?=.*[^a-zA-Z\d].*[^a-zA-Z\d]).{8,}$" required /><br>
-            <p class="p follow_text">By signing up, you are agreeing to our <a style="color:cornflowerblue;" href="../terms">Terms of Service</a>.</p>
-        </div>
-        
-        <div class="wrap">
-            <input type="submit" class="go" id="submit" value="Go" />
-        </div>
-        
-        <br><hr><br>
-        <div class="wrap">
-            <button class="go" onclick="location = `../login?redir=/home`">I already have an account</button>
-        </div>
-    </div> -->
-
     <div class="okayu-login">
-        <div class="panel">
+        <div class="panel signup-panel">
             <div class="top">
-                <h1>Welcome to OkayuCDN!</h1>
+                <h1 class="signup-header">Welcome to OkayuCDN!</h1>
 
                 <div class="inputs">
                     <input class="margin-bottom-less" type="text" placeholder="Username" id="username" pattern="^[a-zA-Z0-9]{6,25}$" required>
@@ -59,6 +34,8 @@
                 <button class="go hide-by-default" id="submit">Sign Up</button>
             </div>
         </div>
+        <div class="separator">OR</div>
+        <button class="go btn-red noacc" onclick="document.location = '/login?redir=/mybox'">Go back to login</button>
     </div>
 </body>
 </html>
