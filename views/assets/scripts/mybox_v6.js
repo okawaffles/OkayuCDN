@@ -187,7 +187,7 @@ function generateItem(id, item, fsize, alternate, private) {
         <button class="view mobile" onclick="view('${item}')"><i class="fa-solid fa-eye"></i></button>
         <button class="dl mobile" onclick="download('${item}')"><i class="fa-solid fa-download"></i></button>
         <button class="btn-orange visibility mobile" id="m-change-visibility-${id}" onclick="changeVisibility('${item}', ${id})">${private?'<i class="fa-solid fa-lock-open"></i>':'<i class="fa-solid fa-lock"></i>'}</button>
-        <button class="btn-red delete mobile" id="m-delete-item-${id}" onclick="startDeleteSequence('${item}', ${id}, false)"><i class="fa-solid fa-trash-can"></i></button>
+        <button class="btn-red delete mobile" id="m-delete-item-${id}" onclick="startDeleteSequence('${item}', ${id}, true)"><i class="fa-solid fa-trash-can"></i></button>
     </div>
 </div>`;
 }
@@ -281,9 +281,9 @@ function share(item, id, mobile) {
 function startDeleteSequence(item, id, mobile) {
     if (mobile) {
         if ($(`#m-delete-item-${id}`).html() == '<i class="fa-solid fa-trash-can" aria-hidden="true"></i>') {
-            $(`#${id}`).html('<i class="fa-solid fa-check"> Are you sure?</i>?');
+            $(`#m-delete-item-${id}`).html('<i class="fa-solid fa-check"></i>  ?');
             setTimeout(() => {
-                $(`#${id}`).html('<i class="fa-solid fa-trash-can" aria-hidden="true"> Delete</i>');
+                $(`#m-delete-item-${id}`).html('<i class="fa-solid fa-trash-can" aria-hidden="true"></i>');
             }, 3000);
         } else {
             deleteItemRequest(item, id);
