@@ -96,3 +96,7 @@ export const ValidateAdminBanIP = () => [
     body('ip').notEmpty().escape(),
     body('reason').notEmpty().escape().optional()
 ];
+
+export const ValidateVideoStreamParams = () => [
+    header('range').notEmpty().escape().isString().optional()
+];

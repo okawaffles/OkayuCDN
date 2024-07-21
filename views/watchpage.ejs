@@ -30,13 +30,14 @@
     </video> -->
     <div class="container_video">
         <div id="vp"></div>
+         <!-- <video src="/@<%=user%>/<%=filename%>/stream"></video> -->
     </div>
 </body>
 
 <script>
     const player = new xgplayer({
         el:document.querySelector('#vp'),
-        url:'/@<%=user%>/<%=filename%>?bypass=true',
+        url:'/@<%=user%>/<%=filename%>/stream',
         width: window.innerWidth * 0.85,
         height: window.innerHeight * 0.85,
         style: {

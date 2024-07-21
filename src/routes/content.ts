@@ -2,11 +2,12 @@ import { Request, Response } from 'express';
 import { Router, domain, version } from '../main';
 import { join } from 'path';
 import { UPLOADS_PATH } from '../util/paths';
-import { HandleBadRequest, ValidateContentRequest, ValidateOptionalToken, ValidateShortURL } from '../util/sanitize';
+import { HandleBadRequest, ValidateContentRequest, ValidateOptionalToken, ValidateShortURL, ValidateVideoStreamParams } from '../util/sanitize';
 import { existsSync, statSync } from 'fs';
 import { GetUserFromToken, IsContentProtected } from '../util/secure';
 import { matchedData } from 'express-validator';
 import { GetLinkData } from '../api/shortener';
+import { HandleVideoStreaming } from '../api/content';
 
 
 export function RegisterContentRoutes() {
@@ -80,5 +81,29 @@ export function RegisterContentRoutes() {
         } catch {
             res.status(404).send('This shortened link has expired. Please ask the sender to create a new link.');
         }
+    });
+
+    // Route for getting videos (hopefully so they don't stream awfully)
+    Router.get('/@:username/:item/stream', ValidateContentRequest(), ValidateOptionalToken(), ValidateVideoStreamParams(), HandleBadRequest, (req: Request, res: Response) => {
+        const data = matchedData(req);
+        const username: string = data.username;
+        const item: string = data.item;
+
+        // only mp4 files are supported right now
+        if (!item.endsWith('.mp4')) return res.status(400).end();
+
+        // make sure content exists
+        if (!existsSync(
+            join(UPLOADS_PATH, username, item)
+        )) return res.status(404).render('notfound');
+
+        // make sure it's not protected & if it is make sure theyre authorized to view it
+        if (IsContentProtected(username, item)) { 
+            if (!data.token || GetUserFromToken(data.token).username != username)
+                return res.status(401).render('err401');
+        }
+
+        // handoff to api to handle the rest
+        HandleVideoStreaming(req, res);
     });
 }

@@ -1,8 +1,10 @@
 import { join } from 'node:path';
 import { ContentItem, StorageData, UserModel } from '../types';
 import { UPLOADS_PATH } from '../util/paths';
-import { readdirSync, rmSync, Stats, statSync } from 'node:fs';
+import { createReadStream, readdirSync, rmSync, Stats, statSync } from 'node:fs';
 import { GetProtectedFiles } from '../util/secure';
+import { Request, Response } from 'express';
+import { matchedData } from 'express-validator';
 
 
 export function GetStorageInfo(user: UserModel, keepFileRemnants = false): StorageData {
@@ -39,4 +41,39 @@ export function GetStorageInfo(user: UserModel, keepFileRemnants = false): Stora
     };
 
     return storage;
+}
+
+export function HandleVideoStreaming(req: Request, res: Response) {
+    const data = matchedData(req);
+
+    const video_path: string = join(UPLOADS_PATH, data.username, data.item);
+    const stats: Stats = statSync(video_path);
+    const filesize: number = stats.size;
+    const range: string = data.range;
+
+    if (range) {
+        const parts = range.replace('bytes=', '').split('-');
+        const start = parseInt(parts[0], 10);
+        const end = parts[1] ? parseInt(parts[1], 10) : filesize - 1;
+        const chunk_size = end - start + 1;
+        const file = createReadStream(video_path, {start, end});
+        
+        const headers = {
+            'Content-Range': `bytes ${start}-${end}/${filesize}`,
+            'Accept-Ranges': 'bytes',
+            'Content-Length': chunk_size,
+            'Content-Type': 'video/mp4'
+        };
+        
+        res.writeHead(206, headers);
+        file.pipe(res);
+    } else {
+        const headers = {
+            'Content-Length': filesize,
+            'Content-Type': 'video/mp4'
+        };
+
+        res.writeHead(200, headers);
+        createReadStream(video_path).pipe(res);
+    }
 }
