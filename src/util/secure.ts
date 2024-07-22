@@ -208,7 +208,7 @@ export async function UpdateUserPassword(user: UserModel, rawNewPassword: string
 export async function VerifyLoginCredentials(username: string, password: string): Promise<boolean> {
     return new Promise((resolve) => {
 
-        if (!VerifyUserExists(username)) return false;
+        if (!VerifyUserExists(username)) return resolve(false);
         
         const user: UserModel = GetUserModel(username, true);
         

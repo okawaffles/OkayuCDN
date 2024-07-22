@@ -38,13 +38,15 @@ $(document).ready(() => {
 
     $('#username').focusout(() => {
         if (!REGEX_USERNAME.test($('#username').val())) {
-            username_valid = false;
             $('#input_error').css('display', 'revert').text('Usernames must be 6-25 alphanumeric characters.');
             $('#username').css('animation', 'bad-login 0.5s ease');
             setTimeout(() => {
                 $('#username').css('animation', 'none');
             }, 550);
+            return username_valid = false;
         } else username_valid = true;
+
+        if ($('#username').val() == '') return username_valid = false;
 
         $.get('/api/username', {username:$('#username').val()}, () => {
             username_valid = true;
@@ -72,7 +74,10 @@ $(document).ready(() => {
             setTimeout(() => {
                 $('#password').css('animation', 'none');
             }, 550);
-        } else password_valid = true;
+        } else { 
+            $('#input_error').css('display', 'none');
+            password_valid = true;
+        }
 
         CheckSubmitRequirements();
     });
@@ -84,7 +89,10 @@ $(document).ready(() => {
             setTimeout(() => {
                 $('#email').css('animation', 'none');
             }, 550);
-        } else email_valid = true;
+        } else { 
+            $('#input_error').css('display', 'none');
+            email_valid = true; 
+        }
 
         CheckSubmitRequirements();
     });
