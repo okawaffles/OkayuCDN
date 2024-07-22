@@ -4,7 +4,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { Request, Response } from 'express';
 import { matchedData } from 'express-validator';
 import { TokenV2, UserModel, UserSecureData } from '../types';
-import { createHash, randomBytes } from 'node:crypto';
+import { randomBytes } from 'node:crypto';
 import { hash, verify } from 'argon2';
 import { Logger } from 'okayulogger';
 import { toDataURL } from 'qrcode';
@@ -115,75 +115,70 @@ export function GetSecureData(user: UserModel): UserSecureData {
  */
 export function GetUserModel(username: string, addSecureData: boolean = false): UserModel {
     const userData = JSON.parse(readFileSync(join(USER_DATABASE_PATH, `${username}.json`), 'utf-8'));
+     
+    if (!addSecureData) userData.SecureData = undefined;
+    return userData as UserModel;
 
-    // oops...
-    if (userData.userId) {
-        // strip securedata if we don't want it
-        if (!addSecureData) userData.SecureData = undefined;
+    // // upgrade usermodel if we need to
+    // const model: UserModel = {
+    //     username: username,
+    //     userId: -1, // userId is -1 until implemented, if ever
+    //     email: userData.email,
+    //     storageAmount: userData.storage,
+    //     hasLargeStorage: userData.premium,
+    //     preferences: {
+    //         language: 0
+    //     }
+    // };
 
-        return userData as UserModel;
-    }
+    // if (addSecureData) model.SecureData = GetSecureData(model);
 
-    // upgrade usermodel if we need to
-    const model: UserModel = {
-        username: username,
-        userId: -1, // userId is -1 until implemented, if ever
-        email: userData.email,
-        storageAmount: userData.storage,
-        hasLargeStorage: userData.premium,
-        preferences: {
-            language: 0
-        }
-    };
-
-    if (addSecureData) model.SecureData = GetSecureData(model);
-
-    return model;
+    // return model;
 }
 
 
-/**
- * This function should and will only be called when a user is upgrading from a pre-6.0 password which was
- * encrypted with sha256 as opposed to argon2. The passwords are then re-encrypted and replaced with an argon2 hash.
- * @param user UserModel of the user
- * @param secureData UserSecureData of the user
- * @param raw_password the unencrypted password of the user
- * @returns true if password update was successful, false if the password is incorrect (or otherwise)
- */
-async function UpgradeUserPassword(user: UserModel, secureData: UserSecureData, raw_password: string): Promise<boolean> {
-    return new Promise((resolve: CallableFunction) => {
-        const passwordInSHA256: string = createHash('sha256').update(raw_password).digest('hex');
-        if (passwordInSHA256 != secureData.password) {
-            resolve(false);
-            return;
-        }
+// /**
+//  * This function should and will only be called when a user is upgrading from a pre-6.0 password which was
+//  * encrypted with sha256 as opposed to argon2. The passwords are then re-encrypted and replaced with an argon2 hash.
+//  * @param user UserModel of the user
+//  * @param secureData UserSecureData of the user
+//  * @param raw_password the unencrypted password of the user
+//  * @returns true if password update was successful, false if the password is incorrect (or otherwise)
+//  */
+// async function UpgradeUserPassword(user: UserModel, secureData: UserSecureData, raw_password: string): Promise<boolean> {
+//     return new Promise((resolve: CallableFunction) => {
+//         const passwordInSHA256: string = createHash('sha256').update(raw_password).digest('hex');
+//         if (passwordInSHA256 != secureData.password) {
+//             resolve(false);
+//             return;
+//         }
 
-        // re-encrypt the password
-        const newPasswordSalt: string = CreateNewToken(); 
+//         // re-encrypt the password
+//         const newPasswordSalt: string = CreateNewToken(); 
 
-        // this nesting is quite ugly, but it seems as if this is the only way
-        // eslint will let me to it. PR if you can fix this :3
-        hash(raw_password + newPasswordSalt).then((newHashedPassword) => {
-            secureData.password = newHashedPassword;
-            secureData.password_salt = newPasswordSalt;
-            secureData.passwordIsLegacy = false;
+//         // this nesting is quite ugly, but it seems as if this is the only way
+//         // eslint will let me to it. PR if you can fix this :3
+//         hash(raw_password + newPasswordSalt).then((newHashedPassword) => {
+//             secureData.password = newHashedPassword;
+//             secureData.password_salt = newPasswordSalt;
+//             secureData.passwordIsLegacy = false;
             
-            user.SecureData = secureData;
+//             user.SecureData = secureData;
             
-            writeFileSync(join(USER_DATABASE_PATH, `${user.username}.json`), JSON.stringify(user), 'utf-8');
-            resolve(true);
-        });
-    });
-}
+//             writeFileSync(join(USER_DATABASE_PATH, `${user.username}.json`), JSON.stringify(user), 'utf-8');
+//             resolve(true);
+//         });
+//     });
+// }
 
-/**
- * Update a user's data to the new UserModel format
- * @param username The user to upgrade
- */
-function UpgradeToUserModel(username: string) {
-    const userData = GetUserModel(username, true); // get UserModel with secure data
-    writeFileSync(join(USER_DATABASE_PATH, `${username}.json`), JSON.stringify(userData)); // rewrite it
-}
+// /**
+//  * Update a user's data to the new UserModel format
+//  * @param username The user to upgrade
+//  */
+// function UpgradeToUserModel(username: string) {
+//     const userData = GetUserModel(username, true); // get UserModel with secure data
+//     writeFileSync(join(USER_DATABASE_PATH, `${username}.json`), JSON.stringify(userData)); // rewrite it
+// }
 
 export async function UpdateUserPassword(user: UserModel, rawNewPassword: string): Promise<boolean> {
     return new Promise((resolve: CallableFunction) => {
@@ -205,7 +200,7 @@ export async function UpdateUserPassword(user: UserModel, rawNewPassword: string
 }
 
 /**
- * Check whether provided login credentials are correct. Also upgrades pre-6.0 passwords to argon2 (and switches to the new UserModel data structure if so).
+ * Check whether provided login credentials are correct.
  * @param username provided username
  * @param password provided password
  * @returns true if the credentials are correct, false otherwise
@@ -217,24 +212,24 @@ export async function VerifyLoginCredentials(username: string, password: string)
         
         const user: UserModel = GetUserModel(username, true);
         
-        CheckPrivateIndex(user.username);
+        // since not every server will delete v3 accounts at the same time, 
+        // implement handler because v4 accounts will crash without it.
+        try {
+            CheckPrivateIndex(user.username);
 
-        // we can check whether a user is legacy by checking whether they have a password in the root element
-        const data = JSON.parse(readFileSync(join(USER_DATABASE_PATH, `${username}.json`), 'utf-8'));
-        if (data.password != undefined) {
-            UpgradeToUserModel(username);
-        }
-
-        if (user.SecureData!.passwordIsLegacy) {
-            L.warn(`passwordIsLegacy, ${user.SecureData!.passwordIsLegacy}`);
-            UpgradeUserPassword(user, user.SecureData!, password).then(result => {
-                return resolve(result);
-            });
-        } else {   
             verify(<string> user.SecureData!.password, password + user.SecureData!.password_salt).then(result => {
                 return resolve(result);
             });
+        } catch (err: unknown) {
+            L.error('Failed to load account data. Account may be of v3 structure. These accounts are no longer supported.');
+            return resolve(false);
         }
+
+        // // we can check whether a user is legacy by checking whether they have a password in the root element
+        // const data = JSON.parse(readFileSync(join(USER_DATABASE_PATH, `${username}.json`), 'utf-8'));
+        // if (data.password != undefined) {
+        //     UpgradeToUserModel(username);
+        // }
     });
 }
     
