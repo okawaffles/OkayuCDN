@@ -336,10 +336,6 @@ export function RegisterAPIRoutes() {
         const bans: IPBanList = GetIPBans();
         if (Object.keys(bans).length == 0) res.status(204).end(); else res.json(bans);
     });
-
-
-    /* Token V2 */
-    // lol i didnt put anything here
     
 
     /* Link Shortening */

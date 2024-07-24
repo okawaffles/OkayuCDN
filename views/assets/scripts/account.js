@@ -5,8 +5,8 @@ let USERNAME = '';
 
 function updatePwd() {
     $.ajax({
-        type:'PATCH',
-        url:'/api/password',
+        type: 'PATCH',
+        url: '/api/password',
         data: {
             current_password: $('#password_current').val(),
             new_password: $('#password_new').val()
@@ -29,7 +29,7 @@ function updatePwd() {
             },
             401: () => {
                 // $('p.login_error').css('display', 'inline').text('Please check your current password.');
-                
+
                 $('#password_current').css('animation', 'bad-login 0.5s ease-in-out');
 
                 setTimeout(() => {
@@ -50,7 +50,7 @@ function EnableOTP() {
 }
 
 function CheckOTP() {
-    $.post('/api/otp', {username: USERNAME, code: $('#totpCode').val()}, (result) => {
+    $.post('/api/otp', { username: USERNAME, code: $('#totpCode').val() }, (result) => {
         if (result.statusCode == 204) {
             alert('OK!');
         } else {
@@ -75,7 +75,7 @@ function DisableOTP() {
 
 async function StartPasskeySetup() {
     if (navigator.userAgent.includes('Android') || navigator.userAgent.includes('iPhone OS') || navigator.userAgent.includes('iPad OS')) {
-        if (!confirm(`Warning: ${navigator.userAgent.includes('Android')?'Android does':'Apple devices do'} not support WebAuthn at the moment, would you like to continue anyways?`)) return;
+        if (!confirm(`Warning: ${navigator.userAgent.includes('Android') ? 'Android does' : 'Apple devices do'} not support WebAuthn at the moment, would you like to continue anyways?`)) return;
     }
 
     let options;
@@ -115,6 +115,8 @@ async function StartPasskeySetup() {
         return;
     });
 }
+
+const { startRegistration } = SimpleWebAuthnBrowser;
 
 $(document).ready(() => {
     $.get('/api/whoami').done((data) => {

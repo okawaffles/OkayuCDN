@@ -1287,7 +1287,11 @@ button:hover {
     }
 }
 
-
+/* Account page */
+.account_header {
+    color: var(--active-text);
+    margin-top: .5em;
+}
 
 
 /* Success page */

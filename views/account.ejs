@@ -8,37 +8,21 @@
     <link rel="stylesheet" href="/assets/styles/_newStyles.css">
     <script src="https://kit.fontawesome.com/dc1b60441b.js" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-    <script src="/assets/scripts/account.js"></script>
     <script src="https://unpkg.com/@simplewebauthn/browser/dist/bundle/index.umd.min.js"></script>
+    <script src="/assets/scripts/account.js"></script>
 </head>
 <body class="scrollable">
     <%- include('parts/navbar-logged-in', {active:'account'}) %>
 
     <div class="center">
-        <h1 class="tfa_h1" id="account_name">Your Account</h1>
+        <h1 class="account_header" id="account_name">Your Account</h1>
         <br><hr><br>
-        <h1 class="tfa_h1">Update Your Password</h1><br>
+        <h1 class="account_header">Update Your Password</h1><br>
 
         <input type="password" class="common_input" id="password_current" placeholder="Current Password"><br>
         <input type="password" class="slight-margin-top margin-bottom common_input" id="password_new" placeholder="New Password"><br>
         <!-- <p class="login_error">Please check your password</p><br><br> -->
         <button class="go" id="submit" onclick="updatePwd()">Change</button>
-
-        <br><br>
-        <h1 class="tfa_h1" id="otp-header">Enable OTP Two-Factor Authentication</h1><br>
-        <button class="go" id="submit-otp" onclick="EnableOTP();">Enable OTP 2FA</button><br><br>
-
-        <div id="totpSetup" style="display: none;">
-            <img id="qrcode" />
-            <h3>Scan this QR code with your desired authenticator app.<br>Then, enter the code below to activate.</h3>
-            <input type="number" id="totpCode" />
-            <button class="go" id="submit" onclick="CheckOTP()">Check</button>
-        </div>
-
-        <!-- TO ANYONE SNOOPING AROUND: PASSKEY LOGIN DOES NOT WORK! -->
-        <!-- If you do know what you're doing and can help me, make a PR on the github!! -->
-        <!-- <h1 class="tfa_h1" id="passkey-header">Enable Passkey Authentication</h1><br>
-        <button class="go" id="submit-passkey" onclick="StartPasskeySetup()">Enable Passkey</button> -->
     </div>
 </body>
 </html>
