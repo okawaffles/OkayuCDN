@@ -8,6 +8,11 @@ if (document.location.toString().includes('?redir=')) {
 }
 
 $(document).ready(() => {
+    $('#dl-login-button').on('click', () => {
+        console.debug('dashlane button was clicked');
+        $('#login').trigger('click');
+    });
+
     $('#login').on('click', () => {
 
         if (currentProcess == '2fa') {

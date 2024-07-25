@@ -594,7 +594,7 @@ button:hover {
     }
 }
 
-.go {
+.go, .big-button {
     padding: 9px 25px;
     background-color: var(--active-button);
     border: none;
@@ -607,8 +607,14 @@ button:hover {
     height: 3em;
 }
 
-.go:hover {
+.go:hover, .big-button:hover {
     background-color: var(--active-button-hover);
+}
+
+span.big-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /* signup */
