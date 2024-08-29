@@ -3,12 +3,10 @@ import { USER_DATABASE_PATH, TOKEN_DATABASE_PATH, UPLOADS_PATH } from './paths';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { Request, Response } from 'express';
 import { matchedData } from 'express-validator';
-import { TokenV2, UserModel, UserSecureData } from '../types';
+import { OTPSetupOptions, TokenV2, UserModel, UserSecureData } from '../types';
 import { randomBytes } from 'node:crypto';
 import { hash, verify } from 'argon2';
 import { Logger } from 'okayulogger';
-import { toDataURL } from 'qrcode';
-import { authenticator, totp } from 'otplib';
 import { GenerateDefaultUserToken } from '../api/newtoken';
 
 
@@ -351,9 +349,7 @@ export function ChangeFileVisibility(token: string, name: string) {
 }
 
 
-export async function BeginTOTPSetup(user: UserModel): Promise<string> {
-    const secret = authenticator.generateSecret();
-
+export function StoreTOTPSetup(user: UserModel, options: OTPSetupOptions) {
     const fullUser = GetUserModel(user.username, true);
 
     fullUser.SecureData!.twoFactorData = {
@@ -363,37 +359,30 @@ export async function BeginTOTPSetup(user: UserModel): Promise<string> {
         OTPConfig: {
             secret: '',
             setup: {
-                data: secret
+                data: options.base32
             }
         }
     };
 
     writeFileSync(join(USER_DATABASE_PATH, `${user.username}.json`), JSON.stringify(fullUser));
-    
-    return new Promise((resolve) => {
-        const URI = authenticator.keyuri(user.username, 'OkayuCDN', secret);
-
-        toDataURL(URI, (err: unknown, data_url: string) => {
-            resolve(data_url);
-        });
-    });
 }
 
-export function CheckTOTPCode(username: string, code: number): boolean {
-    const user = GetUserModel(username, true);
-    console.log(code, user.SecureData!.twoFactorData!.OTPConfig!.setup!.data);
+export function StoreTOTPFinal(user: UserModel) {
+    const fullUser = GetUserModel(user.username, true);
 
-    let correct: boolean;
-    try {
-        correct = totp.check(code.toString(), user.SecureData!.twoFactorData!.OTPConfig!.setup!.data);
-    } catch (err: unknown) {
-        console.log(err);
-        return false;
-    }
+    fullUser.SecureData!.twoFactorData = {
+        usesOTP: true,
+        usesPasskey: false,
+        PasskeyConfig: {},
+        OTPConfig: {
+            secret: <string> fullUser.SecureData?.twoFactorData?.OTPConfig?.setup?.data,
+            setup: {
+                data: ''
+            }
+        }
+    };
 
-    console.log(correct);
-
-    return correct;
+    writeFileSync(join(USER_DATABASE_PATH, `${user.username}.json`), JSON.stringify(fullUser));
 }
 
 /**

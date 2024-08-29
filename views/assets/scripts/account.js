@@ -41,16 +41,19 @@ function updatePwd() {
 }
 
 function EnableOTP() {
-    return alert('Due to an unmaintained package, OTP 2FA is currently unavailable until a new package is implemented. Sorry about that!');
-    // eslint-disable-next-line no-unreachable
-    $.getJSON('/api/otp', (data) => {
-        $('#qrcode').prop('src', data.url);
-        $('#totpSetup').css('display', 'inherit');
+    // return alert('Due to an unmaintained package, OTP 2FA is currently unavailable until a new package is implemented. Sorry about that!');
+    $('#setuptotp').remove();
+
+    $.getJSON('/api/2fa/setup', (data) => {
+        $('#qrcode').prop('src', data.qrcode);
+        $('#totpSetup').css('display', 'flex');
+        $('#numbers').css('display', 'flex');
+        $('#instructions').css('display', 'flex');
     });
 }
 
 function CheckOTP() {
-    $.post('/api/otp', { username: USERNAME, code: $('#totpCode').val() }, (result) => {
+    $.post('/api/2fa/finalize', { username: USERNAME, code: $('#totpCode').val() }, (result) => {
         if (result.statusCode == 204) {
             alert('OK!');
         } else {
@@ -116,8 +119,6 @@ async function StartPasskeySetup() {
     });
 }
 
-const { startRegistration } = SimpleWebAuthnBrowser;
-
 $(document).ready(() => {
     $.get('/api/whoami').done((data) => {
         USERNAME = data.username;
@@ -132,5 +133,11 @@ $(document).ready(() => {
             $('#passkey-header').html('Disable Passkey Authentication');
             $('#submit-passkey').html('Disable Passkey').css('background-color', 'var(--active-button-red)').attr('onclick', 'DisablePasskey()');
         }
+    });
+
+    if (navigator.userAgent.includes('Android') || navigator.userAgent.includes('iPhone OS')) $('#setuptotp').css('display', 'none');
+
+    $('#setuptotp').on('click', () => {
+        EnableOTP();
     });
 });

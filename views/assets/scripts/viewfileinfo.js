@@ -38,17 +38,26 @@ let knownFileTypes = {
     'HEIC': 'Image / High Efficiency Image Container (HEIC)',
     'BMP': 'Image / Bitmap Graphic (BMP)',
     'ICO': 'Image / Icon (ICO)',
+    'SVG': 'Image / Scalable Vector Graphic (SVG)',
+    'PDN': 'paint.net Document (PDN)',
+    'TGA': 'Image / Texture File (TGA)',
 
     'MP4': 'Video (MP4)',
     'MOV': 'Video (MOV)',
     'GIF': 'Image (GIF)',
     'MKV': 'Video / Mastroska (MKV)',
     'WEBM': 'Video (WEBM)',
+    'AEP': 'After Effects Project (AEP)',
+    'VEADOMINI': 'veadotube mini Avatar (VEADOMINI)',
 
 
     'MP3': 'Audio (MP3)',
     'FLAC': 'Lossless Audio (FLAC)',
     'WAV': 'Audio / Microsoft Wave File (WAV)',
+    'OGG': 'Ogg Vorbis Audio File (OGG)',
+    'FLP': 'FL Studio Project File (FLP)',
+    'ALS': 'Ableton Live Project File (ALS)',
+    'VSQ': 'Vocaloid Project File (VSQ)',
 
 
     'EXE': 'Windows Executable (EXE)',
@@ -63,14 +72,19 @@ let knownFileTypes = {
     'INF': 'Setup Information (INF)',
     'JAR': 'Java / Executable JAR File (JAR)',
     'APK': 'Android Installable App Package (APK)',
-    'IPA': 'IOS Installable App Package (IPA)',
+    'IPA': 'iOS Installable App Package (IPA)',
+    'BIN': 'Binary File (BIN)',
+    'CFG': 'Configuration File (CFG)',
 
     'PDF': 'Document (PDF)',
     'TXT': 'Text File (TXT)',
     'PPTX': 'Microsoft PowerPoint Document (PPTX)',
     'DOCX': 'Microsoft Word Document (DOCX)',
+    'STORY': 'NovelAI Story (STORY)',
+    'NAITHEME': 'NovelAI Theme (NAITHEME)',
 
     'HTML': 'Webpage (HTML)',
+    'HTM': 'Webpage (HTM)',
     'JS': 'JavaScript File (JS)',
     'TS': 'TypeScript File (TS)',
     'EJS': 'Embedded JavaScript Webpage (EJS)',
@@ -88,6 +102,11 @@ let knownFileTypes = {
     'VSIX': 'Microsoft Visual Studio Extension (VSIX)',
     'VCXPROJ': 'Microsoft Visual Studio Project File (VCXPROJ)',
     'SLN': 'Microsoft Visual Studio Solution (SLN)',
+    'GD': 'Godot GDScript File (GD)',
+    'GODOT': 'Godot Project File (GODOT)',
+    'LICENSE': 'License File (LICENSE)',
+    'REG': 'Windows Registry File (REG)',
+
 
     'VTT': 'Subtitles (VTT)',
     'ASS': 'Subtitles (ASS)',
@@ -108,6 +127,8 @@ let knownFileTypes = {
     'FBX': '3D Model (FBX)',
     'GCODE': 'Sliced 3D Object (GCODE)',
     'UNITYPACKAGE': 'Unity Engine Package (UNITYPACKAGE)',
+    'BLEND': 'Blender Project (BLEND)',
+    'PMX': 'MikuMikuDance Model (PMX)',
 
     'MCWORLD': 'Minecraft Bedrock World (MCWORLD)'
 };

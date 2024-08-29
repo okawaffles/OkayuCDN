@@ -28,6 +28,7 @@
     "passport-oauth2": "^1.8.0",
     "qrcode": "^1.5.3",
     "qs": "^6.11.0",
+    "speakeasy": "^2.0.0",
     "xgplayer": "^3.0.0-alpha.119"
   },
   "scripts": {

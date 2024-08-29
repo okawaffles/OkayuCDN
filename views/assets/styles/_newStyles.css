@@ -1299,6 +1299,58 @@ span.big-button {
     margin-top: .5em;
 }
 
+.qrcode {
+    margin: 0% 40%;
+    margin-top: 1.5rem;
+    display: none;
+}
+#instructions {
+    display: none;
+}
+
+.setup2fa {
+    text-align: center;
+}
+
+.setuptotp {
+    text-align: center;
+}
+
+.totpSetup {
+    /* display: flex; */
+    justify-content: center;
+
+    input[type=number]::-webkit-outer-spin-button,
+    input[type=number]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    input[type=number] {
+        -moz-appearance: textfield;
+        appearance: textfield;
+    }
+    
+    .numbers {
+        display: none;
+        justify-content: space-evenly;
+        width: 325px;
+        padding-top: 1em;
+    }
+
+    .otp-number {
+        width: 50px !important;
+        height: 50px;
+        font-size: 16px;
+        border-radius: 1em;
+        padding: .5em;
+        border: 1px solid var(--active-text);
+        color: var(--active-text);
+        background-color: var(--active-background-compliment);
+        text-align: center;
+    }
+}
+
 
 /* Success page */
 .sc {
@@ -2105,4 +2157,7 @@ span.big-button {
 }
 .text-hidden {
     display: none;
+}
+.text-white {
+    color: white;
 }

@@ -68,7 +68,9 @@ function GetSort(type) {
     }
 }
 
-const EXPERIMENT_NEW_LIST_ITEMS = document.cookie.includes('new_mybox=true') && !IS_MOBILE;
+const EXPERIMENT_NEW_LIST_ITEMS = document.cookie.includes('new_mybox=new-list-demo') && !IS_MOBILE;
+const EXPERIMENT_NEW_LAYOUT = document.cookie.includes('new_mybox=new-layout') && !IS_MOBILE;
+
 
 function RenderBox() {
     $('#content_container').css('display', 'none');

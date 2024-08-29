@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { ENABLE_ACCOUNT_CREATION, ENABLE_UPLOADING, Router, admins, announcement, domain, version } from '../main';
 import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST, ValidateDeletionRequest, ValidatePasswordRequest, ValidateSignupPOST, ValidateAdminDeletionRequest, ValidateAdminStorageRequest, ValidateUploadChunk, ValidateContentRequest, ValidateTokenBothModes, ValidateAdminBanIP, ValidateUsernameCheck } from '../util/sanitize';
 import { matchedData } from 'express-validator';
-import { BeginTOTPSetup, ChangeFileVisibility, CheckTOTPCode, GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewAccount, RegisterNewToken, UpdateUserPassword, VerifyLoginCredentials, VerifyUserExists } from '../util/secure';
+import { StoreTOTPSetup, ChangeFileVisibility, StoreTOTPFinal, GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewAccount, RegisterNewToken, UpdateUserPassword, VerifyLoginCredentials, VerifyUserExists } from '../util/secure';
 import { FinishUpload, MulterUploader } from '../api/upload';
 import { AuthorizationIntents, ContentItem, IPBanList, StorageData, UserModel } from '../types';
 import { GetStorageInfo } from '../api/content';
@@ -13,6 +13,7 @@ import { existsSync, readdirSync, renameSync, rmSync, writeFileSync } from 'fs';
 import { CreateLink } from '../api/shortener';
 import { ChangeTokenUsername, ReadIntents } from '../api/newtoken';
 import { AddIPBan, GetIPBans, RemoveIPBan } from '../util/ipManage';
+import { CheckOTP, GenerateQRImage, GetOTPSetupOptions } from '../api/otp';
 
 const L: Logger = new Logger('API');
 
@@ -250,30 +251,6 @@ export function RegisterAPIRoutes() {
             res.status(500).json({success:false});
     });
 
-    // GET route = begin TOTP setup
-    Router.get('/api/otp', ValidateToken(), PrefersLogin, HandleBadRequest, async (req: Request, res: Response) => {
-        const data = matchedData(req);
-
-        const intents: AuthorizationIntents = ReadIntents(data.token);
-        if (!intents.canChangeAccountOptions) return res.status(403).json({success:false,reason:'No permission'});
-
-        const url = await BeginTOTPSetup(GetUserFromToken(data.token));
-        res.json({url});
-    });
-
-    // POST route = verify TOTP
-    Router.post('/api/otp', ValidateOTP(), HandleBadRequest, (req: Request, res: Response) => {
-        const data = matchedData(req);
-
-        const intents: AuthorizationIntents = ReadIntents(data.token);
-        if (!intents.canChangeAccountOptions) return res.status(403).json({success:false,reason:'No permission'});
-
-        if (CheckTOTPCode(data.username, data.code))
-            res.status(200).end();
-        else
-            res.status(401).end();
-    });
-
     /* Admin Page */
     Router.get('/api/admin', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
         const data = matchedData(req);
@@ -336,7 +313,32 @@ export function RegisterAPIRoutes() {
         const bans: IPBanList = GetIPBans();
         if (Object.keys(bans).length == 0) res.status(204).end(); else res.json(bans);
     });
-    
+
+
+    /* 2FA OTP */
+    Router.get('/api/2fa/setup', ValidateToken(), PrefersLogin, HandleBadRequest, async (req: Request, res: Response) => {
+        const data = matchedData(req);
+
+        const user: UserModel = GetUserFromToken(data.token);
+        const setupOptions = GetOTPSetupOptions(user.username);
+
+        StoreTOTPSetup(user, setupOptions);
+
+        res.json({
+            qrcode: await GenerateQRImage(setupOptions.otpauthUrl)
+        });
+    });
+    Router.get('/api/2fa/finalize', ValidateToken(), ValidateOTP(), PrefersLogin, HandleBadRequest, async (req: Request, res: Response) => {
+        const data = matchedData(req);
+
+        const user = GetUserModel(data.username, true);
+
+        if (CheckOTP(<string> user.SecureData?.twoFactorData?.OTPConfig?.setup?.data, data.code)) {
+            StoreTOTPFinal(user);
+            res.status(204).end();
+        } else res.status(409).end();
+    });
+
 
     /* Link Shortening */
 

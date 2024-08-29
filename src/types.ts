@@ -103,3 +103,8 @@ export interface IPBan {
 export interface IPBanList {
     [key: string]: IPBan
 }
+
+export interface OTPSetupOptions {
+    otpauthUrl: string,
+    base32: string
+}

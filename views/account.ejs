@@ -23,6 +23,23 @@
         <input type="password" class="slight-margin-top margin-bottom common_input" id="password_new" placeholder="New Password"><br>
         <!-- <p class="login_error">Please check your password</p><br><br> -->
         <button class="go" id="submit" onclick="updatePwd()">Change</button>
+
+        <br><br>
+
+        <!-- UNFINISHED! -->
+        <!-- <button class="go setup2fa" id="setuptotp">Enable 2FA</button> -->
+        <img class="qrcode" id='qrcode' src="">
+        <div id="totpSetup" class="totpSetup">
+            <p id="instructions" class="text-white">Scan this QR code with a supported 2FA app, such as Google Authenticator, and enter the code shown.</p>
+            <div class="numbers" id="numbers">
+                <input type="number" id="code-0" class="otp-number" maxlength="1" oninput="this.value=this.value[0]; $('#code-1').focus()" onfocus="this.value = ''">
+                <input type="number" id="code-1" class="otp-number" maxlength="1" oninput="this.value=this.value[0]; $('#code-2').focus()" onfocus="this.value = ''">
+                <input type="number" id="code-2" class="otp-number" maxlength="1" oninput="this.value=this.value[0]; $('#code-3').focus()" onfocus="this.value = ''">
+                <input type="number" id="code-3" class="otp-number" maxlength="1" oninput="this.value=this.value[0]; $('#code-4').focus()" onfocus="this.value = ''">
+                <input type="number" id="code-4" class="otp-number" maxlength="1" oninput="this.value=this.value[0]; $('#code-5').focus()" onfocus="this.value = ''">
+                <input type="number" id="code-5" class="otp-number" maxlength="1" oninput="this.value=this.value[0];" onfocus="this.value = ''">
+            </div>
+        </div>
     </div>
 </body>
 </html>
