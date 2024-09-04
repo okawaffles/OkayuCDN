@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { admins, BASE_DIRNAME, Router, version } from '../main';
-import { HandleBadRequest, ValidateAuthorizationRequest, ValidateLoginGET, ValidateToken } from '../util/sanitize';
+import { HandleBadRequest, TestMenuValidation, ValidateAuthorizationRequest, ValidateLoginGET, ValidateToken } from '../util/sanitize';
 import { GetUserFromToken, PrefersLogin } from '../util/secure';
 import { rmSync } from 'node:fs';
 import { TOKEN_DATABASE_PATH } from '../util/paths';
@@ -21,8 +21,7 @@ export function RegisterSimpleRoutes() {
     Router.get('/info', (req: Request, res: Response) => res.render('info.ejs'));
 
     // used for testing features not ready for release, or just very specific issues
-    Router.get('/test', (req: Request, res: Response) => {
-        if (req.query.invokeError == '400') return res.status(400).render('err400.ejs');
+    Router.get('/test', TestMenuValidation(), HandleBadRequest, (req: Request, res: Response) => {
         if (req.query.invokeError == '500') return res.status(500).render('err500.ejs');
         if (req.query.aprilfools == 'true') return res.render('assets/aprilfools/home', {version:'TEST PAGE'});
 
@@ -64,5 +63,9 @@ export function RegisterSimpleRoutes() {
      * This route is for the April Fools homepage
      * It's to hide the YouTube link so you can't see that it leads to... yk 
      */
-    Router.get('/info/newDirection', (req: Request, res: Response) => res.redirect('https://youtu.be/dQw4w9WgXcQ'));
+    Router.get('/info/newDirection', (req: Request, res: Response) => {
+        // stop foiling my plans!!!
+        if (!req.headers['accept-language']) return res.status(403).end();
+        else res.redirect('https://youtu.be/dQw4w9WgXcQ'); 
+    });
 }

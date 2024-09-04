@@ -68,7 +68,7 @@ function GetSort(type) {
     }
 }
 
-const EXPERIMENT_NEW_LIST_ITEMS = document.cookie.includes('new_mybox=new-list-demo') && !IS_MOBILE;
+// const EXPERIMENT_NEW_LIST_ITEMS = document.cookie.includes('new_mybox=new-list-demo') && !IS_MOBILE;
 const EXPERIMENT_NEW_LAYOUT = document.cookie.includes('new_mybox=new-layout') && !IS_MOBILE;
 
 
@@ -98,7 +98,7 @@ function AddItem(item, id, private) {
     if (item.name.startsWith('LATEST.UPLOADING.')) return;
     let element; 
 
-    if (EXPERIMENT_NEW_LIST_ITEMS)
+    if (EXPERIMENT_NEW_LAYOUT)
         element = generateItemNew(id, item.name, parseStorageAmount(item.size), alternate, private);
     else 
         element = generateItem(id, item.name, parseStorageAmount(item.size), alternate, private);
@@ -146,23 +146,26 @@ function parseStorageAmount(bytes) {
 /* Moved from old script */
 
 function generateItemNew(id, item, fsize, alternate, private) {
-    return `
-    <div id="item-${id}" class="content_items new_list_item ${alternate?'alternate':''}">
-        <div class="top">
-            <div class="left">
-                <span class="size" id="size-${id}">${fsize}${private?'<i class="fa-solid fa-lock"></i>':''}</span>
-                <p class="name">${item}</p>
-            </div>
-            <div class="right">
-                <button class="share desktop new_button" id="share-content-${id}" onclick="share('${item}', ${id}, false)"><i class="fa-solid fa-arrow-up-right-from-square"></i> Share</button>
-                <button class="view desktop new_button" onclick="view('${item}')"><i class="fa-solid fa-eye"></i> View</button>
-                <button class="dl desktop new_button" onclick="download('${item}')"><i class="fa-solid fa-download"></i> Download</button>
-                <button class="btn-orange visibility desktop new_button" id="change-visibility-${id}" onclick="changeVisibility('${item}', ${id})">${private?'<i class="fa-solid fa-lock-open"></i> Un-Private':'<i class="fa-solid fa-lock"></i> Private'}</button>
-                <button class="btn-red delete desktop new_button" id="delete-item-${id}" onclick="startDeleteSequence('${item}', ${id}, false)"><i class="fa-solid fa-trash-can"></i> Delete</button>
-            </div>
+    return `<div id="item-${id}" class="content_items ${alternate?'alternate':''}">
+    <div class="top">
+        <div class="left">
+            <span class="size" id="size-${id}">${fsize}    ${private?'<i class="fa-solid fa-lock"></i>':''}</span>
+            <p class="name">${item}</p>
+        </div>
+        <div class="right">
+            <button class="view desktop mybox_experiment" onclick="view('${item}')"><i class="fa-solid fa-eye"></i> View</button>
+            <button class="dropdown okayu-green" id="showhide-button-${id}" onclick="dropdown(${id})">
+                <i class="fa-solid fa-caret-down"></i>
+            </button>
         </div>
     </div>
-    `;
+    <div class="bottom" id="showhide-id-${id}">
+        <button class="share desktop" id="share-content-${id}" onclick="share('${item}', ${id}, false)"><i class="fa-solid fa-arrow-up-right-from-square"></i> Share</button>
+        <button class="dl desktop" onclick="download('${item}')"><i class="fa-solid fa-download"></i> Download</button>
+        <button class="btn-orange visibility desktop" id="change-visibility-${id}" onclick="changeVisibility('${item}', ${id})">${private?'<i class="fa-solid fa-lock-open"></i> Make Public':'<i class="fa-solid fa-lock"></i> Make Private'}</button>
+        <button class="btn-red delete desktop" id="delete-item-${id}" onclick="startDeleteSequence('${item}', ${id}, false)"><i class="fa-solid fa-trash-can"></i> Delete</button>
+    </div>
+</div>`;
 }
 
 function generateItem(id, item, fsize, alternate, private) {

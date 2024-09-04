@@ -100,3 +100,7 @@ export const ValidateAdminBanIP = () => [
 export const ValidateVideoStreamParams = () => [
     header('range').notEmpty().escape().isString().optional()
 ];
+
+export const TestMenuValidation = () => [
+    query('invokeError').notEmpty().escape().isLength({min:3,max:3}).optional()
+];
