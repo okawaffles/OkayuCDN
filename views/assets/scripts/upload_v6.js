@@ -27,6 +27,8 @@ function parseStorageAmount(bytes) {
 
 
 function start() {
+    if (document.cookie.includes('okayu-experiment=new-font')) document.body.style = 'font-family: RoundedMplusMedium !important';
+
     let totalStorage = 0;
     let usedStorage = 0;
 
@@ -237,14 +239,3 @@ $(window).on('beforeunload', (e) => {
         e.preventDefault();
     }
 });
-
-// experiment font
-if (document.cookie.includes('okayu-experiment=new-font')) {
-    const elements = document.getElementsByTagName('*');
-    for (let i = 0; i < elements.length; i++) {
-        // console.log(elements[i].tagName);
-        if (elements[i].tagName != 'I') {
-            elements[i].style = 'font-family: RoundedMplusMedium !important';
-        }
-    }
-}

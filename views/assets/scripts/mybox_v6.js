@@ -7,11 +7,12 @@ const IS_MOBILE = navigator.userAgent.includes('Android') || navigator.userAgent
 $(document).ready(() => {
     // experiment font
     if (document.cookie.includes('okayu-experiment=new-font')) {
-        document.body.style.fontFamily = 'RoundedMplusMedium.ttf !important';
-
-        document.querySelectorAll('*').forEach(function(element) {
-            element.style.fontFamily = 'RoundedMplusMedium.ttf !important';
-        });
+        const styleSheet = document.styleSheets[0]; // Get the first stylesheet
+        for (let i = 0; i < styleSheet.cssRules.length; i++) {
+            if (styleSheet.cssRules[i].selectorText === '*') {
+                styleSheet.cssRules[i].style.fontFamily = 'RoundedMplusMedium';
+            }
+        }
     }
 
     $.getJSON('/api/whoami', (data) => {
@@ -41,7 +42,7 @@ function LoadBox() {
 
         $('#used').text(parseStorageAmount(data.used));
         $('#total').text(parseStorageAmount(data.total));
-        $('#fill').css('width', `${(data.used / data.total)*20}em`);
+        $('#fill').css('width', `${(data.used / data.total) * 20}em`);
         $('#newStorageAmount').css('visibility', 'visible');
 
         RenderBox();
@@ -51,27 +52,27 @@ function LoadBox() {
 function GetSort(type) {
     switch (type) {
     case 'default':
-        return function(a, b) {
+        return function (a, b) {
             if (a.name < b.name) return -1; else return 1;
         };
     case 'size-large':
-        return function(a, b) {
+        return function (a, b) {
             if (a.size > b.size) return -1; else return 1;
         };
     case 'size-small':
-        return function(a, b) {
+        return function (a, b) {
             if (a.size < b.size) return -1; else return 1;
         };
     case 'date-new':
-        return function(a, b) {
+        return function (a, b) {
             if (a.date > b.date) return -1; else return 1;
         };
     case 'date-old':
-        return function(a, b) {
+        return function (a, b) {
             if (a.date < b.date) return -1; else return 1;
         };
     default:
-        return function(a, b) {
+        return function (a, b) {
             if (a.name < b.name) return -1; else return 1;
         };
     }
@@ -105,13 +106,13 @@ let alternate = true;
 function AddItem(item, id, private) {
     if (private) console.log(`${item} is private`);
     if (item.name.startsWith('LATEST.UPLOADING.')) return;
-    let element; 
+    let element;
 
     if (EXPERIMENT_NEW_LAYOUT)
         element = generateItemNew(id, item.name, parseStorageAmount(item.size), alternate, private);
-    else 
+    else
         element = generateItem(id, item.name, parseStorageAmount(item.size), alternate, private);
-        
+
     alternate = !alternate;
 
     $('#content_container').append(element);
@@ -139,9 +140,9 @@ function dropdown(id) {
 function parseStorageAmount(bytes) {
     let formatted = '';
 
-    if (bytes > 750*1024*1024)
+    if (bytes > 750 * 1024 * 1024)
         formatted = (((bytes / 1024) / 1024) / 1024).toFixed(2) + 'GB';
-    else if (bytes > 750*1024)
+    else if (bytes > 750 * 1024)
         formatted = ((bytes / 1024) / 1024).toFixed(2) + 'MB';
     else if (bytes > 1024)
         formatted = (bytes / 1024).toFixed(2) + 'KB';
@@ -155,10 +156,10 @@ function parseStorageAmount(bytes) {
 /* Moved from old script */
 
 function generateItemNew(id, item, fsize, alternate, private) {
-    return `<div id="item-${id}" class="content_items ${alternate?'alternate':''}">
+    return `<div id="item-${id}" class="content_items ${alternate ? 'alternate' : ''}">
     <div class="top">
         <div class="left">
-            <span class="size" id="size-${id}">${fsize}    ${private?'<i class="fa-solid fa-lock"></i>':''}</span>
+            <span class="size" id="size-${id}">${fsize}    ${private ? '<i class="fa-solid fa-lock"></i>' : ''}</span>
             <p class="name">${item}</p>
         </div>
         <div class="right">
@@ -171,17 +172,17 @@ function generateItemNew(id, item, fsize, alternate, private) {
     <div class="bottom" id="showhide-id-${id}">
         <button class="share desktop" id="share-content-${id}" onclick="share('${item}', ${id}, false)"><i class="fa-solid fa-arrow-up-right-from-square"></i> Share</button>
         <button class="dl desktop" onclick="download('${item}')"><i class="fa-solid fa-download"></i> Download</button>
-        <button class="btn-orange visibility desktop" id="change-visibility-${id}" onclick="changeVisibility('${item}', ${id})">${private?'<i class="fa-solid fa-lock-open"></i> Make Public':'<i class="fa-solid fa-lock"></i> Make Private'}</button>
+        <button class="btn-orange visibility desktop" id="change-visibility-${id}" onclick="changeVisibility('${item}', ${id})">${private ? '<i class="fa-solid fa-lock-open"></i> Make Public' : '<i class="fa-solid fa-lock"></i> Make Private'}</button>
         <button class="btn-red delete desktop" id="delete-item-${id}" onclick="startDeleteSequence('${item}', ${id}, false)"><i class="fa-solid fa-trash-can"></i> Delete</button>
     </div>
 </div>`;
 }
 
 function generateItem(id, item, fsize, alternate, private) {
-    return `<div id="item-${id}" class="content_items ${alternate?'alternate':''}">
+    return `<div id="item-${id}" class="content_items ${alternate ? 'alternate' : ''}">
     <div class="top">
         <div class="left">
-            <span class="size" id="size-${id}">${fsize}    ${private?'<i class="fa-solid fa-lock"></i>':''}</span>
+            <span class="size" id="size-${id}">${fsize}    ${private ? '<i class="fa-solid fa-lock"></i>' : ''}</span>
             <p class="name">${item}</p>
         </div>
         <div class="right">
@@ -194,13 +195,13 @@ function generateItem(id, item, fsize, alternate, private) {
         <button class="share desktop" id="share-content-${id}" onclick="share('${item}', ${id}, false)"><i class="fa-solid fa-arrow-up-right-from-square"></i> Share</button>
         <button class="view desktop" onclick="view('${item}')"><i class="fa-solid fa-eye"></i> View</button>
         <button class="dl desktop" onclick="download('${item}')"><i class="fa-solid fa-download"></i> Download</button>
-        <button class="btn-orange visibility desktop" id="change-visibility-${id}" onclick="changeVisibility('${item}', ${id})">${private?'<i class="fa-solid fa-lock-open"></i> Make Public':'<i class="fa-solid fa-lock"></i> Make Private'}</button>
+        <button class="btn-orange visibility desktop" id="change-visibility-${id}" onclick="changeVisibility('${item}', ${id})">${private ? '<i class="fa-solid fa-lock-open"></i> Make Public' : '<i class="fa-solid fa-lock"></i> Make Private'}</button>
         <button class="btn-red delete desktop" id="delete-item-${id}" onclick="startDeleteSequence('${item}', ${id}, false)"><i class="fa-solid fa-trash-can"></i> Delete</button>
 
         <button class="share mobile" id="share-content-${id}" onclick="share('${item}', ${id}, true)"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
         <button class="view mobile" onclick="view('${item}')"><i class="fa-solid fa-eye"></i></button>
         <button class="dl mobile" onclick="download('${item}')"><i class="fa-solid fa-download"></i></button>
-        <button class="btn-orange visibility mobile" id="m-change-visibility-${id}" onclick="changeVisibility('${item}', ${id})">${private?'<i class="fa-solid fa-lock-open"></i>':'<i class="fa-solid fa-lock"></i>'}</button>
+        <button class="btn-orange visibility mobile" id="m-change-visibility-${id}" onclick="changeVisibility('${item}', ${id})">${private ? '<i class="fa-solid fa-lock-open"></i>' : '<i class="fa-solid fa-lock"></i>'}</button>
         <button class="btn-red delete mobile" id="m-delete-item-${id}" onclick="startDeleteSequence('${item}', ${id}, true)"><i class="fa-solid fa-trash-can"></i></button>
     </div>
 </div>`;
@@ -221,7 +222,7 @@ function changeVisibility(item, id) {
     $.ajax({
         type: 'PATCH',
         url: '/api/changeVisibility',
-        data: {id:item},
+        data: { id: item },
         statusCode: {
             400: () => {
                 alert('Failed to update visibility.');
@@ -231,10 +232,10 @@ function changeVisibility(item, id) {
 
                 if (IS_MOBILE) {
                     isPrivate = $(`#m-change-visibility-${id}`).html() != '<i class="fa-solid fa-lock-open" aria-hidden="true"></i>';
-                    $(`#m-change-visibility-${id}`).html(isPrivate?'<i class="fa-solid fa-lock-open"></i>':'<i class="fa-solid fa-lock"></i>');
+                    $(`#m-change-visibility-${id}`).html(isPrivate ? '<i class="fa-solid fa-lock-open"></i>' : '<i class="fa-solid fa-lock"></i>');
                 } else {
                     isPrivate = $(`#change-visibility-${id}`).html() != '<i class="fa-solid fa-lock-open" aria-hidden="true"></i> Make Public';
-                    $(`#change-visibility-${id}`).html(isPrivate?'<i class="fa-solid fa-lock-open"></i> Make Public':'<i class="fa-solid fa-lock"></i> Make Private');
+                    $(`#change-visibility-${id}`).html(isPrivate ? '<i class="fa-solid fa-lock-open"></i> Make Public' : '<i class="fa-solid fa-lock"></i> Make Private');
                 }
 
                 if (isPrivate) {
@@ -253,37 +254,37 @@ function changeVisibility(item, id) {
 function share(item, id, mobile) {
     const tl_share = '<i class="fa-solid fa-arrow-up-right-from-square"></i> Share';
     const tl_share_mobile = '<i class="fa-solid fa-arrow-up-right-from-square"></i>';
-    const tl_copied = `<i class="fa-solid fa-arrow-up-right-from-square"></i></i><strong>  ${(document.cookie.includes('language=ja-jp'))? 'リンクがコピーしました' : 'Copied link!' }</strong>`;
-    const tl_nvgt_text = document.cookie.includes('language=ja-jp')?'OkayuCDNで僕のファイルを見ます！':'View my file on OkayuCDN!';
+    const tl_copied = `<i class="fa-solid fa-arrow-up-right-from-square"></i></i><strong>  ${(document.cookie.includes('language=ja-jp')) ? 'リンクがコピーしました' : 'Copied link!'}</strong>`;
+    const tl_nvgt_text = document.cookie.includes('language=ja-jp') ? 'OkayuCDNで僕のファイルを見ます！' : 'View my file on OkayuCDN!';
 
     if (mobile) {
         $.getJSON(`/api/shorturl/${USERNAME}/${item}`, (data) => {
-            try { 
+            try {
                 navigator.share({
-                    title:'OkayuCDN',
-                    text:tl_nvgt_text,
-                    url:`${DOMAIN}/.${data.id}`
-                }); 
-            } catch(e) { 
+                    title: 'OkayuCDN',
+                    text: tl_nvgt_text,
+                    url: `${DOMAIN}/.${data.id}`
+                });
+            } catch (e) {
                 navigator.clipboard.writeText(`${DOMAIN}/.${data.id}`);
                 document.getElementById(`share-content-${id}`).innerHTML = tl_copied;
                 setTimeout(() => {
-                    document.getElementById(`share-content-${id}`).innerHTML = mobile?tl_share_mobile : tl_share;
+                    document.getElementById(`share-content-${id}`).innerHTML = mobile ? tl_share_mobile : tl_share;
                 }, 1500);
             }
         });
     } else {
-        try { 
+        try {
             navigator.share({
-                title:'OkayuCDN',
-                text:tl_nvgt_text,
-                url:`${DOMAIN}/@${USERNAME}/${item}`
-            }); 
-        } catch(e) { 
+                title: 'OkayuCDN',
+                text: tl_nvgt_text,
+                url: `${DOMAIN}/@${USERNAME}/${item}`
+            });
+        } catch (e) {
             navigator.clipboard.writeText(`${DOMAIN}/@${USERNAME}/${item}`);
             document.getElementById(`share-content-${id}`).innerHTML = tl_copied;
             setTimeout(() => {
-                document.getElementById(`share-content-${id}`).innerHTML = mobile?tl_share_mobile : tl_share;
+                document.getElementById(`share-content-${id}`).innerHTML = mobile ? tl_share_mobile : tl_share;
             }, 1500);
         }
     }
@@ -320,7 +321,7 @@ function deleteItemRequest(item, id) {
     $.ajax({
         type: 'DELETE',
         url: '/api/deleteItem',
-        data: {id:item},
+        data: { id: item },
         statusCode: {
             400: () => {
                 alert('Failed to delete item');
