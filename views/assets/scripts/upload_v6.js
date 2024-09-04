@@ -237,3 +237,14 @@ $(window).on('beforeunload', (e) => {
         e.preventDefault();
     }
 });
+
+// experiment font
+if (document.cookie.includes('okayu-experiment=new-font')) {
+    const elements = document.getElementsByTagName('*');
+    for (let i = 0; i < elements.length; i++) {
+        // console.log(elements[i].tagName);
+        if (elements[i].tagName != 'I') {
+            elements[i].style = 'font-family: RoundedMplusMedium !important';
+        }
+    }
+}

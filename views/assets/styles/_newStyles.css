@@ -3,6 +3,11 @@
     src: url("/assets/fonts/GenJyuuGothic.ttf");
 }
 
+@font-face {
+    font-family: RoundedMplusMedium;
+    src: url("/assets/fonts/RoundedMplusMedium.ttf");
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -807,6 +812,10 @@ span.big-button {
     justify-self: center;
     align-self: center;
     margin-bottom: 1rem;
+}
+
+button.mybox_experiment {
+    height: 2em;
 }
 
 @media screen and (max-width: 600px) {

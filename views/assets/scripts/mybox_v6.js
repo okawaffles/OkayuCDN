@@ -5,6 +5,15 @@ let PROTECTED_BOX_ITEMS = [];
 const IS_MOBILE = navigator.userAgent.includes('Android') || navigator.userAgent.includes('iOS');
 
 $(document).ready(() => {
+    // experiment font
+    if (document.cookie.includes('okayu-experiment=new-font')) {
+        document.body.style.fontFamily = 'RoundedMplusMedium.ttf !important';
+
+        document.querySelectorAll('*').forEach(function(element) {
+            element.style.fontFamily = 'RoundedMplusMedium.ttf !important';
+        });
+    }
+
     $.getJSON('/api/whoami', (data) => {
         if (data.result != 200) {
             return document.location = '/login?redir=/mybox';
