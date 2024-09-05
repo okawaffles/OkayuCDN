@@ -25,31 +25,32 @@ function parseStorageAmount(bytes) {
     return formatted;
 }
 
+let USED_STORAGE, TOTAL_STORAGE;
 
 function start() {
     if (document.cookie.includes('okayu-experiment=new-font')) document.body.style = 'font-family: RoundedMplusMedium !important';
 
-    let totalStorage = 0;
-    let usedStorage = 0;
+    TOTAL_STORAGE = 0;
+    USED_STORAGE = 0;
 
     // Get user's storage
     $.getJSON('/api/storage', (data) => {
         if (data.error && data.reason == 'needs_login') document.location = '/login?redir=/upload';
 
         // we only care about the storage numbers right now
-        usedStorage = data.used;
-        totalStorage = data.total;
+        USED_STORAGE = data.used;
+        TOTAL_STORAGE = data.total;
 
-        if (usedStorage >= totalStorage) {
+        if (USED_STORAGE >= TOTAL_STORAGE) {
             alert('It appears you\'ve run out of storage! Head over to My Box to delete some content before uploading!');
             document.location = '/mybox';
             return;
         }
 
         // set up the new storage bar
-        $('#used').text(parseStorageAmount(usedStorage));
-        $('#total').text(parseStorageAmount(totalStorage));
-        $('#fill').css('width', `${(usedStorage / totalStorage)*20}em`);
+        $('#used').text(parseStorageAmount(USED_STORAGE));
+        $('#total').text(parseStorageAmount(TOTAL_STORAGE));
+        $('#fill').css('width', `${(USED_STORAGE / TOTAL_STORAGE)*20}em`);
         $('#newStorageAmount').css('visibility', 'visible');
 
         // allow the rest of the page to load
@@ -106,9 +107,12 @@ function FilePickerClicked() {
 
 function UpdateFileName() {
     $('#filename').text($('#uploaded')[0].files[0].name);
+    let file_size = $('#uploaded')[0].files[0].size;
+
+    $('#fill-preview').css('width', `${((USED_STORAGE + file_size) / TOTAL_STORAGE)*20}em`);
 
     const chunk_size = 1024*1024*5; // 5MB chunks
-    const total_chunks = Math.ceil($('#uploaded')[0].files[0].size / chunk_size);
+    const total_chunks = Math.ceil(file_size / chunk_size);
     $('#approxTime').text(`Approximate Upload Time: ${CalculateApproxUploadTime(total_chunks)}`);
 }
 
@@ -117,6 +121,8 @@ function FPDrag(ev) { ev.preventDefault(); }
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function FPDrop(ev) {
     ev.preventDefault();
+
+    $('#fill').css('width', `${(USED_STORAGE / TOTAL_STORAGE)*20}em`);
 
     const temporaryDataTransfer = new DataTransfer();
     temporaryDataTransfer.items.add(ev.dataTransfer.files[0]);

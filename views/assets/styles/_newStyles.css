@@ -1094,6 +1094,16 @@ button.mybox_experiment {
     height: 2.1em;
     z-index: 2;
 }
+#newStorageAmount #fill-preview {
+    position: absolute;
+    background-color: var(--active-primary-hover);
+    /* border: inset .25rem solid var(--okayucdn-green); */
+    border-radius: 16px;
+    width: 0em;
+    height: 2.1em;
+    z-index: 2;
+    transition: .5s all;
+}
 #newStorageAmount .texts {
     display: flex;
     justify-content: space-between;
