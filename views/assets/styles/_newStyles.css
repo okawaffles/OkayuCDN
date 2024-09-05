@@ -616,6 +616,14 @@ button:hover {
     background-color: var(--active-button-hover);
 }
 
+.go:disabled {
+    opacity: 25%;
+}
+.go:disabled:hover {
+    background-color: var(--active-button);
+    cursor: not-allowed;
+}
+
 span.big-button {
     display: flex;
     justify-content: center;

@@ -67,6 +67,10 @@ function start() {
 
     // upload button!
     $('#uploadButton').on('click', StartFileUpload);
+
+    $('#filename_input').focusout(() => {
+        $('#uploadButton').prop('disabled', $('#filename_input').val() == '');
+    }); 
 }
 
 /**
