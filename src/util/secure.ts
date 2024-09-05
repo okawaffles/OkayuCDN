@@ -405,7 +405,7 @@ export function RegisterNewAccount(username: string, password: string, email: st
                 email: email,
                 realname: realname,
                 hasLargeStorage: false,
-                storageAmount: 25*1024*1024*1024, // 25gb
+                storageAmount: 10*1024*1024*1024, // 10gb, used to be 25gb
                 preferences: {
                     language: 0
                 },
