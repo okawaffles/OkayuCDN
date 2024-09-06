@@ -340,6 +340,12 @@ button:hover {
     animation-delay: 1250ms;
 }
 
+@media screen and (max-width: 1700px) and (min-width: 600px) {
+    .chara-center {
+        width: 20%;
+    }
+}
+
 @keyframes charaFly {
     0% {
         bottom: -100%;
@@ -499,6 +505,10 @@ button:hover {
     font-size: 1.5em;
     margin-top: .5em;
     margin-bottom: .5em;
+}
+
+.noacc {
+    margin-bottom: 2em;
 }
 
 @media screen and (max-width: 1700px) {
@@ -836,6 +846,13 @@ span.big-button {
 
 button.mybox_experiment {
     height: 2em;
+}
+
+@media screen and (max-width: 1700px) {
+    .content_items button:not(.dropdown) {
+        padding: 9px 12px;
+        font-size: 1rem;
+    }
 }
 
 @media screen and (max-width: 600px) {
