@@ -768,7 +768,7 @@ span.big-button {
     margin-bottom: 7px;
     background-color: var(--active-mybox-item);
     padding: 6px;
-    transition: ease-in-out 1s;
+    /* transition: ease-in-out 1s; */
 }
 .alternate {
     background-color: var(--active-mybox-item-alternate);
