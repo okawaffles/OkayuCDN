@@ -501,6 +501,12 @@ button:hover {
     margin-bottom: .5em;
 }
 
+@media screen and (max-width: 1700px) {
+    .okayu-login .panel {
+        width: 28rem;
+    }
+}
+
 @media screen and (max-width: 600px) {
     .okayu-login .separator {
         width: 90%;
@@ -649,6 +655,12 @@ span.big-button {
 .input-error {
     color: var(--active-button-red);
     text-align: center;
+}
+
+@media screen and (max-width: 1700px) {
+    .signup-panel {
+        width: 28rem;
+    }
 }
 
 @media screen and (max-width: 600px) {
