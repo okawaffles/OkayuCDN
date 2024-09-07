@@ -2,6 +2,7 @@ let DOMAIN = 'https://okayucdn.com';
 let USERNAME = 'anonymous';
 let BOX_ITEMS = [];
 let PROTECTED_BOX_ITEMS = [];
+let USED_STORAGE, TOTAL_STORAGE;
 const IS_MOBILE = navigator.userAgent.includes('Android') || navigator.userAgent.includes('iOS');
 
 $(document).ready(() => {
@@ -40,9 +41,13 @@ function LoadBox() {
         PROTECTED_BOX_ITEMS = data.protected_files;
         console.log(data);
 
-        $('#used').text(parseStorageAmount(data.used));
-        $('#total').text(parseStorageAmount(data.total));
-        $('#fill').css('width', `${(data.used / data.total) * 20}em`);
+        TOTAL_STORAGE = data.total;
+        USED_STORAGE = data.used;
+
+        $('#used').text(parseStorageAmount(USED_STORAGE));
+        $('#total').text(parseStorageAmount(TOTAL_STORAGE));
+        $('#fill').css('width', `${(USED_STORAGE / TOTAL_STORAGE) * 20}em`);
+        $('#mybox-fill-preview').css('width', `${(USED_STORAGE / TOTAL_STORAGE)*20}em`);
         $('#newStorageAmount').css('visibility', 'visible');
 
         RenderBox();
@@ -310,8 +315,12 @@ function startDeleteSequence(item, id, mobile) {
 
     if ($(`#delete-item-${id}`).html() == '<i class="fa-solid fa-trash-can" aria-hidden="true"></i> Delete') {
         $(`#delete-item-${id}`).html('<i class="fa-solid fa-check"></i> Are you sure?');
+
+        PreviewFreedStorage(id);
+
         setTimeout(() => {
             $(`#delete-item-${id}`).html('<i class="fa-solid fa-trash-can" aria-hidden="true"></i> Delete');
+            UnPreviewFreedStorage();
         }, 3000);
     } else {
         deleteItemRequest(item, id);
@@ -339,3 +348,12 @@ function deleteItemRequest(item, id) {
 $('#body').scroll(() => {
     $('#overlay').css('top', $(this).scrollTop());
 });
+
+function PreviewFreedStorage(id) {
+    let item_size = BOX_ITEMS[id].size;
+
+    $('#mybox-fill-preview').css('width', `${((USED_STORAGE - item_size) / TOTAL_STORAGE)*20}em`);
+}
+function UnPreviewFreedStorage() {
+    $('#mybox-fill-preview').css('width', `${(USED_STORAGE / TOTAL_STORAGE)*20}em`);
+}

@@ -1141,6 +1141,20 @@ button.mybox_experiment {
     z-index: 2;
     transition: .5s all;
 }
+#newStorageAmount .mybox-fill-background {
+    background-color: var(--okayucdn-blue-hover) !important;
+    transition: all .5s ease;
+}
+#newStorageAmount .mybox-fill-preview {
+    position: absolute;
+    background-color: var(--okayucdn-blue);
+    /* border: inset .25rem solid var(--okayucdn-green); */
+    border-radius: 16px;
+    width: 0em;
+    height: 2.1em;
+    z-index: 2;
+    transition: all .5s ease;
+}
 #newStorageAmount .texts {
     display: flex;
     justify-content: space-between;
