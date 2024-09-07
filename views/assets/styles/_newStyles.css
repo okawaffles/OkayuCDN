@@ -14,14 +14,16 @@
     padding: 0;
     font-family: GenJyuuGothic;
 
-    --okayucdn-blue: #0087a9;
-    --okayucdn-blue-hover: #0088a983;
+    /* --okayucdn-blue: #0087a9;
+    --okayucdn-blue-hover: #0088a983; */
+    --okayucdn-blue: rgb(0, 135, 169);
+    --okayucdn-blue-hover: rgba(0, 136, 169, 0.5);
     --okayucdn-green: #00a987;
     --okayucdn-green-hover: #00a98783;
     --okayucdn-purple: #8200a9;
     --okayucdn-purple-hover: #8200a983;
     --okayucdn-orange: rgb(207, 113, 58);
-    --okayucdn-orange-hover: rgb(207, 113, 58, 0.9);
+    --okayucdn-orange-hover: rgb(207, 113, 58, 0.6);
     --progress-previous-green: #45ffbb;
     --progress-new-green: var(--okayucdn-green);
     
@@ -37,7 +39,7 @@
     --default-button: var(--okayucdn-blue);
     --default-button-hover: var(--okayucdn-blue-hover);
     --default-button-red: rgb(153, 30, 30);
-    --default-button-red-hover: rgba(150, 30, 30, 0.8);
+    --default-button-red-hover: rgba(150, 30, 30, 0.6);
     --default-mybox-item: #1a1f25;
     --default-mybox-item-alternate: #121518;
 

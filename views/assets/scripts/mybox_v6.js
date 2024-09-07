@@ -6,16 +6,6 @@ let USED_STORAGE, TOTAL_STORAGE;
 const IS_MOBILE = navigator.userAgent.includes('Android') || navigator.userAgent.includes('iOS');
 
 $(document).ready(() => {
-    // experiment font
-    if (document.cookie.includes('okayu-experiment=new-font')) {
-        const styleSheet = document.styleSheets[0]; // Get the first stylesheet
-        for (let i = 0; i < styleSheet.cssRules.length; i++) {
-            if (styleSheet.cssRules[i].selectorText === '*') {
-                styleSheet.cssRules[i].style.fontFamily = 'RoundedMplusMedium';
-            }
-        }
-    }
-
     $.getJSON('/api/whoami', (data) => {
         if (data.result != 200) {
             return document.location = '/login?redir=/mybox';
@@ -83,10 +73,6 @@ function GetSort(type) {
     }
 }
 
-// const EXPERIMENT_NEW_LIST_ITEMS = document.cookie.includes('new_mybox=new-list-demo') && !IS_MOBILE;
-const EXPERIMENT_NEW_LAYOUT = document.cookie.includes('new_mybox=new-layout') && !IS_MOBILE;
-
-
 function RenderBox() {
     $('#content_container').css('display', 'none');
 
@@ -112,11 +98,8 @@ function AddItem(item, id, private) {
     if (private) console.log(`${item} is private`);
     if (item.name.startsWith('LATEST.UPLOADING.')) return;
     let element;
-
-    if (EXPERIMENT_NEW_LAYOUT)
-        element = generateItemNew(id, item.name, parseStorageAmount(item.size), alternate, private);
-    else
-        element = generateItem(id, item.name, parseStorageAmount(item.size), alternate, private);
+        
+    element = generateItem(id, item.name, parseStorageAmount(item.size), alternate, private);
 
     alternate = !alternate;
 
@@ -160,29 +143,6 @@ function parseStorageAmount(bytes) {
 
 /* Moved from old script */
 
-function generateItemNew(id, item, fsize, alternate, private) {
-    return `<div id="item-${id}" class="content_items ${alternate ? 'alternate' : ''}">
-    <div class="top">
-        <div class="left">
-            <span class="size" id="size-${id}">${fsize}    ${private ? '<i class="fa-solid fa-lock"></i>' : ''}</span>
-            <p class="name">${item}</p>
-        </div>
-        <div class="right">
-            <button class="view desktop mybox_experiment" onclick="view('${item}')"><i class="fa-solid fa-eye"></i> View</button>
-            <button class="dropdown okayu-green" id="showhide-button-${id}" onclick="dropdown(${id})">
-                <i class="fa-solid fa-caret-down"></i>
-            </button>
-        </div>
-    </div>
-    <div class="bottom" id="showhide-id-${id}">
-        <button class="share desktop" id="share-content-${id}" onclick="share('${item}', ${id}, false)"><i class="fa-solid fa-arrow-up-right-from-square"></i> Share</button>
-        <button class="dl desktop" onclick="download('${item}')"><i class="fa-solid fa-download"></i> Download</button>
-        <button class="btn-orange visibility desktop" id="change-visibility-${id}" onclick="changeVisibility('${item}', ${id})">${private ? '<i class="fa-solid fa-lock-open"></i> Make Public' : '<i class="fa-solid fa-lock"></i> Make Private'}</button>
-        <button class="btn-red delete desktop" id="delete-item-${id}" onclick="startDeleteSequence('${item}', ${id}, false)"><i class="fa-solid fa-trash-can"></i> Delete</button>
-    </div>
-</div>`;
-}
-
 function generateItem(id, item, fsize, alternate, private) {
     return `<div id="item-${id}" class="content_items ${alternate ? 'alternate' : ''}">
     <div class="top">
@@ -200,13 +160,13 @@ function generateItem(id, item, fsize, alternate, private) {
         <button class="share desktop" id="share-content-${id}" onclick="share('${item}', ${id}, false)"><i class="fa-solid fa-arrow-up-right-from-square"></i> Share</button>
         <button class="view desktop" onclick="view('${item}')"><i class="fa-solid fa-eye"></i> View</button>
         <button class="dl desktop" onclick="download('${item}')"><i class="fa-solid fa-download"></i> Download</button>
-        <button class="btn-orange visibility desktop" id="change-visibility-${id}" onclick="changeVisibility('${item}', ${id})">${private ? '<i class="fa-solid fa-lock-open"></i> Make Public' : '<i class="fa-solid fa-lock"></i> Make Private'}</button>
+        <button class="btn-orange visibility desktop" id="change-visibility-${id}" onclick="changeVisibility('${item}', ${id})">${private ? '<i class="fa-solid fa-lock"></i> Private' : '<i class="fa-solid fa-lock-open"></i> Public'}</button>
         <button class="btn-red delete desktop" id="delete-item-${id}" onclick="startDeleteSequence('${item}', ${id}, false)"><i class="fa-solid fa-trash-can"></i> Delete</button>
 
         <button class="share mobile" id="share-content-${id}" onclick="share('${item}', ${id}, true)"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
         <button class="view mobile" onclick="view('${item}')"><i class="fa-solid fa-eye"></i></button>
         <button class="dl mobile" onclick="download('${item}')"><i class="fa-solid fa-download"></i></button>
-        <button class="btn-orange visibility mobile" id="m-change-visibility-${id}" onclick="changeVisibility('${item}', ${id})">${private ? '<i class="fa-solid fa-lock-open"></i>' : '<i class="fa-solid fa-lock"></i>'}</button>
+        <button class="btn-orange visibility mobile" id="m-change-visibility-${id}" onclick="changeVisibility('${item}', ${id})">${private ? '<i class="fa-solid fa-lock"></i>' : '<i class="fa-solid fa-lock-open"></i>'}</button>
         <button class="btn-red delete mobile" id="m-delete-item-${id}" onclick="startDeleteSequence('${item}', ${id}, true)"><i class="fa-solid fa-trash-can"></i></button>
     </div>
 </div>`;
@@ -233,22 +193,29 @@ function changeVisibility(item, id) {
                 alert('Failed to update visibility.');
             },
             204: () => {
-                let isPrivate;
+                // we want this to be opposite because we will be toggling the state
+                const IS_PRIVATE = PROTECTED_BOX_ITEMS.indexOf(BOX_ITEMS[id]) == -1;
+                
+                if (IS_PRIVATE) {
+                    // change the button
+                    if (!IS_MOBILE) $(`#change-visibility-${id}`).html('<i class="fa-solid fa-lock"></i> Private');
+                    else $(`#m-change-visibility-${id}`).html('<i class="fa-solid fa-lock"></i>');
 
-                if (IS_MOBILE) {
-                    isPrivate = $(`#m-change-visibility-${id}`).html() != '<i class="fa-solid fa-lock-open" aria-hidden="true"></i>';
-                    $(`#m-change-visibility-${id}`).html(isPrivate ? '<i class="fa-solid fa-lock-open"></i>' : '<i class="fa-solid fa-lock"></i>');
-                } else {
-                    isPrivate = $(`#change-visibility-${id}`).html() != '<i class="fa-solid fa-lock-open" aria-hidden="true"></i> Make Public';
-                    $(`#change-visibility-${id}`).html(isPrivate ? '<i class="fa-solid fa-lock-open"></i> Make Public' : '<i class="fa-solid fa-lock"></i> Make Private');
-                }
+                    // add the lock icon to the size
+                    $(`#size-${id}`).html(`${parseStorageAmount(BOX_ITEMS[id].size)}    <i class="fa-solid fa-lock" aria-hidden="true"></i>`);
 
-                if (isPrivate) {
-                    let currentHTML = $(`#size-${id}`).html();
-                    $(`#size-${id}`).html(`${currentHTML}    <i class="fa-solid fa-lock" aria-hidden="true"></i>`);
+                    // we must add the item to the protected box items
+                    PROTECTED_BOX_ITEMS.push(BOX_ITEMS[id]);
                 } else {
-                    let currentHTML = $(`#size-${id}`).html().split(' ')[0];
-                    $(`#size-${id}`).html(currentHTML);
+                    // change the button
+                    if (!IS_MOBILE) $(`#change-visibility-${id}`).html('<i class="fa-solid fa-lock-open"></i> Public');
+                    else $(`#m-change-visibility-${id}`).html('<i class="fa-solid fa-lock-open"></i>');
+
+                    // remove the lock icon from the size
+                    $(`#size-${id}`).html(parseStorageAmount(BOX_ITEMS[id].size));
+
+                    // remove the item from the protected box items
+                    PROTECTED_BOX_ITEMS.splice(PROTECTED_BOX_ITEMS.indexOf(BOX_ITEMS[id]), 1);
                 }
             }
         }
