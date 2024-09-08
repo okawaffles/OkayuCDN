@@ -45,7 +45,7 @@ function EnableOTP() {
     $('#setuptotp').remove();
 
     $.getJSON('/api/2fa/setup', (data) => {
-        $('#qrcode').prop('src', data.qrcode);
+        $('#qrcode').prop('src', data.qrcode).css('display', 'revert');
         $('#totpSetup').css('display', 'flex');
         $('#numbers').css('display', 'flex');
         $('#instructions').css('display', 'flex');

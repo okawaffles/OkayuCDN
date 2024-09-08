@@ -1378,6 +1378,8 @@ button.mybox_experiment {
 }
 #instructions {
     display: none;
+    width: 100%;
+    justify-content: center;
 }
 
 .setup2fa {
@@ -1390,7 +1392,9 @@ button.mybox_experiment {
 
 .totpSetup {
     /* display: flex; */
+    width: 100%;
     justify-content: center;
+    flex-wrap: wrap;
 
     input[type=number]::-webkit-outer-spin-button,
     input[type=number]::-webkit-inner-spin-button {
@@ -1421,6 +1425,18 @@ button.mybox_experiment {
         background-color: var(--active-background-compliment);
         text-align: center;
     }
+}
+
+.validate2fa {
+    display: none;
+    margin-top: 1rem;
+}
+
+.go.small {
+    padding: 3px 12px !important;
+    height: 3em !important;
+    width: 10em !important;
+    font-size: 1rem !important;
 }
 
 
