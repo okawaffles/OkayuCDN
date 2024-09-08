@@ -5,7 +5,7 @@ import { RegisterRoutes } from './routes';
 
 /* load various data */
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-export const { paths, domain, announcement, admins, version_include_git_commit, ENABLE_ACCOUNT_CREATION, ENABLE_UPLOADING } = require(join(__dirname, '..', 'config.json'));
+export const { paths, domain, announcement, admins, version_include_git_commit, ENABLE_ACCOUNT_CREATION, ENABLE_UPLOADING, ENABLE_USE_OF_EMAIL_FEATURES, email } = require(join(__dirname, '..', 'config.json'));
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { port, DISABLE_ASCII_ART } = require(join(__dirname, '..', 'config.json'));
 

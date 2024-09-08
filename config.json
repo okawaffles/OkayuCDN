@@ -8,6 +8,7 @@
     "ENABLE_ACCOUNT_CREATION": true,
     "ENABLE_UPLOADING":true,
     "DISABLE_ASCII_ART": false,
+    "ENABLE_USE_OF_EMAIL_FEATURES":true,
     
     "announcement":{
         "active":false,
@@ -23,5 +24,12 @@
 
         "UPLOADS":"../content",
         "DATABASE":"../db"
+    },
+
+    "email": {
+        "__COMMENT__":"For authentication, these .ENV variables must be set: EMAIL_IAM_USER_NAME, EMAIL_SMTP_USER_NAME, EMAIL_SMTP_PASSWORD",
+
+        "endpoint": "email-smtp.us-east-2.amazonaws.com",
+        "port":465
     }
 }
