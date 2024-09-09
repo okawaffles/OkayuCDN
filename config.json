@@ -27,7 +27,7 @@
     },
 
     "email": {
-        "__COMMENT__":"For authentication, these .ENV variables must be set: EMAIL_IAM_USER_NAME, EMAIL_SMTP_USER_NAME, EMAIL_SMTP_PASSWORD",
+        "__COMMENT__":"For authentication, these .ENV variables must be set: EMAIL_SMTP_USER_NAME, EMAIL_SMTP_PASSWORD. AWS SES is used by default.",
 
         "endpoint": "email-smtp.us-east-2.amazonaws.com",
         "port":465

@@ -37,6 +37,12 @@ import { CreateNewToken } from './util/secure';
 config({path:join(__dirname, '..', '.ENV')});
 if (!process.env.SESSION_SECRET) process.env.SESSION_SECRET = CreateNewToken();
 
+import { SetUpMailConfig } from './email/config';
+if (ENABLE_USE_OF_EMAIL_FEATURES) { 
+    L.warn('Email features are on. This is highly experimental.');
+    SetUpMailConfig();
+}
+
 
 /* configure the server */
 export const Router: Express = express();

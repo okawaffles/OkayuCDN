@@ -1,4 +1,6 @@
 import { email } from '../main';
+import { CreateTransport } from './smtp';
+import { Transporter } from 'nodemailer';
 
 export interface EmailConfig {
     endpoint: string,
@@ -9,6 +11,8 @@ export interface EmailConfig {
 
 export let EMAIL_CONFIG: EmailConfig;
 
+export let TRANSPORT: Transporter;
+
 export function SetUpMailConfig() {
     EMAIL_CONFIG = {
         endpoint: email.endpoint,
@@ -16,4 +20,6 @@ export function SetUpMailConfig() {
         smtp_username: <string> process.env.EMAIL_SMTP_USER_NAME,
         smtp_password: <string> process.env.EMAIL_SMTP_PASSWORD
     };
+
+    TRANSPORT = CreateTransport();
 }

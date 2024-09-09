@@ -14,6 +14,7 @@ import { CreateLink } from '../api/shortener';
 import { ChangeTokenUsername, ReadIntents } from '../api/newtoken';
 import { AddIPBan, GetIPBans, RemoveIPBan } from '../util/ipManage';
 import { CheckOTP, GenerateQRImage, GetOTPSetupOptions } from '../api/otp';
+import { SendVerificationEmail } from '../email/verification';
 
 const L: Logger = new Logger('API');
 
@@ -347,6 +348,12 @@ export function RegisterAPIRoutes() {
         const data = matchedData(req);
         const id: string = CreateLink(data.username, data.item, true);
         res.json({id});
+    });
+
+    /* DEBUG */
+    Router.get('/api/email/test', async (req: Request, res: Response) => {
+        await SendVerificationEmail('okawaffles@gmail.com');
+        res.send('test email sent, see console for info');
     });
 }
 
