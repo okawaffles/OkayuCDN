@@ -5,6 +5,7 @@ import { IPBan, IPBanList } from '../types';
 import { Request, Response } from 'express';
 import { Logger } from 'okayulogger';
 import { red, yellowBright, bold } from 'chalk';
+import { ENABLE_DEBUG_LOGGING } from '../main';
 
 const L: Logger = new Logger('IP Management');
 
@@ -41,6 +42,8 @@ export function CheckIP(req: Request, res: Response, next: CallableFunction) {
     let IPAddress: string = 'IP Unavailable';
     IPAddress = <string> req.ip;
     if (IPAddress.startsWith('::ffff:')) IPAddress = IPAddress.split('::ffff:')[1];
+
+    if (ENABLE_DEBUG_LOGGING) L.debug(`checking if IP ${IPAddress} is banned...`);
 
     const ip_ban: IPBan | undefined = bannedIPs[<string> IPAddress];
 

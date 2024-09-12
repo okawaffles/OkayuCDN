@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Router, domain, version } from '../main';
+import { ENABLE_DEBUG_LOGGING, Router, domain, version } from '../main';
 import { join } from 'path';
 import { UPLOADS_PATH } from '../util/paths';
 import { HandleBadRequest, ValidateContentRequest, ValidateOptionalToken, ValidateShortURL, ValidateVideoStreamParams } from '../util/sanitize';
@@ -8,14 +8,19 @@ import { GetUserFromToken, IsContentProtected } from '../util/secure';
 import { matchedData } from 'express-validator';
 import { GetLinkData } from '../api/shortener';
 import { HandleVideoStreaming } from '../api/content';
+import { debug } from 'okayulogger';
 
 
 export function RegisterContentRoutes() {
+    if (ENABLE_DEBUG_LOGGING) debug('routes', 'registering content routes...');
+
     // main two content routes
     Router.get('/@:username/:item', ValidateContentRequest(), ValidateOptionalToken(), HandleBadRequest, (req: Request, res: Response) => {
         const data = matchedData(req);
         const username = data.username;
         const item = data.item;
+
+        if (ENABLE_DEBUG_LOGGING) debug('content', `preparing content ${username}/${item}`);
 
         if (item.startsWith('LATEST.UPLOADING.')) return res.status(404).render('notfound.ejs', {version}); // don't allow sending of pre-joined uploading files
 
@@ -26,13 +31,17 @@ export function RegisterContentRoutes() {
         if (!existsSync(pathOfContent)) return res.status(404).render('notfound.ejs', {version});
 
         if (IsContentProtected(username, item)) {
+            if (ENABLE_DEBUG_LOGGING) debug('content', 'content is protected, verifying ownership');
             if (data.token == undefined) return res.status(404).render('err401');
             if (GetUserFromToken(data.token).username != username) return res.status(404).render('err401');
         }
 
         if (pathOfContent.endsWith('.mp4') && !bypassVideoPage) {
+            if (ENABLE_DEBUG_LOGGING) debug('content', 'content is of type MP4 and bypassVideoPage is false, rendering the watchpage instead of sending the file');
             res.render('watchpage.ejs', {filename: item, domain, user: username});
         } else {
+            if (ENABLE_DEBUG_LOGGING) debug('content', 'sending raw content');
+
             if (data.intent == 'download') return res.download(pathOfContent);
             res.sendFile(pathOfContent);
         }
@@ -106,4 +115,6 @@ export function RegisterContentRoutes() {
         // handoff to api to handle the rest
         HandleVideoStreaming(req, res);
     });
+
+    if (ENABLE_DEBUG_LOGGING) debug('routes', 'done registering content routes');
 }

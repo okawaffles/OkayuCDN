@@ -1,18 +1,20 @@
 import { Request, Response } from 'express';
-import { admins, BASE_DIRNAME, Router, version } from '../main';
+import { admins, BASE_DIRNAME, Router, version, ENABLE_DEBUG_LOGGING } from '../main';
 import { HandleBadRequest, TestMenuValidation, ValidateAuthorizationRequest, ValidateLoginGET, ValidateToken } from '../util/sanitize';
 import { GetUserFromToken, PrefersLogin } from '../util/secure';
 import { rmSync } from 'node:fs';
 import { TOKEN_DATABASE_PATH } from '../util/paths';
 import { matchedData } from 'express-validator';
 import { join } from 'node:path';
-import { error } from 'okayulogger';
+import { error, debug } from 'okayulogger';
 import { IsAprilFools } from '../util/aprilfools';
 
 /**
  * These are routes that don't change much, such as /home and /info.
  */
 export function RegisterSimpleRoutes() {
+    if (ENABLE_DEBUG_LOGGING) debug('routes', 'registering simple routes...');
+
     Router.get('/home', (req: Request, res: Response) => {
         if (IsAprilFools()) return res.render('assets/aprilfools/home', {version});
         res.render('home', {version});
@@ -68,4 +70,5 @@ export function RegisterSimpleRoutes() {
         if (!req.headers['accept-language']) return res.status(403).end();
         else res.redirect('https://youtu.be/dQw4w9WgXcQ'); 
     });
+    if (ENABLE_DEBUG_LOGGING) debug('routes', 'done registering simple routes');
 }

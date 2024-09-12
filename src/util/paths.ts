@@ -1,12 +1,12 @@
 import { existsSync, mkdirSync } from 'node:fs';
-import { BASE_DIRNAME } from '../main';
+import { BASE_DIRNAME, ENABLE_DEBUG_LOGGING } from '../main';
 import { paths } from '../main';
 import { join } from 'node:path';
+import { debug } from 'okayulogger';
 
 
 export let DATABASE_PATH: string = '';
 export let UPLOADS_PATH: string = '';
-//export let UPLOADS_TEMP_PATH: string = '';
 export let USER_DATABASE_PATH: string = '';
 export let TOKEN_DATABASE_PATH: string = '';
 export let APPLICATION_DATABASE_PATH: string = '';
@@ -21,15 +21,18 @@ export function PreparePaths() {
 
     DATABASE_PATH = join(AppendedDirname, paths.DATABASE);
     UPLOADS_PATH = join(AppendedDirname, paths.UPLOADS);
-    //UPLOADS_TEMP_PATH = join(UPLOADS_PATH, '.uploading');
     USER_DATABASE_PATH = join(DATABASE_PATH, 'users');
     TOKEN_DATABASE_PATH = join(DATABASE_PATH, 'tokens');
     APPLICATION_DATABASE_PATH = join(DATABASE_PATH, 'applications');
+    if (ENABLE_DEBUG_LOGGING) debug('paths', `DATABASE_PATH will be exported as ${DATABASE_PATH}`);
+    if (ENABLE_DEBUG_LOGGING) debug('paths', `UPLOADS_PATH will be exported as ${UPLOADS_PATH}`);
+    if (ENABLE_DEBUG_LOGGING) debug('paths', `USER_DATABASE_PATH will be exported as ${USER_DATABASE_PATH}`);
+    if (ENABLE_DEBUG_LOGGING) debug('paths', `TOKEN_DATABASE_PATH will be exported as ${TOKEN_DATABASE_PATH}`);
+    if (ENABLE_DEBUG_LOGGING) debug('paths', `APPLICATION_DATABASE_PATH will be exported as ${APPLICATION_DATABASE_PATH}`);
 
     // ensure these paths exist
     if (!existsSync(DATABASE_PATH)) mkdirSync(DATABASE_PATH, {recursive: true});
     if (!existsSync(UPLOADS_PATH)) mkdirSync(UPLOADS_PATH, {recursive: true});
-    //if (!existsSync(UPLOADS_TEMP_PATH)) mkdirSync(UPLOADS_TEMP_PATH, {recursive: true});
     if (!existsSync(USER_DATABASE_PATH)) mkdirSync(USER_DATABASE_PATH, {recursive: true});
     if (!existsSync(TOKEN_DATABASE_PATH)) mkdirSync(TOKEN_DATABASE_PATH, {recursive: true});
     if (!existsSync(APPLICATION_DATABASE_PATH)) mkdirSync(APPLICATION_DATABASE_PATH, {recursive: true});

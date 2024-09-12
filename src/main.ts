@@ -1,15 +1,27 @@
 import express, { Express, static as staticFiles } from 'express';
-import { Logger } from 'okayulogger';
+import { Logger, debug } from 'okayulogger';
 import { join } from 'node:path';
 import { RegisterRoutes } from './routes';
 
-/* load various data */
+/* load various config settings */
+export const { 
+    paths, 
+    domain, 
+    announcement, 
+    admins, 
+    version_include_git_commit, 
+    ENABLE_ACCOUNT_CREATION, ENABLE_UPLOADING, ENABLE_USE_OF_EMAIL_FEATURES, ENABLE_DEBUG_LOGGING,
+    email 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-export const { paths, domain, announcement, admins, version_include_git_commit, ENABLE_ACCOUNT_CREATION, ENABLE_UPLOADING, ENABLE_USE_OF_EMAIL_FEATURES, email } = require(join(__dirname, '..', 'config.json'));
+} = require(join(__dirname, '..', 'config.json'));
+if (ENABLE_DEBUG_LOGGING) debug('preload', 'exported config variables loaded successfully');
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { port, DISABLE_ASCII_ART } = require(join(__dirname, '..', 'config.json'));
+if (ENABLE_DEBUG_LOGGING) debug('preload', 'local config variables loaded successfully');
 
 export const BASE_DIRNAME: string = __dirname;
+if (ENABLE_DEBUG_LOGGING) debug('preload', `BASE_DIRNAME will be exported as ${BASE_DIRNAME}`);
 
 import { PreparePaths } from './util/paths';
 PreparePaths(); // called to prepare exported paths
@@ -18,6 +30,7 @@ PreparePaths(); // called to prepare exported paths
 export let { version } = require(join(__dirname, '..', 'package.json')); // maybe change later...
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 if (version_include_git_commit) version = `${version} (${require('child_process').execSync('git rev-parse HEAD').toString().trim().slice(0, 7)})`;
+if (ENABLE_DEBUG_LOGGING) debug('preload', `loaded OkayuCDN version: ${version}`);
 
 // ascii art isn't necessary but i think its a nice touch
 import { readFileSync } from 'node:fs';
@@ -35,16 +48,20 @@ if (process.argv[0].includes('bun')) L.warn('Bun support is not guaranteed. It i
 import {config} from 'dotenv';
 import { CreateNewToken } from './util/secure';
 config({path:join(__dirname, '..', '.ENV')});
+if (ENABLE_DEBUG_LOGGING) debug('init', 'environment variables loaded successfully');
 if (!process.env.SESSION_SECRET) process.env.SESSION_SECRET = CreateNewToken();
 
 import { SetUpMailConfig } from './email/config';
 if (ENABLE_USE_OF_EMAIL_FEATURES) { 
+    // TODO: Check if variables are missing
+    if (ENABLE_DEBUG_LOGGING) debug('init', 'email is on, checking for missing variables is not present.');
     L.warn('Email features are on. This is highly experimental.');
     SetUpMailConfig();
 }
 
 
 /* configure the server */
+if (ENABLE_DEBUG_LOGGING) debug('init', 'configuring express...');
 export const Router: Express = express();
 
 Router.set('view engine', 'ejs');
@@ -95,6 +112,8 @@ Router.set('trust proxy', 1);
 
 Router.use('*', limiter);
 
+if (ENABLE_DEBUG_LOGGING) debug('init', 'express configured OK');
+
 // this handles logging requests
 RegisterRequestLogger();
 Router.use('*', CheckIP);
@@ -104,5 +123,6 @@ RegisterRoutes();
 
 // this will be run after registering all routes
 Router.listen(port).on('listening', () => {
+    if (ENABLE_DEBUG_LOGGING) L.debug('hello world!');
     L.info(`Listening on port ${port}!`);
 });

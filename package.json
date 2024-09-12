@@ -24,7 +24,7 @@
     "multer": "^1.4.5-lts.1",
     "mysql": "^2.18.1",
     "nodemailer": "^6.9.15",
-    "okayulogger": "^1.2.0",
+    "okayulogger": "^2.2.1",
     "otplib": "^12.0.1",
     "passport": "^0.7.0",
     "passport-oauth2": "^1.8.0",

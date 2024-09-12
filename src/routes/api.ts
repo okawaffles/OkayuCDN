@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'; 
-import { ENABLE_ACCOUNT_CREATION, ENABLE_UPLOADING, Router, admins, announcement, domain, version } from '../main';
+import { ENABLE_ACCOUNT_CREATION, ENABLE_DEBUG_LOGGING, ENABLE_UPLOADING, Router, admins, announcement, domain, version } from '../main';
 import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST, ValidateDeletionRequest, ValidatePasswordRequest, ValidateSignupPOST, ValidateAdminDeletionRequest, ValidateAdminStorageRequest, ValidateUploadChunk, ValidateContentRequest, ValidateTokenBothModes, ValidateAdminBanIP, ValidateUsernameCheck } from '../util/sanitize';
 import { matchedData } from 'express-validator';
 import { StoreTOTPSetup, ChangeFileVisibility, StoreTOTPFinal, GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewAccount, RegisterNewToken, UpdateUserPassword, VerifyLoginCredentials, VerifyUserExists } from '../util/secure';
@@ -19,6 +19,8 @@ import { SendVerificationEmail } from '../email/verification';
 const L: Logger = new Logger('API');
 
 export function RegisterAPIRoutes() {
+    if (ENABLE_DEBUG_LOGGING) L.debug('registering routes...');
+
     /**
      * This route should be the first route registered.
      * It should be considered the "test route" as it should ALWAYS report if the server is running
@@ -355,6 +357,8 @@ export function RegisterAPIRoutes() {
         await SendVerificationEmail('okawaffles@gmail.com', 'okawaffles', 'https://okayucdn.com');
         res.send('test email sent, see console for info');
     });
+
+    if (ENABLE_DEBUG_LOGGING) L.debug('done registering routes');
 }
 
 export function RateLimitHandler(req: Request, res: Response) {

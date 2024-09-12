@@ -1,8 +1,9 @@
 import { readFileSync } from 'node:fs';
-import { BASE_DIRNAME, email } from '../main';
+import { BASE_DIRNAME, email, ENABLE_DEBUG_LOGGING } from '../main';
 import { CreateTransport } from './smtp';
 import { Transporter } from 'nodemailer';
 import { join } from 'node:path';
+import { debug } from 'okayulogger';
 
 export interface EmailConfig {
     endpoint: string,
@@ -25,6 +26,8 @@ export function SetUpMailConfig() {
         smtp_username: <string> process.env.EMAIL_SMTP_USER_NAME,
         smtp_password: <string> process.env.EMAIL_SMTP_PASSWORD
     };
+    if (ENABLE_DEBUG_LOGGING) debug('mail', `endpoint: ${EMAIL_CONFIG.endpoint}:${EMAIL_CONFIG.secure_port}`);
+    if (ENABLE_DEBUG_LOGGING) debug('mail', `EMAIL_SMTP_USER_NAME=${EMAIL_CONFIG.smtp_username.substring(0, 3)}*** : EMAIL_SMTP_PASSWORD=${EMAIL_CONFIG.smtp_password.substring(0, 3)}***`);
 
     TRANSPORT = CreateTransport();
 
