@@ -1,6 +1,8 @@
-import { email } from '../main';
+import { readFileSync } from 'node:fs';
+import { BASE_DIRNAME, email } from '../main';
 import { CreateTransport } from './smtp';
 import { Transporter } from 'nodemailer';
+import { join } from 'node:path';
 
 export interface EmailConfig {
     endpoint: string,
@@ -13,6 +15,9 @@ export let EMAIL_CONFIG: EmailConfig;
 
 export let TRANSPORT: Transporter;
 
+export let VERIFICATION_EMAIL_HTML: string;
+
+
 export function SetUpMailConfig() {
     EMAIL_CONFIG = {
         endpoint: email.endpoint,
@@ -22,4 +27,7 @@ export function SetUpMailConfig() {
     };
 
     TRANSPORT = CreateTransport();
+
+    // have to go one back because its in the /dist folder
+    VERIFICATION_EMAIL_HTML = readFileSync(join(BASE_DIRNAME, '..', 'views', 'assets', 'email', 'verify.html'), 'utf-8');
 }
