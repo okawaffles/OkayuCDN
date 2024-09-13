@@ -193,10 +193,9 @@ function changeVisibility(item, id) {
                 alert('Failed to update visibility.');
             },
             204: () => {
-                // we want this to be opposite because we will be toggling the state
-                const IS_PRIVATE = PROTECTED_BOX_ITEMS.indexOf(BOX_ITEMS[id]) == -1;
+                const WAS_PUBLIC = PROTECTED_BOX_ITEMS.indexOf(BOX_ITEMS[id].name) == -1;
                 
-                if (IS_PRIVATE) {
+                if (WAS_PUBLIC) {
                     // change the button
                     if (!IS_MOBILE) $(`#change-visibility-${id}`).html('<i class="fa-solid fa-lock"></i> Private');
                     else $(`#m-change-visibility-${id}`).html('<i class="fa-solid fa-lock"></i>');
@@ -205,7 +204,7 @@ function changeVisibility(item, id) {
                     $(`#size-${id}`).html(`${parseStorageAmount(BOX_ITEMS[id].size)}    <i class="fa-solid fa-lock" aria-hidden="true"></i>`);
 
                     // we must add the item to the protected box items
-                    PROTECTED_BOX_ITEMS.push(BOX_ITEMS[id]);
+                    PROTECTED_BOX_ITEMS.push(BOX_ITEMS[id].name);
                 } else {
                     // change the button
                     if (!IS_MOBILE) $(`#change-visibility-${id}`).html('<i class="fa-solid fa-lock-open"></i> Public');
@@ -215,7 +214,7 @@ function changeVisibility(item, id) {
                     $(`#size-${id}`).html(parseStorageAmount(BOX_ITEMS[id].size));
 
                     // remove the item from the protected box items
-                    PROTECTED_BOX_ITEMS.splice(PROTECTED_BOX_ITEMS.indexOf(BOX_ITEMS[id]), 1);
+                    PROTECTED_BOX_ITEMS.splice(PROTECTED_BOX_ITEMS.indexOf(BOX_ITEMS[id].name), 1);
                 }
             }
         }
