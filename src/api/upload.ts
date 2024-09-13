@@ -5,9 +5,9 @@ import { appendFileSync, mkdirSync, readFileSync, readdirSync, rmSync } from 'fs
 import { join } from 'path';
 import { UPLOADS_PATH } from '../util/paths';
 import { matchedData } from 'express-validator';
-import { error, info } from 'okayulogger';
+import { debug, error, info } from 'okayulogger';
 import { Request, Response } from 'express';
-import { domain } from '../main';
+import { domain, ENABLE_DEBUG_LOGGING } from '../main';
 import { GetStorageInfo } from './content';
 
 // someone help me figure out a type for this PLEASE
@@ -35,6 +35,7 @@ const storage = multer.diskStorage({
 export const MulterUploader = multer({storage});
 
 export function FinishUpload(req: Request, res: Response) {
+    if (ENABLE_DEBUG_LOGGING) debug('upload', 'starting upload joining procedure...');
     info('upload', 'finishing upload ...');
 
     const data = matchedData(req);
@@ -46,9 +47,12 @@ export function FinishUpload(req: Request, res: Response) {
 
     const userFiles: string[] = readdirSync(join(UPLOADS_PATH, user.username));
 
+    if (ENABLE_DEBUG_LOGGING) debug('upload', `new upload name: ${newName}, for user ${user.username}`);
+
     // ensure we don't write over a preexisting file:
     // do this by adding numbers to the filename
     if (userFiles.indexOf(newName) > -1) {
+        if (ENABLE_DEBUG_LOGGING) debug('upload', 'file already exists for user, appending a number to the filename');
         newName = `${filename}-0.${extension}`;
         let i = 0;
         while (userFiles.indexOf(newName) > -1) {
@@ -64,6 +68,9 @@ export function FinishUpload(req: Request, res: Response) {
 
     const userStorage: StorageData = GetStorageInfo(user, true);
 
+    if (ENABLE_DEBUG_LOGGING) debug('upload', `new file path = ${newPath}`);
+    if (ENABLE_DEBUG_LOGGING) debug('upload', `total chunks = ${totalChunks}`);
+
     // OkayuCDN is nice about storage:
     // if you are at, for example, 99mb of 100mb, you may upload files until you are equal or over your limit
     // this is limited to a 100mb file at max
@@ -75,17 +82,19 @@ export function FinishUpload(req: Request, res: Response) {
     if (totalChunks > 20 && (userStorage.total - userStorage.used) <= 100*1024*1024) uploadAllowed = false;
 
     try {
+        info('upload', 'Joining file chunks...');
         for (let i = 0; i != totalChunks; i++) {
-            info('upload', `joining chunk ${i+1}/${totalChunks}`);
+            debug('upload', `joining chunk ${i+1}/${totalChunks}`);
             const currentPath = join(UPLOADS_PATH, user.username, 'LATEST.UPLOADING.'+i);
             // don't append to file unless they have sufficient storage
             if (uploadAllowed) appendFileSync(newPath, readFileSync(currentPath));
             rmSync(currentPath);
         }
 
-        if (req.body.isPrivate == 'true') AddProtectedFile(user.username, newName);
+        if (req.body.isPrivate == 'true') { AddProtectedFile(user.username, newName); debug('upload', 'user requested file to be private, adding to their index...'); }
     
         if (!uploadAllowed) {
+            debug('upload', 'insufficient storage to finish upload');
             error('upload', 'insufficient storage for upload: aborting!');
             return res.json({status:423,reason:'Insufficient storage'});
         }
@@ -95,7 +104,7 @@ export function FinishUpload(req: Request, res: Response) {
             goto: `${domain}/view/@${user.username}/${newName}`
         });
 
-        info('upload', 'upload finished ok!');
+        info('upload', `Upload finished successfully (@${user.username}/${newName})`);
     } catch (e: unknown) {
         error('upload', 'failed to upload file');
         error('upload', ''+e);
