@@ -993,6 +993,10 @@ button.mybox_experiment {
     flex-wrap: wrap;
 }
 
+.view_info button {
+    margin-bottom: 2rem;
+}
+
 .view_info>h2 {
     margin-top: 1.5rem;
 }
@@ -1019,6 +1023,9 @@ button.mybox_experiment {
     width: 100%;
     margin: 2rem 0em;
     color: var(--active-text);
+}
+.view_info .view_preview video {
+    width: 50%;
 }
 
 .view_info .font_preview {

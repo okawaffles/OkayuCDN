@@ -130,7 +130,8 @@ let knownFileTypes = {
     'BLEND': 'Blender Project (BLEND)',
     'PMX': 'MikuMikuDance Model (PMX)',
 
-    'MCWORLD': 'Minecraft Bedrock World (MCWORLD)'
+    'MCWORLD': 'Minecraft Bedrock World (MCWORLD)',
+    'GMA': 'Garry\'s Mod Addon (GMA)',
 };
 
 function getFileTypeDesc(filetype) {
@@ -144,7 +145,8 @@ function getFileTypeDesc(filetype) {
             ft == 'ZIP' ||
             ft == 'RAR' ||
             ft == 'BAT' ||
-            ft == 'CMD'
+            ft == 'CMD' ||
+            ft == 'REG'
         ) warning = true;
 
         return 'File Type: ' + knownFileTypes[ft];
@@ -155,10 +157,10 @@ function processPreview(filetype, link) {
     let previewArea = document.getElementById('previewArea');
     switch (filetype.toUpperCase()) {
     case 'MP4':
-        previewArea.innerHTML = `<video src='${link}?bypass=true'></video>`;
+        previewArea.innerHTML = `<video controls src='${link}?bypass=true'></video>`;
         break;
     case 'MOV': case 'MKV': case 'WEBM':
-        previewArea.innerHTML = `<video src='${link}'></video>`;
+        previewArea.innerHTML = `<video controls src='${link}'></video>`;
         break;
     case 'PNG': case 'JPG': case 'JPEG': case 'WEBP': case 'BMP': case 'ICO': case 'GIF': case 'HEIC':
         previewArea.innerHTML = `<img src='${link}'>`;
