@@ -354,6 +354,7 @@ export function RegisterAPIRoutes() {
 
     /* DEBUG */
     Router.get('/api/email/test', async (req: Request, res: Response) => {
+        return res.status(501).end();
         await SendVerificationEmail('okawaffles@gmail.com', 'okawaffles', 'https://okayucdn.com');
         res.send('test email sent, see console for info');
     });
