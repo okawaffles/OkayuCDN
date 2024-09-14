@@ -157,7 +157,7 @@ function processPreview(filetype, link) {
     let previewArea = document.getElementById('previewArea');
     switch (filetype.toUpperCase()) {
     case 'MP4':
-        previewArea.innerHTML = `<video controls src='${link}?bypass=true'></video>`;
+        previewArea.innerHTML = `<video controls src='${link}/stream'></video>`;
         break;
     case 'MOV': case 'MKV': case 'WEBM':
         previewArea.innerHTML = `<video controls src='${link}'></video>`;

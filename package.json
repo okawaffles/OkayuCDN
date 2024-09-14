@@ -39,7 +39,7 @@
   },
   "name": "okayucdn",
   "description": "A File Upload Server based around Nekomata Okayu",
-  "version": "6.3.1",
+  "version": "6.3.2",
   "main": "dist/main.js",
   "repository": {
     "type": "git",
