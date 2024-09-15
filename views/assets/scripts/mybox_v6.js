@@ -29,7 +29,6 @@ function LoadBox() {
     $.getJSON('/api/storage', (data) => {
         BOX_ITEMS = data.content;
         PROTECTED_BOX_ITEMS = data.protected_files;
-        console.log(data);
 
         TOTAL_STORAGE = data.total;
         USED_STORAGE = data.used;
@@ -48,7 +47,7 @@ function GetSort(type) {
     switch (type) {
     case 'default':
         return function (a, b) {
-            if (a.name < b.name) return -1; else return 1;
+            if (a.name.toLowerCase() < b.name.toLowerCase()) return -1; else return 1;
         };
     case 'size-large':
         return function (a, b) {
@@ -56,7 +55,7 @@ function GetSort(type) {
         };
     case 'size-small':
         return function (a, b) {
-            if (a.size < b.size) return -1; else return 1;
+            if (a.size < b.size) return -1; else return 1;  
         };
     case 'date-new':
         return function (a, b) {
@@ -65,6 +64,14 @@ function GetSort(type) {
     case 'date-old':
         return function (a, b) {
             if (a.date < b.date) return -1; else return 1;
+        };
+    case 'filetype':
+        return function (a, b) {
+            if (a.name.toLowerCase().split('.').at(-1) < b.name.toLowerCase().split('.').at(-1)) return -1; else return 1;
+        };
+    case 'privated':
+        return function (a, b) {
+            if (PROTECTED_BOX_ITEMS.indexOf(a.name) > PROTECTED_BOX_ITEMS.indexOf(b.name)) return -1; else return 1;
         };
     default:
         return function (a, b) {
@@ -95,7 +102,6 @@ function RenderBox() {
 
 let alternate = true;
 function AddItem(item, id, private) {
-    if (private) console.log(`${item} is private`);
     if (item.name.startsWith('LATEST.UPLOADING.')) return;
     let element;
         
