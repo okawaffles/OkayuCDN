@@ -727,7 +727,16 @@ span.big-button {
 }
 
 .content_items {
-    transition: display 0.3s ease;
+    /* transition: display 0.3s ease; */
+    border: 2px solid var(--active-button-hover);
+}
+
+.experiment-mybox-items-smooth {
+    height: 0;
+    transition: height 0.2s ease-out, padding 0.2s ease !important;
+    display: flex !important;
+    overflow: hidden;
+    margin: 0 !important;
 }
 
 .content_items .top {
@@ -756,7 +765,7 @@ span.big-button {
     justify-content: space-between;
     flex-wrap: nowrap;
     display: none;
-    transition: display 0.3s ease;
+    /* transition: display 0.3s ease; */
 }
 
 .mobile {
@@ -1286,6 +1295,15 @@ button.mybox_experiment {
 #premium-tag {
 	color: white;
 	background-color: #ffbb3c;
+	padding: 5px 10px;
+	border-radius: 16px;
+	font-size: 16px;
+	margin: 5px;
+	display: none;
+}
+#experiment-on {
+	color: white;
+	background-color: var(--active-button-red);
 	padding: 5px 10px;
 	border-radius: 16px;
 	font-size: 16px;
