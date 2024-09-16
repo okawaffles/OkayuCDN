@@ -91,6 +91,7 @@ $(document).ready(() => {
         }).fail(($xhr) => {
             // login failed, show error and let user try again
             $('#login').css('visibility', 'visible');
+            $('#login-options').css('visibility', 'visible');
 
             if ($('#username')[0].value == '' || $('#password')[0].value == '') {
                 $('#login').css('animation', 'button-incorrect 1s ease');
