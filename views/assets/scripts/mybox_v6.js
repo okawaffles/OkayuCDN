@@ -132,31 +132,13 @@ function AddItem(item, id, private) {
 function dropdown(id) {
     const item = id.toString();
 
-    if (EXPERIMENT_ITEMS_SMOOTH) {
-        if ($(`#showhide-id-${id}`).css('height') == '0px') {
-            console.log('experiment item open');
-
-            let height = $(`#showhide-id-${id}`)[0].scrollHeight + 15 + 'px';
-
-            $(`#showhide-id-${item}`).css('height', height);
-            $(`#showhide-id-${item}`).css('padding-top', '5px');
-            $(`#showhide-button-${item}`).html('<i class="fa-solid fa-caret-up"></i>');
-        } else {
-            console.log('experiment item closed');
-
-            $(`#showhide-id-${item}`).css('height', '0px');
-            $(`#showhide-id-${item}`).css('padding-top', '0');
-            $(`#showhide-button-${item}`).html('<i class="fa-solid fa-caret-down"></i>');
-        }
-        
-        return;
-    }
-
-    if ($(`#showhide-id-${item}`).css('display') == 'none') {
-        $(`#showhide-id-${item}`).css('display', 'flex');
+    if ($(`#showhide-id-${id}`).css('height') == '0px') {
+        $(`#showhide-id-${item}`).css('height', '50px');
+        $(`#showhide-id-${item}`).css('padding-top', '5px');
         $(`#showhide-button-${item}`).html('<i class="fa-solid fa-caret-up"></i>');
     } else {
-        $(`#showhide-id-${item}`).css('display', 'none');
+        $(`#showhide-id-${item}`).css('height', '0px');
+        $(`#showhide-id-${item}`).css('padding-top', '0');
         $(`#showhide-button-${item}`).html('<i class="fa-solid fa-caret-down"></i>');
     }
 }
@@ -197,7 +179,7 @@ function generateItem(id, item, fsize, alternate, private) {
             </button>
         </div>
     </div>
-    <div class="bottom ${EXPERIMENT_ITEMS_SMOOTH?'experiment-mybox-items-smooth':''}" id="showhide-id-${id}">
+    <div class="bottom" id="showhide-id-${id}">
         <button class="share desktop" id="share-content-${id}" onclick="share('${item}', ${id}, false)"><i class="fa-solid fa-arrow-up-right-from-square"></i> Share</button>
         <button class="view desktop" onclick="view('${item}')"><i class="fa-solid fa-eye"></i> View</button>
         <button class="dl desktop" onclick="download('${item}')"><i class="fa-solid fa-download"></i> Download</button>

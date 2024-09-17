@@ -731,14 +731,6 @@ span.big-button {
     border: 2px solid var(--active-button-hover);
 }
 
-.experiment-mybox-items-smooth {
-    height: 0;
-    transition: height 0.2s ease-out, padding 0.2s ease !important;
-    display: flex !important;
-    overflow: hidden;
-    margin: 0 !important;
-}
-
 .content_items .top {
     width: 100%;
     display: flex;
@@ -760,12 +752,16 @@ span.big-button {
     align-items: center;
 }
 .content_items .bottom {
-    margin-top: 10px;
+    /* margin-top: 10px; */
     width: 100%;
     justify-content: space-between;
     flex-wrap: nowrap;
-    display: none;
-    /* transition: display 0.3s ease; */
+
+    height: 0;
+    transition: height 0.2s ease-out, padding 0.2s ease;
+    display: flex;
+    overflow: hidden;
+    margin: 0;
 }
 
 .mobile {
