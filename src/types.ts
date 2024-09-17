@@ -108,3 +108,18 @@ export interface OTPSetupOptions {
     otpauthUrl: string,
     base32: string
 }
+
+export enum PrivacyVisibilityType {
+    PUBLIC,
+    PRIVATE,
+    LIMITED
+}
+
+interface BasicUserList {
+    [username: string]: string
+}
+export interface FilePrivacyOptions {
+    isProtected: boolean,
+    visibility: PrivacyVisibilityType,
+    permittedUsers: BasicUserList
+}

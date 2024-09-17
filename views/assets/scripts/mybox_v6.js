@@ -3,9 +3,8 @@ let USERNAME = 'anonymous';
 let BOX_ITEMS = [];
 let PROTECTED_BOX_ITEMS = [];
 let USED_STORAGE, TOTAL_STORAGE;
-const EXPERIMENT_ITEMS_HOVER = document.cookie.includes('okayu-experiment=mybox-items-hover');
-const EXPERIMENT_ITEMS_SMOOTH = document.cookie.includes('okayu-experiment=mybox-items-smooth') || EXPERIMENT_ITEMS_HOVER; // must be on for hover experiment to work
 const IS_MOBILE = navigator.userAgent.includes('Android') || navigator.userAgent.includes('iOS');
+const EXPERIMENT_ITEMS_HOVER = document.cookie.includes('okayu-experiment=mybox-items-hover') && !IS_MOBILE;
 
 $(document).ready(() => {
     $.getJSON('/api/whoami', (data) => {
@@ -23,7 +22,7 @@ $(document).ready(() => {
         RenderBox();
     });
 
-    if (EXPERIMENT_ITEMS_SMOOTH || EXPERIMENT_ITEMS_HOVER) $('#experiment-on').css('display', 'inline');
+    if (EXPERIMENT_ITEMS_HOVER) $('#experiment-on').css('display', 'inline');
 });
 
 
@@ -168,15 +167,15 @@ function parseStorageAmount(bytes) {
 
 function generateItem(id, item, fsize, alternate, private) {
     return `<div id="item-${id}" class="content_items ${alternate ? 'alternate' : ''}">
-    <div class="top">
+    <div class="top ${EXPERIMENT_ITEMS_HOVER?'mybox-experiment-hover':''}">
         <div class="left">
-            <span class="size" id="size-${id}">${fsize}    ${private ? '<i class="fa-solid fa-lock"></i>' : ''}</span>
+            <span class="size" id="size-${id}">${fsize}</span>
             <p class="name">${item}</p>
         </div>
         <div class="right">
-            <button class="dropdown okayu-green" id="showhide-button-${id}" onclick="dropdown(${id})">
+            ${EXPERIMENT_ITEMS_HOVER?`${private ? '<i class="fa-solid fa-lock new-lock"></i>' : ''}`:`<button class="dropdown okayu-green" id="showhide-button-${id}" onclick="dropdown(${id})">
                 <i class="fa-solid fa-caret-down"></i>
-            </button>
+            </button>`}
         </div>
     </div>
     <div class="bottom" id="showhide-id-${id}">

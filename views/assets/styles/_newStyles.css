@@ -735,6 +735,17 @@ span.big-button {
     width: 100%;
     display: flex;
 }
+.mybox-experiment-hover {
+    height: 2em;
+
+    .size {
+        width: 6rem;
+    }
+
+    .new-lock {
+        margin-right: 1rem;
+    }
+}
 .content_items .top p {
     font-size: 1em;
     margin-left: 0.5em;
@@ -762,6 +773,10 @@ span.big-button {
     display: flex;
     overflow: hidden;
     margin: 0;
+
+    button {
+        margin: 0 2px;
+    }
 }
 
 .mobile {
