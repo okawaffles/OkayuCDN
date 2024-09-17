@@ -37,11 +37,15 @@ function LoadBox() {
         TOTAL_STORAGE = data.total;
         USED_STORAGE = data.used;
 
+        // 20em is too big for some mobile devices and causes the bar to be incorrectly filled
+        let barWidthInEm = IS_MOBILE?visualViewport.width/32:20;
+        console.log('bar width in em:' + barWidthInEm);
+
         $('#used').text(parseStorageAmount(USED_STORAGE));
         $('#total').text(parseStorageAmount(TOTAL_STORAGE));
-        $('#fill').css('width', `${(USED_STORAGE / TOTAL_STORAGE) * 20}em`);
-        $('#mybox-fill-preview').css('width', `${(USED_STORAGE / TOTAL_STORAGE)*20}em`);
-        $('#newStorageAmount').css('visibility', 'visible');
+        $('#fill').css('width', `${(USED_STORAGE / TOTAL_STORAGE) * barWidthInEm}em`);
+        $('#mybox-fill-preview').css('width', `${(USED_STORAGE / TOTAL_STORAGE)*barWidthInEm}em`);
+        $('#newStorageAmount').css('visibility', 'visible').css('width', `${barWidthInEm}em`);
 
         RenderBox();
     });
