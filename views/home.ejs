@@ -17,26 +17,28 @@
         <meta name="theme-color" content="#9a21db">
     </head>
     <body>
-    <%- include('parts/navbar', {active:'home'}) %>
+        <%- include('parts/navbar', {active:'home'}) %>
+        <div id="announcement">
+            <p id="announcement-content">This is where an announcement would go.</p>
+        </div>
 
-    <!-- this will be removed, currently for okayu-nightly.catgirls.space -->
-    <div id="announcement">
-        <p id="announcement-content">This site is for live-testing development builds of OkayuCDN. Please use https://okayu.okawaffles.com if you want a stable website.</p>
-    </div>
+        <div class="container">
+            <h1 class="title" id="t_title">Welcome to OkayuCDN!</h1>
+            <h2 class="subtitle sa" id="t_sa">You can upload your files for free here!</h2>
+            <h2 class="subtitle sb" id="t_sb">These files can then be shared and embedded anywhere!</h2>
+        </div>
 
-    <div class="container">
-        <h1 class="title" id="t_title">Welcome to OkayuCDN!</h1>
-        <h2 class="subtitle sa" id="t_sa">You can upload your files for free here!</h2>
-        <h2 class="subtitle sb" id="t_sb">Any file type is supported and they can be embedded anywhere!</h2>
-    </div>
+        <div class="characters">
+            <img src="./assets/images/okayu_450.png" class="chara-center" />
+        </div>
 
-    <div class="characters">
-        <img src="./assets/images/okayu_450.png" class="chara-center" />
-    </div>
+        <!-- <div class="home">
+            <h1>Welcome to OkayuCDN!</h1>
+        </div> -->
 
-    <h3 class="v">v<%= version %>
-    </h3><br>
-</body>
+        <h3 class="v">v<%= version %>
+        </h3><br>
+    </body>
 
 <script>
     $.getJSON('/api/health', (data) => {

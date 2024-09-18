@@ -1,3 +1,5 @@
+import { WebSocket } from 'ws';
+
 export interface OTPConfig {
     secret: string,
     setup?: {
@@ -122,4 +124,15 @@ export interface FilePrivacyOptions {
     isProtected: boolean,
     visibility: PrivacyVisibilityType,
     permittedUsers: BasicUserList
+}
+
+export interface QuickTransferConnection {
+    ws: WebSocket,
+    role: string
+}
+export interface QuickTransferSessions {
+    [key: string]: QuickTransferConnection
+}
+export interface QuickTransferUsernameAssociations {
+    [key: string]: string
 }

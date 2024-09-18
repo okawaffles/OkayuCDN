@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico">
+    <title>QuickTransfer | OkayuCDN</title>
+    <link rel="stylesheet" href="/assets/styles/_newStyles.css">
+    <script src="https://kit.fontawesome.com/dc1b60441b.js" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <!-- <script src="/assets/scripts/language.js"></script> -->
+
+    <meta content="Upload | OkayuCDN" property="og:title">
+    <meta content="Upload files for free" property="og:description">
+    <meta content="https://okayu.okawaffles.com/manage/upload" property="og:url">
+    <meta content="#9000e3" data-react-helmet="true" name="theme-color">
+    <script src="/assets/scripts/qt_sender.js"></script>
+</head>
+
+<body class="default-bg scrollable">
+    <%- include('parts/navbar-logged-in', {active:'upload'}) %>
+
+    <div class="upload-pane">
+        <div class="uploader">
+            <h1 id="title">QuickTransfer with OkayuCDN</h1>
+            <h3 class="white">Please open the receiver page on the device you want to send to.</h3><br>
+                
+            <div id="hider" style="display: none">
+                <div class="uploadfile" id="uploadInterface" ondragover="FPDrag(event);" ondrop="FPDrop(event);">
+                    <div class="container-upload-first" id="container-upload-first">
+                        <input type="file" class="chooseFiles" id="uploaded" required />
+                        <i class="fa-solid fa-arrow-up-from-bracket"></i><br><br>
+                        <p id="filename">Click or drag and drop to upload</p>
+                        <p id="approxTime"></p>
+                    </div>
+                    <div class="container-upload-second" id="container-upload-second">
+                        <p>Sending...</p>
+                        <div class="up_progressupload" id="progressUpload"></div><br>
+                    </div>
+                </div><br>
+                
+                <div class="wrap up_wrap" style="width: 100%;">
+                    <button class="go" id="uploadButton">Send File!</button>
+                </div>
+            </div>
+            <div class="upload-progress" id="div_progress">
+                <h1>Sending file...</h1>
+                <div class="progressBarContainer">
+                    <div class="progressBar" id="progress"></div>
+                </div>
+            </div>
+            <br>
+        </div>
+    </div>
+
+    <h3 class="version"><label id="premium-tag">Extended Storage</label><label id="bugtest-tag">Bugtester</label></h3><br>
+</body>
+
+</html>

@@ -99,6 +99,8 @@ Router.use(urlencoded({extended:true}));
 import { rateLimit } from 'express-rate-limit';
 import { IsUpload, RateLimitHandler } from './routes/api';
 import { LoadIPs, CheckIP } from './util/ipManage';
+import { SetUpQuickTransfer } from './api/quicktransfer';
+import { createServer } from 'node:http';
 LoadIPs();
 const limiter = rateLimit({
     windowMs: 5*60*1000, // 5 minutes
@@ -121,8 +123,13 @@ Router.use('*', CheckIP);
 /* routes.ts will manage loading all routes */
 RegisterRoutes();
 
+export const SERVER = createServer(Router);
+
+// set up the websocket handlers for quick transfer!
+SetUpQuickTransfer();
+
 // this will be run after registering all routes
-Router.listen(port).on('listening', () => {
+SERVER.listen(port).on('listening', () => {
     if (ENABLE_DEBUG_LOGGING) L.debug('hello world!');
     L.info(`Listening on port ${port}!`);
 });

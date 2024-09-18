@@ -47,6 +47,9 @@ export function RegisterSimpleRoutes() {
 
     Router.get('/upload', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => res.render('upload.ejs'));
 
+    Router.get('/qt/send', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => res.render('quicktransfer_send.ejs'));
+    Router.get('/qt/receive', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => res.render('quicktransfer_receive.ejs'));
+
     Router.get('/mybox', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => res.render('mybox.ejs'));
 
     Router.get('/authorize', ValidateToken(), ValidateAuthorizationRequest(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
