@@ -22,7 +22,7 @@ $(document).ready(() => {
         RenderBox();
     });
 
-    if (EXPERIMENT_ITEMS_HOVER) $('#experiment-on').css('display', 'inline');
+    if (EXPERIMENT_ITEMS_HOVER) $('#experiment-on').css('display', 'inline').text('EXPERIMENT_ITEMS_HOVER is active');
 });
 
 

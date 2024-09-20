@@ -746,18 +746,25 @@ span.big-button {
         margin-right: 1rem;
     }
 }
+@media (prefers-reduced-motion) {
+    .content_items .bottom {
+        transition: height 0.2s ease-out, padding 0.2s ease !important;
+    }
+}
+
 .content_items .top p {
     font-size: 1em;
     margin-left: 0.5em;
 }
 .content_items .top .left {
+    width: 100%;
     margin-left: 0.25em;
 }
 .content_items .top .right {
+    width: 20%;
     justify-content: right;
 }
 .content_items .top .right, .content_items .top .left {
-    width: 50%;
     display: flex;
     flex-wrap: nowrap;
     align-items: center;
