@@ -16,7 +16,7 @@ const receiver_usernames: QuickTransferUsernameAssociations = {};
 DOCUMENTATION ON COMMUNICATION PROTOCOL:
 
 handshake: 
-- server: data = 'please identify' OR 'authentication pass' OR 'authentication fail'
+- server: data = 'please identify' OR 'authentication pass' OR 'authentication fail' OR 'authentication duplicate'
 - client: data = 'sender <token>' OR 'receiver <token>'
 
 awaiting:
@@ -29,7 +29,7 @@ begin_transfer:
 - client (receiver): data = 'ready' | token = <token>
 
 transfer:
-- server (to sender): verify = 'pass' OR 'fail'
+- server (to sender): verify = 'pass' OR 'fail' | status = 'awaiting metadata' OR 'awaiting data'
 - server (to receiver): chunk = <current chunk> | data = <chunk data> | checksum = <chunk data checksum> (maybe?)
 - client (sender): [same as server->receiver] | token = <token>
 - client (receiver): [same as server->sender] | token = <token>
@@ -37,6 +37,10 @@ transfer:
 finish:
 - server: (no response)
 - client: data = 'destroying session, goodbye' | token = <token>
+
+error:
+- server: 'authentication expired' OR 'internal server error'
+- client: (none)
 */
 
 
@@ -57,7 +61,7 @@ export function SetUpQuickTransfer() {
         ws.send('{"message_type":"handshake","data":"please identify"}');
 
         ws.on('message', (message) => {
-            if (ENABLE_DEBUG_LOGGING) L.debug(`(websocket) message received: ${message.toString()}`);
+            // if (ENABLE_DEBUG_LOGGING) L.debug(`(websocket) message received: ${message.toString()}`);
 
             try {
                 const data = JSON.parse(message.toString());
@@ -73,16 +77,41 @@ export function SetUpQuickTransfer() {
                     }
 
                     const username = GetUserFromToken(token).username;
-                        
+
+                    if (role == 'sender') {
+                        // if (receiver_usernames[username]) {
+                        //     L.error('SENDER tried to authenticate, but token already exists for RECEIVER. Terminating RECEIVER session.');
+
+                        //     sessions[receiver_usernames[username]].ws.send('{"message_type":"finish","data":"destroying session, goodbye"}');
+                        //     sessions[receiver_usernames[username]].ws.close();
+
+                        //     delete receiver_usernames[username];
+                        //     return ws.send('{"message_type":"handshake","data":"authentication duplicate"}');
+                        // }
+                        sender_usernames[username] = token;
+                    } else if (role == 'receiver') { 
+                        // if (sender_usernames[username]) {
+                        //     L.error('RECEIVER tried to authenticate, but token already exists for SENDER. Terminating SENDER session.');
+
+                        //     sessions[sender_usernames[username]].ws.send('{"message_type":"finish","data":"destroying session, goodbye"}');
+                        //     sessions[sender_usernames[username]].ws.close();
+
+                        //     delete sender_usernames[username];
+                        //     return ws.send('{"message_type":"handshake","data":"authentication duplicate"}');
+                        // }
+                        receiver_usernames[username] = token;
+                    }
+
                     sessions[token] = {ws, role};
 
-                    if (role == 'sender') 
-                        sender_usernames[username] = token;
-                    else if (role == 'receiver') 
-                        receiver_usernames[username] = token;
+                    if (ENABLE_DEBUG_LOGGING) L.debug(`websocket for ${username} as role ${(<string>role).toUpperCase()} has been authenticated`);
 
                     ws.send('{"message_type":"handshake","data":"authentication pass"}');
+
+                    return;
                 }
+
+                if (!CheckToken(data.token)) return ws.send('{"message_type":"error","data":"authentication expired"}');
 
                 // AWAITING
                 if (data.message_type == 'awaiting') {
@@ -131,11 +160,29 @@ export function SetUpQuickTransfer() {
 
                     if (session.role == 'receiver') {
                         // simply forward the info to the sender
-                        sessions[receiver_usernames[username]].ws.send(`{"message_type":"transfer","verify":"${data.verify}"}`);
+                        sessions[sender_usernames[username]].ws.send(`{"message_type":"transfer","verify":"${data.verify}"}`);
                     }
                 }
+
+                // FINAL
+                if (data.message_type == 'final' && data.data == 'destroying session, goodbye') {
+                    
+                    const token = data.token;
+                    const username = GetUserFromToken(token).username;
+                    const session: QuickTransferConnection = sessions[token];
+                    delete sessions[token];
+
+                    if (ENABLE_DEBUG_LOGGING) L.debug(`websocket for ${username} (${session.role}) has been closed`);
+
+                    if (session.role == 'sender')
+                        delete sender_usernames[username];
+                    else if (session.role == 'receiver')
+                        delete receiver_usernames[username];
+
+                    ws.close();                    
+                }
             } catch (err) {
-                L.fatal('Unable to parse data from websocket client!');
+                L.fatal('Unable to handle websocket request; dropping it to prevent issues!!');
                 if (ENABLE_DEBUG_LOGGING) L.debug(`(FATAL) ${err}`);
                 return;
             }

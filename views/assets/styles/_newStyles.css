@@ -2029,6 +2029,22 @@ button.mybox_experiment {
 }
 
 
+/* Quick Transfer */
+.qt-title {
+    font-size: 3em;
+    margin: 1rem 0;
+}
+.qt-subtitle {
+    color: white;
+    margin-bottom: 1rem;
+}
+.qt-receive {
+    color: white;
+    text-align: center;
+}
+.qt-receive-progress {
+    width: 100%;
+}
 
 
 /* Modals */

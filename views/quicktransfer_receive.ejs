@@ -7,17 +7,25 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Info | OkayuCDN</title>
+    <title>QuickTransfer Receive | OkayuCDN</title>
     <link rel="stylesheet" href="/assets/styles/_newStyles.css">
     <script src="https://kit.fontawesome.com/dc1b60441b.js" crossorigin="anonymous"></script>
     <script src="/assets/scripts/qt_receiver.js"></script>
 </head>
 
-<body class="info_body">
+<body class="qt-receive">
     <%- include('parts/navbar', {active:'none'}) %>
         
-    <h1>Receive a QuickTransfer</h1>
-    <h3>Waiting for sender...</h3>
+    <h1 class="qt-title">Receive a QuickTransfer</h1>
+    <h3 class="qt-subtitle" id="qt-receive-status">Connecting...</h3>
+
+    <div class="uploader qt-receive-progress">
+        <div class="upload-progress" id="div_progress">
+            <div class="progressBarContainer">
+                <div class="progressBar" id="progress"></div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

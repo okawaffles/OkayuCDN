@@ -8,13 +8,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico">
-    <title>QuickTransfer | OkayuCDN</title>
+    <title>QuickTransfer Send | OkayuCDN</title>
     <link rel="stylesheet" href="/assets/styles/_newStyles.css">
     <script src="https://kit.fontawesome.com/dc1b60441b.js" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <!-- <script src="/assets/scripts/language.js"></script> -->
 
-    <meta content="Upload | OkayuCDN" property="og:title">
+    <meta content="QuickTransfer Send | OkayuCDN" property="og:title">
     <meta content="Upload files for free" property="og:description">
     <meta content="https://okayu.okawaffles.com/manage/upload" property="og:url">
     <meta content="#9000e3" data-react-helmet="true" name="theme-color">
@@ -27,7 +27,7 @@
     <div class="upload-pane">
         <div class="uploader">
             <h1 id="title">QuickTransfer with OkayuCDN</h1>
-            <h3 class="white">Please open the receiver page on the device you want to send to.</h3><br>
+            <h3 class="qt-subtitle white" id="qt-send-status">Please open the receiver page on the device you want to send to.</h3><br>
                 
             <div id="hider" style="display: none">
                 <div class="uploadfile" id="uploadInterface" ondragover="FPDrag(event);" ondrop="FPDrop(event);">
@@ -44,11 +44,10 @@
                 </div><br>
                 
                 <div class="wrap up_wrap" style="width: 100%;">
-                    <button class="go" id="uploadButton">Send File!</button>
+                    <button class="go" id="uploadButton" disabled>Waiting for receiver...</button>
                 </div>
             </div>
             <div class="upload-progress" id="div_progress">
-                <h1>Sending file...</h1>
                 <div class="progressBarContainer">
                     <div class="progressBar" id="progress"></div>
                 </div>

@@ -43,22 +43,31 @@ function start() {
             }
 
             if (data.message_type == 'handshake' && data.data == 'authentication fail') {
-                alert('authentication failure, please log in again');
+                alert('Authentication failure: Invalid session');
                 document.location = '/login?redir=/qt/send';
+            }
+            if (data.message_type == 'handshake' && data.data == 'authentication duplicate') {
+                alert('Authentication failure: You cannot receive and transmit from the same token. Any existing QuickTransfer sessions have been terminated.');
+                return location.reload();
             }
 
             // AWAITING
             if (data.message_type == 'awaiting' && data.data == 'receiver ready') {
+                $('#uploadButton').prop('disabled', false).text('Send!');
+                $('#qt-send-status').text('Receiver is connected, ready to transfer').css('color', 'var(--okayucdn-green)');
                 if (transferIsReady) BeginTransfer();
             }
 
             // BEGIN TRANSFER
             if (data.message_type == 'begin_transfer' && data.data == 'ready') {
+                console.log('starting transfer...');
                 sendChunk();
             }
 
             // TRANSFER
-            if (data.message_type == 'transfer' && data.data == 'pass') {
+            if (data.message_type == 'transfer' && data.verify == 'pass') {
+                $('#qt-send-status').text(`File transfer of ${FILE_NAME} in progress...`).css('color', 'var(--okayucdn-green)');
+                console.log(`chunk passed, sending next (${current_chunk}/${total_chunks+1})`);
                 sendChunk();
             }
         });
@@ -82,7 +91,7 @@ function FilePickerClicked() {
 
 function UpdateFileName() {
     $('#filename').text($('#uploaded')[0].files[0].name);
-    FILE_NAME = $('#uploaded')[0].files[0].size;
+    FILE_NAME = $('#uploaded')[0].files[0].name;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -130,6 +139,7 @@ async function BeginTransfer() {
     SOCKET.send(`{"message_type":"begin_transfer","total_chunks":"${total_chunks}","file_name":"${FILE_NAME}","token":"${TOKEN}"}`);
 }
 
+// send the RAW BUFFER of the data instead of JSON
 async function sendChunk() {
     if (current_chunk <= total_chunks) {
         $('#progress').css('width', `${(current_chunk / total_chunks)*100}%`);
@@ -138,9 +148,16 @@ async function sendChunk() {
         const chunk = file.slice(start_byte, end_byte);
         start_byte += chunk_size;
 
-        SOCKET.send(`{"message_type":"transfer","chunk":"${current_chunk}","data":"${chunk}","token":"${TOKEN}"}`);
+        const reader = new FileReader();
+        reader.onload = () => {
+            SOCKET.send(`{"message_type":"transfer","token":"${TOKEN}","chunk":${current_chunk},"data":"${btoa(reader.result)}"}`);
+            current_chunk++;
+        };
 
-        current_chunk++;
+        reader.readAsBinaryString(chunk);
+    } else {
+        $('#qt-send-status').text('Disconnected, file transfer succeeded. Reload the page to transfer another file.').css('color', 'var(--okayucdn-blue)');
+        return SOCKET.send(`{"message_type":"final","data":"destroying session, goodbye","token":"${TOKEN}"}`);
     }
 }
 
