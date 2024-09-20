@@ -2,11 +2,13 @@
 
 let SOCKET, DOMAIN, TOKEN = getCookie('token'), FILE_NAME;
 
+let INSECURE_MODE = true;
 
 // get identity on load <- yes.
 $(document).ready(() => {
     $.getJSON('/api/whoami', (data) => {
         DOMAIN = data.domain;
+        if (DOMAIN.includes('https://')) INSECURE_MODE = false;
         if (DOMAIN.includes('https://') || DOMAIN.includes('http://')) DOMAIN = DOMAIN.split('://')[1];
     }, () => {
         document.location = '/login?redir=/qt/send';
@@ -28,7 +30,7 @@ function start() {
         if (data.error && data.reason == 'needs_login') document.location = '/login?redir=/qt/send';
 
         // handshake with websocket
-        SOCKET = new WebSocket(`ws://${DOMAIN}`);
+        SOCKET = new WebSocket(`${INSECURE_MODE?'ws':'wss'}://${DOMAIN}`);
 
         SOCKET.addEventListener('message', (event) => {
             const data = JSON.parse(event.data);
