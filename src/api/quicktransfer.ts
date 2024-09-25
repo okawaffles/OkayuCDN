@@ -19,6 +19,10 @@ handshake:
 - server: data = 'please identify' OR 'authentication pass' OR 'authentication fail' OR 'authentication duplicate'
 - client: data = 'sender <token>' OR 'receiver <token>'
 
+e2ee:
+- server: (forwards any data)
+- client: key? = '<public key>' | status? = 'e2ee accepted' OR 'public key requested'
+
 awaiting:
 - server: data = 'pass' OR 'receiver ready' OR 'client ready'
 - client: data = 'ready' | token = <token>
@@ -113,6 +117,24 @@ export function SetUpQuickTransfer() {
 
                 if (!CheckToken(data.token)) return ws.send('{"message_type":"error","data":"authentication expired"}');
 
+                // E2EE
+                if (data.message_type == 'e2ee') {
+                    const token = data.token;
+                    const username = GetUserFromToken(token).username;
+                    const session: QuickTransferConnection = sessions[token];
+
+                    if (session.role == 'sender') {
+                        // simply forward the data to the receiver
+                        sessions[receiver_usernames[username]].ws.send(`{"message_type":"e2ee","status":"${data.status}","aes":"${data.aes||''}"}`);
+                    }
+
+                    if (session.role == 'receiver') {
+                        // simply forward the info to the sender
+                        sessions[sender_usernames[username]].ws.send(`{"message_type":"e2ee","key":"${data.key}"}`);
+                    }
+                }
+                
+
                 // AWAITING
                 if (data.message_type == 'awaiting') {
                     const token = data.token;
@@ -155,7 +177,7 @@ export function SetUpQuickTransfer() {
 
                     if (session.role == 'sender') {
                         // simply forward the data to the receiver
-                        sessions[receiver_usernames[username]].ws.send(`{"message_type":"transfer","chunk":${data.chunk},"data":"${data.data}"}`);
+                        sessions[receiver_usernames[username]].ws.send(`{"message_type":"transfer","chunk":${data.chunk},"data":"${data.data}","iv":"${data.iv}"}`);
                     }
 
                     if (session.role == 'receiver') {

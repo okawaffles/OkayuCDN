@@ -1,7 +1,9 @@
 /* eslint-disable no-undef */
 
 let SOCKET, DOMAIN, TOKEN = getCookie('token'), FILE_NAME;
-
+let E2EE_PUBLIC = '';
+let E2EE_AES_KEYS = '';
+let E2EE_EXPORTED_AES = '';
 let INSECURE_MODE = true;
 
 // get identity on load <- yes.
@@ -55,9 +57,36 @@ function start() {
 
             // AWAITING
             if (data.message_type == 'awaiting' && data.data == 'receiver ready') {
+                if (E2EE_PUBLIC == '') {
+                    SOCKET.send(`{"message_type":"e2ee","token":"${TOKEN}","status":"public key requested"}`);
+                    $('#qt-send-status').text('Connected, waiting for encryption...').css('color', 'var(--okayucdn-orange)');
+                    E2EE_PUBLIC = 'requested';
+                    lily2ee_generateAESKey().then(async key => { 
+                        E2EE_AES_KEYS = key; 
+                        E2EE_EXPORTED_AES = await lily2ee_exportAES(key);
+                    });
+                    return;
+                }
+                if (E2EE_PUBLIC == 'requested') return;
+
                 $('#uploadButton').prop('disabled', false).text('Send!');
-                $('#qt-send-status').text('Receiver is connected, ready to transfer').css('color', 'var(--okayucdn-green)');
+                $('#qt-send-status').text('Connected + E2EE, ready to transfer!').css('color', 'var(--okayucdn-green)');
                 if (transferIsReady) BeginTransfer();
+            }
+
+            // E2EE
+            if (data.message_type == 'e2ee' && data.key) {
+                console.log('got RSA key from receiver!');
+                lily2ee_importPublicKeyFromBase64(data.key).then(key => {
+                    console.log('RSA key imported, encrypting AES key and returning...');
+                    console.log(key);
+                    E2EE_PUBLIC = key;
+                    lily2ee_encrypt_rsa(E2EE_PUBLIC, E2EE_EXPORTED_AES).then(encrypted => {
+                        const base64EncryptedKey = btoa(String.fromCharCode(...new Uint8Array(encrypted)));
+                        SOCKET.send(`{"message_type":"e2ee","token":"${TOKEN}","status":"e2ee accepted","aes":"${base64EncryptedKey}"}`);
+                        $('#qt-send-status').text('Connected + E2EE, ready to transfer!').css('color', 'var(--okayucdn-green)');
+                    });
+                });
             }
 
             // BEGIN TRANSFER
@@ -102,7 +131,7 @@ function FPDrag(ev) { ev.preventDefault(); }
 function FPDrop(ev) {
     ev.preventDefault();
 
-    $('#fill').css('width', `${(USED_STORAGE / TOTAL_STORAGE)*20}em`);
+    // $('#fill').css('width', `${(USED_STORAGE / TOTAL_STORAGE)*20}em`);
 
     const temporaryDataTransfer = new DataTransfer();
     temporaryDataTransfer.items.add(ev.dataTransfer.files[0]);
@@ -152,8 +181,10 @@ async function sendChunk() {
 
         const reader = new FileReader();
         reader.onload = () => {
-            SOCKET.send(`{"message_type":"transfer","token":"${TOKEN}","chunk":${current_chunk},"data":"${btoa(reader.result)}"}`);
-            current_chunk++;
+            lily2ee_encrypt_aes(E2EE_AES_KEYS, btoa(reader.result)).then(encrypted => {
+                SOCKET.send(`{"message_type":"transfer","token":"${TOKEN}","chunk":${current_chunk},"data":"${btoa(encrypted.encryptedChunk)}","iv":"${encrypted.iv}"}`);
+                current_chunk++;
+            });
         };
 
         reader.readAsBinaryString(chunk);

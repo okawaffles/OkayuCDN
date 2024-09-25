@@ -2,6 +2,9 @@
 
 let SOCKET, DOMAIN, TOKEN = getCookie('token'), FILE_NAME, TOTAL_CHUNKS;
 let transferHasBegun = false;
+let E2EE_PRIVATE = '';
+let E2EE_PUBLIC  = '';
+let E2EE_AES_KEY = '';
 
 let INSECURE_MODE = true;
 
@@ -47,7 +50,7 @@ function start() {
 
             if (data.message_type == 'handshake' && data.data == 'authentication pass') {
                 // start pinging
-                $('#qt-receive-status').text('Connected, waiting for sender to start transfer...').css('color', 'var(--okayucdn-green)');
+                $('#qt-receive-status').text('Connected, waiting for sender (E2EE pending)...').css('color', 'var(--okayucdn-orange)');
                 Ping();
             }
 
@@ -60,6 +63,22 @@ function start() {
                 $('#qt-receive-status').text('Disconnected').css('color', 'var(--button-red)');
                 alert('Authentication failure: You cannot receive and transmit from the same token. Any existing QuickTransfer sessions have been terminated.');
                 return location.reload();
+            }
+
+            // E2EE
+            if (data.message_type == 'e2ee' && data.status == 'public key requested') {
+                $('#qt-receive-status').text('Connected, waiting for sender to send AES key...').css('color', 'var(--okayucdn-orange)');
+                PrepareE2EE();
+            }
+            if (data.message_type == 'e2ee' && data.status == 'e2ee accepted') {
+                const encrypted_key = data.aes;
+                const encryptedArrayBuffer = Uint8Array.from(atob(encrypted_key), c => c.charCodeAt(0)).buffer;
+                $('#qt-receive-status').text('Connected, attempting to import AES key...').css('color', 'var(--okayucdn-orange)');
+                
+                lily2ee_decrypt_rsa(E2EE_PRIVATE, encryptedArrayBuffer).then(key => {
+                    lily2ee_importAES(key).then(k => {E2EE_AES_KEY = k; console.log('AES key import OK!');});
+                    $('#qt-receive-status').text('Connected + E2EE, waiting for sender to begin transfer...').css('color', 'var(--okayucdn-green)');
+                });
             }
 
             // AWAITING
@@ -75,14 +94,20 @@ function start() {
             if (data.message_type == 'transfer') {
                 console.log(`chunk ${data.chunk} incoming...`);
                 $('#qt-receive-status').text(`Connected, transferring ${FILE_NAME} ${Math.round((data.chunk/TOTAL_CHUNKS)*100)}%...`).css('color', 'var(--okayucdn-green)');
-                buffers.push(data.data);
-                SOCKET.send(`{"message_type":"transfer","token":"${TOKEN}","verify":"pass"}`);
+                
+                console.log(data.iv);
+                console.log(data.data);
+                lily2ee_decrypt_aes(E2EE_AES_KEY, data.data, data.iv).then(decrypted => {
+                    buffers.push(decrypted);
 
-                if (data.chunk == TOTAL_CHUNKS) {
-                    FinishTransfer();
-                    SOCKET.send(`{"message_type":"final","data":"destroying session, goodbye","token":"${TOKEN}"}`);
-                    $('#qt-receive-status').text('Disconnected, transfer succeeded. Reload the page to transfer another file.').css('color', 'var(--okayucdn-blue)');
-                }    
+                    SOCKET.send(`{"message_type":"transfer","token":"${TOKEN}","verify":"pass"}`);
+                    
+                    if (data.chunk == TOTAL_CHUNKS) {
+                        FinishTransfer();
+                        SOCKET.send(`{"message_type":"final","data":"destroying session, goodbye","token":"${TOKEN}"}`);
+                        $('#qt-receive-status').text('Disconnected, transfer succeeded. Reload the page to transfer another file.').css('color', 'var(--okayucdn-blue)');
+                    }    
+                });
             }
         });
     }).fail((err) => {
@@ -103,14 +128,8 @@ function Ping() {
 function FinishTransfer() {
     $('#qt-receive-status').text('Transfer finished, preparing to save file...').css('color', 'var(--okayucdn-green)');
     const chunks = [];
-    buffers.forEach((buf) => {
-        const binaryString = atob(buf);
-        const binaryLength = binaryString.length;
-        const bytes = new Uint8Array(binaryLength);
-
-        for (let i = 0; i < binaryLength; i++) {
-            bytes[i] = binaryString.charCodeAt(i);
-        }
+    buffers.forEach(async (buf) => {
+        const bytes = new Uint8Array(buf);
 
         chunks.push(bytes);
     });
@@ -121,4 +140,17 @@ function FinishTransfer() {
     link.href = URL.createObjectURL(fullBlob);
     link.download = FILE_NAME;
     link.click();
+}
+
+async function PrepareE2EE() {
+    // generate the keypair
+    const keypair = await lily2ee_generateKeypair();
+    E2EE_PRIVATE = keypair.privateKey;
+    E2EE_PUBLIC = await lily2ee_exportPublicKey(keypair.publicKey);
+
+    // make it base64
+    const publicKeyBase64 = btoa(String.fromCharCode(...new Uint8Array(E2EE_PUBLIC)));
+
+    // send the public key to the sender page
+    SOCKET.send(`{"message_type":"e2ee","token":"${TOKEN}","key":"${publicKeyBase64}"}`);    
 }
