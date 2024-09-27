@@ -13,12 +13,7 @@ function getCookie(name) {
 }
 
 function calculateMD5(data) {
-    // Create an MD5 hash object
-    const hash = crypto.createHash('md5');
-    // Update the hash object with the data
-    hash.update(data);
-    // Generate the MD5 checksum in hexadecimal format
-    return hash.digest('hex');
+    return CryptoJS.MD5(data).toString();
 }
 
 // -- Main WebSocket Functions --
@@ -56,6 +51,13 @@ function SocketParseMessage(ws_message) {
         break;
     case 'e2ee':
         HandleE2EE(ws_message_data);
+        break;
+    case 'begin_transfer':
+        // only begin_transfer message just means we're good to go
+        SendChunk();
+        break;
+    case 'transfer':
+        HandleTransferResponse(ws_message_data);
         break;
     }
 }
@@ -106,7 +108,7 @@ function HandleTransferResponse(ws_message_data) {
     const verify = ws_message_data.status;
     
     // retry last chunk if it didn't pass checksum
-    if (status == 'fail') CURRENT_CHUNK--;
+    if (verify == 'fail') CURRENT_CHUNK--;
 
     SendChunk();
 }
@@ -183,7 +185,7 @@ class E2EE {
                 message_type: 'transfer',
                 chunk: CURRENT_CHUNK,
                 data: btoa(encrypted.encryptedChunk),
-                iv: encrypted.iv,
+                iv: `${encrypted.iv}`, // receiver expects a string... for some reason?
                 md5: checksum
             }));
             CURRENT_CHUNK++;
@@ -192,6 +194,8 @@ class E2EE {
 }
 
 $(document).ready(async () => {
+    $('#uploadButton').prop('disabled', true);
+
     let domain;
 
     await $.getJSON('/api/whoami', (result) => {
@@ -211,10 +215,16 @@ $(document).ready(async () => {
     SOCKET.addEventListener('message', (message) => {
         SocketParseMessage(message);
     });
+
+    $('#uploadButton').on('click', StartFileUpload);
+    $('#uploadInterface').on('click', FPClick);
+    $('#uploaded').on('change', FPUpdate);
 });
 
 // -- Handling User Input --
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function FPDrag(event) { event.preventDefault(); }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function FPDrop(event) {
     event.preventDefault();
 
@@ -225,6 +235,15 @@ function FPDrop(event) {
     FILENAME = temp_dt.files[0].name;
     $('#filename').text(FILENAME);
 }
+function FPClick() {
+    $('#uploaded')[0].click();
+}
+function FPUpdate() {
+    FILENAME = $('#uploaded')[0].files[0].name;
+    $('#filename').text($('#uploaded')[0].files[0].name);
+}
+
+// -- Chunk sending --
 
 async function StartFileUpload() {
     if ($('#uploaded')[0].files[0] == undefined) {
@@ -241,7 +260,7 @@ async function StartFileUpload() {
     $('#div_progress').css('display', 'flex');
 
     const chunk_size = (1024*1024*5); // each chunk is ~5.24MB
-    TOTAL_CHUNKS = Math.ceil($('#uploaded')[0].items[0].size / chunk_size);
+    TOTAL_CHUNKS = Math.ceil($('#uploaded')[0].files[0].size / chunk_size);
 
     SOCKET.send(JSON.stringify({
         token: TOKEN,
@@ -275,7 +294,7 @@ async function SendChunk() {
     const reader = new FileReader();
     reader.onload = () => {
         SECURITY.AESEncryptChunkAndSend(reader.result); // don't btoa, function will handle that
-    }
+    };
     reader.readAsBinaryString(chunk); // <-- deprecated, find a new way to do this somehow?
 
     $('#progress').css('width', `${(CURRENT_CHUNK / TOTAL_CHUNKS)*100}%`);
