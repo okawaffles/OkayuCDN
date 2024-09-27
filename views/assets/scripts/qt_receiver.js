@@ -107,6 +107,7 @@ async function HandleE2EE(ws_message_data) {
 }
 
 const CHUNK_BUFFERS = [];
+let RETRY_COUNT = 0;
 
 async function HandleChunk(ws_message_data) {
     const chunk_id = ws_message_data.chunk;
@@ -116,6 +117,22 @@ async function HandleChunk(ws_message_data) {
 
     // decrypt the chunk
     const decryptedBuffer = await SECURITY.DecryptChunkAES(chunk_data, aes_iv);
+
+    const expected_md5 = ws_message_data.md5;
+    const calculated_md5 = CryptoJS.MD5(btoa(decryptedBuffer)).toString();
+
+    if (expected_md5 != calculated_md5) {
+        console.warn(`chunk ${chunk_id} integrity check failure. expected: ${expected_md5}, real: ${calculated_md5}`);
+
+        // we only want to retry 3 times, then fail the transfer
+        if (RETRY_COUNT == 3) {
+            $('#qt-receive-status').text(`Transfer failed: Could not verify integrity of file chunks (${chunk_id}/${EXPECTED_CHUNK_COUNT})`).css('color', 'var(--active-button-red)');
+            return SOCKET.send(JSON.stringify({message_type:'final',data:'destroying session, goodbye',token:TOKEN}));
+        }
+        RETRY_COUNT++;
+        $('#qt-receive-status').text(`Chunk ${chunk_id} integrity check failed, requesting re-send... (${RETRY_COUNT}/3)`).css('color', 'var(--button-orange)');
+        return SOCKET.send(JSON.stringify({message_type:'transfer',token:TOKEN,verify:'fail'}));
+    }
 
     // add it to our buffers
     CHUNK_BUFFERS.push(decryptedBuffer);
