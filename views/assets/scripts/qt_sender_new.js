@@ -1,7 +1,8 @@
 /* eslint-disable no-undef */
 const IS_SECURE_ENVIRONMENT = document.location.protocol == 'https:';
 const TOKEN = getCookie('token');
-let SOCKET, SECURITY;
+let SOCKET, SECURITY, FILENAME, TOTAL_CHUNKS;
+let CURRENT_CHUNK = 0;
 
 // -- Helpers --
 
@@ -101,6 +102,15 @@ function HandleAwaiting(ws_message_data) {
     }
 }
 
+function HandleTransferResponse(ws_message_data) {
+    const verify = ws_message_data.status;
+    
+    // retry last chunk if it didn't pass checksum
+    if (status == 'fail') CURRENT_CHUNK--;
+
+    SendChunk();
+}
+
 async function HandleE2EE(ws_message_data) {
     // does the message include "key"? if so, then its the RSA-OAEP public key
     if (ws_message_data.key) {
@@ -164,6 +174,21 @@ class E2EE {
             });
         });
     }
+
+    async AESEncryptChunkAndSend(fileReaderResult) {
+        const checksum = calculateMD5(btoa(fileReaderResult));
+        lily2ee_encrypt_aes(this.AES_KEY, btoa(fileReaderResult)).then(encrypted => {
+            SOCKET.send(JSON.stringify({
+                token: TOKEN,
+                message_type: 'transfer',
+                chunk: CURRENT_CHUNK,
+                data: btoa(encrypted.encryptedChunk),
+                iv: encrypted.iv,
+                md5: checksum
+            }));
+            CURRENT_CHUNK++;
+        });
+    }
 }
 
 $(document).ready(async () => {
@@ -187,3 +212,71 @@ $(document).ready(async () => {
         SocketParseMessage(message);
     });
 });
+
+// -- Handling User Input --
+function FPDrag(event) { event.preventDefault(); }
+function FPDrop(event) {
+    event.preventDefault();
+
+    const temp_dt = new DataTransfer();
+    temp_dt.items.add(event.dataTransfer.files[0]);
+    $('#uploaded')[0].files = temp_dt.files;
+
+    FILENAME = temp_dt.files[0].name;
+    $('#filename').text(FILENAME);
+}
+
+async function StartFileUpload() {
+    if ($('#uploaded')[0].files[0] == undefined) {
+        $('#uploadInterface').css('animation', 'file_missing 1s');
+        setTimeout(() => {
+            $('#uploadInterface').css('animation', 'none');
+        }, 1000);
+        return;
+    }
+
+    $('#hider').css('display', 'none');
+    $('#uploadInterface').css('display', 'none');
+    $('#uploadButton').css('display', 'none');
+    $('#div_progress').css('display', 'flex');
+
+    const chunk_size = (1024*1024*5); // each chunk is ~5.24MB
+    TOTAL_CHUNKS = Math.ceil($('#uploaded')[0].items[0].size / chunk_size);
+
+    SOCKET.send(JSON.stringify({
+        token: TOKEN,
+        message_type: 'begin_transfer',
+        total_chunks: TOTAL_CHUNKS,
+        file_name: FILENAME
+    }));
+}
+
+let START_BYTE = 0;
+
+async function SendChunk() {
+    // handle if the transfer is finished
+    if (CURRENT_CHUNK > TOTAL_CHUNKS) {
+        $('#qt-send-status').text('File transfer succeeded! Reload the page to transfer another file.').css('color', 'var(--okayucdn-blue)');
+        return SOCKET.send(JSON.stringify({
+            token: TOKEN,
+            message_type: 'final',
+            data: 'destroying session, goodbye'
+        }));
+    }
+
+    // calculating the start/end positions byte-wise
+    const file = $('#uploaded')[0].files[0];
+    const CHUNK_SIZE = 1024*1024*5;
+    const end_byte = Math.min(START_BYTE + CHUNK_SIZE, file.size);
+    const chunk = file.slice(START_BYTE, end_byte);
+    START_BYTE += CHUNK_SIZE;
+
+    // reading the bytes we need
+    const reader = new FileReader();
+    reader.onload = () => {
+        SECURITY.AESEncryptChunkAndSend(reader.result); // don't btoa, function will handle that
+    }
+    reader.readAsBinaryString(chunk); // <-- deprecated, find a new way to do this somehow?
+
+    $('#progress').css('width', `${(CURRENT_CHUNK / TOTAL_CHUNKS)*100}%`);
+}
