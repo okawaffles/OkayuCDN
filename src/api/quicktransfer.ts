@@ -177,7 +177,7 @@ export function SetUpQuickTransfer() {
 
                     if (session.role == 'sender') {
                         // simply forward the data to the receiver
-                        sessions[receiver_usernames[username]].ws.send(`{"message_type":"transfer","chunk":${data.chunk},"data":"${data.data}","iv":"${data.iv}"}`);
+                        sessions[receiver_usernames[username]].ws.send(`{"message_type":"transfer","chunk":${data.chunk},"data":"${data.data}","iv":"${data.iv}","md5":"${data.md5}"}`);
                     }
 
                     if (session.role == 'receiver') {

@@ -91,6 +91,7 @@ async function HandleE2EE(ws_message_data) {
     // We must first establish RSA-OAEP encryption so we can trade AES keys.
     switch(ws_message_data.status) {
     case 'public key requested': // send back the public RSA-OAEP key
+        KEEP_PINGING = false;
         $('#qt-receive-status').text('Connected, exchanging encryption keys...').css('color', 'var(--okayucdn-orange)');
         SOCKET.send(JSON.stringify({
             token: TOKEN,
@@ -131,9 +132,9 @@ function Ping() {
         data: 'ready',
         token: TOKEN
     }));
-
-    if (KEEP_PINGING) setTimeout(() => {
-        Ping();
+     
+    setTimeout(() => {
+        if (KEEP_PINGING) Ping();
     }, 2500);
 }
 
