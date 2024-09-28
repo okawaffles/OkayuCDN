@@ -119,7 +119,7 @@ async function HandleChunk(ws_message_data) {
     const decryptedBuffer = await SECURITY.DecryptChunkAES(chunk_data, aes_iv);
 
     const expected_md5 = ws_message_data.md5;
-    const calculated_md5 = CryptoJS.MD5(btoa(decryptedBuffer)).toString();
+    const calculated_md5 = CryptoJS.MD5(btoa(String.fromCharCode(decryptedBuffer))).toString();
 
     if (expected_md5 != calculated_md5) {
         console.warn(`chunk ${chunk_id} integrity check failure. expected: ${expected_md5}, real: ${calculated_md5}`);

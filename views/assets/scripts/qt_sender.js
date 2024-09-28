@@ -1,23 +1,10 @@
 /* eslint-disable no-undef */
+const IS_SECURE_ENVIRONMENT = document.location.protocol == 'https:';
+const TOKEN = getCookie('token');
+let SOCKET, SECURITY, FILENAME, TOTAL_CHUNKS;
+let CURRENT_CHUNK = 0;
 
-let SOCKET, DOMAIN, TOKEN = getCookie('token'), FILE_NAME;
-let E2EE_PUBLIC = '';
-let E2EE_AES_KEYS = '';
-let E2EE_EXPORTED_AES = '';
-let INSECURE_MODE = true;
-
-// get identity on load <- yes.
-$(document).ready(() => {
-    $.getJSON('/api/whoami', (data) => {
-        DOMAIN = data.domain;
-        if (DOMAIN.includes('https://')) INSECURE_MODE = false;
-        if (DOMAIN.includes('https://') || DOMAIN.includes('http://')) DOMAIN = DOMAIN.split('://')[1];
-    }, () => {
-        document.location = '/login?redir=/qt/send';
-    });
-
-    start();
-});
+// -- Helpers --
 
 function getCookie(name) {
     const value = `; ${document.cookie}`;
@@ -25,121 +12,243 @@ function getCookie(name) {
     if (parts.length === 2) return parts.pop().split(';').shift();
 }
 
+function calculateMD5(data) {
+    return CryptoJS.MD5(data).toString();
+}
 
-function start() {
-    // Get user's storage
-    $.getJSON('/api/storage', async (data) => {
-        if (data.error && data.reason == 'needs_login') document.location = '/login?redir=/qt/send';
+// -- Main WebSocket Functions --
 
-        // handshake with websocket
-        SOCKET = new WebSocket(`${INSECURE_MODE?'ws':'wss'}://${DOMAIN}`);
+function ConnectWS(domain) {
+    return new Promise((resolve, reject) => {
+        try {
+            const ws = new WebSocket(`${IS_SECURE_ENVIRONMENT?'wss':'ws'}://${domain}`);
+            
+            $('#qt-send-status').text('Logging in...').css('color', 'var(--okayucdn-orange)');
+            resolve(ws);
+        } catch (err) {
+            $('#qt-send-status').text('Failed to connect (WebSocket failed to connect)').css('color', 'var(--active-button-red)');
+            console.error(err);
+            reject();
+        }
+    });
+}
 
-        SOCKET.addEventListener('message', (event) => {
-            const data = JSON.parse(event.data);
+function SocketParseMessage(ws_message) {
+    let ws_message_data;
 
-            if (data.message_type == 'handshake' && data.data == 'please identify') {
-                SOCKET.send(`{"message_type":"handshake","data":"sender ${TOKEN}"}`);
-            }
+    try {
+        ws_message_data = JSON.parse(ws_message.data);
+    } catch (err) {
+        return console.error(`SocketParseMessage: Failed to parse WebSocket message! ${err}`);
+    }
 
-            if (data.message_type == 'handshake' && data.data == 'authentication pass') {
-                // allow the rest of the page to load
-                $('#hider').css('display', 'flex');
-            }
+    switch (ws_message_data.message_type) {
+    case 'handshake':
+        HandleHandshake(ws_message_data);
+        break;
+    case 'awaiting':
+        HandleAwaiting(ws_message_data);
+        break;
+    case 'e2ee':
+        HandleE2EE(ws_message_data);
+        break;
+    case 'begin_transfer':
+        // only begin_transfer message just means we're good to go
+        SendChunk();
+        break;
+    case 'transfer':
+        HandleTransferResponse(ws_message_data);
+        break;
+    }
+}
 
-            if (data.message_type == 'handshake' && data.data == 'authentication fail') {
-                alert('Authentication failure: Invalid session');
-                document.location = '/login?redir=/qt/send';
-            }
-            if (data.message_type == 'handshake' && data.data == 'authentication duplicate') {
-                alert('Authentication failure: You cannot receive and transmit from the same token. Any existing QuickTransfer sessions have been terminated.');
-                return location.reload();
-            }
+// -- Handlers --
 
-            // AWAITING
-            if (data.message_type == 'awaiting' && data.data == 'receiver ready') {
-                if (E2EE_PUBLIC == '') {
-                    SOCKET.send(`{"message_type":"e2ee","token":"${TOKEN}","status":"public key requested"}`);
-                    $('#qt-send-status').text('Connected, waiting for encryption...').css('color', 'var(--okayucdn-orange)');
-                    E2EE_PUBLIC = 'requested';
-                    lily2ee_generateAESKey().then(async key => { 
-                        E2EE_AES_KEYS = key; 
-                        E2EE_EXPORTED_AES = await lily2ee_exportAES(key);
-                    });
-                    return;
-                }
-                if (E2EE_PUBLIC == 'requested') return;
+function HandleHandshake(ws_message_data) {
+    const handshake_data = ws_message_data.data;
 
-                $('#uploadButton').prop('disabled', false).text('Send!');
-                $('#qt-send-status').text('Connected + E2EE, ready to transfer!').css('color', 'var(--okayucdn-green)');
-                if (transferIsReady) BeginTransfer();
-            }
+    // Identifying ourself:
+    if (handshake_data == 'please identify') {
+        // send back our token
+        SOCKET.send(JSON.stringify({
+            message_type: 'handshake',
+            data: `sender ${TOKEN}`
+        }));
+    }
 
-            // E2EE
-            if (data.message_type == 'e2ee' && data.key) {
-                console.log('got RSA key from receiver!');
-                lily2ee_importPublicKeyFromBase64(data.key).then(key => {
-                    console.log('RSA key imported, encrypting AES key and returning...');
-                    console.log(key);
-                    E2EE_PUBLIC = key;
-                    lily2ee_encrypt_rsa(E2EE_PUBLIC, E2EE_EXPORTED_AES).then(encrypted => {
-                        const base64EncryptedKey = btoa(String.fromCharCode(...new Uint8Array(encrypted)));
-                        SOCKET.send(`{"message_type":"e2ee","token":"${TOKEN}","status":"e2ee accepted","aes":"${base64EncryptedKey}"}`);
-                        $('#qt-send-status').text('Connected + E2EE, ready to transfer!').css('color', 'var(--okayucdn-green)');
-                    });
-                });
-            }
+    // Authentication OK
+    if (handshake_data == 'authentication pass') {
+        console.log('authenticated successfully!');
+        $('#qt-send-status').text('Logged in, please open the receiver page on your other device.').css('color', 'var(--okayucdn-orange)');
+        $('#hider').css('display', 'flex'); // we can let the rest of the page show now
+    }
 
-            // BEGIN TRANSFER
-            if (data.message_type == 'begin_transfer' && data.data == 'ready') {
-                console.log('starting transfer...');
-                sendChunk();
-            }
+    // Authentication failed:
+    if (handshake_data == 'authentication fail') {
+        console.error('authentication failed');
+        $('#qt-send-status').text('Failed to log in').css('color', 'var(--active-button-red)');
+    }
+}
 
-            // TRANSFER
-            if (data.message_type == 'transfer' && data.verify == 'pass') {
-                $('#qt-send-status').text(`File transfer of ${FILE_NAME} in progress...`).css('color', 'var(--okayucdn-green)');
-                console.log(`chunk passed, sending next (${current_chunk}/${total_chunks+1})`);
-                sendChunk();
-            }
+function HandleAwaiting(ws_message_data) {
+    const data = ws_message_data.data;
+    
+    if (data == 'receiver ready') {
+        // the receiver is online, we can request their public key
+        console.log('requesting the receiver\'s public RSA-OAEP key...');
+        SOCKET.send(JSON.stringify({
+            token: TOKEN,
+            message_type: 'e2ee',
+            status: 'public key requested'
+        }));
+    }
+}
+
+function HandleTransferResponse(ws_message_data) {
+    const verify = ws_message_data.verify;
+    console.log(ws_message_data.verify);
+    
+    // retry last chunk if it didn't pass checksum
+    if (verify == 'fail') { 
+        CURRENT_CHUNK--;
+        START_BYTE -= CHUNK_SIZE;
+    }
+
+    SendChunk();
+}
+
+async function HandleE2EE(ws_message_data) {
+    // does the message include "key"? if so, then its the RSA-OAEP public key
+    if (ws_message_data.key) {
+        // this message includes the RSA-OAEP public key
+        // it's in base64 but the E2EE function will take care of decoding
+        await SECURITY.ImportRSAPublic(ws_message_data.key);
+        // now we can send back our AES key, encrypted with their RSA public key
+        const aes = await SECURITY.GetRSAEncryptedAES(); // exported in base64 automatically
+        SOCKET.send(JSON.stringify({
+            token: TOKEN,
+            message_type: 'e2ee',
+            status: 'e2ee accepted',
+            aes,
+        }));
+        $('#qt-send-status').text('Connected (encrypted), ready to transfer!').css('color', 'var(--okayucdn-green)');
+        // allow the send button to be clicked
+        $('#uploadButton').prop('disabled', false).text('Send!');
+    }
+}
+
+
+// -- E2EE --
+
+class E2EE {
+    RSA_PUBLIC;
+    AES_KEY;
+
+    constructor() {
+        this.RSA_PUBLIC = '';
+        this.AES_KEY = '';
+    }
+
+    async GenerateAES() {
+        return new Promise((resolve) => {
+            lily2ee_generateAESKey().then(key => {
+                console.log('[E2EE] generated AES key');
+                this.AES_KEY = key;
+                resolve();
+            });
         });
-    }).fail((err) => {
-        if (err.contains('Too Many Requests')) return alert('Too many API requests. Please wait at least 5 minutes and try again.');
-        alert('Error in upload_v6.js.\n\nIf you are on desktop, please open your browser console and report the bug at https://github.com/okawaffles/OkayuCDN');
-        console.error('HELLO BUG REPORTER, YOU WANT THIS -> ' + err.responseText);
+    }
+
+    async GetRSAEncryptedAES() {
+        return new Promise((resolve) => {
+            lily2ee_exportAES(this.AES_KEY).then(exported => {
+                console.log('[E2EE] AES export successful');
+                lily2ee_encrypt_rsa(this.RSA_PUBLIC, exported).then(encrypted => {
+                    // must be in base64 to send
+                    resolve(btoa(String.fromCharCode(...new Uint8Array(encrypted))));
+                });
+            });
+        });
+    }
+
+    async ImportRSAPublic(public_key_base64) {
+        return new Promise((resolve) => {
+            lily2ee_importPublicKeyFromBase64(public_key_base64).then(imported => {
+                this.RSA_PUBLIC = imported;
+                console.log('[E2EE] imported RSA public key');
+                resolve();
+            });
+        });
+    }
+
+    async AESEncryptChunkAndSend(fileReaderResult) {
+        console.log(fileReaderResult);
+        lily2ee_encrypt_aes(this.AES_KEY, btoa(fileReaderResult)).then(encrypted => {
+            const checksum = calculateMD5(btoa(String.fromCharCode(encrypted)));
+            SOCKET.send(JSON.stringify({
+                token: TOKEN,
+                message_type: 'transfer',
+                chunk: CURRENT_CHUNK,
+                data: btoa(encrypted.encryptedChunk),
+                iv: `${encrypted.iv}`, // receiver expects a string... for some reason?
+                md5: checksum
+            }));
+            CURRENT_CHUNK++;
+        });
+    }
+}
+
+$(document).ready(async () => {
+    $('#uploadButton').prop('disabled', true);
+
+    let domain;
+
+    await $.getJSON('/api/whoami', (result) => {
+        if (result.error && result.reason == 'needs_login') return document.location = '/login?redir=/qt/receive';
+
+        domain = result.domain.split('://')[1]; 
     });
 
-    // file picker!
-    $('#uploadInterface').on('click', FilePickerClicked);
-    $('#uploaded').on('change', UpdateFileName);
+    // TODO: generate keys goes here
+    console.log('preparing security...');
+    SECURITY = new E2EE();
+    SECURITY.GenerateAES();
 
-    // upload button!
+    console.log('preparing websocket...');
+    SOCKET = await ConnectWS(domain);
+
+    SOCKET.addEventListener('message', (message) => {
+        SocketParseMessage(message);
+    });
+
     $('#uploadButton').on('click', StartFileUpload);
-}
+    $('#uploadInterface').on('click', FPClick);
+    $('#uploaded').on('change', FPUpdate);
+});
 
-function FilePickerClicked() {
+// -- Handling User Input --
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function FPDrag(event) { event.preventDefault(); }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function FPDrop(event) {
+    event.preventDefault();
+
+    const temp_dt = new DataTransfer();
+    temp_dt.items.add(event.dataTransfer.files[0]);
+    $('#uploaded')[0].files = temp_dt.files;
+
+    FILENAME = temp_dt.files[0].name;
+    $('#filename').text(FILENAME);
+}
+function FPClick() {
     $('#uploaded')[0].click();
 }
-
-function UpdateFileName() {
+function FPUpdate() {
+    FILENAME = $('#uploaded')[0].files[0].name;
     $('#filename').text($('#uploaded')[0].files[0].name);
-    FILE_NAME = $('#uploaded')[0].files[0].name;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function FPDrag(ev) { ev.preventDefault(); }
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function FPDrop(ev) {
-    ev.preventDefault();
-
-    // $('#fill').css('width', `${(USED_STORAGE / TOTAL_STORAGE)*20}em`);
-
-    const temporaryDataTransfer = new DataTransfer();
-    temporaryDataTransfer.items.add(ev.dataTransfer.files[0]);
-    $('#uploaded')[0].files = temporaryDataTransfer.files;
-    UpdateFileName();
-}
-
-let transferIsReady = false;
+// -- Chunk sending --
 
 async function StartFileUpload() {
     if ($('#uploaded')[0].files[0] == undefined) {
@@ -154,50 +263,44 @@ async function StartFileUpload() {
     $('#uploadInterface').css('display', 'none');
     $('#uploadButton').css('display', 'none');
     $('#div_progress').css('display', 'flex');
-    
-    transferIsReady = true;
+
+    const chunk_size = (1024*1024*5); // each chunk is ~5.24MB
+    TOTAL_CHUNKS = Math.ceil($('#uploaded')[0].files[0].size / chunk_size);
+
+    SOCKET.send(JSON.stringify({
+        token: TOKEN,
+        message_type: 'begin_transfer',
+        total_chunks: TOTAL_CHUNKS,
+        file_name: FILENAME
+    }));
 }
 
-let start_byte = 0;
-let current_chunk = 0;
-const chunk_size = 1024*1024*5; // 5MB chunks
-let file, total_chunks;
+const CHUNK_SIZE = 1024*1024*5;
+let START_BYTE = 0;
 
-async function BeginTransfer() {
-    file = $('#uploaded')[0].files[0];
-    total_chunks = Math.ceil(file.size / chunk_size);
-    
-    SOCKET.send(`{"message_type":"begin_transfer","total_chunks":"${total_chunks}","file_name":"${FILE_NAME}","token":"${TOKEN}"}`);
-}
-
-// send the RAW BUFFER of the data instead of JSON
-async function sendChunk() {
-    if (current_chunk <= total_chunks) {
-        $('#progress').css('width', `${(current_chunk / total_chunks)*100}%`);
-
-        const end_byte = Math.min(start_byte + chunk_size, file.size);
-        const chunk = file.slice(start_byte, end_byte);
-        start_byte += chunk_size;
-
-        const reader = new FileReader();
-        reader.onload = () => {
-            lily2ee_encrypt_aes(E2EE_AES_KEYS, btoa(reader.result)).then(encrypted => {
-                SOCKET.send(`{"message_type":"transfer","token":"${TOKEN}","chunk":${current_chunk},"data":"${btoa(encrypted.encryptedChunk)}","iv":"${encrypted.iv}"}`);
-                current_chunk++;
-            });
-        };
-
-        reader.readAsBinaryString(chunk);
-    } else {
-        $('#qt-send-status').text('Disconnected, file transfer succeeded. Reload the page to transfer another file.').css('color', 'var(--okayucdn-blue)');
-        return SOCKET.send(`{"message_type":"final","data":"destroying session, goodbye","token":"${TOKEN}"}`);
+async function SendChunk() {
+    // handle if the transfer is finished
+    if (CURRENT_CHUNK > TOTAL_CHUNKS) {
+        $('#qt-send-status').text('File transfer succeeded! Reload the page to transfer another file.').css('color', 'var(--okayucdn-blue)');
+        return SOCKET.send(JSON.stringify({
+            token: TOKEN,
+            message_type: 'final',
+            data: 'destroying session, goodbye'
+        }));
     }
-}
 
-$(window).on('beforeunload', (e) => {
-    if (!transferIsReady) return;
-    
-    if (confirm('WARNING: Leaving will cancel your upload! Are you sure you want to leave?')) {
-        e.preventDefault();
-    }
-});
+    // calculating the start/end positions byte-wise
+    const file = $('#uploaded')[0].files[0];
+    const end_byte = Math.min(START_BYTE + CHUNK_SIZE, file.size);
+    const chunk = file.slice(START_BYTE, end_byte);
+    START_BYTE += CHUNK_SIZE;
+
+    // reading the bytes we need
+    const reader = new FileReader();
+    reader.onload = () => {
+        SECURITY.AESEncryptChunkAndSend(reader.result); // don't btoa, function will handle that
+    };
+    reader.readAsBinaryString(chunk); // <-- deprecated, find a new way to do this somehow?
+
+    $('#progress').css('width', `${(CURRENT_CHUNK / TOTAL_CHUNKS)*100}%`);
+}
