@@ -1,7 +1,5 @@
 /* eslint-disable no-undef */
 
-const EXPERIMENT_UPLOAD_LOWER_CHUNK_SIZE = document.cookie.includes('okayu-experiment=upload-lower-chunk-size');
-
 // get identity on load <- no.
 $(document).ready(() => {
     start();
@@ -177,7 +175,7 @@ async function StartFileUpload() {
     uploadInProgress = true;
 
     const file = $('#uploaded')[0].files[0];
-    const chunk_size = EXPERIMENT_UPLOAD_LOWER_CHUNK_SIZE?1024*1024*1:1024*1024*5; // 5MB chunks
+    const chunk_size = 1024*1024*5; // 5MB chunks
     const total_chunks = Math.ceil(file.size / chunk_size);
     let start_byte = 0;
     for (let i = 0; i <= total_chunks; i++) {
