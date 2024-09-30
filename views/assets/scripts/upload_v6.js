@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 
-const EXPERIMENT_UPLOAD_LOWER_CHUNK_SIZE = document.cookie.contains('okayu-experiment=upload-lower-chunk-size');
+const EXPERIMENT_UPLOAD_LOWER_CHUNK_SIZE = document.cookie.includes('okayu-experiment=upload-lower-chunk-size');
 
 // get identity on load <- no.
 $(document).ready(() => {
