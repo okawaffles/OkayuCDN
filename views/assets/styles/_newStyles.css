@@ -1003,6 +1003,9 @@ button.mybox_experiment {
     color: var(--active-primary);
     font-size: inherit;
 }
+.bethefirst {
+    font-size: small;
+}
 
 @media screen and (max-width: 600px) {
     .section_header {

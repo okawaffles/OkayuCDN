@@ -3,7 +3,7 @@ import { USER_DATABASE_PATH, TOKEN_DATABASE_PATH, UPLOADS_PATH } from './paths';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { Request, Response } from 'express';
 import { matchedData } from 'express-validator';
-import { OTPSetupOptions, TokenV2, UserModel, UserSecureData } from '../types';
+import { AccountStatus, OTPSetupOptions, TokenV2, UserModel, UserSecureData } from '../types';
 import { randomBytes } from 'node:crypto';
 import { hash, verify } from 'argon2';
 import { Logger } from 'okayulogger';
@@ -54,20 +54,7 @@ export function GetUserFromToken(token: string): UserModel {
     CheckPrivateIndex(tokenUser.username);
     
     // simple way to check if it's already stored as a new usermodel
-    if (tokenUser.storageAmount != undefined) return tokenUser as UserModel;
-
-    const model: UserModel = {
-        username: tokenUser.username,
-        userId: -1, // userId is -1 until implemented, if ever
-        email: tokenUser.email,
-        storageAmount: tokenUser.storage,
-        hasLargeStorage: tokenUser.premium,
-        preferences: {
-            language: 0
-        }
-    };
-
-    return model;
+    return tokenUser as UserModel;
 }
 
 /**
@@ -97,6 +84,7 @@ export function GetSecureData(user: UserModel): UserSecureData {
     const SecureData: UserSecureData = {
         password: userData.password,
         password_salt: userData.password_salt || undefined, // not present if not using argon2
+        password_reset_key: userData.password_reset_key,
         passwordIsLegacy: (userData.hash_method != 'argon2'),
         two_factor: userData.uses2FA,
         twoFactorData: userData.tfa_config || undefined // not present if not using 2fa
@@ -409,9 +397,11 @@ export function RegisterNewAccount(username: string, password: string, email: st
                 preferences: {
                     language: 0
                 },
+                account_status: AccountStatus.ACCOUNT_REQUIRES_EMAIL_VERIFICATION,
                 SecureData: {
                     password: hashedPassword,
                     password_salt: salt,
+                    password_reset_key: '',
                     passwordIsLegacy: false,
                     two_factor: false,
                     twoFactorData: {
@@ -433,4 +423,14 @@ export function RegisterNewAccount(username: string, password: string, email: st
             resolve(true);
         });
     });
+}
+
+
+/**
+ * Get the AccountStatus of a user.
+ * @param username The user to check
+ */
+export function GetAccountStatus(username: string): AccountStatus {
+    const user: UserModel = GetUserModel(username);
+    return user.account_status;
 }

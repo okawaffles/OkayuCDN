@@ -10,6 +10,7 @@ export interface OTPConfig {
 export interface UserSecureData {
     password: string,
     password_salt: string,
+    password_reset_key: string,
     passwordIsLegacy: boolean,
     two_factor: boolean,
     twoFactorData?: {
@@ -38,7 +39,8 @@ export interface UserModel {
     storageAmount: number,
     hasLargeStorage: boolean,
     preferences: LocalUserSettings,
-    SecureData?: UserSecureData
+    SecureData?: UserSecureData,
+    account_status: AccountStatus
 }
 
 export enum UploadResult {
@@ -135,4 +137,14 @@ export interface QuickTransferSessions {
 }
 export interface QuickTransferUsernameAssociations {
     [key: string]: string
+}
+
+export enum AccountStatus {
+    ACCOUNT_ACTIVE,
+    ACCOUNT_REQUIRES_EMAIL_VERIFICATION,
+    ACCOUNT_DISABLED,
+    ACCOUNT_BANNED,
+    ACCOUNT_REQUESTED_PASSWORD_RESET,
+    ACCOUNT_LOCKED,
+    ACCOUNT_CAN_LOGIN_NO_UPLOADS
 }

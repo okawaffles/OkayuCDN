@@ -17,6 +17,7 @@ export let EMAIL_CONFIG: EmailConfig;
 export let TRANSPORT: Transporter;
 
 export let VERIFICATION_EMAIL_HTML: string;
+export let RESET_EMAIL_HTML: string;
 
 
 export function SetUpMailConfig() {
@@ -33,4 +34,5 @@ export function SetUpMailConfig() {
 
     // have to go one back because its in the /dist folder
     VERIFICATION_EMAIL_HTML = readFileSync(join(BASE_DIRNAME, '..', 'views', 'assets', 'email', 'verify.html'), 'utf-8');
+    RESET_EMAIL_HTML = readFileSync(join(BASE_DIRNAME, '..', 'views', 'assets', 'email', 'reset_passwd.html'), 'utf-8');
 }
