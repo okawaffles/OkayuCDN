@@ -1,5 +1,7 @@
 /* eslint-disable no-undef */
 
+const EXPERIMENT_UPLOAD_LOWER_CHUNK_SIZE = document.cookie.contains('okayu-experiment=upload-lower-chunk-size');
+
 // get identity on load <- no.
 $(document).ready(() => {
     start();
@@ -28,8 +30,6 @@ function parseStorageAmount(bytes) {
 let USED_STORAGE, TOTAL_STORAGE;
 
 function start() {
-    if (document.cookie.includes('okayu-experiment=new-font')) document.body.style = 'font-family: RoundedMplusMedium !important';
-
     TOTAL_STORAGE = 0;
     USED_STORAGE = 0;
 
@@ -177,7 +177,7 @@ async function StartFileUpload() {
     uploadInProgress = true;
 
     const file = $('#uploaded')[0].files[0];
-    const chunk_size = 1024*1024*5; // 5MB chunks
+    const chunk_size = EXPERIMENT_UPLOAD_LOWER_CHUNK_SIZE?1024*1024*1:1024*1024*5; // 5MB chunks
     const total_chunks = Math.ceil(file.size / chunk_size);
     let start_byte = 0;
     for (let i = 0; i <= total_chunks; i++) {
