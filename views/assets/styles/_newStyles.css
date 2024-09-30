@@ -791,7 +791,12 @@ span.big-button {
 }
 
 .dropdown {
-    width: 10%;
+    width: 2.5rem;
+    height: 40px;
+}
+.dropdown > div:nth-child(1) {
+    display: flex;
+    justify-content: center;
 }
 .okayu-green {
     background-color: var(--okayucdn-green);

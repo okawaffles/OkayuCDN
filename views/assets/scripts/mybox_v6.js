@@ -134,11 +134,11 @@ function dropdown(id) {
     if ($(`#showhide-id-${id}`).css('height') == '0px') {
         $(`#showhide-id-${item}`).css('height', '50px');
         $(`#showhide-id-${item}`).css('padding-top', '5px');
-        $(`#showhide-button-${item}`).html('<i class="fa-solid fa-caret-up"></i>');
+        $(`#showhide-button-${item}`).html('<div><i class="fa-solid fa-caret-up"></i></div>');
     } else {
         $(`#showhide-id-${item}`).css('height', '0px');
         $(`#showhide-id-${item}`).css('padding-top', '0');
-        $(`#showhide-button-${item}`).html('<i class="fa-solid fa-caret-down"></i>');
+        $(`#showhide-button-${item}`).html('<div><i class="fa-solid fa-caret-down"></i></div>');
     }
 }
 
@@ -174,7 +174,7 @@ function generateItem(id, item, fsize, alternate, private) {
         </div>
         <div class="right">
             ${EXPERIMENT_ITEMS_HOVER?`${private ? '<i class="fa-solid fa-lock new-lock"></i>' : ''}`:`<button class="dropdown okayu-green" id="showhide-button-${id}" onclick="dropdown(${id})">
-                <i class="fa-solid fa-caret-down"></i>
+                <div><i class="fa-solid fa-caret-down"></i></div>
             </button>`}
         </div>
     </div>
