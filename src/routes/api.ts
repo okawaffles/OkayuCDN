@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'; 
 import { ENABLE_ACCOUNT_CREATION, ENABLE_DEBUG_LOGGING, ENABLE_UPLOADING, Router, admins, announcement, domain, version } from '../main';
-import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST, ValidateDeletionRequest, ValidatePasswordRequest, ValidateSignupPOST, ValidateAdminDeletionRequest, ValidateAdminStorageRequest, ValidateUploadChunk, ValidateContentRequest, ValidateTokenBothModes, ValidateAdminBanIP, ValidateUsernameCheck } from '../util/sanitize';
+import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST, ValidateDeletionRequest, ValidatePasswordRequest, ValidateSignupPOST, ValidateAdminDeletionRequest, ValidateAdminStorageRequest, ValidateUploadChunk, ValidateContentRequest, ValidateTokenBothModes, ValidateAdminBanIP, ValidateUsernameCheck, ValidatePWResetPost } from '../util/sanitize';
 import { matchedData } from 'express-validator';
-import { StoreTOTPSetup, ChangeFileVisibility, StoreTOTPFinal, GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewAccount, RegisterNewToken, UpdateUserPassword, VerifyLoginCredentials, VerifyUserExists } from '../util/secure';
+import { StoreTOTPSetup, ChangeFileVisibility, StoreTOTPFinal, GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewAccount, RegisterNewToken, UpdateUserPassword, VerifyLoginCredentials, VerifyUserExists, HandlePasswordReset } from '../util/secure';
 import { FinishUpload, MulterUploader } from '../api/upload';
 import { AuthorizationIntents, ContentItem, IPBanList, StorageData, UserModel } from '../types';
 import { GetStorageInfo } from '../api/content';
@@ -80,6 +80,18 @@ export function RegisterAPIRoutes() {
             res.json({status:200,uses2FA:false,token:authToken});
         });
     });
+
+    // reset password from username
+    Router.post('/api/reset', ValidatePWResetPost(), HandleBadRequest, (req: Request, res: Response) => {
+        const data = matchedData(req);
+        const username = data.username;
+
+        if (!VerifyUserExists(username)) return res.status(200).end(); // be intentionally vague for security reasons
+
+        HandlePasswordReset(username);
+        res.status(200).end();        
+    });
+
     // pages use this to figure out who they are based on the login token
     Router.get('/api/whoami', ValidateTokenBothModes(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
         const data = matchedData(req);

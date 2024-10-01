@@ -11,6 +11,7 @@ export interface UserSecureData {
     password: string,
     password_salt: string,
     password_reset_key: string,
+    password_reset_last_sent: number,
     passwordIsLegacy: boolean,
     two_factor: boolean,
     twoFactorData?: {

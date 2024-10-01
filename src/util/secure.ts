@@ -8,6 +8,8 @@ import { randomBytes } from 'node:crypto';
 import { hash, verify } from 'argon2';
 import { Logger } from 'okayulogger';
 import { GenerateDefaultUserToken } from '../api/newtoken';
+import { SendPasswordResetEmail } from '../email/reset_passwd';
+import { domain } from '../main';
 
 
 const L: Logger = new Logger('secure'); 
@@ -85,6 +87,7 @@ export function GetSecureData(user: UserModel): UserSecureData {
         password: userData.password,
         password_salt: userData.password_salt || undefined, // not present if not using argon2
         password_reset_key: userData.password_reset_key,
+        password_reset_last_sent: userData.password_reset_last_sent,
         passwordIsLegacy: (userData.hash_method != 'argon2'),
         two_factor: userData.uses2FA,
         twoFactorData: userData.tfa_config || undefined // not present if not using 2fa
@@ -402,6 +405,7 @@ export function RegisterNewAccount(username: string, password: string, email: st
                     password: hashedPassword,
                     password_salt: salt,
                     password_reset_key: '',
+                    password_reset_last_sent: -1,
                     passwordIsLegacy: false,
                     two_factor: false,
                     twoFactorData: {
@@ -433,4 +437,15 @@ export function RegisterNewAccount(username: string, password: string, email: st
 export function GetAccountStatus(username: string): AccountStatus {
     const user: UserModel = GetUserModel(username);
     return user.account_status;
+}
+
+export function HandlePasswordReset(username: string) {
+    const user: UserModel = GetUserModel(username, true);
+
+    const key: string = CreateNewToken();
+    const d = new Date();
+    user.SecureData!.password_reset_key = key;
+    user.SecureData!.password_reset_last_sent = d.getTime();
+
+    SendPasswordResetEmail(user.email, username, `${domain}/account/recover?user=${username}&key=${key}`);
 }

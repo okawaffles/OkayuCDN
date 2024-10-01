@@ -1,5 +1,5 @@
 const REGEX_USERNAME = new RegExp('^[a-zA-Z0-9]{6,25}$');
-const REGEX_PASSWORD = new RegExp('^(?=.*[a-z])(?=.*[A-Z].*[A-Z])(?=.*\\d.*\\d)(?=.*[^a-zA-Z\\d].*[^a-zA-Z\\d]).{8,}$');
+const REGEX_PASSWORD = new RegExp('^(?=.*[A-Z].*[A-Z])(?=.*[\\W]).{8,}$');
 const REGEX_EMAIL = new RegExp('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$');
 
 let username_valid = false;
@@ -69,7 +69,7 @@ $(document).ready(() => {
     $('#password').focusout(() => {
         if (!REGEX_PASSWORD.test($('#password').val())) {
             password_valid = false;
-            $('#input_error').css('display', 'revert').text('Passwords must be at least 8 characters, with 2 uppercase, 2 numbers, and 2 symbols.');
+            $('#input_error').css('display', 'revert').text('Passwords must be at least 8 characters, 2 uppercase letters, and a symbol.');
             $('#password').css('animation', 'bad-login 0.5s ease');
             setTimeout(() => {
                 $('#password').css('animation', 'none');

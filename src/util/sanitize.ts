@@ -26,6 +26,7 @@ export const ValidateLoginPOST = () => [
     body('username').notEmpty().escape().isAlphanumeric('en-US'),
     body('password').notEmpty().escape()
 ];
+export const ValidatePWResetPost = () => body('username').notEmpty().escape().isAlphanumeric('en-US');
 
 export const ValidateUploadPOST = () => [
     body('filename').notEmpty().escape().isLength({min:1,max:50}),
@@ -70,7 +71,7 @@ export const ValidateUsernameCheck = () => [
 
 export const ValidateSignupPOST = () => [
     body('username').notEmpty().isAlphanumeric('en-US').escape().isLength({min:6,max:25}),
-    body('password').notEmpty().escape().isStrongPassword({minLength:8,minNumbers:2,minSymbols:2,minUppercase:2}),
+    body('password').notEmpty().escape().isStrongPassword({minLength:8,minSymbols:1,minUppercase:2}),
     body('realname').notEmpty().escape(),
     body('email').notEmpty().escape().isEmail()
 ];
