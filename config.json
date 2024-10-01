@@ -2,7 +2,7 @@
     "__COMMENT__":"This is the new config for version 6.0+",
 
     "port":2773,
-    "domain":"http://localhost:2773",
+    "domain":"http://69.57.90.32:2773",
     "version_include_git_commit":true,
 
     "ENABLE_ACCOUNT_CREATION": true,

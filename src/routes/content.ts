@@ -9,6 +9,7 @@ import { matchedData } from 'express-validator';
 import { GetLinkData } from '../api/shortener';
 import { HandleVideoStreaming } from '../api/content';
 import { debug } from 'okayulogger';
+import Ffmpeg from 'fluent-ffmpeg';
 
 
 export function RegisterContentRoutes() {
@@ -114,6 +115,21 @@ export function RegisterContentRoutes() {
 
         // handoff to api to handle the rest
         HandleVideoStreaming(req, res);
+    });
+
+    Router.get('/api/thumbnail/@:username/:item', ValidateContentRequest(), HandleBadRequest, (req: Request, res: Response) => {
+        const data = matchedData(req);
+        
+        if (!existsSync(join(UPLOADS_PATH, data.username, data.item))) return res.status(400).render('notfound');
+
+        // need to use ffmpeg for this
+        Ffmpeg(join(UPLOADS_PATH, data.username, data.item)).takeScreenshots({
+            count: 1,
+            timemarks: ['0'],
+            filename: '@tn.png',
+        }, join(UPLOADS_PATH, data.username)).on('end', () => {
+            res.sendFile(join(UPLOADS_PATH, data.username, '@tn.png'));
+        });
     });
 
     if (ENABLE_DEBUG_LOGGING) debug('routes', 'done registering content routes');

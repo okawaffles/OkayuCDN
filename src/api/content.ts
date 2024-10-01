@@ -22,7 +22,8 @@ export function GetStorageInfo(user: UserModel, keepFileRemnants = false): Stora
 
         // Check if user has remnants of a broken file upload
         // if so, remove them, and don't add them to the user's storage
-        if (name.startsWith('LATEST.UPLOADING')) {
+        // @ can't be used in filenames so they're reserved for thumbnails and whatnot
+        if (name.startsWith('LATEST.UPLOADING') || name.startsWith('@')) {
             if (!keepFileRemnants) rmSync(join(contentPath, name));
         } else {
             usedStorage += size;
