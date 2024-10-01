@@ -4,7 +4,7 @@ let BOX_ITEMS = [];
 let PROTECTED_BOX_ITEMS = [];
 let USED_STORAGE, TOTAL_STORAGE;
 const IS_MOBILE = navigator.userAgent.includes('Android') || navigator.userAgent.includes('iOS');
-const EXPERIMENT_ITEMS_HOVER = document.cookie.includes('okayu-experiment=mybox-items-hover') && !IS_MOBILE;
+const EXPERIMENT_VISUAL_REFRESH = document.cookie.includes('okayu-experiment=mybox-visual-refresh') && !IS_MOBILE;
 
 $(document).ready(() => {
     $.getJSON('/api/whoami', (data) => {
@@ -22,7 +22,7 @@ $(document).ready(() => {
         RenderBox();
     });
 
-    if (EXPERIMENT_ITEMS_HOVER) $('#experiment-on').css('display', 'inline').text('EXPERIMENT_ITEMS_HOVER is active');
+    if (EXPERIMENT_VISUAL_REFRESH) $('#experiment-on').css('display', 'inline').text('EXPERIMENT_VISUAL_REFRESH is active');
 });
 
 
@@ -116,7 +116,7 @@ function AddItem(item, id, private) {
 
     alternate = !alternate;
 
-    if (EXPERIMENT_ITEMS_HOVER) {
+    if (EXPERIMENT_VISUAL_REFRESH) {
         $('#content_container').append(element);
         $(`#item-${id}`).hover(() => {
             dropdown(id);
@@ -167,18 +167,18 @@ function parseStorageAmount(bytes) {
 
 function generateItem(id, item, fsize, alternate, private) {
     return `<div id="item-${id}" class="content_items ${alternate ? 'alternate' : ''}">
-    <div class="top ${EXPERIMENT_ITEMS_HOVER?'mybox-experiment-hover':''}">
+    <div class="top ${EXPERIMENT_VISUAL_REFRESH?'mybox-experiment-visual-refresh':''}">
         <div class="left">
             <span class="size" id="size-${id}">${fsize}</span>
             <p class="name">${item}</p>
         </div>
         <div class="right">
-            ${EXPERIMENT_ITEMS_HOVER?`${private ? '<i class="fa-solid fa-lock new-lock"></i>' : ''}`:`<button class="dropdown okayu-green" id="showhide-button-${id}" onclick="dropdown(${id})">
+            ${EXPERIMENT_VISUAL_REFRESH?`${private ? '<i class="fa-solid fa-lock new-lock"></i>' : ''}`:`<button class="dropdown okayu-green" id="showhide-button-${id}" onclick="dropdown(${id})">
                 <div><i class="fa-solid fa-caret-down"></i></div>
             </button>`}
         </div>
     </div>
-    <div class="bottom" id="showhide-id-${id}">
+    <div class="bottom ${EXPERIMENT_VISUAL_REFRESH?'mybox-experiment-visual-refresh':''}" id="showhide-id-${id}">
         <button class="share desktop" id="share-content-${id}" onclick="share('${item}', ${id}, false)"><i class="fa-solid fa-arrow-up-right-from-square"></i> Share</button>
         <button class="view desktop" onclick="view('${item}')"><i class="fa-solid fa-eye"></i> View</button>
         <button class="dl desktop" onclick="download('${item}')"><i class="fa-solid fa-download"></i> Download</button>
@@ -344,4 +344,9 @@ function PreviewFreedStorage(id) {
 }
 function UnPreviewFreedStorage() {
     $('#mybox-fill-preview').css('width', `${(USED_STORAGE / TOTAL_STORAGE)*20}em`);
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function TriggerShareModal() {
+    $('#link_type_modal').css('', '');
 }

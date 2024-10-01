@@ -735,7 +735,7 @@ span.big-button {
     width: 100%;
     display: flex;
 }
-.mybox-experiment-hover {
+.mybox-experiment-visual-refresh {
     height: 2em;
 
     .size {
@@ -744,6 +744,10 @@ span.big-button {
 
     .new-lock {
         margin-right: 1rem;
+    }
+
+    button {
+        border-radius: 1rem !important;
     }
 }
 @media (prefers-reduced-motion) {
@@ -866,16 +870,18 @@ span.big-button {
 
 .sort_select {
     border: none;
-    border-radius: 50px;
+    border-radius: 1rem;
     width: 20rem !important;
     height: 3em;
     font-size: 1rem;
-    background-color: white;
     text-align: center;
     display: flex;
     justify-self: center;
     align-self: center;
     margin-bottom: 1rem;
+    background: var(--active-background-compliment);
+    border: 2px solid var(--active-text);
+    color: var(--active-text);
 }
 
 button.mybox_experiment {
@@ -1322,7 +1328,7 @@ button.mybox_experiment {
 	color: white;
 	background-color: #ffbb3c;
 	padding: 5px 10px;
-	border-radius: 16px;
+	border-radius: .5rem;
 	font-size: 16px;
 	margin: 5px;
 	display: none;
@@ -1331,7 +1337,7 @@ button.mybox_experiment {
 	color: white;
 	background-color: var(--active-button-red);
 	padding: 5px 10px;
-	border-radius: 16px;
+	border-radius: .5rem;
 	font-size: 16px;
 	margin: 5px;
 	display: none;
@@ -1340,7 +1346,7 @@ button.mybox_experiment {
 	color: white;
 	background-color: var(--active-primary);
 	padding: 5px 10px;
-	border-radius: 16px;
+	border-radius: .5rem;
 	font-size: 16px;
 	margin: 5px;
 	display: none;
