@@ -59,9 +59,7 @@
         let runPixi = true;
         console.log(zoom);
 
-        // prevent tacobelle03 from getting around my check by 100%ing, then zooming after load >:3
-        // jk, reloads the sketch so it looks normal after zooming on respectable browsers such as firefox
-        // tacobamp was here! :3c
+        // fix scaling issues caused by browser zoom by reloading the page
         $(window).resize(function() { 
             document.location = '/';
         });
