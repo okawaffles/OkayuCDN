@@ -2,8 +2,15 @@ import express, { Express, static as staticFiles } from 'express';
 import { Logger, debug } from 'okayulogger';
 import { join } from 'node:path';
 import { RegisterRoutes } from './routes';
+import { copyFileSync, existsSync, readFileSync } from 'node:fs';
 
 /* load various config settings */
+// make sure config exists!
+if (!existsSync(join(__dirname, '..', 'config.json'))) {
+    debug('preload', 'no config was present, copying example to default');
+    copyFileSync(join(__dirname, '..', 'config.json.example'), join(__dirname, '..', 'config.json')); 
+}
+
 export const { 
     paths, 
     domain, 
@@ -33,7 +40,6 @@ if (version_include_git_commit) version = `${version} (${require('child_process'
 if (ENABLE_DEBUG_LOGGING) debug('preload', `loaded OkayuCDN version: ${version}`);
 
 // ascii art isn't necessary but i think its a nice touch
-import { readFileSync } from 'node:fs';
 const asciiart: string = readFileSync(join(__dirname, '..', 'asciiart.txt'), 'utf-8');
 if (!DISABLE_ASCII_ART) console.log(asciiart);
 
@@ -53,10 +59,10 @@ if (!process.env.SESSION_SECRET) process.env.SESSION_SECRET = CreateNewToken();
 
 import { SetUpMailConfig } from './email/config';
 if (ENABLE_USE_OF_EMAIL_FEATURES) { 
-    // TODO: Check if variables are missing
-    if (ENABLE_DEBUG_LOGGING) debug('init', 'email is on, checking for missing variables is not present.');
     L.warn('Email features are on. This is highly experimental.');
-    SetUpMailConfig();
+    if (!process.env.EMAIL_SMTP_USER_NAME || process.env.EMAIL_SMTP_PASSWORD) {
+        L.error('Missing email ENV variables. Email setup will not be executed. This can cause issues!!');
+    } else SetUpMailConfig();
 }
 
 
