@@ -48,4 +48,15 @@ export function RegisterDesktopRoutes() {
 
         res.json(storage);
     });
+
+    Router.get('/papi/boxList', (req: Request, res: Response) => {
+        res.json({
+            items: [
+                'photo.png',
+                'video.mp4',
+                'photo.jpeg',
+                'test.txt'
+            ]
+        });
+    });
 }
