@@ -119,18 +119,34 @@ function AddItem(item, id, private) {
     if (EXPERIMENT_VISUAL_REFRESH) {
         $('#content_container').append(element);
         $(`#item-${id}`).hover(() => {
-            dropdown(id);
+            dropdown(id, true, true); // force dropdown open
         }, () => {
-            dropdown(id);
+            dropdown(id, true, false); // force dropdown close
         });
     } else $('#content_container').append(element);
 }
 
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function dropdown(id) {
+function dropdown(id, overridePx = false, isOpen = false) {
     const item = id.toString();
 
+    // override if booleans are provided
+    if (overridePx) {
+        if (isOpen) {
+            $(`#showhide-id-${item}`).css('height', '50px');
+            $(`#showhide-id-${item}`).css('padding-top', '5px');
+            $(`#showhide-button-${item}`).html('<div><i class="fa-solid fa-caret-up"></i></div>');   
+        } else {
+            $(`#showhide-id-${item}`).css('height', '0px');
+            $(`#showhide-id-${item}`).css('padding-top', '0');
+            $(`#showhide-button-${item}`).html('<div><i class="fa-solid fa-caret-down"></i></div>');
+        }
+
+        return
+    }
+
+    // default behavior
     if ($(`#showhide-id-${id}`).css('height') == '0px') {
         $(`#showhide-id-${item}`).css('height', '50px');
         $(`#showhide-id-${item}`).css('padding-top', '5px');
