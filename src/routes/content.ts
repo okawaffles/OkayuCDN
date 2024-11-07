@@ -78,7 +78,7 @@ export function RegisterContentRoutes() {
     });
 
     // Short URL GET route
-    Router.get('/.:id', ValidateShortURL(), HandleBadRequest, (req: Request, res: Response) => {
+    Router.get('/\\.:id', ValidateShortURL(), HandleBadRequest, (req: Request, res: Response) => {
         const data = matchedData(req);
 
         try {
