@@ -1,6 +1,9 @@
 ![Commits](https://img.shields.io/github/commit-activity/m/okawaffles/okayucdn/main?style=flat-square)
 ![Build](https://github.com/okawaffles/OkayuCDN/actions/workflows/tsc_build.yml/badge.svg)
 
+> [!WARNING]
+> The license for OkayuCDN has changed and will take effect from version v6.5.0 onward. Please read the license before upgrading your server from versions < v6.5.0.
+
 # A File Upload Server
 You create an account. You log in. You upload a file. You send the link. It embeds.
 It's *that* easy.
