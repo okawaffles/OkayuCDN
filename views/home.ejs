@@ -36,7 +36,7 @@
             <h1>Welcome to OkayuCDN!</h1>
         </div> -->
 
-        <h3 class="v">v<%= version %>
+        <h3 class="v" id="ver">v<%= version %>
         </h3><br>
     </body>
 
@@ -47,6 +47,15 @@
             $('#announcement').css('display', 'inherit');
             $('#announcement-content').html(announcement.content);
         }
+    });
+
+    $('#ver').click(() => {
+        let version = $('#ver').text();
+        if (!version.includes('(')) return;
+        
+        let commitId = version.split('(')[1].split(')')[0];
+
+        document.location = `https://github.com/okawaffles/OkayuCDN/commit/${commitId}`;
     });
 </script>
 

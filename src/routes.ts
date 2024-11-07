@@ -13,6 +13,8 @@ export function RegisterRoutes() {
 
     // base routes don't need their own files
     Router.get('/', (req: Request, res: Response) => {
+        if (req.headers && req.headers['user-agent'] && (req.headers['user-agent'].includes('iPhone OS') || req.headers['user-agent'].includes('Android')))
+            return res.redirect('/home');
         res.render('landing/okayu.ejs'); // this may need to be changed later
     });
     Router.get('/wallpaper', (req: Request, res: Response) => {
