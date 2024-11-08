@@ -33,7 +33,7 @@ export function RegisterContentRoutes() {
 
         if (IsContentProtected(username, item)) {
             if (ENABLE_DEBUG_LOGGING) debug('content', 'content is protected, verifying ownership');
-            if (data.token == undefined) return res.status(404).render('err401');
+            if (data.token == undefined) return res.status(401).render('err401');
             if (GetUserFromToken(data.token).username != username) return res.status(404).render('err401');
         }
 

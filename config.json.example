@@ -32,5 +32,13 @@
 
         "endpoint": "email-smtp.us-east-2.amazonaws.com",
         "port":465
+    },
+
+    "test": {
+        "content": {
+            "username": "okawaffles",
+            "file": "boob.jpg",
+            "protected_file": "actuallyprivate.png"
+        }
     }
 }
