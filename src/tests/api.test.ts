@@ -1,3 +1,4 @@
+import { existsSync, rmdirSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe } from 'node:test';
 import request from 'supertest';
@@ -24,14 +25,27 @@ describe('API API', () => {
         const response = await request(SERVER_URL).get('/api/username?username=nottacobella3');
         expect(response.status).toBe(204);
     });
-    // test below is a really annoying test. You have to delete the new account created when testing each time.
-    // commenting out test below because its a pain to delete
-    // it('should return 200 for successful signup', async () => {
-    //     const response = await request(SERVER_URL).post('/api/signup').type('form').send({username: 'tacobelle03',password:'CatGirls:333',realname:'Bellers',email:'baubaubau@fuwamoco.com'});
-    //     expect(response.status).toBe(200);
-    // });
+
+    it('should return 200 for successful signup', async () => {
+        // first delete the account if it already exists
+        const USER_DB_PATH = join(__dirname, '..', '..', 'db', 'users');
+        const CONTENT_PATH = join(__dirname, '..', '..', 'content');
+        
+        if (existsSync(join(USER_DB_PATH, 'demoUsername.json'))) {
+            try {
+                rmSync(join(USER_DB_PATH, 'demoUsername.json'));
+                rmdirSync(join(CONTENT_PATH, 'demoUsername'), {recursive:true});
+            } catch(e) {
+                console.error(`unable to delete demoUsername.json and its PCI despite it existing? ${e}`);
+            }
+        }
+        
+        // re-create demo account
+        const response = await request(SERVER_URL).post('/api/signup').type('form').send({username: 'demoUsername',password:'CatGirls:333',realname:'Bellers',email:'baubaubau@fuwamoco.com'});
+        expect(response.status).toBe(200);
+    });
     it('should return 409 for already existing account', async () => {
-        const response = await request(SERVER_URL).post('/api/signup').type('form').send({username: 'tacobelle3',password:'CatGirls:333',realname:'Belle',email:'baubau@fuwamoco.com'});
+        const response = await request(SERVER_URL).post('/api/signup').type('form').send({username: CONFIG.test.content.username,password:'CatGirls:333',realname:'Belle',email:'baubau@fuwamoco.com'});
         expect(response.status).toBe(409);
     });
     
