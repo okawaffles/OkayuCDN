@@ -55,7 +55,7 @@ export function RegisterContentRoutes() {
         const pathOfContent = join(UPLOADS_PATH, username, item);
 
         if (!existsSync(pathOfContent)) {
-            return res.status(404).render('notfound.ejs');
+            return res.status(404).render('notfound.ejs', {version});
         }
 
         if (IsContentProtected(username, item)) {
