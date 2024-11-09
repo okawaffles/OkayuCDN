@@ -1,5 +1,6 @@
 ![Commits](https://img.shields.io/github/commit-activity/m/okawaffles/okayucdn/main?style=flat-square)
 ![Build](https://github.com/okawaffles/OkayuCDN/actions/workflows/tsc_build.yml/badge.svg)
+![Tests](https://github.com/okawaffles/OkayuCDN/actions/workflows/run_tests.yml/badge.svg)
 
 > [!WARNING]
 > The license for OkayuCDN has changed and will take effect from version v6.5.0 onward. Please read the license before upgrading your server from versions < v6.5.0.
