@@ -37,8 +37,8 @@
     "test": {
         "content": {
             "username": "okawaffles",
-            "file": "boob.jpg",
-            "protected_file": "actuallyprivate.png"
+            "file": "public.jpg",
+            "protected_file": "private.png"
         }
     }
 }

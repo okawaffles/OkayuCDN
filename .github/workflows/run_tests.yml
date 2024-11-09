@@ -24,6 +24,15 @@ jobs:
             npm install -g typescript
             tsc
 
+        - name: Create mock files
+          run: |
+            mkdir -p db/users/okawaffles
+            mkdir -p content/okawaffles
+            touch db/users/okawaffles.json
+            echo '{"protected_files":["private.png"]}' > db/users/okawaffles/private.json
+            touch content/okawaffles/public.jpg
+            touch content/okawaffles/private.png
+
         - name: Start server
           run: |
             node . &
