@@ -5,7 +5,6 @@ cache/
 db/stats.json
 .ENV
 nodemon.json
-package-lock.json
 blocked_ips.json
 dist/
 config.json

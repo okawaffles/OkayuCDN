@@ -7,12 +7,8 @@ const SERVER_URL = 'http://localhost:2773';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const CONFIG = require(join(__dirname, '..', '..', 'config.json'));
 
-// it('should ', async () => {
-//     const response = await request(SERVER_URL).get('');
-//     expect(response.status).toBe();
-
 describe('API API', () => {
-    it('should Return Good Health', async () => {
+    it('should return good health', async () => {
         const response = await request(SERVER_URL).get('/api/health');
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty('health', 'OK');

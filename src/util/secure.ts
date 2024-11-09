@@ -423,7 +423,14 @@ export function RegisterNewAccount(username: string, password: string, email: st
             };
 
             writeFileSync(join(USER_DATABASE_PATH, `${username}.json`), JSON.stringify(userData));
-            mkdirSync(join(UPLOADS_PATH, username));
+            
+            // realistically this should NEVER skip. however, in testing, it can crash the server
+            // when account deletion added, content should be orphaned in its own folder
+            // rather than just leaving it there/deleting it
+            if (!existsSync(join(UPLOADS_PATH, username)))
+                mkdirSync(join(UPLOADS_PATH, username));
+
+
             resolve(true);
         });
     });
