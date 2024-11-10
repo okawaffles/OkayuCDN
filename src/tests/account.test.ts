@@ -13,6 +13,9 @@ describe('API API', () => {
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty('health', 'OK');
     });
+
+    // signup
+
     it('should return 409 for claimed username', async () => {
         const response = await request(SERVER_URL).get(`/api/username?username=${CONFIG.test.content.username}`);
         expect(response.status).toBe(409);
@@ -45,4 +48,36 @@ describe('API API', () => {
         expect(response.status).toBe(409);
     });
     
+    // login
+    let auth_token: string;
+
+    it('should return 200 and a token for a successful login', async () => {
+        const response = await request(SERVER_URL).post('/api/login').type('form').send({
+            username: 'demoUsername',
+            password: 'CatGirls:333'
+        });
+
+        expect(response.status).toBe(200);
+        expect(response.body).toHaveProperty('token');
+
+        auth_token = response.body.token;
+    });
+
+    it('should return 401 for an invalid login', async () => {
+        const response = await request(SERVER_URL).post('/api/login').type('form').send({username:'NotARealUser',password:'NotCatGirls:333'});
+        expect(response.status).toBe(401);
+    });
+
+    // account info
+    it('should return account information on an authenticated whoami call', async () => {
+        const response = await request(SERVER_URL).get('/api/whoami').set('Cookie', `token=${auth_token}`);
+
+        expect(response.status).toBe(200);
+        expect(response.body).toHaveProperty('username', 'demoUsername');
+    });
+    it('should not return account information on an unauthenticated whoami call', async () => {
+        const response = await request(SERVER_URL).get('/api/whoami');
+
+        expect(response.status).not.toBe(200);
+    });
 });
