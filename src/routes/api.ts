@@ -52,7 +52,7 @@ export function RegisterAPIRoutes() {
         const data = matchedData(req);
 
         // oops we need to verify the user exists first!
-        if (!VerifyUserExists(data.username)) return res.json({status:401,reason:'User not found'});
+        if (!VerifyUserExists(data.username)) return res.status(401).json({status:401,reason:'User not found'});
 
         // validation of login credentials...
         VerifyLoginCredentials(data.username, data.password).then(isValid => {
