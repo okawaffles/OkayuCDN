@@ -60,7 +60,7 @@ if (!process.env.SESSION_SECRET) process.env.SESSION_SECRET = CreateNewToken();
 import { SetUpMailConfig } from './email/config';
 if (ENABLE_USE_OF_EMAIL_FEATURES) { 
     L.warn('Email features are on. This is highly experimental.');
-    if (!process.env.EMAIL_SMTP_USER_NAME || process.env.EMAIL_SMTP_PASSWORD) {
+    if (!process.env.EMAIL_SMTP_USER_NAME || !process.env.EMAIL_SMTP_PASSWORD) {
         L.error('Missing email ENV variables. Email setup will not be executed. This can cause issues!!');
     } else SetUpMailConfig();
 }
@@ -126,9 +126,8 @@ if (DISABLE_RATE_LIMITING && process.env.NODE_ENV != 'development') {
 }
 
 if (!DISABLE_RATE_LIMITING) {
-    L.warn('Rate limiting is disabled! Do not use this option in production.');
     Router.use('*', limiter);
-}
+} else L.warn('Rate limiting is disabled! Do not use this option in production.');
 
 if (ENABLE_DEBUG_LOGGING) debug('init', 'express configured OK');
 
