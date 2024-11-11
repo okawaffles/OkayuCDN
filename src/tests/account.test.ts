@@ -1,4 +1,4 @@
-import { existsSync, rmdirSync, rmSync } from 'node:fs';
+import { cpSync, existsSync, rmdirSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe } from 'node:test';
 import request from 'supertest';
@@ -7,7 +7,7 @@ const SERVER_URL = 'http://localhost:2773';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const CONFIG = require(join(__dirname, '..', '..', 'config.json'));
 
-describe('API API', () => {
+describe('Account API', () => {
     it('should return good health', async () => {
         const response = await request(SERVER_URL).get('/api/health');
         expect(response.status).toBe(200);
@@ -33,6 +33,7 @@ describe('API API', () => {
         if (existsSync(join(USER_DB_PATH, 'demoUsername.json'))) {
             try {
                 rmSync(join(USER_DB_PATH, 'demoUsername.json'));
+                rmSync(join(USER_DB_PATH, 'demoUsername', 'private.json'));
                 rmdirSync(join(CONTENT_PATH, 'demoUsername'), {recursive:true});
             } catch(e) {
                 console.error(`unable to delete demoUsername.json and its PCI despite it existing? ${e}`);
@@ -79,5 +80,53 @@ describe('API API', () => {
         const response = await request(SERVER_URL).get('/api/whoami');
 
         expect(response.status).not.toBe(200);
+    });
+
+    // storage/mybox
+
+    // keep this one first so we don't test /api/storage twice
+    it('should be able to change item privacy', async () => {
+        // need to copy a demo file first of all
+        const CONTENT_PATH = join(__dirname, '..', '..', 'content', 'demoUsername');
+        cpSync(join(__dirname, 'resource', 'file.png'), join(CONTENT_PATH, 'file.png'));
+        
+        // change its privacy
+        const response = await request(SERVER_URL)
+            .patch('/api/changeVisibility')
+            .type('form')
+            .set('Cookie', `token=${auth_token}`)
+            .send({id:'file.png'});
+
+        expect(response.statusCode).toBe(204);
+    });
+    it('should return valid storage information', async () => {
+        // call /api/storage and see if it exists
+        const response = await request(SERVER_URL).get('/api/storage').set('Cookie', `token=${auth_token}`);
+        
+        expect(response.status).toBe(200);
+        expect(response.body).toHaveProperty('used', 16276); // file.png is 16276 bytes
+        expect(response.body).toHaveProperty('content[0].name', 'file.png'); // does it exist?
+        expect(response.body).toHaveProperty('protected_files', ['file.png']); // is it private?
+    });
+    it('should be able to delete an item', async () => {
+        const response = await request(SERVER_URL)
+            .delete('/api/deleteItem')
+            .type('form')
+            .set('Cookie', `token=${auth_token}`)
+            .send({id:'file.png'});
+
+        expect(response.statusCode).toBe(204);
+    });
+
+    // updating account info
+    it('should return 200 on a successful password change', async () => {
+        const response = await request(SERVER_URL)
+            .patch('/api/password')
+            .set('Cookie', `token=${auth_token}`)
+            .type('form')
+            .send({current_password:'CatGirls:333',new_password:'NewCatGirls:333'});
+
+        expect(response.status).toBe(200);
+        expect(response.body).toHaveProperty('success', true);
     });
 });
