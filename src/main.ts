@@ -17,8 +17,8 @@ export const {
     announcement, 
     admins, 
     version_include_git_commit, 
-    ENABLE_ACCOUNT_CREATION, ENABLE_UPLOADING, ENABLE_USE_OF_EMAIL_FEATURES, ENABLE_DEBUG_LOGGING,
-    email 
+    ENABLE_ACCOUNT_CREATION, ENABLE_UPLOADING, ENABLE_USE_OF_EMAIL_FEATURES, ENABLE_DEBUG_LOGGING, DISABLE_RATE_LIMITING,
+    email
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 } = require(join(__dirname, '..', 'config.json'));
 if (ENABLE_DEBUG_LOGGING) debug('preload', 'exported config variables loaded successfully');
@@ -118,7 +118,17 @@ const limiter = rateLimit({
 });
 Router.set('trust proxy', 1);
 
-Router.use('*', limiter);
+if (DISABLE_RATE_LIMITING && process.env.NODE_ENV != 'development') {
+    L.fatal('! YOU HAVE RATE LIMITING DISABLED !');
+    L.fatal('OkayuCDN will not start unless NODE_ENV is set to development.');
+    L.fatal('You should not be using the DISABLE_RATE_LIMITING option on a production instance.');
+    process.exit();
+}
+
+if (!DISABLE_RATE_LIMITING) {
+    L.warn('Rate limiting is disabled! Do not use this option in production.');
+    Router.use('*', limiter);
+}
 
 if (ENABLE_DEBUG_LOGGING) debug('init', 'express configured OK');
 

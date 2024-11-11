@@ -10,6 +10,7 @@
     "DISABLE_ASCII_ART": false,
     "ENABLE_USE_OF_EMAIL_FEATURES":true,
     "ENABLE_DEBUG_LOGGING": true,
+    "DISABLE_RATE_LIMITING":false,
     
     "announcement":{
         "active":false,
