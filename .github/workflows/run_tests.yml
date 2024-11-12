@@ -32,6 +32,7 @@ jobs:
             echo '{"protected_files":["private.png"]}' > db/users/okawaffles/private.json
             touch content/okawaffles/public.jpg
             touch content/okawaffles/private.png
+            touch content/okawaffles/video.mp4
 
         - name: Start server
           run: |

@@ -31,6 +31,12 @@ Feel free to even customize the logos and name throughout your pages. Note that 
 6. Edit `config.json` to your liking.
 7. Start the server with `node .` (alternatively, you can use some watchdog such as PM2 like `pm2 start . -n "OkayuCDN"`)
 8. It is recommended you use a reverse proxy such as NGINX to allow SSL.
+### To run tests:
+1. Start the instance with DISABLE_RATE_LIMITING set in config.json.
+2. Create an account on the instance.
+3. Upload required demo files. Check config.json for the required files.
+4. Set the username and filenames in config.json.
+5. Run `npx jest`
 
 ## Cool! I want to contribute!
 Here's some things you could help me with:

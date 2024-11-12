@@ -39,7 +39,8 @@
         "content": {
             "username": "okawaffles",
             "file": "public.jpg",
-            "protected_file": "private.png"
+            "protected_file": "private.png",
+            "mp4_file":"video.mp4"
         }
     }
 }

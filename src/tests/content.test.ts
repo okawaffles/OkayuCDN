@@ -56,11 +56,11 @@ describe('Content API', () => {
         expect(response.status).toBe(404);
         expect(response.text).toBe('This shortened link has expired. Please ask the sender to create a new link.'); 
     });
-    it('should be able to stream the mp4 file (return status code 200)', async () => {
-        const response = await request(SERVER_URL).get(`/@${CONFIG.test.content.username}/${CONFIG.test.content.videofile}/stream`);
-        expect(response.status).toBe(200);
+    it('should be able to handle mp4 range streaming', async () => {
+        const response = await request(SERVER_URL).get(`/@${CONFIG.test.content.username}/${CONFIG.test.content.mp4_file}/stream`);
+        expect([200, 206]).toContain(response.status); // ! this allows us to check either 200 or 206 (both are accepted response codes)
     });
-    it('should return 400 for a non-video file', async () => {
+    it('should return 400 for a non-video stream request', async () => {
         const response = await request(SERVER_URL).get(`/@${CONFIG.test.content.username}/${CONFIG.test.content.file}/stream`);
         expect(response.status).toBe(400);
     });
