@@ -10,7 +10,12 @@ export function RegisterRequestLogger(): void {
     
     Router.use('*', (req: Request, _res: Response, next: CallableFunction) => {
         let IPAddress: string | undefined = 'IP Unavailable';
-        IPAddress = <string> req.ip;
+        
+        // cloudflare proxies include this header, must use or else get a cloudflare IP 
+        if (req.headers['x-forwarded-for'])
+            IPAddress = (req.headers['x-forwarded-for'] as string).split(',')[0];
+        else
+            IPAddress = req.ip as string;
 
         if (IPAddress.startsWith('::ffff:')) IPAddress = IPAddress.split('::ffff:')[1];
         
