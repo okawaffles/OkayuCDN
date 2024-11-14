@@ -88,6 +88,16 @@ export interface TokenV2 {
     intents: AuthorizationIntents
 }
 
+// Used to map usernames to a set of tokens
+export interface SessionUserMap {
+    [key: string]: Array<string>
+}
+
+// Used to map cookie token strings to a given TokenV2
+export interface TokenList {
+    [key: string]: TokenV2
+}
+
 export interface AuthorizationIntents {
     canUseWebsite?: boolean // is this token allowed to authorize the website?
     canUseDesktop?: boolean // is this token allowed to authorize the desktop app?

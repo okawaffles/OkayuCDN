@@ -1,5 +1,5 @@
 import { join } from 'node:path';
-import { USER_DATABASE_PATH, TOKEN_DATABASE_PATH, UPLOADS_PATH } from './paths';
+import { USER_DATABASE_PATH, UPLOADS_PATH } from './paths';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { Request, Response } from 'express';
 import { matchedData } from 'express-validator';
@@ -7,7 +7,7 @@ import { AccountStatus, OTPSetupOptions, TokenV2, UserModel, UserSecureData } fr
 import { randomBytes } from 'node:crypto';
 import { hash, verify } from 'argon2';
 import { Logger } from 'okayulogger';
-import { GenerateDefaultUserToken } from '../api/newtoken';
+import { DeleteAllUserSessions, GenerateDefaultUserToken, GetTokenFromCookie, RegisterNewSession, TokenExists } from '../api/newtoken';
 import { SendPasswordResetEmail } from '../email/reset_passwd';
 import { domain } from '../main';
 
@@ -30,7 +30,8 @@ export function CreateNewToken(): string {
 export function RegisterNewToken(user: UserModel): string {
     const token: string = CreateNewToken();
     const content: TokenV2 = GenerateDefaultUserToken(user.username);
-    writeFileSync(join(TOKEN_DATABASE_PATH, `${token}.json`), JSON.stringify(content));
+    // writeFileSync(join(TOKEN_DATABASE_PATH, `${token}.json`), JSON.stringify(content));
+    RegisterNewSession(token, content);
     return token;
 }
 
@@ -40,7 +41,8 @@ export function RegisterNewToken(user: UserModel): string {
  * @returns true or false whether the token is valid
  */
 export function CheckToken(token: string): boolean {
-    return existsSync(join(TOKEN_DATABASE_PATH, `${token}.json`));
+    // return existsSync(join(TOKEN_DATABASE_PATH, `${token}.json`));
+    return TokenExists(token);
 }
 
 
@@ -50,7 +52,9 @@ export function CheckToken(token: string): boolean {
  * @returns UserModel of the corresponding user
  */
 export function GetUserFromToken(token: string): UserModel {
-    const tokenData: TokenV2 = JSON.parse(readFileSync(join(TOKEN_DATABASE_PATH, `${token}.json`), 'utf-8'));
+    // const tokenData: TokenV2 = JSON.parse(readFileSync(join(TOKEN_DATABASE_PATH, `${token}.json`), 'utf-8'));
+
+    const tokenData: TokenV2 = GetTokenFromCookie(token);
     const tokenUser = JSON.parse(readFileSync(join(USER_DATABASE_PATH, `${tokenData.username}.json`), 'utf-8')); // read this raw because the usermodel might not be upgraded
 
     CheckPrivateIndex(tokenUser.username);
@@ -107,67 +111,8 @@ export function GetUserModel(username: string, addSecureData: boolean = false): 
      
     if (!addSecureData) userData.SecureData = undefined;
     return userData as UserModel;
-
-    // // upgrade usermodel if we need to
-    // const model: UserModel = {
-    //     username: username,
-    //     userId: -1, // userId is -1 until implemented, if ever
-    //     email: userData.email,
-    //     storageAmount: userData.storage,
-    //     hasLargeStorage: userData.premium,
-    //     preferences: {
-    //         language: 0
-    //     }
-    // };
-
-    // if (addSecureData) model.SecureData = GetSecureData(model);
-
-    // return model;
 }
 
-
-// /**
-//  * This function should and will only be called when a user is upgrading from a pre-6.0 password which was
-//  * encrypted with sha256 as opposed to argon2. The passwords are then re-encrypted and replaced with an argon2 hash.
-//  * @param user UserModel of the user
-//  * @param secureData UserSecureData of the user
-//  * @param raw_password the unencrypted password of the user
-//  * @returns true if password update was successful, false if the password is incorrect (or otherwise)
-//  */
-// async function UpgradeUserPassword(user: UserModel, secureData: UserSecureData, raw_password: string): Promise<boolean> {
-//     return new Promise((resolve: CallableFunction) => {
-//         const passwordInSHA256: string = createHash('sha256').update(raw_password).digest('hex');
-//         if (passwordInSHA256 != secureData.password) {
-//             resolve(false);
-//             return;
-//         }
-
-//         // re-encrypt the password
-//         const newPasswordSalt: string = CreateNewToken(); 
-
-//         // this nesting is quite ugly, but it seems as if this is the only way
-//         // eslint will let me to it. PR if you can fix this :3
-//         hash(raw_password + newPasswordSalt).then((newHashedPassword) => {
-//             secureData.password = newHashedPassword;
-//             secureData.password_salt = newPasswordSalt;
-//             secureData.passwordIsLegacy = false;
-            
-//             user.SecureData = secureData;
-            
-//             writeFileSync(join(USER_DATABASE_PATH, `${user.username}.json`), JSON.stringify(user), 'utf-8');
-//             resolve(true);
-//         });
-//     });
-// }
-
-// /**
-//  * Update a user's data to the new UserModel format
-//  * @param username The user to upgrade
-//  */
-// function UpgradeToUserModel(username: string) {
-//     const userData = GetUserModel(username, true); // get UserModel with secure data
-//     writeFileSync(join(USER_DATABASE_PATH, `${username}.json`), JSON.stringify(userData)); // rewrite it
-// }
 
 export async function UpdateUserPassword(user: UserModel, rawNewPassword: string): Promise<boolean> {
     return new Promise((resolve: CallableFunction) => {
@@ -178,6 +123,7 @@ export async function UpdateUserPassword(user: UserModel, rawNewPassword: string
                 user.SecureData!.password_salt = newPasswordSalt;
                 
                 writeFileSync(join(USER_DATABASE_PATH, user.username + '.json'), JSON.stringify(user));
+                DeleteAllUserSessions(user.username);
                 
                 resolve(true);
             });
@@ -233,9 +179,12 @@ export const PrefersLogin = (req: Request, res: Response, next: CallableFunction
     
     // validate token...
     // TokenV2 -- must validate whether a token as the "CanUseWebsite" intent
-    if (!data.token || !CheckToken(data.token) || !(JSON.parse(readFileSync(join(TOKEN_DATABASE_PATH, `${data.token}.json`), 'utf-8')).intents.canUseWebsite)) {
-        return res.redirect(`/login?redir=${req.originalUrl}`); 
-    }
+    // if (!data.token || !CheckToken(data.token) || !(JSON.parse(readFileSync(join(TOKEN_DATABASE_PATH, `${data.token}.json`), 'utf-8')).intents.canUseWebsite)) {
+    //     return res.redirect(`/login?redir=${req.originalUrl}`); 
+    // }
+
+    if (!data.token || !CheckToken(data.token) || !GetTokenFromCookie(data.token).intents.canUseWebsite) 
+        return res.redirect(`/login?redir=${req.originalUrl}`);
 
     // all is good, continue:
     next();
