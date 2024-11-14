@@ -136,6 +136,15 @@ export function RegisterNewSession(cookie: string, token: TokenV2) {
 
 export function DeleteSession(cookie: string) {
     delete SESSIONS[cookie];
+    SaveTokenDatabase();
+}
+
+
+export function DeleteAllUserSessions(username: string) {
+    USER_MAP[username].forEach((token: string) => {
+        delete SESSIONS[token];
+    });
+    SaveTokenDatabase();
 }
 
 

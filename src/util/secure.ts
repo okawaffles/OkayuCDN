@@ -7,7 +7,7 @@ import { AccountStatus, OTPSetupOptions, TokenV2, UserModel, UserSecureData } fr
 import { randomBytes } from 'node:crypto';
 import { hash, verify } from 'argon2';
 import { Logger } from 'okayulogger';
-import { GenerateDefaultUserToken, GetTokenFromCookie, RegisterNewSession, TokenExists } from '../api/newtoken';
+import { DeleteAllUserSessions, GenerateDefaultUserToken, GetTokenFromCookie, RegisterNewSession, TokenExists } from '../api/newtoken';
 import { SendPasswordResetEmail } from '../email/reset_passwd';
 import { domain } from '../main';
 
@@ -123,6 +123,7 @@ export async function UpdateUserPassword(user: UserModel, rawNewPassword: string
                 user.SecureData!.password_salt = newPasswordSalt;
                 
                 writeFileSync(join(USER_DATABASE_PATH, user.username + '.json'), JSON.stringify(user));
+                DeleteAllUserSessions(user.username);
                 
                 resolve(true);
             });

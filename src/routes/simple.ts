@@ -2,12 +2,11 @@ import { Request, Response } from 'express';
 import { admins, BASE_DIRNAME, Router, version, ENABLE_DEBUG_LOGGING } from '../main';
 import { HandleBadRequest, TestMenuValidation, ValidateAuthorizationRequest, ValidateLoginGET, ValidateToken } from '../util/sanitize';
 import { GetUserFromToken, PrefersLogin } from '../util/secure';
-import { rmSync } from 'node:fs';
-import { TOKEN_DATABASE_PATH } from '../util/paths';
 import { matchedData } from 'express-validator';
 import { join } from 'node:path';
-import { error, debug } from 'okayulogger';
+import {  debug } from 'okayulogger';
 import { IsAprilFools } from '../util/aprilfools';
+import { DeleteSession } from '../api/newtoken';
 
 /**
  * These are routes that don't change much, such as /home and /info.
@@ -34,11 +33,7 @@ export function RegisterSimpleRoutes() {
     Router.get('/logout', ValidateToken(), PrefersLogin, (req: Request, res: Response) => {
         const data = matchedData(req);
         res.cookie('token', 'logout').redirect('/login');
-        try {   
-            rmSync(join(TOKEN_DATABASE_PATH, `${data.token}.json`));
-        } catch(err: unknown) {
-            error('logout', <string> err);
-        }
+        DeleteSession(data.token);
     });
 
     Router.get('/signup', (req: Request, res: Response) => res.render('signup'));
