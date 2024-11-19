@@ -10,6 +10,7 @@ import { Logger } from 'okayulogger';
 import { DeleteAllUserSessions, GenerateDefaultUserToken, GetTokenFromCookie, RegisterNewSession, TokenExists } from '../api/newtoken';
 import { SendPasswordResetEmail } from '../email/reset_passwd';
 import { domain } from '../main';
+import { DB_GetAccount, DB_RegisterAccount } from '../data/loki';
 
 
 const L: Logger = new Logger('secure'); 
@@ -143,16 +144,16 @@ export async function UpdateUserPassword(user: UserModel, rawNewPassword: string
 export async function VerifyLoginCredentials(username: string, password: string): Promise<boolean> {
     return new Promise((resolve) => {
 
-        if (!VerifyUserExists(username)) return resolve(false);
-        
-        const user: UserModel = GetUserModel(username, true);
+        // if (!VerifyUserExists(username)) return resolve(false);
+        const account = DB_GetAccount(username);
+        if (account == null) return resolve(false);
         
         // since not every server will delete v3 accounts at the same time, 
         // implement handler because v4 accounts will crash without it.
         try {
-            CheckPrivateIndex(user.username);
+            CheckPrivateIndex(account.username);
 
-            verify(<string> user.SecureData!.password, password + user.SecureData!.password_salt).then(result => {
+            verify(<string> account.SecureData!.password, password + account.SecureData!.password_salt).then(result => {
                 return resolve(result);
             });
         } catch (err: unknown) {
@@ -349,7 +350,7 @@ export function RegisterNewAccount(username: string, password: string, email: st
                 preferences: {
                     language: 0
                 },
-                account_status: AccountStatus.ACCOUNT_REQUIRES_EMAIL_VERIFICATION,
+                account_status: AccountStatus.ACCOUNT_ACTIVE,
                 SecureData: {
                     password: hashedPassword,
                     password_salt: salt,
@@ -371,7 +372,8 @@ export function RegisterNewAccount(username: string, password: string, email: st
                 }
             };
 
-            writeFileSync(join(USER_DATABASE_PATH, `${username}.json`), JSON.stringify(userData));
+            // writeFileSync(join(USER_DATABASE_PATH, `${username}.json`), JSON.stringify(userData));
+            DB_RegisterAccount(userData);
             
             // realistically this should NEVER skip. however, in testing, it can crash the server
             // when account deletion added, content should be orphaned in its own folder

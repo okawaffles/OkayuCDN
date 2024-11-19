@@ -1,5 +1,5 @@
 {
-    "__COMMENT__":"This is the new config for version 6.0+",
+    "__DO_NOT_CHANGE__cfgver":4,
 
     "port":2773,
     "domain":"http://localhost:2773",

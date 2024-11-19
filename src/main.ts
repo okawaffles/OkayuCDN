@@ -65,6 +65,10 @@ if (ENABLE_USE_OF_EMAIL_FEATURES) {
     } else SetUpMailConfig();
 }
 
+/* load database(s) */
+import { LoadDB } from './data/loki';
+if (ENABLE_DEBUG_LOGGING) debug('init', 'loading db...');
+if (!LoadDB()) process.exit();
 
 /* configure the server */
 if (ENABLE_DEBUG_LOGGING) debug('init', 'configuring express...');
