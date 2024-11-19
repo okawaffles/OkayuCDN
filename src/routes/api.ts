@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'; 
 import { ENABLE_ACCOUNT_CREATION, ENABLE_DEBUG_LOGGING, ENABLE_UPLOADING, Router, admins, announcement, domain, version } from '../main';
 import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST, ValidateDeletionRequest, ValidatePasswordRequest, ValidateSignupPOST, ValidateAdminDeletionRequest, ValidateAdminStorageRequest, ValidateUploadChunk, ValidateContentRequest, ValidateTokenBothModes, ValidateAdminBanIP, ValidateUsernameCheck, ValidatePWResetPost } from '../util/sanitize';
-import { matchedData } from 'express-validator';
+import { matchedData, validationResult } from 'express-validator';
 import { StoreTOTPSetup, ChangeFileVisibility, StoreTOTPFinal, GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewAccount, RegisterNewToken, UpdateUserPassword, VerifyLoginCredentials, VerifyUserExists, HandlePasswordReset } from '../util/secure';
 import { FinishUpload, MulterUploader } from '../api/upload';
 import { AuthorizationIntents, ContentItem, IPBanList, StorageData, UserModel } from '../types';
@@ -134,7 +134,19 @@ export function RegisterAPIRoutes() {
         res.end();
     });
 
-    Router.post('/api/signup', ValidateSignupPOST(), HandleBadRequest, async (req: Request, res: Response) => {
+    Router.post('/api/signup', ValidateSignupPOST(), (req: Request, res: Response, next: CallableFunction) => {
+        if (!validationResult(req).isEmpty()) {
+            L.error('(signup) bad request, rejecting.');
+            validationResult(req).array().forEach(item => {
+                if (item.type == 'field' && item.path == 'password') {
+                    return res.status(400).json({error:'password check failed'});
+                }
+            });
+            return;
+        }
+    
+        next();
+    }, async (req: Request, res: Response) => {
         const data = matchedData(req);
 
         if (!ENABLE_ACCOUNT_CREATION) return res.status(423).json({error:'account creation is disabled'});

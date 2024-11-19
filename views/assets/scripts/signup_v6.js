@@ -30,8 +30,9 @@ $(document).ready(() => {
             realname:$('#realname').val()
         }, () => {
             AttemptAutoLogin();
-        }).fail(() => {
-            $('#input_error').css('display', 'revert').text('Account creation failed.');
+        }).fail((data) => {
+            if (data.responseJSON.error == 'password check failed') $('#input_error').css('display', 'revert').text('Password isn\'t strong enough. Try another one.');
+            else $('#input_error').css('display', 'revert').text('Account creation failed.');
             $('#submit').css('display', 'none');
         });
     });
