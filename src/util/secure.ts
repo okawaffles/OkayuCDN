@@ -289,7 +289,11 @@ export function ChangeFileVisibility(token: string, name: string) {
         AddProtectedFile(user.username, name);
 }
 
-
+/**
+ * Stores the setup information for the TOTP 2FA stuff
+ * @param user The user that you are modifying
+ * @param options The TOTP setup options
+ */
 export function StoreTOTPSetup(user: UserModel, options: OTPSetupOptions) {
     const fullUser = GetUserModel(user.username, true);
 

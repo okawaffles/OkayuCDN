@@ -9,13 +9,13 @@ import { GetStorageInfo } from '../api/content';
 import { Logger } from 'okayulogger';
 import { join } from 'path';
 import { UPLOADS_PATH, USER_DATABASE_PATH } from '../util/paths';
-import { existsSync, readdirSync, renameSync, rmSync, writeFileSync } from 'fs';
+import { existsSync, readdirSync, renameSync, rmSync } from 'fs';
 import { CreateLink } from '../api/shortener';
 import { ChangeTokenUsername, ReadIntents } from '../api/newtoken';
 import { AddIPBan, GetIPBans, RemoveIPBan } from '../util/ipManage';
 import { CheckOTP, GenerateQRImage, GetOTPSetupOptions } from '../api/otp';
 import { SendVerificationEmail } from '../email/verification';
-import { DB_GetAccount } from '../data/loki';
+import { DB_GetAccount, DB_UpdateAccount } from '../data/loki';
 
 const L: Logger = new Logger('API');
 
@@ -60,19 +60,19 @@ export function RegisterAPIRoutes() {
             if (!isValid) return res.status(401).json({status:401,reason:'Invalid login credentials'});
             
             // don't register a token for 2fa users
-            if (user.SecureData?.two_factor) return res.json({status:202,uses2FA:true});
+            if (user.SecureData!.two_factor) return res.json({status:202,uses2FA:true});
 
-            // // if login is successful we will record the user's IP address to their securedata
-            // let IPAddress = <string> req.ip;
-            // if (IPAddress.startsWith('::ffff:')) IPAddress = IPAddress.split('::ffff:')[1];
+            // if login is successful we will record the user's IP address to their securedata
+            let IPAddress = <string> req.ip;
+            if (IPAddress.startsWith('::ffff:')) IPAddress = IPAddress.split('::ffff:')[1];
             
-            // if (!user.SecureData?.IPHistory && user.SecureData) user.SecureData.IPHistory = [];
+            if (!user.SecureData!.IPHistory && user.SecureData) user.SecureData.IPHistory = [];
 
-            // // we only need to write it once
-            // if (user.SecureData?.IPHistory && user.SecureData.IPHistory.indexOf(IPAddress) == -1) {
-            //     user.SecureData?.IPHistory?.push(IPAddress);
-            //     writeFileSync(join(USER_DATABASE_PATH, `${user.username}.json`), JSON.stringify(user));
-            // }
+            // we only need to write it once
+            if (user.SecureData?.IPHistory && user.SecureData.IPHistory.indexOf(IPAddress) == -1) {
+                user.SecureData?.IPHistory?.push(IPAddress);
+                DB_UpdateAccount(user);
+            }
 
             // if the user doesn't use 2fa
             const authToken: string = RegisterNewToken(user);
@@ -368,6 +368,11 @@ export function RegisterAPIRoutes() {
         return res.status(501).end();
         await SendVerificationEmail('okawaffles@gmail.com', 'okawaffles', 'https://okayucdn.com');
         res.send('test email sent, see console for info');
+    });
+    Router.get('/api/system/shutdown', async (req: Request, res: Response) => {
+        return res.status(501).end();
+        res.send('shutting down...');
+        process.exit();
     });
 
     if (ENABLE_DEBUG_LOGGING) L.debug('done registering routes');

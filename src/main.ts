@@ -66,7 +66,7 @@ if (ENABLE_USE_OF_EMAIL_FEATURES) {
 }
 
 /* load database(s) */
-import { LoadDB } from './data/loki';
+import { LoadDB, SaveDB } from './data/loki';
 if (ENABLE_DEBUG_LOGGING) debug('init', 'loading db...');
 if (!LoadDB()) process.exit();
 
@@ -111,6 +111,7 @@ import { IsUpload, RateLimitHandler } from './routes/api';
 import { LoadIPs, CheckIP } from './util/ipManage';
 import { SetUpQuickTransfer } from './api/quicktransfer';
 import { createServer } from 'node:http';
+import { CheckForUpdates } from './util/updates';
 LoadIPs();
 const limiter = rateLimit({
     windowMs: 5*60*1000, // 5 minutes
@@ -151,4 +152,25 @@ SetUpQuickTransfer();
 SERVER.listen(port).on('listening', () => {
     if (ENABLE_DEBUG_LOGGING) L.debug('hello world!');
     L.info(`Listening on port ${port}!`);
+
+    CheckForUpdates();
 });
+
+
+function cleanup(exitCode: number) {
+    SaveDB();
+
+    if (exitCode == 0) L.info('Shutting down... Thanks for using OkayuCDN!');
+    else L.error(`cleanup: Unexpected shutdown: exit reason: ${exitCode}`);
+    
+    process.exit();
+}
+
+process.stdin.resume();
+
+process.on('exit', cleanup.bind(null));
+process.on('SIGINT', cleanup.bind(null));
+process.on('SIGUSR1', cleanup.bind(null));
+process.on('SIGUSR2', cleanup.bind(null));
+process.on('uncaughtException', cleanup.bind(null));
+
