@@ -22,10 +22,10 @@
     <div class="okayu-login">
         <div class="panel">
             <div class="top">
-                <h1>Welcome to OkayuCDN!</h1>
+                <h1 class="__LANG_WELCOME">Welcome to OkayuCDN!</h1>
                 <div class="inputs" id="inputs">
-                    <input type="text" placeholder="Username" id="username" />
-                    <input type="password" placeholder="Password" id="password" />
+                    <input class="__LANG_USERNAME" type="text" placeholder="Username" id="username" />
+                    <input class="__LANG_PASSWORD" type="password" placeholder="Password" id="password" />
                     <!-- <p>Password is not required to use passkey login.</p> -->
                 </div>
                 <div class="twofactor-inputs" id="twofactor-inputs">
@@ -35,14 +35,14 @@
             <div class="bottom">
                 <p class="error" id="login_error">Error: please do this and that.</p>
                 <div class="login-options" id="login-options">
-                    <span class="keeplogin"><input type="checkbox" name="keeplogin" id="keeplogin"><p>Stay logged in?</p></span>
-                    <button class="go" id="login" data-form-type="action,login">Let's go!</button>
+                    <span class="keeplogin"><input type="checkbox" name="keeplogin" id="keeplogin"><p class="__LANG_KEEP_LOGIN">Stay logged in?</p></span>
+                    <button class="go __LANG_LETSGO" id="login" data-form-type="action,login">Let's go!</button>
                 </div>
             </div>
         </div>
-        <div class="separator">OR</div>
+        <div class="separator __LANG_OR">OR</div>
         <!-- span instead of button so dashlane doesn't click it -->
-        <button data-form-type="signup" class="big-button btn-red noacc" id="signup" onclick="document.location = '/signup'">Sign up instead</button>
+        <button data-form-type="signup" class="big-button btn-red noacc __LANG_SIGNUP" id="signup" onclick="document.location = '/signup'">Sign up instead</button>
     </div>
 </body>
 </html>
