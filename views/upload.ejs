@@ -37,7 +37,7 @@
 
     <div class="upload-pane">
         <div class="uploader">
-            <h1 id="title">Upload to OkayuCDN</h1>
+            <h1 class="__LANG_UPLOAD" id="title">Upload to OkayuCDN</h1>
             <div id="newStorageAmount">
                 <div id="fill-preview"></div>
                 <div id="fill"></div>
@@ -52,11 +52,11 @@
                     <div class="container-upload-first" id="container-upload-first">
                         <input type="file" class="chooseFiles" id="uploaded" required />
                         <i class="fa-solid fa-arrow-up-from-bracket"></i><br><br>
-                        <p id="filename">Click or drag and drop to upload</p>
+                        <p class="__LANG_UL_INTERFACE" id="filename">Click or drag and drop to upload</p>
                         <p id="approxTime"></p>
                     </div>
                     <div class="container-upload-second" id="container-upload-second">
-                        <p>Uploading...</p>
+                        <p class="__LANG_UPLOADING">Uploading...</p>
                         <div class="up_progressupload" id="progressUpload"></div><br>
                     </div>
                 </div><br>
@@ -66,16 +66,16 @@
                 <p class="upload_error">Error Placeholder</p>
                 <div style="display: flex; justify-content: center;" id="div_private">
                     <input type="checkbox" class="private_toggle" id="private_toggle" style="margin: 0em 1em" />
-                    <p>Upload this file as private</p>
+                    <p class="__LANG_PRIVATE">Upload this file as private</p>
                 </div>
-                <p id="filename-error" class="text-hidden">You may only use alphanumeric characters and underscores in your file names, as well as only up to 25 characters.</p>
+                <p id="filename-error" class="text-hidden __LANG_ALPHANUMERIC">You may only use alphanumeric characters and underscores in your file names, as well as only up to 25 characters.</p>
                 <div class="wrap up_wrap">
-                    <button disabled class="go" id="uploadButton">Upload</button>
+                    <button disabled class="go __LANG_UPLOAD_START" id="uploadButton">Upload</button>
                 </div>
             </div>
             <div class="upload-progress" id="div_progress">
-                <h1>Uploading file...</h1>
-                <h3 id="processing">Please wait while the server processes your file...</h3>
+                <h1 class="__LANG_UL_IN_PROGRESS">Uploading file...</h1>
+                <h3 class="__LANG_UL_PROCESSING" id="processing">Please wait while the server processes your file...</h3>
                 <div class="progressBarContainer">
                     <div class="progressBar" id="progress"></div>
                 </div>

@@ -13,15 +13,16 @@
 
     <div class="view_info">
         <h2><%= filename %></h2>
+        <!-- this will need manual changing via js or something -->
         <h4>Uploaded by <%= username %></h4>
         
         <h4 id="type">Size:</h4>
         <h4 id="warning">
             <i class="fa-solid fa-triangle-exclamation"></i> 
-            <span id="warning-content">Do not run executable files sent to you by strangers.</span> 
+            <span class="__LANG_DANGEROUS_FILETYPE" id="warning-content">Do not run executable files sent to you by strangers.</span> 
             <i class="fa-solid fa-triangle-exclamation"></i>
             <br> 
-            <span>Please contact a site administrator to report this item if it seems malicious.</span>
+            <span class="__LANG_REPORT">Please contact a site administrator to report this item if it seems malicious.</span>
         </h4>
             
         <div class="view_preview" id="previewArea">
@@ -29,7 +30,7 @@
 
 
         <div class="wrap">
-            <button class="go" id="download" onclick="startDownload('<%=username%>', '<%=filename%>')">Download</button>
+            <button class="go __LANG_DOWNLOAD" id="download" onclick="startDownload('<%=username%>', '<%=filename%>')">Download</button>
         </div>
     </div>
 

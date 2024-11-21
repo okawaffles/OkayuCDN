@@ -12,9 +12,9 @@
     <%- include('parts/navbar', {active:'none'}) %>
 
     <div class="sc">
-        <h1>Your file has been uploaded successfully!</h1>
+        <h1 class="__LANG_UPLOAD_SUCCESS">Your file has been uploaded successfully!</h1>
         <hr style="width: 97%; margin: 10px;">
-        <h2>View it here:</h2>
+        <h2 class="__LANG_VIEW_HERE">View it here:</h2>
         <h3><%=l%></h3>
         <button id="share" class="sc_share" onclick="try { navigator.share({
             title:'OkayuCDN',
@@ -28,7 +28,7 @@
             }, 1500);
          }">Share</button>
 
-         <button class="sc_view" onclick="window.location = '<%=vl%>'">View</button>
+         <button class="sc_view __LANG_VIEW" onclick="window.location = '<%=vl%>'">View</button>
     </div>
 </body>
 </html>

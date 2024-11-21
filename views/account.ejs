@@ -15,14 +15,14 @@
     <%- include('parts/navbar-logged-in', {active:'account'}) %>
 
     <div class="center">
-        <h1 class="account_header" id="account_name">Your Account</h1>
+        <h1 class="account_header __LANG_ACCOUNT_NAME" id="account_name">Your Account</h1>
         <br><hr><br>
-        <h1 class="account_header">Update Your Password</h1><br>
+        <h1 class="account_header __LANG_UPDATE_PASSWD">Update Your Password</h1><br>
 
-        <input type="password" class="common_input" id="password_current" placeholder="Current Password"><br>
-        <input type="password" class="slight-margin-top margin-bottom common_input" id="password_new" placeholder="New Password"><br>
+        <input type="password" class="common_input __LANG_CUR_PASSWD" id="password_current" placeholder="Current Password"><br>
+        <input type="password" class="slight-margin-top margin-bottom common_input __LANG_NEW_PASSWD" id="password_new" placeholder="New Password"><br>
         <!-- <p class="login_error">Please check your password</p><br><br> -->
-        <button class="go" id="submit" onclick="updatePwd()">Change</button>
+        <button class="go __LANG_CHANGE" id="submit" onclick="updatePwd()">Change</button>
 
         <br><br>
 

@@ -16,26 +16,26 @@
     <div class="okayu-login">
         <div class="panel signup-panel">
             <div class="top">
-                <h1 class="signup-header">Welcome to OkayuCDN!</h1>
+                <h1 class="signup-header __LANG_WELCOME">Welcome to OkayuCDN!</h1>
 
                 <div class="inputs">
-                    <input class="margin-bottom-less" type="text" placeholder="Username" id="username" pattern="^[a-zA-Z0-9]{6,25}$" required>
+                    <input class="margin-bottom-less __LANG_USERNAME" type="text" placeholder="Username" id="username" pattern="^[a-zA-Z0-9]{6,25}$" required>
                     
-                    <input class="margin-bottom-less" type="password" placeholder="Password" id="password" required>
+                    <input class="margin-bottom-less __LANG_PASSWORD" type="password" placeholder="Password" id="password" required>
                     
-                    <input class="margin-bottom-less" type="text" placeholder="Real Name" id="realname" required>
+                    <input class="margin-bottom-less __LANG_REALNAME" type="text" placeholder="Real Name" id="realname" required>
 
-                    <input type="email" placeholder="Email" id="email" pattern="^(?=.*[a-z])(?=.*[A-Z].*[A-Z])(?=.*\d.*\d)(?=.*[^a-zA-Z\d].*[^a-zA-Z\d]).{8,}$" required>
+                    <input class="__LANG_EMAIL" type="email" placeholder="Email" id="email" pattern="^(?=.*[a-z])(?=.*[A-Z].*[A-Z])(?=.*\d.*\d)(?=.*[^a-zA-Z\d].*[^a-zA-Z\d]).{8,}$" required>
                 </div>
             </div>
 
             <div class="bottom">
                 <p class="input-error hide-by-default" id="input_error">Error: This and that.</p>
-                <button class="go hide-by-default" id="submit">Sign Up</button>
+                <button class="go hide-by-default __LANG_SIGNUP" id="submit">Sign Up</button>
             </div>
         </div>
         <div class="separator">OR</div>
-        <button class="go btn-red noacc" onclick="document.location = '/login?redir=/mybox'">Go back to login</button>
+        <button class="go btn-red noacc __LANG_HAS_ACCOUNT" onclick="document.location = '/login?redir=/mybox'">Go back to login</button>
     </div>
 </body>
 </html>
