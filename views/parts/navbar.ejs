@@ -2,7 +2,7 @@
     <img class="logo" id="logo" src="/assets/images/logo.png" width="200" onclick="document.location = '/'"></img>
     <nav>
         <ul class="nav_links">
-            <li class="mobile-menu" id="mc"><a id="mca"><i class="fa-solid fa-bars"></i> Menu</a></li>
+            <li class="__LANG_NAV_M_MENU mobile-menu" id="mc"><a id="mca"><i class="fa-solid fa-bars"></i> Menu</a></li>
             <li><a class="__LANG_NAV_HOME" id="home" href="/home"><i class="fa-solid fa-house"></i> Home</a></li>
             <li><a class="__LANG_NAV_UPLOAD" id="upload" href="/upload"><i class="fa-solid fa-upload"></i> Upload</a></li>
             <li><a class="__LANG_NAV_BOX" id="mybox" href="/mybox"><i class="fa-solid fa-box"></i> My Box</a></li>
@@ -12,11 +12,11 @@
     </nav>
 </header>
 <ul class="mobile-nav-links" id="mm">
-    <li id="home-m"><a class="__LANG_NAV_HOME" href="/home"><i class="fa-solid fa-house"></i> Home</a></li>
-    <li id="upload-m"><a class="__LANG_NAV_UPLOAD" href="/upload"><i class="fa-solid fa-upload"></i> Upload</a></li>
-    <li id="mybox-m"><a class="__LANG_NAV_BOX" href="/mybox"><i class="fa-solid fa-box"></i> My Box</a></li>
-    <li id="info-m"><a class="__LANG_NAV_INFO" href="/info"><i class="fa-solid fa-circle-info"></i> Info</a></li>
-    <li id="account-m"><a class="__LANG_NAV_ACCOUNT" href="/account"><i class="fa-solid fa-user"></i> My Account</a></li>
+    <li id="home-m"><a class="__LANG_NAV_M_HOME" href="/home"><i class="fa-solid fa-house"></i> Home</a></li>
+    <li id="upload-m"><a class="__LANG_NAV_M_UPLOAD" href="/upload"><i class="fa-solid fa-upload"></i> Upload</a></li>
+    <li id="mybox-m"><a class="__LANG_NAV_M_BOX" href="/mybox"><i class="fa-solid fa-box"></i> My Box</a></li>
+    <li id="info-m"><a class="__LANG_NAV_M_INFO" href="/info"><i class="fa-solid fa-circle-info"></i> Info</a></li>
+    <li id="account-m"><a class="__LANG_NAV_M_ACCOUNT" href="/account"><i class="fa-solid fa-user"></i> My Account</a></li>
 </ul>
 
 <script>
@@ -41,8 +41,8 @@
     };
     
     try {
-        document.getElementById("<%=active%>").className = 'active';    // desktop
-        document.getElementById("<%=active%>-m").className = 'active';  // mobile
+        document.getElementById("<%=active%>").className += ' active';    // desktop
+        document.getElementById("<%=active%>-m").className += ' active';  // mobile
     } catch (e) { console.log('failed to set active navitem; assuming this is a page without one.'); };
 
 </script>
