@@ -9,7 +9,13 @@ export function CheckForUpdates() {
         const json = (await data.json())[0];
 
         const latest_tag = json.tag_name;
-        const current_tag = execSync('git describe --tags --abbrev=0').toString().trim();
+        let current_tag;
+        try {
+            current_tag = execSync('git describe --tags --abbrev=0').toString().trim();
+        } catch (err) {
+            debug('updates', `failed to check for updates (${err})`);
+            return;
+        }
 
         if (CompareVersion(current_tag, latest_tag, true)) {
             info('updates', `A new update for OkayuCDN is available: ${latest_tag}. You are currently running ${current_tag}.`);
