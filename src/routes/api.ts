@@ -11,7 +11,7 @@ import { join } from 'path';
 import { UPLOADS_PATH, USER_DATABASE_PATH } from '../util/paths';
 import { existsSync, readdirSync, renameSync, rmSync } from 'fs';
 import { CreateLink } from '../api/shortener';
-import { ChangeTokenUsername, ReadIntents } from '../api/newtoken';
+import { ChangeTokenUsername, GetTokenFromCookie, ReadIntents } from '../api/newtoken';
 import { AddIPBan, GetIPBans, RemoveIPBan } from '../util/ipManage';
 import { CheckOTP, GenerateQRImage, GetOTPSetupOptions } from '../api/otp';
 import { SendVerificationEmail } from '../email/verification';
@@ -101,7 +101,8 @@ export function RegisterAPIRoutes() {
         if (data.authorization) token = data.authorization;
         else token = data.token;
 
-        const user: UserModel = GetUserFromToken(token);
+        const user = GetUserFromToken(token);
+        if (!user) return res.status(400).end();
         
         try {
             const username: string = user.username;
@@ -152,6 +153,7 @@ export function RegisterAPIRoutes() {
         if (!intents.canUpload) return res.status(403).json({success:false,reason:'No permission'});
 
         const user = GetUserFromToken(data.token);
+        if (!user) return res.status(401).end();
         const username = user.username;
 
         const uploadPath = join(UPLOADS_PATH, username);
@@ -181,7 +183,9 @@ export function RegisterAPIRoutes() {
         }
 
         try {
-            const user = GetUserFromToken(data.token);
+            const username = GetTokenFromCookie(data.token).username;
+            const user = DB_GetAccount(username);
+            if (!user) return res.status(401).json({success:false,reason:'Unauthorized'});
 
             const storage: StorageData = GetStorageInfo(user);
 
@@ -222,6 +226,7 @@ export function RegisterAPIRoutes() {
 
             const item = data.id;
             const user = GetUserFromToken(data.token);
+            if (!user) return res.status(401).json({success:false,reason:'not logged in?'});
 
             const pathOfContent = join(UPLOADS_PATH, user.username, item);
 
@@ -251,6 +256,7 @@ export function RegisterAPIRoutes() {
     Router.patch('/api/password', ValidateToken(), PrefersLogin, ValidatePasswordRequest(), HandleBadRequest, async (req: Request, res: Response) => {
         const data = matchedData(req);
         const user = GetUserFromToken(data.token);
+        if (!user) return res.status(401).json({success:false,reason:'not logged in?'});
 
         const intents: AuthorizationIntents = ReadIntents(data.token);
         if (!intents.canChangeAccountOptions) return res.status(403).json({success:false,reason:'No permission'});
@@ -258,7 +264,7 @@ export function RegisterAPIRoutes() {
         if (!await VerifyLoginCredentials(user.username, data.current_password)) return res.status(401).json({success:false,reason:'bad login'});
 
         // TODO: Simplify this down
-        const fullUserModel: UserModel = GetUserModel(GetUserFromToken(data.token).username, true);
+        const fullUserModel: UserModel = GetUserModel(user.username, true);
         if (await UpdateUserPassword(fullUserModel, data.new_password)) 
             res.status(200).json({success:true});
         else
@@ -268,7 +274,10 @@ export function RegisterAPIRoutes() {
     /* Admin Page */
     Router.get('/api/admin', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
         const data = matchedData(req);
-        if (admins.indexOf(GetUserFromToken(data.token).username) == -1) return res.status(403).end();
+        const user = GetUserFromToken(data.token);
+        if (!user) return res.status(401).json({success:false,reason:'not logged in?'});
+
+        if (admins.indexOf(user.username) == -1) return res.status(403).end();
         // we want all users so far
         const entries = readdirSync(join(USER_DATABASE_PATH), {withFileTypes: true});
         
@@ -287,22 +296,30 @@ export function RegisterAPIRoutes() {
 
     Router.get('/api/adminStorage', ValidateToken(), PrefersLogin, ValidateAdminStorageRequest(), HandleBadRequest, (req: Request, res: Response) => {
         const data = matchedData(req);
-        if (admins.indexOf(GetUserFromToken(data.token).username) == -1) return res.status(403).end();
+        const user = GetUserFromToken(data.token);
+        if (!user) return res.status(401).json({success:false,reason:'not logged in?'});
+
+        if (admins.indexOf(user.username) == -1) return res.status(403).end();
 
         const info: StorageData = GetStorageInfo(GetUserModel(data.username));
         res.json(info);
     });
     Router.patch('/api/adminLoginAs', ValidateToken(), ValidateAdminStorageRequest(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
         const data = matchedData(req);
+        const user = GetUserFromToken(data.token);
+        if (!user) return res.status(401).json({success:false,reason:'not logged in?'});
         
-        if (admins.indexOf(GetUserFromToken(data.token).username) == -1) return res.status(403).end();
+        if (admins.indexOf(user.username) == -1) return res.status(403).end();
 
         ChangeTokenUsername(data.token, data.username);
         res.json({success:true});
     });
     Router.delete('/content', ValidateToken(), ValidateAdminDeletionRequest(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
         const data = matchedData(req);
-        if (admins.indexOf(GetUserFromToken(data.token).username) == -1) return res.status(403).end();
+        const user = GetUserFromToken(data.token);
+        if (!user) return res.status(401).json({success:false,reason:'not logged in?'});
+
+        if (admins.indexOf(user.username) == -1) return res.status(403).end();
 
         const username = data.username;
         const item = data.item;
@@ -333,7 +350,8 @@ export function RegisterAPIRoutes() {
     Router.get('/api/2fa/setup', ValidateToken(), PrefersLogin, HandleBadRequest, async (req: Request, res: Response) => {
         const data = matchedData(req);
 
-        const user: UserModel = GetUserFromToken(data.token);
+        const user: UserModel | null = GetUserFromToken(data.token);
+        if (!user) return res.status(401).end();
         const setupOptions = GetOTPSetupOptions(user.username);
 
         StoreTOTPSetup(user, setupOptions);

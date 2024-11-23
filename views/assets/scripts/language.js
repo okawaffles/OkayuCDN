@@ -10,7 +10,9 @@ const LANG_JP = {
         'NAV_M_BOX':'<i class="fa-solid fa-box"></i> ダンボール',
         'NAV_M_INFO':'<i class="fa-solid fa-circle-info"></i> インフォ',
         'NAV_M_ACCOUNT':'<i class="fa-solid fa-user"></i> マイページ',
-        'NAV_M_MENU':'<i class="fa-solid fa-bars"></i> メニュー'
+        'NAV_M_MENU':'<i class="fa-solid fa-bars"></i> メニュー',
+        'NAV_LOGOUT':'<i class="fa-solid fa-right-from-bracket"></i> ログアウトする',
+        'NAV_M_LOGOUT':'<i class="fa-solid fa-right-from-bracket"></i> ログアウトする',
     },
     '/home': {
         'WELCOME': 'OkayuCDNへようこそ！',
@@ -19,8 +21,22 @@ const LANG_JP = {
     }
 };
 const LANG_ES = {
+    '_': {
+        'NAV_HOME':'<i class="fa-solid fa-house"></i> Página Principal',
+        'NAV_M_HOME':'<i class="fa-solid fa-house"></i> Página Principal',
+        'NAV_UPLOAD':'<i class="fa-solid fa-upload"></i> Cargar',
+        'NAV_M_UPLOAD':'<i class="fa-solid fa-upload"></i> Cargar',
+        'NAV_BOX':'<i class="fa-solid fa-box"></i> Mi Caja',
+        'NAV_M_BOX':'<i class="fa-solid fa-box"></i> Mi Caja',
+        'NAV_INFO':'<i class="fa-solid fa-circle-info"></i> Información',
+        'NAV_M_INFO':'<i class="fa-solid fa-circle-info"></i> Información',
+        'NAV_ACCOUNT':'<i class="fa-solid fa-user"></i> Mi Cuenta',
+        'NAV_M_ACCOUNT':'<i class="fa-solid fa-user"></i> Mi Cuenta',
+        'NAV_LOGOUT':'<i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión',
+        'NAV_M_LOGOUT':'<i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión',
+    },
     '/home': {
-        'WELCOME': '¡Bienvenido a OkayuCDN!'
+        'WELCOME': '¡Bienvenido a OkayuCDN!',
     }
 };
 

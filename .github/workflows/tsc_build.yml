@@ -2,9 +2,9 @@ name: Build
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "lokijs-upgrade" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "lokijs-upgrade" ]
 
 jobs:
   build:

@@ -10,7 +10,7 @@ import { Logger } from 'okayulogger';
 import { DeleteAllUserSessions, GenerateDefaultUserToken, GetTokenFromCookie, RegisterNewSession, TokenExists } from '../api/newtoken';
 import { SendPasswordResetEmail } from '../email/reset_passwd';
 import { domain } from '../main';
-import { DB_GetAccount, DB_RegisterAccount } from '../data/loki';
+import { DB_CreatePCI, DB_GetAccount, DB_GetPCI, DB_RegisterAccount } from '../data/loki';
 
 
 const L: Logger = new Logger('secure'); 
@@ -52,11 +52,13 @@ export function CheckToken(token: string): boolean {
  * @param token the user's token
  * @returns UserModel of the corresponding user
  */
-export function GetUserFromToken(token: string): UserModel {
+export function GetUserFromToken(token: string): UserModel | null {
     // const tokenData: TokenV2 = JSON.parse(readFileSync(join(TOKEN_DATABASE_PATH, `${token}.json`), 'utf-8'));
 
     const tokenData: TokenV2 = GetTokenFromCookie(token);
-    const tokenUser = JSON.parse(readFileSync(join(USER_DATABASE_PATH, `${tokenData.username}.json`), 'utf-8')); // read this raw because the usermodel might not be upgraded
+    // const tokenUser = JSON.parse(readFileSync(join(USER_DATABASE_PATH, `${tokenData.username}.json`), 'utf-8')); // read this raw because the usermodel might not be upgraded
+    const tokenUser = DB_GetAccount(tokenData.username);
+    if (!tokenUser) return null;
 
     CheckPrivateIndex(tokenUser.username);
     
@@ -198,15 +200,10 @@ export const PrefersLogin = (req: Request, res: Response, next: CallableFunction
  * @param username The username to check
  */
 function CheckPrivateIndex(username: string): void {
-    const userPath: string = join(USER_DATABASE_PATH, username);
-    if (!existsSync(userPath)) mkdirSync(userPath, {recursive:true});
-
-    if (!existsSync(join(userPath, 'private.json'))) {
+    const pci = DB_GetPCI(username);
+    if (!pci) {
         L.info(`Creating private file index for ${username}`);
-        const private_index = {
-            protected_files: []
-        };
-        writeFileSync(join(userPath, 'private.json'), JSON.stringify(private_index), 'utf-8');
+        DB_CreatePCI(username);
     }
 }
 
@@ -232,10 +229,10 @@ export function IsContentProtected(username: string, filename: string): boolean 
 export function GetProtectedFiles(username: string): Array<string> {
     CheckPrivateIndex(username);
 
-    const privateIndexPath: string = join(USER_DATABASE_PATH, username, 'private.json');
-    const data = JSON.parse(readFileSync(privateIndexPath, 'utf-8'));
+    const pci = DB_GetPCI(username);
+    if (!pci) return [];
 
-    return data.protected_files;
+    return pci.files;
 }
 
 
@@ -280,7 +277,9 @@ export function RemoveProtectedFile(username: string, name: string) {
  * @param name The name of the file to change
  */
 export function ChangeFileVisibility(token: string, name: string) {
-    const user: UserModel = GetUserFromToken(token);
+    const user: UserModel | null = GetUserFromToken(token);
+    if (!user) return;
+    
     const protected_files: Array<string> = GetProtectedFiles(user.username);
 
     if (protected_files.indexOf(name) != -1)

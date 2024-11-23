@@ -12,11 +12,11 @@
     </nav>
 </header>
 <ul class="mobile-nav-links" id="mm">
-    <li id="home-m"><a class="__LANG_NAV_HOME" href="/home"><i class="fa-solid fa-house"></i> Home</a></li>
-    <li id="upload-m"><a class="__LANG_NAV_UPLOAD" href="/upload"><i class="fa-solid fa-upload"></i> Upload</a></li>
-    <li id="mybox-m"><a class="__LANG_NAV_BOX" href="/mybox"><i class="fa-solid fa-box"></i> My Box</a></li>
-    <li id="info-m"><a class="__LANG_NAV_INFO" href="/info"><i class="fa-solid fa-circle-info"></i> Info</a></li>
-    <li><a class="__LANG_NAV_LOGOUT" href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Log Out</a></li>
+    <li id="home-m"><a class="__LANG_NAV_M_HOME" href="/home"><i class="fa-solid fa-house"></i> Home</a></li>
+    <li id="upload-m"><a class="__LANG_NAV_M_UPLOAD" href="/upload"><i class="fa-solid fa-upload"></i> Upload</a></li>
+    <li id="mybox-m"><a class="__LANG_NAV_M_BOX" href="/mybox"><i class="fa-solid fa-box"></i> My Box</a></li>
+    <li id="info-m"><a class="__LANG_NAV_M_INFO" href="/info"><i class="fa-solid fa-circle-info"></i> Info</a></li>
+    <li><a class="__LANG_NAV_M_LOGOUT" href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Log Out</a></li>
 </ul>
 
 <script>
@@ -41,7 +41,7 @@
     }
 
     try {
-        document.getElementById("<%=active%>").className = 'active';    // desktop
-        document.getElementById("<%=active%>-m").className = 'active';  // mobile
+        document.getElementById("<%=active%>").className += ' active';    // desktop
+        document.getElementById("<%=active%>-m").className += ' active';  // mobile
     } catch (e) { console.log('failed to set active navitem; assuming this is a page without one.'); };
 </script>
