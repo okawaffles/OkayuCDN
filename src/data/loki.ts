@@ -14,15 +14,14 @@ let dbLoaded = false;
 
 export function LoadDB(): boolean {
     try {
-        ACCOUNT_DB = new Loki(join(DATABASE_PATH, 'accounts.okayudb'), {
-            autosave: true,
-            autosaveInterval: 1000*60*10 // autosave every 10 minutes
-        });
+        ACCOUNT_DB = new Loki(join(DATABASE_PATH, 'accounts.okayudb'));
         
-        accounts = ACCOUNT_DB.getCollection('accounts');
-        privateIndexes = ACCOUNT_DB.getCollection('pci');
-        if (accounts == null) accounts = ACCOUNT_DB.addCollection('accounts');
-        if (privateIndexes == null) accounts = ACCOUNT_DB.addCollection('pci');
+        ACCOUNT_DB.loadDatabase({}, () => {  
+            accounts = ACCOUNT_DB.getCollection('accounts');
+            privateIndexes = ACCOUNT_DB.getCollection('pci');
+            if (accounts == null) accounts = ACCOUNT_DB.addCollection('accounts');
+            if (privateIndexes == null) privateIndexes = ACCOUNT_DB.addCollection('pci');
+        });
 
         L.info('Loaded account database');
         dbLoaded = true;
@@ -121,10 +120,13 @@ export function DB_UpdatePCI(username: string, item: string): boolean {
         const pci: PCI = privateIndexes.findOne({username});
         if (!pci) return false;
 
-        if (pci.files.indexOf(item) != -1)
+        if (pci.files.indexOf(item) == -1)
             pci.files.push(item);
         else
             pci.files.splice(pci.files.indexOf(item), 1);
+            
+        privateIndexes.update(pci);
+        SaveDB();
 
         return true;
     } catch(err) {

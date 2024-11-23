@@ -10,7 +10,7 @@ import { Logger } from 'okayulogger';
 import { DeleteAllUserSessions, GenerateDefaultUserToken, GetTokenFromCookie, RegisterNewSession, TokenExists } from '../api/newtoken';
 import { SendPasswordResetEmail } from '../email/reset_passwd';
 import { domain } from '../main';
-import { DB_CreatePCI, DB_GetAccount, DB_GetPCI, DB_RegisterAccount } from '../data/loki';
+import { DB_CreatePCI, DB_GetAccount, DB_GetPCI, DB_RegisterAccount, DB_UpdatePCI } from '../data/loki';
 
 
 const L: Logger = new Logger('secure'); 
@@ -230,7 +230,7 @@ export function GetProtectedFiles(username: string): Array<string> {
     CheckPrivateIndex(username);
 
     const pci = DB_GetPCI(username);
-    if (!pci) return [];
+    if (!pci) return ['@nopci'];
 
     return pci.files;
 }
@@ -243,12 +243,9 @@ export function GetProtectedFiles(username: string): Array<string> {
  */
 export function AddProtectedFile(username: string, name: string) {
     CheckPrivateIndex(username);
-
-    const privateIndexPath: string = join(USER_DATABASE_PATH, username, 'private.json');
-    const data = JSON.parse(readFileSync(privateIndexPath, 'utf-8'));
-
-    data.protected_files.push(name);
-    writeFileSync(privateIndexPath, JSON.stringify(data), 'utf-8');
+    
+    const result = DB_UpdatePCI(username, name);
+    if (!result) L.error('Failed to update PCI');
 }
 
 /**
@@ -259,15 +256,8 @@ export function AddProtectedFile(username: string, name: string) {
 export function RemoveProtectedFile(username: string, name: string) {
     CheckPrivateIndex(username);
 
-    const privateIndexPath: string = join(USER_DATABASE_PATH, username, 'private.json');
-    const data = JSON.parse(readFileSync(privateIndexPath, 'utf-8'));
-
-    const pos: number = data.protected_files.indexOf(name);
-    if (pos == -1) return;
-
-    data.protected_files.splice(pos, 1);
-
-    writeFileSync(privateIndexPath, JSON.stringify(data), 'utf-8');
+    const result = DB_UpdatePCI(username, name);
+    if (!result) L.error('Failed to update PCI');
 }
 
 
