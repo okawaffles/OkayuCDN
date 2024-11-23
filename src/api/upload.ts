@@ -1,5 +1,5 @@
 import multer from 'multer';
-import { StorageData, UploadResult, UserModel } from '../types';
+import { StorageData, UploadResult } from '../types';
 import { AddProtectedFile, GetUserFromToken } from '../util/secure';
 import { appendFileSync, mkdirSync, readFileSync, readdirSync, rmSync } from 'fs';
 import { join } from 'path';
@@ -20,6 +20,7 @@ export const UploadResults: any = {
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         const user = GetUserFromToken(req.cookies.token);
+        if (!user) return;
         const username = user.username;
 
         const uploadPath = join(UPLOADS_PATH, username);
@@ -39,7 +40,8 @@ export function FinishUpload(req: Request, res: Response) {
     info('upload', 'finishing upload ...');
 
     const data = matchedData(req);
-    const user: UserModel = GetUserFromToken(data.token);
+    const user = GetUserFromToken(data.token);
+    if (!user) return error('upload', 'failed to get UserModel');
     const filename: string = data.filename;
     const extension: string = data.extension;
     

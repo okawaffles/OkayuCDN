@@ -80,7 +80,9 @@ export function SetUpQuickTransfer() {
                         return L.error('Token is not valid, rejecting.');
                     }
 
-                    const username = GetUserFromToken(token).username;
+                    const user = GetUserFromToken(token);
+                    if (!user) return ws.send('{"message_type":"handshake","data":"authentication fail"}');
+                    const username = user.username;
 
                     if (role == 'sender') {
                         // if (receiver_usernames[username]) {
@@ -120,7 +122,9 @@ export function SetUpQuickTransfer() {
                 // E2EE
                 if (data.message_type == 'e2ee') {
                     const token = data.token;
-                    const username = GetUserFromToken(token).username;
+                    const user = GetUserFromToken(token);
+                    if (!user) return ws.send('{"message_type":"error","data":"internal server error"}');
+                    const username = user.username;
                     const session: QuickTransferConnection = sessions[token];
 
                     if (session.role == 'sender') {
@@ -138,7 +142,9 @@ export function SetUpQuickTransfer() {
                 // AWAITING
                 if (data.message_type == 'awaiting') {
                     const token = data.token;
-                    const username = GetUserFromToken(token).username;
+                    const user = GetUserFromToken(token);
+                    if (!user) return ws.send('{"message_type":"error","data":"internal server error"}');
+                    const username = user.username;
                     const session: QuickTransferConnection = sessions[token];
 
                     // the receiver will be the only one pinging, the sender will simply wait for the receiver to be online
@@ -155,7 +161,9 @@ export function SetUpQuickTransfer() {
                 // BEGIN TRANSFER
                 if (data.message_type == 'begin_transfer') {
                     const token = data.token;
-                    const username = GetUserFromToken(token).username;
+                    const user = GetUserFromToken(token);
+                    if (!user) return ws.send('{"message_type":"error","data":"internal server error"}');
+                    const username = user.username;
                     const session: QuickTransferConnection = sessions[token];
 
                     if (session.role == 'sender') {
@@ -172,7 +180,9 @@ export function SetUpQuickTransfer() {
                 // TRANSFER
                 if (data.message_type == 'transfer') {
                     const token = data.token;
-                    const username = GetUserFromToken(token).username;
+                    const user = GetUserFromToken(token);
+                    if (!user) return ws.send('{"message_type":"error","data":"internal server error"}');
+                    const username = user.username;
                     const session: QuickTransferConnection = sessions[token];
 
                     if (session.role == 'sender') {
@@ -190,7 +200,9 @@ export function SetUpQuickTransfer() {
                 if (data.message_type == 'final' && data.data == 'destroying session, goodbye') {
                     
                     const token = data.token;
-                    const username = GetUserFromToken(token).username;
+                    const user = GetUserFromToken(token);
+                    if (!user) return ws.send('{"message_type":"error","data":"internal server error"}');
+                    const username = user.username;
                     const session: QuickTransferConnection = sessions[token];
                     delete sessions[token];
 

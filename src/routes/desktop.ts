@@ -25,7 +25,8 @@ export function RegisterDesktopRoutes() {
         const data = matchedData(req);
         
         if (CheckToken(data.authorization)) {
-            const user: UserModel = GetUserFromToken(data.authorization);
+            const user: UserModel | null = GetUserFromToken(data.authorization);
+            if (!user) return res.status(401).json({valid:false,reason:'Invalid token'});
             return res.json({valid:true,username:user.username});
         } else {
             return res.status(401).json({valid:false,reason:'Invalid token'});
@@ -43,7 +44,8 @@ export function RegisterDesktopRoutes() {
         const intents = ReadIntents(data.authorization);
         if (!intents.canUseDesktop) return res.status(403).json({success:false,reason:'No permission'});
 
-        const user: UserModel = GetUserFromToken(data.authorization);
+        const user: UserModel | null = GetUserFromToken(data.authorization);
+        if (!user) return res.status(401).json({success:false,code:401,reason:'Invalid token'});
         const storage: StorageData = GetStorageInfo(user);
 
         res.json(storage);

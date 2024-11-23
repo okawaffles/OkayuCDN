@@ -34,7 +34,9 @@ export function RegisterContentRoutes() {
         if (IsContentProtected(username, item)) {
             if (ENABLE_DEBUG_LOGGING) debug('content', 'content is protected, verifying ownership');
             if (data.token == undefined) return res.status(401).render('err401');
-            if (GetUserFromToken(data.token).username != username) return res.status(401).render('err401');
+            const user = GetUserFromToken(data.token);
+            if (!user) return res.status(401).render('err401');
+            if (user.username != username) return res.status(401).render('err401');
         }
 
         if (pathOfContent.endsWith('.mp4') && !bypassVideoPage) {
@@ -60,7 +62,9 @@ export function RegisterContentRoutes() {
 
         if (IsContentProtected(username, item)) {
             if (data.token == undefined) return res.status(401).render('err401');
-            if (GetUserFromToken(data.token).username != username) return res.status(401).render('err401');
+            const user = GetUserFromToken(data.token);
+            if (!user) return res.status(401).render('err401');
+            if (user.username != username) return res.status(401).render('err401');
         }
 
         const info = statSync(pathOfContent);
@@ -108,8 +112,10 @@ export function RegisterContentRoutes() {
         )) return res.status(404).render('notfound');
 
         // make sure it's not protected & if it is make sure theyre authorized to view it
-        if (IsContentProtected(username, item)) { 
-            if (!data.token || GetUserFromToken(data.token).username != username)
+        if (IsContentProtected(username, item)) {
+            const user = GetUserFromToken(data.token);
+            if (!user) return res.status(401).render('err401');
+            if (!data.token || user.username != username)
                 return res.status(401).render('err401');
         }
 
