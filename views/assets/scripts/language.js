@@ -1,3 +1,7 @@
+// these will later be stored on the server
+// we will download them to the user's LocalStorage
+// and then load them from there
+
 const LANG_JP = {
     '_':{ // these will execute on all pages
         'NAV_HOME':'<i class="fa-solid fa-house"></i> トップ',
@@ -18,6 +22,12 @@ const LANG_JP = {
         'WELCOME': 'OkayuCDNへようこそ！',
         'SUB_A':'ここは君のファイルを無料アップロードできる',
         'SUB_B':'ではどこなりとシェアできます！'
+    },
+    '/mybox': {
+        'MANAGE_BOX':'ダンボールを見る',
+        'CONTENT':'マイファイル',
+        'SORT':'列挙のソート',
+        'SHARE':'シェア'
     }
 };
 const LANG_ES = {
@@ -40,27 +50,27 @@ const LANG_ES = {
     }
 };
 
-jQuery(() => {
-    if (!document.cookie.includes('lang=')) return;
+const AVAILABLE_LANGUAGES = {
+    'ja':LANG_JP,
+    'es':LANG_ES
+};
 
-    console.log(document.location.pathname);
+jQuery(() => {
+    const user_language = navigator.language;
+    if (user_language == 'en-US' || user_language == 'en' ) return;
 
     const PAGE = document.location.pathname;
-    let LANG;
-    switch (getCookie('lang')) {
-    case 'jp':
-        LANG = LANG_JP;
-        break;
-    case 'es':
-        LANG = LANG_ES;
-        break;
-    }
+    const LANG = AVAILABLE_LANGUAGES[getCookie('lang') || user_language];
 
     Object.keys(LANG['_']).forEach(rule => {
         $(`.__LANG_${rule}`).html(LANG['_'][rule]);
     });
     Object.keys(LANG[PAGE]).forEach(rule => {
-        $(`.__LANG_${rule}`).text(LANG[PAGE][rule]);
+        // $(`.__LANG_${rule}`).text(LANG[PAGE][rule]);
+        let els = document.getElementsByClassName(`__LANG_${rule}`);
+        Object.keys(els).forEach(item => {
+            els[item].innerText = LANG[PAGE][rule];
+        });
     });
 });
 

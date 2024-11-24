@@ -143,7 +143,7 @@ function dropdown(id, overridePx = false, isOpen = false) {
             $(`#showhide-button-${item}`).html('<div><i class="fa-solid fa-caret-down"></i></div>');
         }
 
-        return
+        return;
     }
 
     // default behavior
@@ -195,11 +195,11 @@ function generateItem(id, item, fsize, alternate, private) {
         </div>
     </div>
     <div class="bottom ${EXPERIMENT_VISUAL_REFRESH?'mybox-experiment-visual-refresh':''}" id="showhide-id-${id}">
-        <button class="share desktop" id="share-content-${id}" onclick="share('${item}', ${id}, false)"><i class="fa-solid fa-arrow-up-right-from-square"></i> Share</button>
-        <button class="view desktop" onclick="view('${item}')"><i class="fa-solid fa-eye"></i> View</button>
-        <button class="dl desktop" onclick="download('${item}')"><i class="fa-solid fa-download"></i> Download</button>
-        <button class="btn-orange visibility desktop" id="change-visibility-${id}" onclick="changeVisibility('${item}', ${id})">${private ? '<i class="fa-solid fa-lock"></i> Private' : '<i class="fa-solid fa-lock-open"></i> Public'}</button>
-        <button class="btn-red delete desktop" id="delete-item-${id}" onclick="startDeleteSequence('${item}', ${id}, false)"><i class="fa-solid fa-trash-can"></i> Delete</button>
+        <button class="share desktop __LANG_SHARE" id="share-content-${id}" onclick="share('${item}', ${id}, false)"><i class="fa-solid fa-arrow-up-right-from-square"></i> Share</button>
+        <button class="view desktop __LANG_VIEW" onclick="view('${item}')"><i class="fa-solid fa-eye"></i> View</button>
+        <button class="dl desktop __LANG_DOWNLOAD" onclick="download('${item}')"><i class="fa-solid fa-download"></i> Download</button>
+        <button class="btn-orange visibility desktop __LANG_PRIVACY" id="change-visibility-${id}" onclick="changeVisibility('${item}', ${id})">${private ? '<i class="fa-solid fa-lock"></i> Private' : '<i class="fa-solid fa-lock-open"></i> Public'}</button>
+        <button class="btn-red delete desktop __LANG_DELETE" id="delete-item-${id}" onclick="startDeleteSequence('${item}', ${id}, false)"><i class="fa-solid fa-trash-can"></i> Delete</button>
 
         <button class="share mobile" id="share-content-${id}" onclick="share('${item}', ${id}, true)"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
         <button class="view mobile" onclick="view('${item}')"><i class="fa-solid fa-eye"></i></button>
