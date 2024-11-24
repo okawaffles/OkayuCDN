@@ -185,7 +185,7 @@ function generateItem(id, item, fsize, alternate, private) {
     return `<div id="item-${id}" class="content_items ${alternate ? 'alternate' : ''}">
     <div class="top ${EXPERIMENT_VISUAL_REFRESH?'mybox-experiment-visual-refresh':''}">
         <div class="left">
-            <span class="size" id="size-${id}">${fsize}</span>
+            <span class="size" id="size-${id}">${fsize} ${!EXPERIMENT_VISUAL_REFRESH&&private?'<i class="fa-solid fa-lock new-lock"></i>':''}</span>
             <p class="name">${item}</p>
         </div>
         <div class="right">
