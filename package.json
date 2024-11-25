@@ -46,7 +46,7 @@
   },
   "name": "okayucdn",
   "description": "A File Upload Server based around Nekomata Okayu",
-  "version": "6.4.2",
+  "version": "6.4.3",
   "main": "dist/main.js",
   "repository": {
     "type": "git",
@@ -54,7 +54,10 @@
   },
   "keywords": [],
   "author": "okawaffles",
-  "license": "ISC",
+  "license": "CATGIRLS SPACE OSS-2-A",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "bugs": {
     "url": "https://github.com/okawaffles/OkayuCDN/issues"
   },
