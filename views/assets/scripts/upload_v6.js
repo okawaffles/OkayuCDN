@@ -113,7 +113,7 @@ function UpdateFileName() {
 
     $('#fill-preview').css('width', `${((USED_STORAGE + file_size) / TOTAL_STORAGE)*20}em`);
 
-    const chunk_size = 1024*1024*5; // 5MB chunks
+    const chunk_size = 1024*1024*5; // 1MB chunks
     const total_chunks = Math.ceil(file_size / chunk_size);
     $('#approxTime').text(`Approximate Upload Time: ${CalculateApproxUploadTime(total_chunks)}`);
 }
@@ -175,7 +175,7 @@ async function StartFileUpload() {
     uploadInProgress = true;
 
     const file = $('#uploaded')[0].files[0];
-    const chunk_size = 1024*1024*5; // 5MB chunks
+    const chunk_size = 1024*1024*5; // 1MB chunks
     const total_chunks = Math.ceil(file.size / chunk_size);
     let start_byte = 0;
     for (let i = 0; i <= total_chunks; i++) {
