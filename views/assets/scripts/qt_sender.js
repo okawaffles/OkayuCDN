@@ -264,7 +264,7 @@ async function StartFileUpload() {
     $('#uploadButton').css('display', 'none');
     $('#div_progress').css('display', 'flex');
 
-    const chunk_size = (1024*1024*5); // each chunk is ~5.24MB
+    const chunk_size = (1024*512); // each chunk WAS ~5.24MB, now is 0.5MB
     TOTAL_CHUNKS = Math.ceil($('#uploaded')[0].files[0].size / chunk_size);
 
     SOCKET.send(JSON.stringify({
@@ -275,7 +275,7 @@ async function StartFileUpload() {
     }));
 }
 
-const CHUNK_SIZE = 1024*1024*5;
+const CHUNK_SIZE = 1024*512;
 let START_BYTE = 0;
 
 async function SendChunk() {
