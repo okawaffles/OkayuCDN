@@ -90,7 +90,8 @@ export const ValidateShortURL = () => [
 
 export const ValidateAuthorizationRequest = () => [
     query('appId').notEmpty().escape().isNumeric().isLength({min:1,max:16}),
-    query('intents').notEmpty().escape().isNumeric()
+    query('intents').notEmpty().escape().isNumeric(),
+    query('callback').notEmpty().escape().isString(),
 ];
 
 export const ValidateAdminBanIP = () => [

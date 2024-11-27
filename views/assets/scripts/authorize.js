@@ -32,16 +32,33 @@ function DecodeIntents(encoded) {
     return intents;
 }
 
+function getQueryValue(name) {
+    const query = window.location.search.split('?')[1].split('&');
+    const values = {};
+    query.forEach(item => {
+        try {
+            const parts = item.split('=');
+            values[parts[0]] = parts[1];
+        } catch {
+            const parts = item.split('=');
+            values[parts[0]] = undefined;
+        }
+    });
+
+    return values[name] || undefined;
+}
+
 $(document).ready(() => {
     $('#loading').css('display', 'none');
 
-    const query = window.location.search.split('?')[1].split('&');
-    let intent_value = 0;
-    query.forEach(element => {
-        if (element.startsWith('intents=')) {
-            intent_value = element.split('=')[1];
-        }
-    });
+    // const query = window.location.search.split('?')[1].split('&');
+
+    let intent_value = getQueryValue('intents');
+    // query.forEach(element => {
+    //     if (element.startsWith('intents=')) {
+    //         intent_value = element.split('=')[1];
+    //     }
+    // });
     const wanted_intents = DecodeIntents(intent_value);
 
     // errr, no comment on the code quality here
@@ -56,4 +73,18 @@ $(document).ready(() => {
     if (wanted_intents.canChangeAccountOptions) $('#change_secure_yes').css('display', 'inline'); else $('#change_secure_no').css('display', 'inline');
 
     $('#displayed').css('display', 'inline');
+
+    $('approve').click(() => {
+        $.ajax({
+            type: 'POST',
+            url: '/api/authorize',
+            data: {applicationId:getQueryValue('appId'), approve: true},
+            success: function (response) {
+                document.location = getQueryValue('callback')+`?token=${response.token}`;
+            },
+            error: function() {
+                alert('failed to authorize application');
+            }
+        });
+    });
 });

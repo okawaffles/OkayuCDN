@@ -29,13 +29,17 @@
         <div id="displayed">
             <div class="top">
                 <h3 class="authorize_title">Do you want to authorize</h3>
-                <h1 class="authorize_name">OkayuCDN Desktop</h1>
+                <h1 class="authorize_name"><%= applicationName %></h1>
                 <h3 class="authorize_subtitle">on your account?</h3>
             </div>
             <hr>
             <h3 class="authorize_title">It will have permission to:</h3>
             <div class="permissions">
                 <ul class="permissions_list">
+                    <!-- All apps can use /api/whoami to get username and basic info. -->
+                    <i class="fa-solid fa-check" id="read_info_yes" style="display: revert !important;"></i>
+                    <li>Read your account info</li><br>
+
                     <i class="fa-solid fa-check" id="auth_web_yes"></i>
                     <i class="fa-solid fa-xmark" id="auth_web_no"></i>
                     <li>Authorize the website</li><br>
@@ -75,8 +79,8 @@
             </div>
             
             <div class="buttons">
-                <button>Yes</button>
-                <button class="btn-red">No</button>
+            <button id="approve">Yes</button>
+                <button id="deny" class="btn-red">No</button>
             </div>
         </div>
     </div>

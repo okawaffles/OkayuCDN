@@ -7,6 +7,8 @@ import { join } from 'node:path';
 import {  debug } from 'okayulogger';
 import { IsAprilFools } from '../util/aprilfools';
 import { DeleteSession } from '../api/newtoken';
+import { readFileSync } from 'node:fs';
+import { APPLICATION_DATABASE_PATH } from '../util/paths';
 
 /**
  * These are routes that don't change much, such as /home and /info.
@@ -48,7 +50,15 @@ export function RegisterSimpleRoutes() {
     Router.get('/mybox', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => res.render('mybox.ejs'));
 
     Router.get('/authorize', ValidateToken(), ValidateAuthorizationRequest(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
-        res.render('authorize');
+        const data = matchedData(req);
+        try {
+            const app = JSON.parse(readFileSync(join(APPLICATION_DATABASE_PATH, data.appId + '.json'), 'utf-8'));
+            console.log(app.allowed_callbacks, data.callback);
+            if (app.allowed_callbacks.indexOf(data.callback) == -1) return res.send(`Callback URL is not approved in application (${app.name}).`);
+            res.render('authorize', {applicationName: app.name});
+        } catch {
+            res.render('err404');
+        }
     });
 
     Router.get('/admin', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
