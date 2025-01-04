@@ -410,7 +410,7 @@ button:hover {
     flex-wrap: wrap;
     background-color: var(--active-navbar);
     width: 25%;
-    height: 35rem;
+    height: 38rem;
     border-radius: 3em;
     border: 2px solid var(--active-primary-hover);
 }
@@ -457,6 +457,17 @@ button:hover {
     flex-wrap: wrap;
     padding: 1em;
     z-index: 1;
+}
+.okayu-login .panel .bottom .signup-binding-agreement {
+    text-align: center;
+    color: white;
+    margin-bottom: .5rem;
+    display: none;
+
+    a {
+        color: var(--okayucdn-blue);
+        font-size: 1rem;
+    }
 }
 
 .okayu-login .panel .bottom .login-options {

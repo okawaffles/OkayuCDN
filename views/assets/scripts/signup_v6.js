@@ -106,9 +106,12 @@ function CheckSubmitRequirements() {
     if (password_valid && username_valid && email_valid && $('#realname').val() != '') {
         $('#input_error').css('display', 'none');
         $('#submit').css('display', 'revert');
+        $('#agreement').css('display', 'revert');
     }
-    else
+    else {
+        $('#agreement').css('display', 'none');
         $('#submit').css('display', 'none');
+    }
 }
 
 function AttemptAutoLogin() {
