@@ -1,3 +1,5 @@
+const boot_start_time = new Date().getTime();
+
 import express, { Express, static as staticFiles } from 'express';
 import { Logger, debug } from 'okayulogger';
 import { join } from 'node:path';
@@ -133,7 +135,7 @@ if (ENABLE_DEBUG_LOGGING) debug('init', 'express configured OK');
 
 // this handles logging requests
 RegisterRequestLogger();
-Router.use('*', CheckIP);
+Router.use(CheckIP);
 
 /* routes.ts will manage loading all routes */
 RegisterRoutes();
@@ -143,8 +145,12 @@ export const SERVER = createServer(Router);
 // set up the websocket handlers for quick transfer!
 SetUpQuickTransfer();
 
+const boot_end_time = new Date().getTime();
+L.info(`Startup finished in ${boot_end_time - boot_start_time}ms`);
+
 // this will be run after registering all routes
 SERVER.listen(port).on('listening', () => {
+    const listen_end_time = new Date().getTime();
     if (ENABLE_DEBUG_LOGGING) L.debug('hello world!');
-    L.info(`Listening on port ${port}!`);
+    L.info(`Listening on port ${port}! (took ${listen_end_time - boot_start_time}ms)`);
 });

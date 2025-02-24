@@ -4,6 +4,11 @@
 }
 
 @font-face {
+    font-family: OpenDyslexic;
+    src: url("https://okayucdn.com/@okawaffles/OpenDyslexic.otf");
+}
+
+@font-face {
     font-family: RoundedMplusMedium;
     src: url("/assets/fonts/RoundedMplusMedium.ttf");
 }

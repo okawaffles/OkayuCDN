@@ -8,7 +8,7 @@ const L: Logger = new Logger('RequestInfo');
 export function RegisterRequestLogger(): void {
     if (ENABLE_DEBUG_LOGGING) L.debug('hooking into express...');
     
-    Router.use('*', (req: Request, _res: Response, next: CallableFunction) => {
+    Router.use((req: Request, _res: Response, next: CallableFunction) => {
         let IPAddress: string | undefined = 'IP Unavailable';
         
         // cloudflare proxies include this header, must use or else get a cloudflare IP 
@@ -23,4 +23,6 @@ export function RegisterRequestLogger(): void {
 
         next();
     });
+
+    if (ENABLE_DEBUG_LOGGING) L.debug('done!');
 }
