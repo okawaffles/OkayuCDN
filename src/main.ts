@@ -128,7 +128,7 @@ if (DISABLE_RATE_LIMITING && process.env.NODE_ENV != 'development') {
 }
 
 if (!DISABLE_RATE_LIMITING) {
-    Router.use('*', limiter);
+    Router.use(limiter);
 } else L.warn('Rate limiting is disabled! Do not use this option in production.');
 
 if (ENABLE_DEBUG_LOGGING) debug('init', 'express configured OK');
