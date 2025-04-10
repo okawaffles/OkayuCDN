@@ -223,7 +223,7 @@ async function sendChunk(chunk, total_chunks, current_chunk) {
     formData.append('file', chunk);
     formData.append('totalChunks', total_chunks);
     formData.append('currentChunk', current_chunk);
-    const response = await fetch('/api/upload?current_chunk='+current_chunk, {
+    const response = await fetch('/api/upload/v2?current_chunk='+current_chunk, {
         method: 'POST',
         body: formData
     });

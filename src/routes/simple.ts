@@ -40,7 +40,10 @@ export function RegisterSimpleRoutes() {
 
     Router.get('/terms', (req: Request, res: Response) => res.render('terms'));
 
-    Router.get('/upload', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => res.render('upload.ejs'));
+    Router.get('/upload', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
+        if (req.cookies && req.cookies['okayu-experiment'] && req.cookies['okayu-experiment'] == 'upload-mini') return res.render('upload_tiny.ejs');
+        res.render('upload.ejs');
+    });
 
     Router.get('/qt/send', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => res.render('quicktransfer_send.ejs'));
     Router.get('/qt/receive', ValidateToken(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => res.render('quicktransfer_receive.ejs'));

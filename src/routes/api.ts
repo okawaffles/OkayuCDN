@@ -174,6 +174,26 @@ export function RegisterAPIRoutes() {
         res.status(200).end();
     });
 
+    Router.post('/api/upload/v2', ValidateToken(), PrefersLogin, ValidateUploadChunk(), HandleBadRequest, (req: Request, res: Response) => {
+        if (!ENABLE_UPLOADING) return res.status(423).end();
+
+        const data = matchedData(req);
+        const intents: AuthorizationIntents = ReadIntents(data.token);
+        if (!intents.canUpload) return res.status(403).json({success:false,reason:'No permission'});
+
+        // prematurely send a 200 response to the client to trick it into thinking the upload is successful
+        // this is to prevent the client from waiting for the upload to finish before sending the next chunk
+        res.status(200).end();
+    }, MulterUploader.single('file'), (req: Request) => { 
+        const data = matchedData(req);
+        const user = GetUserFromToken(data.token);
+        const username = user.username;
+
+        const uploadPath = join(UPLOADS_PATH, username);
+
+        renameSync(join(uploadPath, 'LATEST.UPLOADING.ID'), join(uploadPath, `LATEST.UPLOADING.${data.current_chunk}`));        
+    });
+
     Router.post('/api/upload/finish', ValidateToken(), ValidateUploadPOST(), HandleBadRequest, (req: Request, res: Response) => { 
         if (!ENABLE_UPLOADING) return res.status(423).end();
 
