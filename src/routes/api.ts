@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'; 
 import { ENABLE_ACCOUNT_CREATION, ENABLE_DEBUG_LOGGING, ENABLE_UPLOADING, Router, admins, announcement, domain, version } from '../main';
-import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST, ValidateDeletionRequest, ValidatePasswordRequest, ValidateSignupPOST, ValidateAdminDeletionRequest, ValidateAdminStorageRequest, ValidateUploadChunk, ValidateContentRequest, ValidateTokenBothModes, ValidateAdminBanIP, ValidateUsernameCheck, ValidatePWResetPost } from '../util/sanitize';
+import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST, ValidateDeletionRequest, ValidatePasswordRequest, ValidateSignupPOST, ValidateAdminDeletionRequest, ValidateAdminStorageRequest, ValidateUploadChunk, ValidateContentRequest, ValidateTokenBothModes, ValidateAdminBanIP, ValidateUsernameCheck, ValidatePWResetPost, ValidateAdminLoginAsRequest } from '../util/sanitize';
 import { matchedData, validationResult } from 'express-validator';
 import { StoreTOTPSetup, ChangeFileVisibility, StoreTOTPFinal, GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewAccount, RegisterNewToken, UpdateUserPassword, VerifyLoginCredentials, VerifyUserExists, HandlePasswordReset } from '../util/secure';
 import { FinishUpload, MulterUploader } from '../api/upload';
@@ -305,7 +305,7 @@ export function RegisterAPIRoutes() {
         const info: StorageData = GetStorageInfo(GetUserModel(data.username));
         res.json(info);
     });
-    Router.patch('/api/adminLoginAs', ValidateToken(), ValidateAdminStorageRequest(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
+    Router.patch('/api/adminLoginAs', ValidateToken(), ValidateAdminLoginAsRequest(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
         const data = matchedData(req);
         
         if (admins.indexOf(GetUserFromToken(data.token).username) == -1) return res.status(403).end();

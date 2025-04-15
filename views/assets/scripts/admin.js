@@ -144,11 +144,53 @@ $(document).ready(() => {
         $('#ipManage').css('display', 'none');
         $('#userPage').css('display', 'flex');
     });
+    $('#forgeToken').click(() => {
+        $.ajax({
+            type: 'PATCH',
+            url: '/api/adminLoginAs',
+            data: {username: MANAGING_USER},
+            statusCode: {
+                200: () => {
+                    // we don't need to worry about any data here,
+                    // as the active token of the user will simply be changed
+                    document.location = '/account';
+                },
+                500: () => {
+                    return alert('Could not create a valid token for this user');
+                }
+            }
+        });
+    });
     
     $('#ipManagement').click(() => {
         $('#userPage').css('display', 'none');
         $('#ipManage').css('display', 'flex');
     });
+    $('#add_ban').click(() => {
+        const ip = prompt('Enter the IP to ban');
+        const reason = prompt('Enter the reason for the ban');
+        $.ajax({
+            type: 'POST',
+            url: '/api/admin/banIP',
+            data: {
+                ip,
+                reason
+            },
+            statusCode: {
+                204: () => {
+                    alert('IP banned successfully.');
+                    location.reload();
+                },
+                400: () => {
+                    alert('Failed to ban IP: Bad Request');
+                },
+                503: () => {
+                    alert('Failed to ban IP: Internal Server Error');
+                }
+            }
+        });
+    });
+
 });
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -9,7 +9,7 @@ import { hash, verify } from 'argon2';
 import { Logger } from 'okayulogger';
 import { DeleteAllUserSessions, GenerateDefaultUserToken, GetTokenFromCookie, RegisterNewSession, TokenExists } from '../api/newtoken';
 import { SendPasswordResetEmail } from '../email/reset_passwd';
-import { domain } from '../main';
+import { admins, domain } from '../main';
 
 
 const L: Logger = new Logger('secure'); 
@@ -215,6 +215,8 @@ function CheckPrivateIndex(username: string): void {
  * @param filename The name of the file
  */
 export function IsContentProtected(username: string, filename: string): boolean {
+    if (admins.includes(username)) return false; // admins can bypass this check
+
     CheckPrivateIndex(username);
 
     const privateIndexPath: string = join(USER_DATABASE_PATH, username, 'private.json');

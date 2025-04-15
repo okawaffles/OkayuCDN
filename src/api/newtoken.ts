@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { AuthorizationIntents, SessionUserMap, TokenList, TokenType, TokenV2 } from '../types';
 import { join } from 'path';
-import { DATABASE_PATH, TOKEN_DATABASE_PATH } from '../util/paths';
+import { DATABASE_PATH } from '../util/paths';
 import { Logger } from 'okayulogger';
 import { ENABLE_DEBUG_LOGGING } from '../main';
 
@@ -94,19 +94,14 @@ export function ReadIntents(token: string): AuthorizationIntents {
  * @param new_username The new username to assign to that token
  */
 export function ChangeTokenUsername(token: string, new_username: string) {
-    const tokenData: TokenV2 = JSON.parse(
-        readFileSync(
-            join(TOKEN_DATABASE_PATH), 'utf-8'
-        )
-    );
+    const tokenData: TokenV2 = GetTokenFromCookie(token);
+
+    delete USER_MAP[tokenData.username];
+    delete SESSIONS[token];
 
     tokenData.username = new_username;
 
-    writeFileSync(
-        join(TOKEN_DATABASE_PATH, `${token}.json`),
-        JSON.stringify(tokenData),
-        'utf-8'
-    );
+    RegisterNewSession(token, tokenData);
 }
 
 

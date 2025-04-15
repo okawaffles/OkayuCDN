@@ -80,6 +80,10 @@ export const ValidateAdminStorageRequest = () => [
     query('username').notEmpty().escape().isAlphanumeric('en-US').isLength({min:6,max:25})
 ];
 
+export const ValidateAdminLoginAsRequest = () => [
+    body('username').notEmpty().escape().isAlphanumeric('en-US').isLength({min:6,max:25}),
+];
+
 export const ValidateUploadChunk = () => [
     query('current_chunk').isNumeric().notEmpty().escape()
 ];
