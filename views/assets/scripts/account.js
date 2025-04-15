@@ -77,12 +77,12 @@ function DisableOTP() {
 }
 
 async function StartPasskeySetup() {
-    if (navigator.userAgent.includes('Android') || navigator.userAgent.includes('iPhone OS') || navigator.userAgent.includes('iPad OS')) {
-        if (!confirm(`Warning: ${navigator.userAgent.includes('Android') ? 'Android does' : 'Apple devices do'} not support WebAuthn at the moment, would you like to continue anyways?`)) return;
-    }
+    // if (navigator.userAgent.includes('Android') || navigator.userAgent.includes('iPhone OS') || navigator.userAgent.includes('iPad OS')) {
+    //     if (!confirm(`Warning: ${navigator.userAgent.includes('Android') ? 'Android does' : 'Apple devices do'} not support WebAuthn at the moment, would you like to continue anyways?`)) return;
+    // }
 
     let options;
-    $.post('/api/2fa/pkreg/start', async (data) => {
+    $.get('/okayusecure/passkey/register', async (data) => {
         options = data;
         //console.log(options);
 
@@ -90,7 +90,7 @@ async function StartPasskeySetup() {
         try {
             attResp = await SimpleWebAuthnBrowser.startRegistration(options);
 
-            const result = await fetch('/api/2fa/pkreg/finish', {
+            const result = await fetch('/okayusecure/passkey/register-finish', {
                 method: 'POST',
                 body: JSON.stringify(attResp),
                 headers: {
@@ -108,7 +108,7 @@ async function StartPasskeySetup() {
                 window.location = '/login?redir=/account';
             }
         } catch (err) {
-            alert('Passkey setup failed.');
+            alert(`Passkey setup failed: ${err}`);
             console.error(err);
             return;
         }
@@ -139,5 +139,9 @@ $(document).ready(() => {
 
     $('#setuptotp').on('click', () => {
         EnableOTP();
+    });
+
+    $('#setup_passkey').on('click', () => {
+        StartPasskeySetup();
     });
 });

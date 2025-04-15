@@ -7,6 +7,7 @@ import { RegisterContentRoutes } from './routes/content';
 import { RegisterAccountRoutes } from './routes/account';
 import { RegisterDesktopRoutes } from './routes/desktop';
 import { debug } from 'okayulogger';
+import { RegisterPasskeyRoutes } from './routes/okayusecure';
 
 export function RegisterRoutes() {
     if (ENABLE_DEBUG_LOGGING) debug('routes', 'registering routes...');
@@ -42,6 +43,7 @@ export function RegisterRoutes() {
 
     // account routes
     RegisterAccountRoutes();
+    RegisterPasskeyRoutes();
 
     // routes for the desktop app (these use headers for the token rather than cookies)
     RegisterDesktopRoutes();
