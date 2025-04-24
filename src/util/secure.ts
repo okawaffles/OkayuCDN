@@ -214,8 +214,8 @@ function CheckPrivateIndex(username: string): void {
  * @param username The uploader of the file
  * @param filename The name of the file
  */
-export function IsContentProtected(username: string, filename: string): boolean {
-    if (admins.includes(username)) return false; // admins can bypass this check
+export function IsContentProtected(username: string, filename: string, accessing_username: string = '@'): boolean {
+    if (admins.indexOf(accessing_username) != -1) return false; // admins can bypass this check
 
     CheckPrivateIndex(username);
 

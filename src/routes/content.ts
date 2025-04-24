@@ -31,10 +31,11 @@ export function RegisterContentRoutes() {
 
         if (!existsSync(pathOfContent)) return res.status(404).render('notfound.ejs', {version});
 
-        if (IsContentProtected(username, item)) {
-            if (ENABLE_DEBUG_LOGGING) debug('content', 'content is protected, verifying ownership');
-            if (data.token == undefined) return res.status(401).render('err401');
-            if (GetUserFromToken(data.token).username != username) return res.status(401).render('err401');
+        if (data.token == undefined) {
+            if (IsContentProtected(username, item)) return res.status(401).render('err401');
+        } else {
+            const user = GetUserFromToken(data.token);
+            if (IsContentProtected(username, item, user.username)) return res.status(401).render('err401');
         }
 
         if (pathOfContent.endsWith('.mp4') && !bypassVideoPage) {
@@ -58,9 +59,11 @@ export function RegisterContentRoutes() {
             return res.status(404).render('notfound.ejs', {version});
         }
 
-        if (IsContentProtected(username, item)) {
-            if (data.token == undefined) return res.status(401).render('err401');
-            if (GetUserFromToken(data.token).username != username) return res.status(401).render('err401');
+        if (data.token == undefined) {
+            if (IsContentProtected(username, item)) return res.status(401).render('err401');
+        } else {
+            const user = GetUserFromToken(data.token);
+            if (IsContentProtected(username, item, user.username)) return res.status(401).render('err401');
         }
 
         const info = statSync(pathOfContent);
