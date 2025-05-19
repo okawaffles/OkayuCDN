@@ -8,3 +8,4 @@ nodemon.json
 blocked_ips.json
 dist/
 config.json
+.idea/
