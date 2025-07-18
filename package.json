@@ -25,7 +25,7 @@
     "formidable": "^3.5.4",
     "jest": "^29.7.0",
     "lusca": "^1.7.0",
-    "multer": "^2.0.1",
+    "multer": "^2.0.2",
     "mysql": "^2.18.1",
     "nodemailer": "^6.9.15",
     "okayulogger": "^2.2.1",
