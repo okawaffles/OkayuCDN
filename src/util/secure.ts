@@ -203,7 +203,8 @@ function CheckPrivateIndex(username: string): void {
     if (!existsSync(join(userPath, 'private.json'))) {
         L.info(`Creating private file index for ${username}`);
         const private_index = {
-            protected_files: []
+            protected_files: [],
+            encrypted_files: [],
         };
         writeFileSync(join(userPath, 'private.json'), JSON.stringify(private_index), 'utf-8');
     }
@@ -252,6 +253,18 @@ export function AddProtectedFile(username: string, name: string) {
     const data = JSON.parse(readFileSync(privateIndexPath, 'utf-8'));
 
     data.protected_files.push(name);
+    writeFileSync(privateIndexPath, JSON.stringify(data), 'utf-8');
+}
+
+export function AddEncryptedFile(username: string, name: string) {
+    CheckPrivateIndex(username);
+
+    const privateIndexPath: string = join(USER_DATABASE_PATH, username, 'private.json');
+    const data = JSON.parse(readFileSync(privateIndexPath, 'utf-8'));
+
+    if (!data.encrypted_files) data.encrypted_files = [];
+
+    data.encrypted_files.push(name);
     writeFileSync(privateIndexPath, JSON.stringify(data), 'utf-8');
 }
 

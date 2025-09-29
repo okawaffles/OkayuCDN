@@ -728,6 +728,15 @@ span.big-button {
     margin: .5rem;
 }
 
+.key p, .key i {
+    display: inline;
+    color: white;
+    margin: 4px 4px;
+}
+.key:last-of-type {
+    margin-bottom: 1rem;
+}
+
 .mybox_all p {
     margin-bottom: 15px;
 }

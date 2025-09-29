@@ -1,7 +1,7 @@
 let DOMAIN = 'https://okayucdn.com';
 let USERNAME = 'anonymous';
 let BOX_ITEMS = [];
-let PROTECTED_BOX_ITEMS = [];
+let PROTECTED_BOX_ITEMS = [], ENCRYPTED_BOX_ITEMS = [];
 let USED_STORAGE, TOTAL_STORAGE;
 const IS_MOBILE = navigator.userAgent.includes('Android') || navigator.userAgent.includes('iOS');
 const EXPERIMENT_VISUAL_REFRESH = document.cookie.includes('okayu-experiment=mybox-visual-refresh') && !IS_MOBILE;
@@ -32,6 +32,7 @@ function LoadBox() {
     $.getJSON('/api/storage', (data) => {
         BOX_ITEMS = data.content;
         PROTECTED_BOX_ITEMS = data.protected_files;
+        ENCRYPTED_BOX_ITEMS = data.encrypted_files;
 
         TOTAL_STORAGE = data.total;
         USED_STORAGE = data.used;
@@ -98,7 +99,8 @@ function RenderBox() {
     let i = 0;
     SORTED_BOX_ITEMS.forEach((item) => {
         const private = (PROTECTED_BOX_ITEMS.indexOf(item.name) != -1);
-        AddItem(item, i, private);
+        const encrypted = ((ENCRYPTED_BOX_ITEMS || []).indexOf(item.name) != -1);
+        AddItem(item, i, private, encrypted);
         i++;
     });
 
@@ -108,11 +110,11 @@ function RenderBox() {
 }
 
 let alternate = true;
-function AddItem(item, id, private) {
+function AddItem(item, id, private, encrypted) {
     if (item.name.startsWith('LATEST.UPLOADING.')) return;
     let element;
         
-    element = generateItem(id, item.name, parseStorageAmount(item.size), alternate, private);
+    element = generateItem(id, item.name, parseStorageAmount(item.size), alternate, private, encrypted);
 
     alternate = !alternate;
 
@@ -181,15 +183,15 @@ function parseStorageAmount(bytes) {
 
 /* Moved from old script */
 
-function generateItem(id, item, fsize, alternate, private) {
+function generateItem(id, item, fsize, alternate, private, encrypted = true) {
     return `<div id="item-${id}" class="content_items ${alternate ? 'alternate' : ''}">
     <div class="top ${EXPERIMENT_VISUAL_REFRESH?'mybox-experiment-visual-refresh':''}">
         <div class="left">
-            <span class="size" id="size-${id}">${fsize} ${!EXPERIMENT_VISUAL_REFRESH&&private?'<i class="fa-solid fa-lock new-lock"></i>':''}</span>
+            <span class="size" id="size-${id}">${fsize} ${!EXPERIMENT_VISUAL_REFRESH&&private?'<i class="fa-solid fa-lock new-lock"></i>':''}${!EXPERIMENT_VISUAL_REFRESH&&encrypted?' <i class="fa-solid fa-microchip"></i>':''}</span>
             <p class="name">${item}</p>
         </div>
         <div class="right">
-            ${EXPERIMENT_VISUAL_REFRESH?`${private ? '<i class="fa-solid fa-lock new-lock"></i>' : ''}`:`<button class="dropdown okayu-green" id="showhide-button-${id}" onclick="dropdown(${id})">
+            ${EXPERIMENT_VISUAL_REFRESH?`${private ? '<i class="fa-solid fa-lock new-lock"></i>' : ''}${encrypted ? ' <i class="fa-solid fa-microchip"></i>':''}`:`<button class="dropdown okayu-green" id="showhide-button-${id}" onclick="dropdown(${id})">
                 <div><i class="fa-solid fa-caret-down"></i></div>
             </button>`}
         </div>

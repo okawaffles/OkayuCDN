@@ -178,9 +178,14 @@ export function RegisterAPIRoutes() {
         if (!ENABLE_UPLOADING) return res.status(423).end();
 
         const data = matchedData(req);
+        if (data.encrypt == undefined) data.encrypt = false;
 
         const intents: AuthorizationIntents = ReadIntents(data.token);
         if (!intents.canUpload) return res.status(403).json({success:false,reason:'No permission'});
+
+        // if (data.encrypt) {
+            
+        // }
 
         FinishUpload(req, res);
     });

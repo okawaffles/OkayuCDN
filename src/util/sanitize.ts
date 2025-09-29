@@ -31,6 +31,7 @@ export const ValidatePWResetPost = () => body('username').notEmpty().escape().is
 export const ValidateUploadPOST = () => [
     body('filename').notEmpty().escape().isLength({min:1,max:50}),
     body('extension').notEmpty().escape().isLength({min:1,max:25}),
+    body('encrypt').optional().escape().isBoolean()
 ];
 
 export const ValidateOTP = () => [
