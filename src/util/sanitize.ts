@@ -39,6 +39,10 @@ export const ValidateOTP = () => [
     body('username').notEmpty().escape().isString().isAlphanumeric('en-US')
 ];
 
+export const ValidatePasskeySetup = () => [
+    
+];
+
 export const HandleBadRequest = (req: Request, res: Response, next: CallableFunction) => {
     if (!validationResult(req).isEmpty()) {
         error('sanitize', 'bad request, rejecting.');

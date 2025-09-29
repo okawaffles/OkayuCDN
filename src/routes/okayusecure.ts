@@ -10,7 +10,7 @@ import { DATABASE_PATH } from '../util/paths';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { domain, Router } from '../main';
 import { GetUserFromToken, PrefersLogin } from '../util/secure';
-import { HandleBadRequest, ValidateToken } from '../util/sanitize';
+import { HandleBadRequest, ValidatePasskeySetup, ValidateToken } from '../util/sanitize';
 import { generateRegistrationOptions } from '@simplewebauthn/server';
 import { matchedData } from 'express-validator';
 import { Logger } from 'okayulogger';
@@ -97,8 +97,8 @@ export function RegisterPasskeyRoutes() {
         res.json(options);
     });
 
-    Router.post('/okayusecure/passkey/register-finish', ValidateToken(), PrefersLogin, HandleBadRequest, async (req, res) => {
-        
+    Router.post('/okayusecure/passkey/register-finish', ValidateToken(), PrefersLogin, HandleBadRequest, ValidatePasskeySetup, async (req, res) => {
+        // const 
     });
 
     L.debug('done!');
