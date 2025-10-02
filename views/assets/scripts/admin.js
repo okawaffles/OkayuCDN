@@ -28,6 +28,7 @@ function ManageUser(username) {
     console.log(MANAGING_USER);
 
     $('#username').text(`Managing ${username}`);
+    $('#admin_last_seen').text('Last login: ???');
     $('#userOptions').css('display', 'flex');
 
     $('#userContent').empty();
@@ -41,6 +42,9 @@ function ManageUser(username) {
                 data.content.forEach(item => {
                     ConstructItem(item.name);
                 });
+                if (data.lastLogin) {
+                    $('#admin_last_seen').text(`Last login: ${new Date(data.lastLogin*1000).toDateString()}`);
+                }
             },
             500: () => {
                 alert('Error getting content for user.');

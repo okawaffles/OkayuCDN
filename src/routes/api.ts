@@ -68,12 +68,15 @@ export function RegisterAPIRoutes() {
             if (IPAddress.startsWith('::ffff:')) IPAddress = IPAddress.split('::ffff:')[1];
             
             if (!user.SecureData?.IPHistory && user.SecureData) user.SecureData.IPHistory = [];
-
+            
             // we only need to write it once
             if (user.SecureData?.IPHistory && user.SecureData.IPHistory.indexOf(IPAddress) == -1) {
                 user.SecureData?.IPHistory?.push(IPAddress);
-                writeFileSync(join(USER_DATABASE_PATH, `${user.username}.json`), JSON.stringify(user));
             }
+
+            if (user.SecureData) user.SecureData.lastLogin = Math.floor(new Date().getTime() / 1000);
+            
+            writeFileSync(join(USER_DATABASE_PATH, `${user.username}.json`), JSON.stringify(user));
 
             // if the user doesn't use 2fa
             const authToken: string = RegisterNewToken(user);
@@ -315,6 +318,7 @@ export function RegisterAPIRoutes() {
         if (admins.indexOf(GetUserFromToken(data.token).username) == -1) return res.status(403).end();
 
         const info: StorageData = GetStorageInfo(GetUserModel(data.username));
+        info.lastLogin = GetUserModel(data.username, true).SecureData?.lastLogin;
         res.json(info);
     });
     Router.patch('/api/adminLoginAs', ValidateToken(), ValidateAdminLoginAsRequest(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
