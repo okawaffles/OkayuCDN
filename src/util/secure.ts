@@ -183,8 +183,10 @@ export const PrefersLogin = (req: Request, res: Response, next: CallableFunction
     //     return res.redirect(`/login?redir=${req.originalUrl}`); 
     // }
 
-    if (!data.token || !CheckToken(data.token) || !GetTokenFromCookie(data.token).intents.canUseWebsite) 
+    if (!data.token || !CheckToken(data.token) || !GetTokenFromCookie(data.token).intents.canUseWebsite) {
+        L.debug('prefers login but can\'t authenticate, redirecting...');
         return res.redirect(`/login?redir=${req.originalUrl}`);
+    }
 
     // all is good, continue:
     next();

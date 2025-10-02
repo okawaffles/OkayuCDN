@@ -3,8 +3,7 @@
     This time, I'm DETERMINED to get it working.
 */
 
-import { CredentialDeviceType } from '@simplewebauthn/server/script/deps';
-import { AuthenticatorTransportFuture } from '@simplewebauthn/types';
+import type { AuthenticatorTransportFuture, CredentialDeviceType, PublicKeyCredentialCreationOptionsJSON, Base64URLString } from '@simplewebauthn/server';
 import { join } from 'path';
 import { DATABASE_PATH } from '../util/paths';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
@@ -89,7 +88,7 @@ export function RegisterPasskeyRoutes() {
                 userVerification: 'preferred',
                 authenticatorAttachment: 'platform',
             },
-            userID: user.username
+            // userID: user.username
         });
 
         AWAITING_REGISTRATION_OPTIONS[user.username] = options;
@@ -97,9 +96,15 @@ export function RegisterPasskeyRoutes() {
         res.json(options);
     });
 
-    Router.post('/okayusecure/passkey/register-finish', ValidateToken(), PrefersLogin, HandleBadRequest, ValidatePasskeySetup, async (req, res) => {
-        // const 
-    });
+    Router.post('/okayusecure/passkey/register-finish', 
+        ValidateToken(), 
+        PrefersLogin, 
+        ValidatePasskeySetup, 
+        HandleBadRequest, 
+        async (req, res) => {
+            console.log(req.body);
+            res.status(200).end();
+        });
 
     L.debug('done!');
 }

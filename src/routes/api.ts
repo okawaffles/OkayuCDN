@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'; 
 import { ENABLE_ACCOUNT_CREATION, ENABLE_DEBUG_LOGGING, ENABLE_UPLOADING, Router, admins, announcement, domain, version } from '../main';
-import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST, ValidateDeletionRequest, ValidatePasswordRequest, ValidateSignupPOST, ValidateAdminDeletionRequest, ValidateAdminStorageRequest, ValidateUploadChunk, ValidateContentRequest, ValidateTokenBothModes, ValidateAdminBanIP, ValidateUsernameCheck, ValidatePWResetPost, ValidateAdminLoginAsRequest } from '../util/sanitize';
+import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST, ValidateDeletionRequest, ValidatePasswordRequest, ValidateSignupPOST, ValidateAdminDeletionRequest, ValidateAdminStorageRequest, ValidateUploadChunk, ValidateContentRequest, ValidateTokenBothModes, ValidateAdminBanIP, ValidateUsernameCheck, ValidatePWResetPost, ValidateAdminLoginAsRequest, ValidateAppTokenRequest } from '../util/sanitize';
 import { matchedData, validationResult } from 'express-validator';
-import { StoreTOTPSetup, ChangeFileVisibility, StoreTOTPFinal, GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewAccount, RegisterNewToken, UpdateUserPassword, VerifyLoginCredentials, VerifyUserExists, HandlePasswordReset } from '../util/secure';
+import { StoreTOTPSetup, ChangeFileVisibility, StoreTOTPFinal, GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewAccount, RegisterNewToken, UpdateUserPassword, VerifyLoginCredentials, VerifyUserExists, HandlePasswordReset, CreateNewToken } from '../util/secure';
 import { FinishUpload, MulterUploader } from '../api/upload';
 import { AuthorizationIntents, ContentItem, IPBanList, StorageData, UserModel } from '../types';
 import { GetStorageInfo } from '../api/content';
@@ -11,7 +11,7 @@ import { join } from 'path';
 import { UPLOADS_PATH, USER_DATABASE_PATH } from '../util/paths';
 import { existsSync, readdirSync, renameSync, rmSync, writeFileSync } from 'fs';
 import { CreateLink } from '../api/shortener';
-import { ChangeTokenUsername, ReadIntents } from '../api/newtoken';
+import { ChangeTokenUsername, GenerateDefaultDesktopToken, ReadIntents, RegisterNewSession } from '../api/newtoken';
 import { AddIPBan, GetIPBans, RemoveIPBan } from '../util/ipManage';
 import { CheckOTP, GenerateQRImage, GetOTPSetupOptions } from '../api/otp';
 import { SendVerificationEmail } from '../email/verification';
@@ -79,6 +79,17 @@ export function RegisterAPIRoutes() {
             const authToken: string = RegisterNewToken(user);
             res.json({status:200,uses2FA:false,token:authToken});
         });
+    });
+
+    Router.get('/api/apptoken', ValidateToken(), PrefersLogin, ValidateAppTokenRequest(), HandleBadRequest, (req: Request, res: Response) => {
+        L.debug('creating new app token');
+        const data = matchedData(req);
+        if (data.appId != 1) return res.status(501).json({success:false,reason:'appId invalid'});
+        const user = GetUserFromToken(data.token);
+        const token = GenerateDefaultDesktopToken(user.username);
+        const token_id = CreateNewToken();
+        RegisterNewSession(token_id, token);
+        res.json({success:true,appId:data.appId, token:token_id});
     });
 
     // reset password from username
@@ -182,11 +193,7 @@ export function RegisterAPIRoutes() {
 
         const intents: AuthorizationIntents = ReadIntents(data.token);
         if (!intents.canUpload) return res.status(403).json({success:false,reason:'No permission'});
-
-        // if (data.encrypt) {
-            
-        // }
-
+        
         FinishUpload(req, res);
     });
 

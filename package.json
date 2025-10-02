@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "@aws-sdk/credential-provider-node": "^3.645.0",
-    "@simplewebauthn/server": "^9.0.3",
+    "@simplewebauthn/server": "^13.2.1",
     "@types/fluent-ffmpeg": "^2.1.26",
     "@types/multer": "^1.4.11",
     "@types/qrcode": "^1.5.5",

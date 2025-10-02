@@ -10,7 +10,11 @@ export const ValidateContentRequest = () => [
     query('intent').escape().optional()
 ];
 
-export const ValidateToken = () => cookie('token').notEmpty().escape().isLength({min:32,max:32});
+export const ValidateToken = () => cookie('token').notEmpty().escape().isLength({min:32,max:128});
+export const ValidateAppTokenRequest = () => [
+    query('appId').isNumeric().escape(),
+    query('intents').isNumeric().escape()
+];
 
 export const ValidateTokenBothModes = () => [
     cookie('token').notEmpty().escape().isLength({min:32,max:32}).optional(),
@@ -41,7 +45,7 @@ export const ValidateOTP = () => [
 ];
 
 export const ValidatePasskeySetup = () => [
-    
+    body('test').optional().escape()
 ];
 
 export const HandleBadRequest = (req: Request, res: Response, next: CallableFunction) => {

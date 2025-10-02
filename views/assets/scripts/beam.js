@@ -17,7 +17,7 @@ function getCookie(cname) {
 function BeamTokenToDesktop() {
     const token = getCookie('token');
 
-    document.location = `okayucdn://token/${token}`;
+    // document.location = `okayucdn://token/${token}`;
     document.querySelector('#text').innerHTML = 'Your token has been sent to the desktop app. You may close this page now.';
 }
 

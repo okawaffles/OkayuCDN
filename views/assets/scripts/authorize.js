@@ -37,9 +37,13 @@ $(document).ready(() => {
 
     const query = window.location.search.split('?')[1].split('&');
     let intent_value = 0;
+    let appId = -1;
     query.forEach(element => {
         if (element.startsWith('intents=')) {
             intent_value = element.split('=')[1];
+        }
+        if (element.startsWith('appId=')) {
+            appId = element.split('=')[1];
         }
     });
     const wanted_intents = DecodeIntents(intent_value);
@@ -56,4 +60,16 @@ $(document).ready(() => {
     if (wanted_intents.canChangeAccountOptions) $('#change_secure_yes').css('display', 'inline'); else $('#change_secure_no').css('display', 'inline');
 
     $('#displayed').css('display', 'inline');
+
+
+    $('#authorize').on('click', () => {
+        console.log('click!');
+        $.get(`/api/apptoken?intents=${intent_value}&appId=${appId}`, (data) => {
+            if (!data.success) return alert('Failed to authorize application.');
+
+            if (data.appId == 1) {
+                document.location = `okayucdn://token/${data.token}`;
+            } 
+        });
+    });
 });
