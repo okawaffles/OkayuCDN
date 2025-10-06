@@ -87,7 +87,7 @@ export function FinishUpload(req: Request, res: Response) {
             debug('upload', `joining chunk ${i+1}/${totalChunks}`);
             const currentPath = join(UPLOADS_PATH, user.username, 'LATEST.UPLOADING.'+i);
             // don't append to file unless they have sufficient storage
-            if (uploadAllowed) appendFileSync(newPath, readFileSync(currentPath, 'utf-8'));
+            if (uploadAllowed) appendFileSync(newPath, <Uint8Array<ArrayBuffer>> readFileSync(currentPath));
             rmSync(currentPath);
         }
 
