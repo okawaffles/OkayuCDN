@@ -30,7 +30,7 @@
         </div>
 
         <div class="characters">
-            <img src="./assets/images/okayu_450.png" class="chara-center" />
+            <img src="./assets/images/okayu_450.png" id="okayu" class="chara-center" />
         </div>
 
         <!-- <div class="home">
@@ -58,6 +58,82 @@
 
         document.location = `https://github.com/okawaffles/OkayuCDN/commit/${commitId}`;
     });
+
+    // silly idea by kasatka, thanks :3
+    const must_match = [
+        'ArrowUp',
+        'ArrowUp',
+        'ArrowDown',
+        'ArrowDown',
+        'ArrowLeft',
+        'ArrowRight',
+        'ArrowLeft',
+        'ArrowRight',
+        'b','a',
+        'Enter'
+    ];
+
+    const current_history = [];
+    let is_listening = true;
+
+    document.onkeydown = (event) => {
+        if (!is_listening) return;
+
+        console.log(event.key);
+        if (current_history.length >= must_match.length) current_history.shift();
+
+        current_history.push(event.key);
+
+        if (event.key == 'ArrowUp') {
+            $('#okayu').css('animation', 'none');
+            $('#okayu').css('bottom', '1rem');
+            setTimeout(() => {
+                $('#okayu').css('bottom', '0');
+            }, 100);
+        }
+        if (event.key == 'ArrowDown') {
+            $('#okayu').css('animation', 'none');
+            $('#okayu').css('bottom', '-1rem');
+            setTimeout(() => {
+                $('#okayu').css('bottom', '0');
+            }, 100);
+        }
+        if (event.key == 'ArrowLeft') {
+            $('#okayu').css('left', '48%');
+            setTimeout(() => {
+                $('#okayu').css('left', '50%');
+            }, 100);
+        }
+        if (event.key == 'ArrowRight') {
+            $('#okayu').css('left', '52%');
+            setTimeout(() => {
+                $('#okayu').css('left', '50%');
+            }, 100);
+        }
+        if (event.key == 'b' || event.key == 'a' || event.key == 'Enter') {
+            $('#okayu').css('height', '5rem');
+            $('#okayu').css('width', '25rem');
+            setTimeout(() => {
+                $('#okayu').css('height', 'revert');
+            }, 100);
+        }
+
+        if (current_history.join(',') == must_match.join(',')) {
+            console.log('PANPAKAPAN ACTIVATED');
+            is_listening = false;
+
+            const music = new Audio('/assets/panpakapan/unwelcomeschool.mp3');
+            const panpakapan = new Audio('/assets/panpakapan/panpakapan.mp3');
+
+            panpakapan.play();
+            setTimeout(() => {
+                $('#okayu').prop('src', '/assets/panpakapan/arisdance.gif');
+                document.getElementsByTagName('body')[0].style.backgroundColor = '#36373c';
+                music.volume = .5;
+                music.play();
+            }, 1000);
+        }
+    };
 </script>
 
 </html>

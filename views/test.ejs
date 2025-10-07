@@ -11,11 +11,13 @@
     <button onclick="window.location = '/test?invokeError=!400'">Invoke Bad Request</button>
     <button onclick="window.location = '/test?invokeError=500'">Preview Internal Server Error</button>
     <hr>
+    <h3>Various</h3>
+    <button onclick="window.location = '/home?af=true'">Preview "April Fools" Homepage</button>
+    <hr>
     <h3>Other</h3>
-    <!-- You might be wondering why this is here. This is for when I am showing off the website to friends/family who
-         are not accepting of LGBTQ groups, as they can get extremely toxic, and I'd like to stay away from all that. -->
-    <button onclick="document.cookie = 'logo-unsafe-mode=true'">Disable LGBTQ logos locally</button>
-    <button onclick="document.cookie = 'logo-unsafe-mode=false'">Enable LGBTQ logos locally</button>
+    <!-- This setting will disable anything that might not fall into "the perfect beliefs" of some families -->
+    <button onclick="document.cookie = 'logo-unsafe-mode=true'">Disable unsafe mode</button>
+    <button onclick="document.cookie = 'logo-unsafe-mode=false'">Enable unsafe mode</button>
     <hr>
     <h3>Experiments (only one may be active at a time)</h3>
     <button onclick="document.cookie = 'okayu-experiment=mybox-visual-refresh'; location = '/mybox'">Enable mybox-visual-refresh experiment</button>

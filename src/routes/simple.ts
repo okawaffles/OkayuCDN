@@ -15,7 +15,7 @@ export function RegisterSimpleRoutes() {
     if (ENABLE_DEBUG_LOGGING) debug('routes', 'registering simple routes...');
 
     Router.get('/home', (req: Request, res: Response) => {
-        if (IsAprilFools()) return res.render('assets/aprilfools/home', {version});
+        if (IsAprilFools() || req.query.af == 'true') return res.render('assets/aprilfools/home', {version});
         res.render('home', {version});
     });
 

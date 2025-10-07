@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OkayuCDN Landing</title>
+    <script src="https://pixijs.download/v7.3.3/pixi.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/dc1b60441b.js" crossorigin="anonymous"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+
+    <meta content="OkayuCDN Landing" property="og:title">
+    <meta content="Upload files for free" property="og:description">
+    <meta content="https://okayu.okawaffles.com/" property="og:url">
+    <meta content="#0087a9" data-react-helmet="true" name="theme-color">
+
+    <link rel="stylesheet" href="/assets/styles/_newStyles.css">
+    <link rel="preload" href="/assets/fonts/GenJyuuGothic.ttf" as="font" type="font/ttf">
+</head>
+
+<body>
+    <header id="header_landing">
+        <img class="logo" src="/assets/images/logo.png" width="200" onclick="window.location = '/home'"></img>
+        <nav>
+            <ul class="nav_links">
+                <li><a href="/home"><i class="fa-solid fa-house"></i> Home</a></li>
+                <li><a href="/mira"><i class="fa-solid fa-plane-arrival"></i> You are viewing the Landing Page.</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <body id="body_landing"></body>
+
+    <style>
+        @font-face {
+            font-family: "GenJyuuGothic";
+            src: url('/assets/fonts/GenJyuuGothic.ttf');
+        }
+    </style>
+
+
+    <script>
+        // mobile devices cause issues and i don't want to risk it with ipads lol
+        const goToHome = navigator.userAgent.includes("Android") || navigator.userAgent.includes("iOS") || navigator.userAgent.includes("iPadOS");
+        if (goToHome) document.location = '/home';
+
+        window.onload = () => {
+
+        let zoom = (( window.outerWidth - 10 ) / window.innerWidth).toFixed(2);
+        let runPixi = true;
+        console.log(zoom);
+
+        // fix scaling issues caused by browser zoom by reloading the page
+        $(window).resize(function() { 
+            document.location = '/';
+        });
+        
+
+        let hr, mn, se;
+        function getTime() {
+            let d = new Date();
+            if (d.getHours() < 10) hr = `0${d.getHours()}`; else hr = d.getHours();
+            if (d.getMinutes() < 10) mn = `0${d.getMinutes()}`; else mn = d.getMinutes();
+            if (d.getSeconds() < 10) se = `0${d.getSeconds()}`; else se = d.getSeconds();
+        }
+
+        let fs = 120;
+        let mX = 0;
+        let mY = 0;
+        let swid = 0;
+        let shei = 0;
+        // if firefox
+        if (navigator.userAgent && navigator.userAgent.includes("Firefox")) {
+            // swid = screen.width;
+            // shei = screen.height;
+            swid = visualViewport.width;
+            shei = visualViewport.height;
+            
+        } else if (navigator.userAgent && navigator.userAgent.includes("Chrome")) {
+            // if chromium-based
+            // love u tacobelle03 <3
+            swid = visualViewport.width;
+            shei = visualViewport.height;
+        }
+        let app;
+        if (runPixi)
+            app = new PIXI.Application({ width: swid, height: shei });
+        else
+            app = new PIXI.Application({ width: 0, height: 0 });
+        app.stage.interactive = true;
+        document.body.appendChild(app.view);
+        let bgi = PIXI.Sprite.from('/assets/images/landing/bgi.png');
+        let okayu = PIXI.Sprite.from('/assets/images/landing/okayu_highres.png');
+        bgi.scale.set(1.05, 1.05);
+        bgi.anchor.set(0.5);
+        app.stage.addChild(bgi);
+        const OKAYU_WIDTH = 720;
+        const OKAYU_HEIGHT = 719;
+        okayuScale = (swid/2000);
+        if (swid < 1280) {
+            fs = 60; 
+            okayuScale = 1.3;
+        }
+        okayu.x = (swid / 2) - ((OKAYU_WIDTH * okayuScale) / 2);
+        okayu.y = shei - (OKAYU_HEIGHT * okayuScale);
+        okayu.scale.set(okayuScale, okayuScale);
+        app.stage.addChild(okayu);
+
+        // add copyright notice to bottom left
+        let copyright = new PIXI.Text('Nekomata Okayu Copyright owned by COVER Corp. All Rights Reserved.', {fontFamily: "GenJyuuGothic", fontSize: 16, fill: "#ffffff"});
+        copyright.x = 5;
+        copyright.y = visualViewport.height - 100;
+        app.stage.addChild(copyright);
+
+        getTime();
+        let title = new PIXI.Text(`${hr}:${mn}:${se}`, { fontFamily: "GenJyuuGothic", fontSize: fs, align: 'center', fill: "#0087a9", stroke: "#222742", strokeThickness: 6 });
+        title.x = swid / 2 - (title.width / 2);
+        title.y = 200;
+        app.stage.addChild(title);
+
+        let elapsed = 0.0;
+        app.ticker.add((delta) => {
+            getTime();
+            title.text = `${hr}:${mn}:${se}`
+
+            elapsed += delta;
+            okayu.y = (shei - (OKAYU_HEIGHT * okayuScale)) + Math.cos(elapsed / 50.0) * 10.0;
+            title.y = 100 + -Math.cos(elapsed / 50.0) * 10.0;
+            okayu.x = (swid / 2) - ((OKAYU_WIDTH * okayuScale) / 2) - (mX / 165) + swid / 125;
+            title.x = swid / 2 - (title.width / 2) - (mX / 125) + swid / 125;
+
+            bgi.x = swid / 2 - (mX / 75) + swid / 125;
+            bgi.y = shei / 2 - (mY / 75) + shei / 125;
+        });
+
+        function updMXY(e) {
+            let pos = e.data.global;
+            mX = pos.x;
+            mY = pos.y;
+        }
+
+        app.stage.on("pointermove", updMXY);
+
+    }
+    </script>
+</body>
+
+<script>
+    checkLanguage('landing');
+</script>
+
+</html>
