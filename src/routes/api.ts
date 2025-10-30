@@ -203,7 +203,7 @@ export function RegisterAPIRoutes() {
     Router.get('/api/storage', ValidateTokenBothModes(), HandleBadRequest, (req: Request, res: Response) => {
         const data = matchedData(req);
 
-        const intents: AuthorizationIntents = ReadIntents(data.token);
+        const intents: AuthorizationIntents = ReadIntents(data.token || data.authorization);
         if (!intents.canGetStorage) {
             return res.status(403).send({success:false,reason:'No permission',intents});
         }
