@@ -205,11 +205,11 @@ export function RegisterAPIRoutes() {
 
         const intents: AuthorizationIntents = ReadIntents(data.token);
         if (!intents.canGetStorage) {
-            return res.status(403).send({success:false,reason:'No permission'});
+            return res.status(403).send({success:false,reason:'No permission',intents});
         }
 
         try {
-            const user = GetUserFromToken(data.token);
+            const user = GetUserFromToken(data.token || data.authorization);
 
             const storage: StorageData = GetStorageInfo(user);
 

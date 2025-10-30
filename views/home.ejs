@@ -132,6 +132,13 @@
                 music.volume = .5;
                 music.play();
             }, 1000);
+
+            music.onended = () => {
+                current_history = [];
+                document.getElementsByTagName('body')[0].style.backgroundColor = 'var(--active-background)';
+                $('#okayu').prop('src', '/assets/images/okayu_450.png');
+                is_listening = true;
+            }
         }
     };
 </script>
