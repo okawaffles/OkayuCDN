@@ -94,6 +94,25 @@ Router.use(session({
     }
 }));
 
+import cors from 'cors';
+
+const origins = ['http://localhost:5173', 'http://127.0.0.1:5173'];
+
+Router.use(cors({
+    origin: origins,
+    methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
+    allowedHeaders: ['Authorization','Content-Type'],
+    // credentials: true, // <- only if you start using cookies
+}));
+
+// Make sure preflight hits the same CORS config
+Router.options(/.*/, cors({
+    origin: origins,
+    methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
+    allowedHeaders: ['Authorization','Content-Type'],
+    // credentials: true,
+}));
+
 import { csrf, xssProtection } from 'lusca';
 Router.use(csrf({allowlist:[
     'http://localhost:2773',

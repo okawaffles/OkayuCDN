@@ -107,7 +107,7 @@ export function RegisterAPIRoutes() {
     });
 
     // pages use this to figure out who they are based on the login token
-    Router.get('/api/whoami', ValidateTokenBothModes(), PrefersLogin, HandleBadRequest, (req: Request, res: Response) => {
+    Router.get('/api/whoami', ValidateTokenBothModes(), HandleBadRequest, (req: Request, res: Response) => {
         const data = matchedData(req);
 
         if (!data.token && !data.authorization) return res.status(400).end();
