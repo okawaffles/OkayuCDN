@@ -17,6 +17,11 @@
         "content":""
     },
 
+    "forwarding": {
+        "active": true,
+        "key": ""
+    },
+
     "admins": [
         "okawaffles"
     ],

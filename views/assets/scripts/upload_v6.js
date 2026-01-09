@@ -217,13 +217,14 @@ async function StartFileUpload() {
 }
 
 let chunkHasFailed = false;
+const USE_FORWARDING = true;
 
 async function sendChunk(chunk, total_chunks, current_chunk) {
     const formData = new FormData();
     formData.append('file', chunk);
     formData.append('totalChunks', total_chunks);
     formData.append('currentChunk', current_chunk);
-    const response = await fetch('/api/upload?current_chunk='+current_chunk, {
+    const response = await fetch(`${USE_FORWARDING ? 'https://daiwa.okayucdn.com' : ''}/api/upload?current_chunk=`+current_chunk, {
         method: 'POST',
         body: formData
     });

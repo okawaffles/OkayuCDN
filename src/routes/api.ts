@@ -1,5 +1,15 @@
 import { Request, Response } from 'express'; 
-import { ENABLE_ACCOUNT_CREATION, ENABLE_DEBUG_LOGGING, ENABLE_UPLOADING, Router, admins, announcement, domain, version } from '../main';
+import {
+    ENABLE_ACCOUNT_CREATION,
+    ENABLE_DEBUG_LOGGING,
+    ENABLE_UPLOADING,
+    Router,
+    admins,
+    announcement,
+    domain,
+    version,
+    forwarding
+} from '../main';
 import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST, ValidateDeletionRequest, ValidatePasswordRequest, ValidateSignupPOST, ValidateAdminDeletionRequest, ValidateAdminStorageRequest, ValidateUploadChunk, ValidateContentRequest, ValidateTokenBothModes, ValidateAdminBanIP, ValidateUsernameCheck, ValidatePWResetPost, ValidateAdminLoginAsRequest, ValidateAppTokenRequest } from '../util/sanitize';
 import { matchedData, validationResult } from 'express-validator';
 import { StoreTOTPSetup, ChangeFileVisibility, StoreTOTPFinal, GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewAccount, RegisterNewToken, UpdateUserPassword, VerifyLoginCredentials, VerifyUserExists, HandlePasswordReset, CreateNewToken } from '../util/secure';
@@ -185,6 +195,27 @@ export function RegisterAPIRoutes() {
 
         renameSync(join(uploadPath, 'LATEST.UPLOADING.ID'), join(uploadPath, `LATEST.UPLOADING.${data.current_chunk}`));
         
+        res.status(200).end();
+    });
+
+    /*
+        Private route which will receive an unproxied body via an Akamai server.
+     */
+    Router.post('/api/upload/proxied', ValidateToken(), PrefersLogin, ValidateUploadChunk(), HandleBadRequest, MulterUploader.single('file'), (req: Request, res: Response) => {
+        if (!ENABLE_UPLOADING || !forwarding.active) return res.status(423).end();
+        if (req.headers.okayukey != forwarding.key) return res.status(401).end();
+
+        const data = matchedData(req);
+        const intents: AuthorizationIntents = ReadIntents(data.token);
+        if (!intents.canUpload) return res.status(403).json({success:false,reason:'No permission'});
+
+        const user = GetUserFromToken(data.token);
+        const username = user.username;
+
+        const uploadPath = join(UPLOADS_PATH, username);
+
+        renameSync(join(uploadPath, 'LATEST.UPLOADING.ID'), join(uploadPath, `LATEST.UPLOADING.${data.current_chunk}`));
+
         res.status(200).end();
     });
 

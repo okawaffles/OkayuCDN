@@ -20,7 +20,8 @@ export const {
     admins, 
     version_include_git_commit, 
     ENABLE_ACCOUNT_CREATION, ENABLE_UPLOADING, ENABLE_USE_OF_EMAIL_FEATURES, ENABLE_DEBUG_LOGGING, DISABLE_RATE_LIMITING,
-    email
+    email,
+    forwarding,
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 } = require(join(__dirname, '..', 'config.json'));
 if (ENABLE_DEBUG_LOGGING) debug('preload', 'exported config variables loaded successfully');
