@@ -226,9 +226,7 @@ async function sendChunk(chunk, total_chunks, current_chunk) {
     formData.append('currentChunk', current_chunk);
     const response = await fetch(`${USE_FORWARDING ? 'https://daiwa.okayucdn.com' : ''}/api/upload?current_chunk=`+current_chunk, {
         method: 'POST',
-        headers: {
-            'Cookie': document.cookie
-        },
+        credentials: 'include',
         body: formData
     });
     if (!response.ok) {
