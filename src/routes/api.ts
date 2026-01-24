@@ -226,10 +226,10 @@ export function RegisterAPIRoutes() {
         if (req.headers.okayukey != forwarding.key) return res.status(401).end();
 
         const data = matchedData(req);
-        const intents: AuthorizationIntents = ReadIntents(data.token);
+        const intents: AuthorizationIntents = ReadIntents(data.authorization);
         if (!intents.canUpload) return res.status(403).json({success:false,reason:'No permission'});
 
-        const user = GetUserFromToken(data.token);
+        const user = GetUserFromToken(data.authorization);
         const username = user.username;
 
         const uploadPath = join(UPLOADS_PATH, username);
