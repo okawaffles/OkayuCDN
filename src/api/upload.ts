@@ -39,7 +39,7 @@ export function FinishUpload(req: Request, res: Response) {
     info('upload', 'finishing upload ...');
 
     const data = matchedData(req);
-    const user: UserModel = GetUserFromToken(data.token);
+    const user: UserModel = GetUserFromToken(data.token || data.authorization);
     const filename: string = data.filename;
     const extension: string = data.extension;
     
