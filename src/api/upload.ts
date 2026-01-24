@@ -19,7 +19,7 @@ export const UploadResults: any = {
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const user = GetUserFromToken(req.cookies.token);
+        const user = GetUserFromToken(req.cookies.token || req.headers.authorization);
         const username = user.username;
 
         const uploadPath = join(UPLOADS_PATH, username);
