@@ -5,6 +5,12 @@ $(document).ready(() => {
     start();
 });
 
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
 /**
  * A nice little function that turns bytes into readable storage amounts.
  * @param bytes the number to parse
@@ -226,8 +232,10 @@ async function sendChunk(chunk, total_chunks, current_chunk) {
     formData.append('currentChunk', current_chunk);
     const response = await fetch(`${USE_FORWARDING ? 'https://daiwa.okayucdn.com' : ''}/api/upload?current_chunk=`+current_chunk, {
         method: 'POST',
-        credentials: 'include',
-        body: formData
+        body: formData,
+        headers: {
+            'Authorization': getCookie('token')
+        }
     });
     if (!response.ok) {
         if (!chunkHasFailed) {

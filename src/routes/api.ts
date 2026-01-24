@@ -10,7 +10,27 @@ import {
     version,
     forwarding
 } from '../main';
-import { HandleBadRequest, ValidateLoginPOST, ValidateToken, ValidateOTP, ValidateUploadPOST, ValidateDeletionRequest, ValidatePasswordRequest, ValidateSignupPOST, ValidateAdminDeletionRequest, ValidateAdminStorageRequest, ValidateUploadChunk, ValidateContentRequest, ValidateTokenBothModes, ValidateAdminBanIP, ValidateUsernameCheck, ValidatePWResetPost, ValidateAdminLoginAsRequest, ValidateAppTokenRequest } from '../util/sanitize';
+import {
+    HandleBadRequest,
+    ValidateLoginPOST,
+    ValidateToken,
+    ValidateOTP,
+    ValidateUploadPOST,
+    ValidateDeletionRequest,
+    ValidatePasswordRequest,
+    ValidateSignupPOST,
+    ValidateAdminDeletionRequest,
+    ValidateAdminStorageRequest,
+    ValidateUploadChunk,
+    ValidateContentRequest,
+    ValidateTokenBothModes,
+    ValidateAdminBanIP,
+    ValidateUsernameCheck,
+    ValidatePWResetPost,
+    ValidateAdminLoginAsRequest,
+    ValidateAppTokenRequest,
+    ValidateHeaderToken
+} from '../util/sanitize';
 import { matchedData, validationResult } from 'express-validator';
 import { StoreTOTPSetup, ChangeFileVisibility, StoreTOTPFinal, GetUserFromToken, GetUserModel, PrefersLogin, RegisterNewAccount, RegisterNewToken, UpdateUserPassword, VerifyLoginCredentials, VerifyUserExists, HandlePasswordReset, CreateNewToken } from '../util/secure';
 import { FinishUpload, MulterUploader } from '../api/upload';
@@ -201,7 +221,7 @@ export function RegisterAPIRoutes() {
     /*
         Private route which will receive an unproxied body via an Akamai server.
      */
-    Router.post('/api/upload/proxied', ValidateToken(), PrefersLogin, ValidateUploadChunk(), HandleBadRequest, MulterUploader.single('file'), (req: Request, res: Response) => {
+    Router.post('/api/upload/proxied', ValidateHeaderToken(), PrefersLogin, ValidateUploadChunk(), HandleBadRequest, MulterUploader.single('file'), (req: Request, res: Response) => {
         if (!ENABLE_UPLOADING || !forwarding.active) return res.status(423).end();
         if (req.headers.okayukey != forwarding.key) return res.status(401).end();
 
