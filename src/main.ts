@@ -20,6 +20,7 @@ export const {
     admins, 
     version_include_git_commit, 
     ENABLE_ACCOUNT_CREATION, ENABLE_UPLOADING, ENABLE_USE_OF_EMAIL_FEATURES, ENABLE_DEBUG_LOGGING, DISABLE_RATE_LIMITING,
+    country_content_block,
     email,
     forwarding,
 // eslint-disable-next-line @typescript-eslint/no-var-requires

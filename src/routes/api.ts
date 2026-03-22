@@ -8,7 +8,7 @@ import {
     announcement,
     domain,
     version,
-    forwarding
+    forwarding, country_content_block
 } from '../main';
 import {
     HandleBadRequest,
@@ -70,7 +70,9 @@ export function RegisterAPIRoutes() {
             desktop: {
                 min_version: 2,
                 to: '/api/upload'
-            }
+            },
+            region_restricted: req.headers['cf-ipcountry'] && country_content_block.includes((req.headers['cf-ipcountry'] as string).toUpperCase()),
+            country: req.headers['cf-ipcountry'],
         });
     });
 

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { ENABLE_DEBUG_LOGGING, Router, domain, version } from '../main';
+import {ENABLE_DEBUG_LOGGING, Router, domain, version, country_content_block} from '../main';
 import { join } from 'path';
 import { UPLOADS_PATH } from '../util/paths';
 import { HandleBadRequest, ValidateContentRequest, ValidateOptionalToken, ValidateShortURL, ValidateVideoStreamParams } from '../util/sanitize';
@@ -10,6 +10,7 @@ import { GetLinkData } from '../api/shortener';
 import { HandleVideoStreaming } from '../api/content';
 import { debug } from 'okayulogger';
 import Ffmpeg from 'fluent-ffmpeg';
+import {TokenExists} from '../api/newtoken';
 
 
 export function RegisterContentRoutes() {
@@ -20,6 +21,13 @@ export function RegisterContentRoutes() {
         const data = matchedData(req);
         const username = data.username;
         const item = data.item;
+        const region_restricted = req.headers['cf-ipcountry'] && country_content_block.includes((req.headers['cf-ipcountry'] as string).toUpperCase())
+
+        if (region_restricted) {
+            if (!TokenExists(data.token)) return res.status(451).send("Sorry, items from others' boxes are not available in your region.");
+            const user = GetUserFromToken(data.token);
+            if (data.username != user.username) return res.status(451).send("Sorry, items from others' boxes are not available in your region.");
+        }
 
         if (ENABLE_DEBUG_LOGGING) debug('content', `preparing content ${username}/${item}`);
 
@@ -109,6 +117,13 @@ export function RegisterContentRoutes() {
         if (!existsSync(
             join(UPLOADS_PATH, username, item)
         )) return res.status(404).render('notfound');
+
+        const region_restricted = req.headers['cf-ipcountry'] && country_content_block.includes((req.headers['cf-ipcountry'] as string).toUpperCase())
+
+        if (region_restricted) {
+            const user = GetUserFromToken(data.token);
+            if (data.username != user.username) return res.status(451).send("Sorry, items from others' boxes are not available in your region.");
+        }
 
         // make sure it's not protected & if it is make sure theyre authorized to view it
         if (IsContentProtected(username, item)) { 

@@ -17,6 +17,8 @@
         "content":""
     },
 
+    "country_content_block":[],
+
     "forwarding": {
         "active": true,
         "key": ""

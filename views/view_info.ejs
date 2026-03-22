@@ -36,9 +36,32 @@
 
     <script src="/assets/scripts/viewfileinfo.js"></script>
     <script>doInfo("<%= filesize %>", "<%= filetype %>", "<%= username %>", "<%= filename %>")</script>
-    <!-- <script>
-        // try and open in android app
-        window.location.replace('okayucdn://view/<%= username %>:<%= filename %>')
-    </script> -->
+
+    <script>
+        fetch('/api/health').then(health => {
+            health.json().then(data => {
+                if (!data.region_restricted) return;
+
+                let previous_text = document.querySelector('#download').innerHTML;
+                console.log('i am restricted');
+                document.querySelector('#download').disabled = true;
+                document.querySelector('#download').innerHTML = 'Please wait...';
+
+                fetch('/api/whoami').then(resp => resp.json().then(data => {
+                    if (data.username !== "<%= username %>") {
+                        document.querySelector('#download').innerHTML = 'Download Unavailable';
+                        document.querySelector('#previewArea').innerHTML = '<h3>This content is not available in your region.</h3>';
+                    } else {
+                        document.querySelector('#download').disabled = true;
+                        document.querySelector('#download').innerHTML = previous_text;
+                    }
+                })).catch(err => {
+                    console.warn(err);
+                    document.querySelector('#download').innerHTML = 'Download Unavailable';
+                    document.querySelector('#previewArea').innerHTML = '<h3>This content is not available in your region.<br>If this is your content, please log in.</h3>';
+                });
+            })
+        });
+    </script>
 </body>
 </html>
